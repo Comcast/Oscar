@@ -41,7 +41,6 @@ import com.comcast.oscar.configurationfile.ConfigrationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.constants.Constants;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
-import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.DirectoryStructure;
 import com.comcast.oscar.utilities.HexString;
