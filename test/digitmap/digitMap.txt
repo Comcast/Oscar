@@ -1,0 +1,102 @@
+TIMER S=4.000000
+TIMER Z=2.000000
+
+domain = "@qa2ims.comcast.net"
+dialString = ";user=dialstring"
+dialPhone = ";user=phone"
+
+homeEmergencyNumber = "911"
+localEmergencyNumber = "911"
+
+MAP MainTable =
+ "0S" : MAKE-CALL("sip:0" =domain =dialPhone)
+ "0#" : MAKE-CALL("sip:0" =domain =dialPhone)
+ "00" : MAKE-CALL("sip:00" =domain =dialPhone)
+ "(=Emergency)" : EMERGENCY-CALL("sip:" "911" =domain =dialPhone)
+ "(=N11)" : MAKE-CALL("sip:" #1v =domain =dialString)
+ "(=SpeedDial)" : MAKE-CALL("sip:" #1v =domain =dialString)
+ "(=PhoneNumber)" : MAKE-CALL("sip:" #1v =domain =dialPhone)
+ "(=ImmediateVSCs)" : RETURN
+ "(=DelayedVSCs)" : RETURN
+ "(x{8-20})S" : MAKE-CALL("sip:" #1 =domain =dialPhone)
+ "(x{1-20})#" : MAKE-CALL("sip:" #1 =domain =dialPhone)
+ "(958)S" : MAKE-CALL("sip:" #1 =domain =dialPhone)
+
+MAP Emergency =
+ "(=localEmergencyNumber)" : RETURN
+ "(=homeEmergencyNumber)" : RETURN
+ "[01](=homeEmergencyNumber)" : RETURN
+
+MAP N11 = 
+ "1[2-8]11" : RETURN(#0)
+ "[2-8]11" : RETURN(#0)
+
+MAP SpeedDial = 
+ "([2-9])S" : RETURN(#1)
+ "([2-4]x)S" : RETURN(#1)
+ "([2-9])#" : RETURN(#1)
+ "([2-4]x)#" : RETURN(#1)
+
+MAP PhoneNumber =
+ "(=SevenDigitMap)" : RETURN(#1v)
+ "1(=TenDigitMap)" : RETURN("1" #1v)
+ "(=TenDigitMap)" : RETURN( #1v)
+ "011(=InternationalNumbers)" : RETURN("011" #1v)
+ "010(=InternationalNumbers)" : RETURN("010" #1v)
+
+MAP SevenDigitMap =
+ "([2-9]x{6})S" : RETURN(#1)
+ "([2-9]x{6})#" : RETURN(#1)
+
+MAP TenDigitMap =
+ "([2-9]x{9})" : RETURN(#1)
+
+MAP InternationalNumbers =
+ "([2-9]x{7-15})S" : RETURN(#1)
+ "([2-9]x{1-15})#" : RETURN(#1)
+
+MAP ImmediateVSCs =
+ "*57" : MAKE-CALL("sip:*57" =domain =dialString)
+ "*60" : MAKE-CALL("sip:*60" =domain =dialString)
+ "*61" : MAKE-CALL("sip:*61" =domain =dialString)
+ "*63" : MAKE-CALL("sip:*63" =domain =dialString)
+ "*66" : MAKE-CALL("sip:*66" =domain =dialString)
+ "*69" : MAKE-CALL("sip:*69" =domain =dialString)
+ "*73" : MAKE-CALL("sip:*73" =domain =dialString)
+ "*74" : MAKE-CALL("sip:*74" =domain =dialString)
+ "*75" : MAKE-CALL("sip:*75" =domain =dialString)
+ "*77" : MAKE-CALL("sip:*77" =domain =dialString)
+ "*78" : MAKE-CALL("sip:*78" =domain =dialString)
+ "*79" : MAKE-CALL("sip:*79" =domain =dialString)
+ "*80" : MAKE-CALL("sip:*80" =domain =dialString)
+ "*83" : MAKE-CALL("sip:*83" =domain =dialString)
+ "*86" : MAKE-CALL("sip:*86" =domain =dialString)
+ "*87" : MAKE-CALL("sip:*87" =domain =dialString)
+ "*89" : MAKE-CALL("sip:*89" =domain =dialString)
+ "*90" : MAKE-CALL("sip:*90" =domain =dialString)
+ "*91" : MAKE-CALL("sip:*91" =domain =dialString)
+ "*92" : MAKE-CALL("sip:*92" =domain =dialString)
+ "*93" : MAKE-CALL("sip:*93" =domain =dialString)
+ "*94" : MAKE-CALL("sip:*94" =domain =dialString)
+ "*99" : MAKE-CALL("sip:*99" =domain =dialString)
+
+MAP DelayedVSCs =
+ "*67" : RECALL; USEMAP(=CallIDBlock)
+ "*70" : CW-TOGGLE; RECALL; USEMAP(=MainTable)
+ "*72" : RECALL; USEMAP(=ForwardingNumber)
+ "*82" : RECALL; USEMAP(=CallIDDeliver)
+ "*96" : HOOKFLASH-ACTIVATE; MAKE-CALL("sip:*96"  =domain =dialString)
+ "*97" : HOOKFLASH-DEACTIVATE; MAKE-CALL("sip:*97"  =domain =dialString)
+
+MAP CallIDBlock =
+ "(=PhoneNumber)" : MAKE-CALL("sip:*67" #1v =domain =dialString)
+
+MAP ForwardingNumber =
+ "(=Emergency)" : MAKE-CALL("sip:*72911" =domain =dialString)
+ "(=PhoneNumber)" : MAKE-CALL("sip:*72" #1v =domain =dialString)
+ "#" : MAKE-CALL("sip:*72" =domain =dialString)
+
+MAP CallIDDeliver =
+ "(=SpeedDial)" : MAKE-CALL("sip:*82" #1v =domain =dialString)
+ "(=PhoneNumber)" : MAKE-CALL("sip:*82" #1v =domain =dialString)
+ 

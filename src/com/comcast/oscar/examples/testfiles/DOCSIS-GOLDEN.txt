@@ -1,0 +1,309 @@
+
+/*
+	Copyright 2015 Comcast Cable Communications Management, LLC
+	___________________________________________________________________
+	Licensed under the Apache License, Version 2.0 (the "License")
+	you may not use this file except in compliance with the License.
+	You may obtain a copy of the License at
+	http://www.apache.org/licenses/LICENSE-2.0
+	Unless required by applicable law or agreed to in writing, software
+	distributed under the License is distributed on an "AS IS" BASIS,
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	See the License for the specific language governing permissions and
+	limitations under the License.
+	
+	@author Maurice Garcia (maurice.garcia.2015@gmail.com)
+
+*/
+
+Docsis {
+	NetworkAccess 1;	 /* TLV: [3]*/
+	Snmp11 docsDevNmAccessIp.1 IpAddress "0.0.0.0";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessIpMask.1 IpAddress "0.0.0.0";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessCommunity.1 OctetString "ReadWrite";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessControl.1 Integer32 "3";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessInterfaces.1 HexString "40:00";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessStatus.1 Integer32 "4";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessIp.2 IpAddress "0.0.0.0";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessIpMask.2 IpAddress "0.0.0.0";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessCommunity.2 OctetString "ReadOnly";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessControl.2 Integer32 "2";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessInterfaces.2 HexString "40:00";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessStatus.2 Integer32 "4";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessIp.3 IpAddress "100.100.100.100";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessIpMask.3 IpAddress "255.255.255.255";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessCommunity.3 OctetString "RORORORO";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessControl.3 Integer32 "2";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessInterfaces.3 HexString "40:00";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessStatus.3 Integer32 "4";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessIp.4 IpAddress "100.100.100.100";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessIpMask.4 IpAddress "255.255.255.255";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessCommunity.4 OctetString "RWRWRWRW";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessControl.4 Integer32 "3";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessInterfaces.4 HexString "40:00";	 /* TLV: [11]*/
+	Snmp11 docsDevNmAccessStatus.4 Integer32 "4";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCUnmatchedAction.0 Integer32 "1";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCStatus.16 Integer32 "4";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCIfIndex.16 Integer32 "0";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCProtocolType.16 Integer32 "1";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCProtocol.16 Integer32 "2048";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCStatus.18 Integer32 "4";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCIfIndex.18 Integer32 "0";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCProtocolType.18 Integer32 "1";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCProtocol.18 Integer32 "2054";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCStatus.20 Integer32 "4";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCIfIndex.20 Integer32 "0";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCProtocolType.20 Integer32 "1";	 /* TLV: [11]*/
+	Snmp11 docsDevFilterLLCProtocol.20 Integer32 "34525";	 /* TLV: [11]*/
+	Snmp11 enterprises.4115.1.3.1.1.2.3.67.0 Integer32 "2";	 /* TLV: [11]*/
+
+	BaselinePrivacyConfigSetting {
+		AuthorizeWaitTimeout 10;	 /* TLV: [17.1]*/
+		ReauthorizeWaitTimeout 10;	 /* TLV: [17.2]*/
+		AuthorizationGraceTime 600;	 /* TLV: [17.3]*/
+		OperationalWaitTimeout 10;	 /* TLV: [17.4]*/
+		RekeyWaitTimeout 10;	 /* TLV: [17.5]*/
+		TEKGraceTime 600;	 /* TLV: [17.6]*/
+		AuthorizeRejectWaitTimeout 60;	 /* TLV: [17.7]*/
+		SAMapWaitTimeout 1;	 /* TLV: [17.8]*/
+		SAMapMaxRetries 4;	 /* TLV: [17.9]*/
+	}
+
+	ManufacturerCVC 30:82:03:1E:30:82:02:06:A0:03:02:01:02:02:10:30:13:55:A0:4D:95:AF:9B:6D:28:33:BC:0D:D9:67:B1:30:0D:06:09:2A:86:48:86:F7:0D:01:01:05:05:00:30:81:97:31:0B:30:09:06:03:55:04:06:13:02:55:53:31:39:30:37:06:03:55:04:0A:13:30:44:61:74:61:20:4F:76:65:72:20:43:61:62:6C:65:20:53:65:72:76:69:63:65:20:49:6E:74:65:72:66:61:63:65:20:53:70:65:63:69:66:69:63:61:74:69:6F:6E:73:31:15:30:13:06:03:55:04:0B:13:0C:43:61:62:6C:65:20:4D:6F:64:65:6D:73:31:36:30:34:06:03:55:04:03:13:2D:44:4F:43:53:49:53:20:43:61:62:6C:65:20:4D:6F:64:65:6D:20:52:6F:6F:74:20:43:65:72:74:69:66:69:63:61:74:65:20:41:75:74:68:6F:72:69:74:79:30:1E:17:0D:30:33:30:36:31:33:30:30:30:30:30:30:5A:17:0D:31:33:30:36:31:32:32:33:35:39:35:39:5A:30:66:31:0B:30:09:06:03:55:04:06:13:02:43:41:31:1E:30:1C:06:03:55:04:0A:13:15:45:6C:65:63:74:72:6F:6C:69:6E:65:20:45:71:75:69:70:6D:65:6E:74:31:0F:30:0D:06:03:55:04:0B:13:06:44:4F:43:53:49:53:31:26:30:24:06:03:55:04:03:13:1D:43:6F:64:65:20:56:65:72:69:66:69:63:61:74:69:6F:6E:20:43:65:72:74:69:66:69:63:61:74:65:30:81:9F:30:0D:06:09:2A:86:48:86:F7:0D:01:01:01:05:00:03:81:8D:00:30:81:89:02:81:81:00:D1:8B:B7:5E:C3:19:44:B3:F6:69:51:35:6A:B5:A3:BD:2B:BB:20:1E:2A:1B:21:B5:7F:A8:8F:0D:AA:F2:7D:46:B8:6D:71:97:5A:CF:B3:F2:F4:96:83:35:EE:30:E0:19:38:41:A5:CE:EE:3A:A1:68:A2:6D:AB:99:0E:DC:C4:F7:54:52:D9:C9:70:F0:F2:12:9C:B6:75:AD:42:5B:52:7C:D0:22:7A:59:C8:92:23:AE:AD:AA:F6:EB:FA:4C:89:2E:10:1C:81:18:92:8F:E4:4A:77:18:12:CE:56:AC:A1:D2:F8:F3:A5:0A:22:79:93:E1:9A:81:E6:10:4E:EC:FB:69:02:03:01:00:01:A3:1A:30:18:30:16:06:03:55:1D:25:01:01:FF:04:0C:30:0A:06:08:2B:06:01:05:05:07:03:03:30:0D:06:09:2A:86:48:86:F7:0D:01:01:05:05:00:03:82:01:01:00:A4:DB:FB:9B:8F:56:5A:6C:43:1E:B9:85:5A:85:82:89:6C:BC:4D:5D:2B:CF:81:6D:4A:A2:B3:AF:C7:3A:90:A5:FA:28:10:C6:46:B3:9E:40:2F:FA:0A:1E:AA:85:4D:02:1B:AC:94:6A:B5:9B:F9:26:76:B7:BC:01:74:F4:3D:3B:80:D0:E1:8A:DD:4D:70:4D:10:23:80:27:8F:4D:56:88:A0:4E:AC:72:BF:6D:99:E8:1A:D7:E9:1E:C8:43:08:46:B7:28:64:91:B3:6E:49:64:37:85:D5:37:1E:B4:20:CF:B7:AB:5D:48:76:B3:48:F1:51:16:F4:93:B5:3B:FB:6C:2B:45:48:68:38:97:41:AF:94:0F:B9:25:87:5F:D9:77:BE:B3:01:CC:4A:C3:5A:D0:40:83:9D:A2:75:01:05:6D:32:B0:27:BD:AA:D4:DD:E8:11:85:4D:22:77:79:8B:DA:04:DE:18:5E:6D:C2:64:9A:88:8B:EA:D9:D4:F2:8A:E7:83:34:51:69:CE:0B:AF:23:CB:6D:39:D4:98:6C:B0:D2:7E:CD:49:D9:D3:84:8E:0E:72:97:D3:1D:73:8C:C8:56:FA:6D:17:08:00:B9:CC:91:DE:F6:0E:31:20:85:37:97:BA:F9:F4:E5:86:69:0B:EB:3E:05:C1:5F:CA:BA:01:8D;	 /* TLV: [32]*/
+	MaxCPEAllowed 5;	 /* TLV: [18]*/
+
+	UpstreamServiceFlow {
+		ServiceFlowReference 1;	 /* TLV: [24.1]*/
+		ServiceFlowIdentifier ;	 /* TLV: [24.2]*/
+		ServiceIdentifier ;	 /* TLV: [24.3]*/
+		ServiceClassName hsd;	 /* TLV: [24.4]*/
+		ServiceFlowError {
+			ErroredParameter ;	 /* TLV: [24.5.1]*/
+			ErrorCode ;	 /* TLV: [24.5.2]*/
+			ErrorMessage ;	 /* TLV: [24.5.3]*/
+		}
+
+		QualityOfServiceParameterSetType 07 ;	 /* TLV: [24.6]*/
+		TrafficPriority ;	 /* TLV: [24.7]*/
+		MaxSubstainedTrafficRate 768000;	 /* TLV: [24.8]*/
+		MaxTrafficBurst 10000000;	 /* TLV: [24.9]*/
+		MinReservedTrafficRate ;	 /* TLV: [24.10]*/
+		AssumedMinReserved RatePacketSize ;	 /* TLV: [24.11]*/
+		TimeoutForActiveQoS ;	 /* TLV: [24.12]*/
+		TimeoutForAdmittedQoS ;	 /* TLV: [24.13]*/
+		MaxConcatenatedBurst 6088;	 /* TLV: [24.14]*/
+		SchedulingType 2;	 /* TLV: [24.15]*/
+		RequestTransmissionPolicy ;	 /* TLV: [24.16]*/
+		NominalPollingInterval ;	 /* TLV: [24.17]*/
+		ToleratedPollJitter ;	 /* TLV: [24.18]*/
+		UnsolicitedGrantSize ;	 /* TLV: [24.19]*/
+		NominalGrantInterval ;	 /* TLV: [24.20]*/
+		ToleratedGrantJitter ;	 /* TLV: [24.21]*/
+		GrantsPerInterval ;	 /* TLV: [24.22]*/
+		IPTypeOfServiceDSCPOverwrite ;	 /* TLV: [24.23]*/
+		UnsolicitedGrantTimeReference ;	 /* TLV: [24.24]*/
+		MultiplierContentionBackoffWindow ;	 /* TLV: [24.25]*/
+		MultiplierNumberOfBytesRequested ;	 /* TLV: [24.26]*/
+		UpstreamPeakTrafficRate ;	 /* TLV: [24.27]*/
+		ServiceFlowRequiredAttrMask ;	 /* TLV: [24.31]*/
+		ServiceFlowForbiddenAttrMask ;	 /* TLV: [24.32]*/
+		ServiceFlowAttrAggregationRuleMask ;	 /* TLV: [24.33]*/
+		ApplicationIdentifier ;	 /* TLV: [24.34]*/
+		UpstreamBufferControl {
+			MinBuffer ;	 /* TLV: [24.35.1]*/
+			TargetBuffer ;	 /* TLV: [24.35.2]*/
+			MaxBuffer ;	 /* TLV: [24.35.3]*/
+		}
+
+		AggregateServiceFlowReference ;	 /* TLV: [24.36]*/
+		MESPReference ;	 /* TLV: [24.37]*/
+		VendorSpecificQoS ;	 /* TLV: [24.43]*/
+	}
+
+
+	DownstreamServiceFlow {
+		ServiceFlowReference 2;	 /* TLV: [25.1]*/
+		ServiceFlowIdentifier ;	 /* TLV: [25.2]*/
+		ServiceIdentifier ;	 /* TLV: [25.3]*/
+		ServiceClassName ;	 /* TLV: [25.4]*/
+		ServiceFlowError {
+			ErroredParameter ;	 /* TLV: [25.5.1]*/
+			ErrorCode ;	 /* TLV: [25.5.2]*/
+			ErrorMessage ;	 /* TLV: [25.5.3]*/
+		}
+
+		QualityOfServiceParameterSetType 07 ;	 /* TLV: [25.6]*/
+		TrafficPriority ;	 /* TLV: [25.7]*/
+		MaxSubstainedTrafficRate 8800000;	 /* TLV: [25.8]*/
+		MaxTrafficBurst 20000000;	 /* TLV: [25.9]*/
+		MinReservedTrafficRate ;	 /* TLV: [25.10]*/
+		AssumedMinReservedRatePacketSize ;	 /* TLV: [25.11]*/
+		TimeoutForActiveQoS ;	 /* TLV: [25.12]*/
+		TimeoutForAdmittedQoS ;	 /* TLV: [25.13]*/
+		TimeoutForAdmittedQoS ;	 /* TLV: [25.14]*/
+		DownstreamResequencing ;	 /* TLV: [25.17]*/
+		IPTypeOfServiceDSCPOverwrite ;	 /* TLV: [25.23]*/
+		DownstreamPeakTrafficRate ;	 /* TLV: [25.27]*/
+		ServiceFlowRequiredAttrMask ;	 /* TLV: [25.31]*/
+		ServiceFlowForbiddenAttrMask ;	 /* TLV: [25.32]*/
+		ServiceFlowAttrAggregationRuleMask ;	 /* TLV: [25.33]*/
+		ApplicationIdentifier ;	 /* TLV: [25.34]*/
+		DownstreamBufferControl {
+			MinBuffer ;	 /* TLV: [25.35.1]*/
+			TargetBuffer ;	 /* TLV: [25.35.2]*/
+			MaxBuffer ;	 /* TLV: [25.35.3]*/
+		}
+
+		AggregateServiceFlowReference ;	 /* TLV: [25.36]*/
+		MESPReference ;	 /* TLV: [25.37]*/
+		VendorSpecificQoS ;	 /* TLV: [25.43]*/
+	}
+
+	PrivacyEnable 1;	 /* TLV: [29]*/
+
+	eSTBConfig {
+		IPModeControl ;	 /* TLV: [217.1]*/
+		VendorID ;	 /* TLV: [217.8]*/
+		SnmpOID ;	 /* TLV: [217.11]*/
+		SNMPv3NotificationReceiver {
+			IPv4Address ;	 /* TLV: [217.38.1]*/
+			UDPPortNumber ;	 /* TLV: [217.38.2]*/
+			TrapType ;	 /* TLV: [217.38.3]*/
+			Timeout ;	 /* TLV: [217.38.4]*/
+			Retries ;	 /* TLV: [217.38.5]*/
+			SnmpFilteringParameters ;	 /* TLV: [217.38.6]*/
+			SecurityName ;	 /* TLV: [217.38.7]*/
+			IPv6Address ;	 /* TLV: [217.38.8]*/
+		}
+
+		HomeNetworkPrefixValidation {
+			InstanceNumber ;	 /* TLV: [217.39.1]*/
+			PrefixUsage ;	 /* TLV: [217.39.2]*/
+			IPAddressVersion ;	 /* TLV: [217.39.3]*/
+			IPv4PrefixLength ;	 /* TLV: [217.39.4]*/
+			IPv4SubnetAddress ;	 /* TLV: [217.39.5]*/
+			IPv6PrefixLength ;	 /* TLV: [217.39.6]*/
+			IPv6NetworkAddress ;	 /* TLV: [217.39.7]*/
+		}
+
+		SEBServerEnableTLSCipherSuites ;	 /* TLV: [217.40]*/
+		VendorSpecificInformation ;	 /* TLV: [217.43]*/
+		SNMPv1v2cCoexistenceConfig {
+			SNMPv1v2cCommunityName ReadWrite;	 /* TLV: [217.53.1]*/
+			SNMPv1v2cTransportAddressAccess {
+				SNMPv1v2cTransportAddress 0.0.0.0(0);	 /* TLV: [217.53.2.1]*/
+				SNMPv1v2cTransportMask 0.0.0.0(0);	 /* TLV: [217.53.2.2]*/
+			}
+
+			SNMPv1v2cAccessViewType 2;	 /* TLV: [217.53.3]*/
+			SNMPv1v2cAccessViewName stb;	 /* TLV: [217.53.4]*/
+		}
+
+		SNMPv3AccessViewConfig {
+			SNMPv3AccessViewName stb;	 /* TLV: [217.54.1]*/
+			SNMPv3AccessViewSubtree ;	 /* TLV: [217.54.2]*/
+			SNMPv3AccessViewMask ;	 /* TLV: [217.54.3]*/
+			SNMPv3AccessViewType ;	 /* TLV: [217.54.4]*/
+		}
+
+	}
+
+
+	SNMPv1v2cCoexistenceConfig {
+		SNMPv1v2cCommunityName ReadWrite;	 /* TLV: [53.1]*/
+		SNMPv1v2cTransportAddressAccess {
+			SNMPv1v2cTransportAddress 0.0.0.0(0);	 /* TLV: [53.2.1]*/
+			SNMPv1v2cTransportMask 0.0.0.0(0);	 /* TLV: [53.2.2]*/
+		}
+
+		SNMPv1v2cAccessViewType 2;	 /* TLV: [53.3]*/
+		SNMPv1v2cAccessViewName docsisManagerView;	 /* TLV: [53.4]*/
+	}
+
+
+	SNMPv1v2cCoexistenceConfig {
+		SNMPv1v2cCommunityName ReadOnly;	 /* TLV: [53.1]*/
+		SNMPv1v2cTransportAddressAccess {
+			SNMPv1v2cTransportAddress 0.0.0.0(0);	 /* TLV: [53.2.1]*/
+			SNMPv1v2cTransportMask 0.0.0.0(0);	 /* TLV: [53.2.2]*/
+		}
+
+		SNMPv1v2cAccessViewType 1;	 /* TLV: [53.3]*/
+		SNMPv1v2cAccessViewName docsisManagerView;	 /* TLV: [53.4]*/
+	}
+
+
+	SNMPv1v2cCoexistenceConfig {
+		SNMPv1v2cCommunityName RORORORO;	 /* TLV: [53.1]*/
+		SNMPv1v2cTransportAddressAccess {
+			SNMPv1v2cTransportAddress 100.100.100.100(0);	 /* TLV: [53.2.1]*/
+			SNMPv1v2cTransportMask 255.255.255.255(0);	 /* TLV: [53.2.2]*/
+		}
+
+		SNMPv1v2cAccessViewType 1;	 /* TLV: [53.3]*/
+		SNMPv1v2cAccessViewName docsisManagerView;	 /* TLV: [53.4]*/
+	}
+
+
+	SNMPv1v2cCoexistenceConfig {
+		SNMPv1v2cCommunityName RWRWRWRW;	 /* TLV: [53.1]*/
+		SNMPv1v2cTransportAddressAccess {
+			SNMPv1v2cTransportAddress 100.100.100.100(0);	 /* TLV: [53.2.1]*/
+			SNMPv1v2cTransportMask 255.255.255.255(0);	 /* TLV: [53.2.2]*/
+		}
+
+		SNMPv1v2cAccessViewType 2;	 /* TLV: [53.3]*/
+		SNMPv1v2cAccessViewName docsisManagerView;	 /* TLV: [53.4]*/
+	}
+
+
+	SNMPv1v2cCoexistenceConfig {
+		SNMPv1v2cCommunityName ReadWrite;	 /* TLV: [53.1]*/
+		SNMPv1v2cTransportAddressAccess {
+			SNMPv1v2cTransportAddress 2001:558:0:0:0:0:0:0(0);	 /* TLV: [53.2.1]*/
+			SNMPv1v2cTransportMask ffff:ffff:0:0:0:0:0:0(0);	 /* TLV: [53.2.2]*/
+		}
+
+		SNMPv1v2cAccessViewType 2;	 /* TLV: [53.3]*/
+		SNMPv1v2cAccessViewName docsisManagerView;	 /* TLV: [53.4]*/
+	}
+
+
+	SNMPv1v2cCoexistenceConfig {
+		SNMPv1v2cCommunityName ReadOnly;	 /* TLV: [53.1]*/
+		SNMPv1v2cTransportAddressAccess {
+			SNMPv1v2cTransportAddress 2001:558:0:0:0:0:0:0(0);	 /* TLV: [53.2.1]*/
+			SNMPv1v2cTransportMask ffff:ffff:0:0:0:0:0:0(0);	 /* TLV: [53.2.2]*/
+		}
+
+		SNMPv1v2cAccessViewType 1;	 /* TLV: [53.3]*/
+		SNMPv1v2cAccessViewName docsisManagerView;	 /* TLV: [53.4]*/
+	}
+
+
+	SNMPv1v2cCoexistenceConfig {
+		SNMPv1v2cCommunityName RWRWRWRW;	 /* TLV: [53.1]*/
+		SNMPv1v2cTransportAddressAccess {
+			SNMPv1v2cTransportAddress 2002:558f:0:0:0:0:0:0(0);	 /* TLV: [53.2.1]*/
+			SNMPv1v2cTransportMask ffff:ffff:0:0:0:0:0:0(0);	 /* TLV: [53.2.2]*/
+		}
+
+		SNMPv1v2cAccessViewType 2;	 /* TLV: [53.3]*/
+		SNMPv1v2cAccessViewName docsisManagerView;	 /* TLV: [53.4]*/
+	}
+
+
+	SNMPv1v2cCoexistenceConfig {
+		SNMPv1v2cCommunityName RORORORO;	 /* TLV: [53.1]*/
+		SNMPv1v2cTransportAddressAccess {
+			SNMPv1v2cTransportAddress 2002:558f:0:0:0:0:0:0(0);	 /* TLV: [53.2.1]*/
+			SNMPv1v2cTransportMask ffff:ffff:0:0:0:0:0:0(0);	 /* TLV: [53.2.2]*/
+		}
+
+		SNMPv1v2cAccessViewType 1;	 /* TLV: [53.3]*/
+		SNMPv1v2cAccessViewName docsisManagerView;	 /* TLV: [53.4]*/
+	}
+
+	CmMic 96:1F:9E:C4:A4:CF:66:26:D6:DD:25:79:B2:90:5F:B1;	 /* TLV: [6]*/
+	CmtsMic B0:34:97:66:6A:A5:7E:93:89:E6:93:CC:3B:22:A8:09;	 /* TLV: [7]*/
+}

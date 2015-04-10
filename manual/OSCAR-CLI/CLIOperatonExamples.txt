@@ -1,0 +1,86 @@
+#Create Directories - Initial Installation
+java -jar oscar.jar
+
+#Compile MIBS basic
+java -jar oscar.jar -M
+
+#Compile MIBS basic with SMI conformance
+java -jar oscar.jar -M t
+
+#Compile MIBS basic without SMI conformance
+java -jar oscar.jar -M f
+
+#Compile MIBS basic with SMI conformance and verbose output
+java -jar oscar.jar -M t v
+
+#Compile MIBS basic without SMI conformance and verbose output
+java -jar oscar.jar -M f v
+
+################################################################################
+#                               DOCSIS                                         
+################################################################################
+
+#Create DOCSIS Template File
+java -jar oscar.jar -s docsis -ftd > docsis-template.txt
+
+#Encode Text -> Binary - Add SharedSecret Key
+java -jar oscar.jar --key key.txt -c -i docsis-template.txt -o docsis-template.bin
+
+#Decompile Binary to Text -> Add OID and Display
+java -jar oscar.jar -d -i docsis-template.bin -OID [sysContact.0][1234567890][OctetString] [sysContact.1][1234567890][OctetString]
+
+#Add Downstream Frequency and Display
+java -jar oscar.jar -d -i docsis-template.bin -df 723000000
+
+#Add CVC Co-Sign Certificate
+java -jar oscar.jar -d -i docsis-template.bin -cvc c=COCVC.der
+
+#Add CVC Manufacture Certificate
+java -jar oscar.jar -d -i docsis-template.bin -cvc m=MANFUFACTURE-CVC.der
+
+#Add Software Download Filename
+java -jar oscar.jar -d -i docsis-template.bin -f FirmwareName.bin
+
+#Add TFTP Server Address IPv4
+java -jar oscar.jar -d -i docsis-template.bin -T v4=10.10.10.10
+
+#Add TFTP Server IPv6 Long and Short Form
+java -jar oscar.jar -d -i docsis-template.bin -T v6=2001::1 
+java -jar oscar.jar -d -i docsis-template.bin -T v6=2001:558:ff2e:a92e:221:9bff:fe99:c7a0 
+
+Add TLV - i.e. UpStream ChannelID
+java -jar oscar.jar -d -i docsis-template.bin -t 020101
+
+################################################################################
+#                               PACKET CABLE                                   
+################################################################################
+
+# PacketCable 2.0
+
+#Create Packet Cable Template File
+java -jar oscar.jar -s p 2.0 -ftd > pktcbl-2.0-template.txt
+
+#Text To Binary
+java -jar oscar.jar -s p 2.0 -c -i pktcbl-2.0-template.txt -o pktcbl-2.0-template.bin
+
+#Add DigitMap
+java -jar oscar.jar -s p 2.0 -dm digitMap.txt -c -i pktcbl-2.0-template.bin -o pktcbl-2.0-DigitMap.bin
+
+#Display DigitMap
+java -jar oscar.jar -ddm -i pktcbl-2.0-DigitMap.bin
+
+################################################################################
+#                                 Bulk Compiling
+################################################################################
+java -jar oscar.jar --key key.txt --bulk txt input output -df 723000000
+
+################################################################################
+#                                 UTILITIES
+################################################################################
+
+#Get TLV Definition - DestinationMACAddress	 /* TLV: [22.10.1]*/
+java -jar oscar.jar -td 22.10.1
+
+#HEX Dump
+java -jar oscar.jar -x -i pktcbl-2.0-DigitMap.bin
+
