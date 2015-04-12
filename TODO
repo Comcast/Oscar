@@ -6,7 +6,7 @@ If you like help complete or support the of this development of this project, pl
 •	Add NetSNMPJ Support, Later 2015
 •	ADD DPoE Support (API Started but not finished) Later 2015
 •	ADD Extended CMTS MIC
-•	Provide GUI Support to ADD TLV types to Sqlite Database
+•	Provide GUI Support to ADD/EDIT TLV Types to Sqlite Database
 •	Fix Adding OID TLV to TLV Subtype
 •	Complete CLI Interpreter functionality(API Started)
 •	Improve Lexer robustness
