@@ -1,6 +1,6 @@
 ### OSCAR - OpenSource Cablemodem file AssembleR
 
-OSCAR is a Java-based CableLabs&copy; Configuration File Builder API for DOCSIS, PacketCable and DPoE files.
+OSCAR is a Java-based CableLabs&copy; Configuration File Builder API for DOCSIS&copy, PacketCable&copy and DPoE&copy files.
 
 Check out our wiki for more information: https://github.com/Comcast/Oscar/wiki
 
