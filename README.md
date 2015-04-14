@@ -19,8 +19,7 @@ View JavaDoc: http://comcast.github.io/Oscar/doc/index.html
 
 ### Known Issues
 
-Fix Adding OID TLV to TLV Subtype
-
+* Fix Adding OID TLV to TLV Subtype
 * Improve Lexer robustness
 * Add Multiple CommonTlvInserts at one time
 * Edit Service Flow via Service Flow ID Directly
