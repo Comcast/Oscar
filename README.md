@@ -10,7 +10,7 @@ View JavaDoc: http://comcast.github.io/Oscar/doc/index.html
 
 ### 2015 TODO's Features
 
-Add NetSNMPJ Support, Later 2015
+Add NetSNMPJ Support or new Java Wrapper for NetSNMP, Later 2015
 
 ADD DPoE Support (API Started but not finished) Later 2015
 
