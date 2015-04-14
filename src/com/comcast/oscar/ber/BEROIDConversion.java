@@ -62,7 +62,14 @@ public class BEROIDConversion {
 	 * @param bBER
 	 */
 	public BEROIDConversion (byte[] bBER) {
-				
+		
+		if (true) {
+			
+			HexString hs = new HexString(bBER);
+			
+			System.out.println("BEROIDConversion() " + hs.toString());
+		}
+		
 		//Save copy of BER
 		this.bBER = bBER;
 
@@ -70,7 +77,7 @@ public class BEROIDConversion {
 		bbBER = ByteBuffer.allocate(this.bBER.length);
 
 		//Add byte Array
-		bbBER.put(bBER).rewind();
+		bbBER.put(this.bBER).rewind();
 		
 		//Convert to BERInputStream
 		bisBER = new BERInputStream(bbBER);
@@ -87,6 +94,7 @@ public class BEROIDConversion {
 		oOID = vbBER.getOid();
 		
 		if (debug) {
+			System.out.println("BEROIDConversion() " + oOID.toString());
 			System.out.println("BEROIDConversion() " + vbBER.toString());
 			System.out.println("BEROIDConversion() " + vbBER.getSyntax());
 		}
