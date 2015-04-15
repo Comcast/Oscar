@@ -56,7 +56,7 @@ public class CVC {
 		OptionBuilder.withLongOpt("certificate");
     	OptionBuilder.withDescription("Add this CVC during file compilation. "
     			+ "For CoSigner use this format for the argument: c=<filename>. "
-    			+ "For Manufacturer use this format for the argument: m=<filename>."
+    			+ "For Manufacturer use this format for the argument: m=<filename>. "
     			+ "Both CVCs can be inserted simultaneously (space delimited).");
     	return OptionBuilder.create("cvc");
 	}

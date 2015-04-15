@@ -45,7 +45,7 @@ public class DownstreamFrequency {
 		OptionBuilder.hasArgs(1);
 		OptionBuilder.hasOptionalArgs();
         OptionBuilder.withValueSeparator(' ');
-        OptionBuilder.withLongOpt("dFreq");
+        OptionBuilder.withLongOpt("dsfreq");
         OptionBuilder.withDescription("Insert this downstream frequency during file compilation EX: 723000000.");
 		return OptionBuilder.create("df");
 	}
