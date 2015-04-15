@@ -88,12 +88,15 @@ public class BEROIDConversion {
 		try {
 			vbBER.decodeBER(bisBER);
 		} catch (IOException e) {
-			e.printStackTrace();
+			if (debug) {
+				e.printStackTrace();	
+			}
+			
 		}
 
 		oOID = vbBER.getOid();
 		
-		if (debug) {
+		if (true) {
 			System.out.println("BEROIDConversion() " + oOID.toString());
 			System.out.println("BEROIDConversion() " + vbBER.toString());
 			System.out.println("BEROIDConversion() " + vbBER.getSyntax());

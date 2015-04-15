@@ -115,7 +115,7 @@ public class BERTest {
 		ByteArrayOutputStream baosOID = new ByteArrayOutputStream();
 		
 		try {
-			baosOID = (ByteArrayOutputStream) BERService.encodeOID(SnmpOIDStringEmbedded);
+			//baosOID =  BERService.encodeOID(new OID(SnmpOIDStringEmbedded));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

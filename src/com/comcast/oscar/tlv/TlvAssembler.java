@@ -595,6 +595,24 @@ public class TlvAssembler extends TlvBuilder {
 				if (debug|localDebug) 
 					System.out.println("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_BYTE: " + tbLocalTlvBuilder.toString());	
 				
+			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
+				
+				//Get String Value HEX String
+				String sTlvValue = joTlvDictionary.getString(Dictionary.VALUE);
+				
+				//Convert Integer to Byte Array
+				HexString hsTlvValue = new HexString(DataTypeFormatConversion.hexStringToByte(sTlvValue));
+				
+				//Add Byte Array TLV
+				try {
+					tbLocalTlvBuilder.add(iType,hsTlvValue.toByteArray());
+				} catch (TlvException e) {
+					e.printStackTrace();
+				}
+				
+				if (debug|localDebug) 
+					System.out.println("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_OID_ASN1_OBJECT_6: " + tbLocalTlvBuilder.toString());	
+				
 			}			
 			
 		} 			

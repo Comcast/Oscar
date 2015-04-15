@@ -36,6 +36,5 @@ public class DataTypeDictionaryReference {
 	public final static String DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR 	= "transport_address_ipv6_address";		//  (TlvAssemble)  (TlvDisassemble)
 	public final static String DATA_TYPE_TRANSPORT_ADDR_INET_ADDR 	= "byte_array_inet_transport_address";	//  (TlvAssemble)  (TlvDisassemble)
 	public final static String DATA_TYPE_MAC_ADDRESS 				= "mac_address";						//  (TlvAssemble)  (TlvDisassemble)
-
 	
 }

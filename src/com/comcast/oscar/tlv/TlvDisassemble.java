@@ -685,6 +685,18 @@ public class TlvDisassemble extends DictionarySQLQueries {
 						//Insert Value into JSON Object
 						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
 												
+					}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
+						
+						String sTlvValue = null;
+						
+						if (debug|true) 
+							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE: " + new HexString(bValue).toString(":"));
+						
+						sTlvValue = new HexString(bValue).toString();
+						
+						//Insert Value into JSON Object
+						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
+												
 					}
 
 				}

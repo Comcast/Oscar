@@ -431,26 +431,8 @@ public class DictionaryTLV implements Dictionary {
 					if (debug|localDebug) 
 						System.out.println("DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_INTEGER: " + iValue);
 
-				} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID)) {
-					/*					
-					if (debug|localDebug) 
-						System.out.println("DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) DATA_TYPE_OID: " + new HexString(bValue).toHexStringList());
-
-					//Need to see if this is a BER byte array
-					//bValue = BERService.cleanBEROIDPrefix(bValue);
-
-					if (debug|localDebug) 
-						System.out.println("DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_OID: " + new HexString(bValue).toHexStringList());
-
-					//Get Value
-					BEROIDConversion bocOID = new BEROIDConversion(bValue); 
-
-					JSONArray jaOID = new JSONArray();
-					jaOID.put(bocOID.toMap());
-
-					//Insert Value into JSON Object
-					joTlvDictionary.put(Dictionary.VALUE, jaOID);
-					 */					
+				} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID)) {					
+					/* DO NOTHING */
 				} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY)) {
 
 					if (debug|localDebug) 
@@ -555,8 +537,15 @@ public class DictionaryTLV implements Dictionary {
 					//Insert Value into JSON Object
 					joTlvDictionary.put(Dictionary.VALUE, sValue);
 
-				}
+				}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
 
+					if (debug|localDebug) 
+						System.out.println("DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_BYTE: " + sValue);
+
+					//Insert Value into JSON Object
+					joTlvDictionary.put(Dictionary.VALUE, sValue);
+
+				}
 
 			}
 
