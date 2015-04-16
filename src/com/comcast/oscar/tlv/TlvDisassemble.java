@@ -686,16 +686,21 @@ public class TlvDisassemble extends DictionarySQLQueries {
 						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
 												
 					}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
-						
-						String sTlvValue = null;
-						
-						if (debug|true) 
+												
+						if (debug|localDebug) 
 							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE: " + new HexString(bValue).toString(":"));
 						
-						sTlvValue = new HexString(bValue).toString();
+						String sObjectOnlyHex = "30" + HexString.toHexString(bValue.length) + new HexString(bValue).toString();
 						
+						HexString hsHexOID = new HexString(HexString.toByteArray(sObjectOnlyHex));
+						
+					    BEROIDConversion bocOidAsnObj5 = new BEROIDConversion(hsHexOID.toByteArray());
+					    
+					    if (debug|true) 
+					    	System.out.println("Hex -> OID-DOT: " + bocOidAsnObj5.getOidDotNotaion());
+					    
 						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
+						joTlvDictionary.put(Dictionary.VALUE,  bocOidAsnObj5.getOidDotNotaion());
 												
 					}
 
