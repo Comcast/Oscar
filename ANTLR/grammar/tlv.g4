@@ -245,17 +245,9 @@ dataType        :         (
                 |           ('OctetString')
                 |           ('HexString')                
                           );
-/*
-value           :         (  
-                            AlphaNum
-                |           '.'
-                |           '@'
-                |           '='
-                |           ':'
-                          )+;
-*/
 
-value           :         (.|'@'|'='|'/')+?;
+/*mgarcia 150416 - Added $*/
+value           :         (.|'@'|'='|'/'|'$')+?;
 
 snmp            :         ( 
                               snmpType 
