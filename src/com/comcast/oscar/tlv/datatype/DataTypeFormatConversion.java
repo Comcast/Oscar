@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.snmp4j.smi.OID;
+
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 
@@ -768,6 +770,26 @@ public class DataTypeFormatConversion {
 			return "No Display Help Avaliable";
 		}
 		
+	}
+	
+	/**
+	 * 
+	 * @param sOidObj6
+	 * @return byte array of the OID Object 6
+	 */
+	public static byte[] oidObj6ToByteArray (String sOidObj6) {
+		
+		OID oid = new OID(sOidObj6);
+		
+		ByteArrayOutputStream baosOID = new ByteArrayOutputStream();
+		
+		try {
+			oid.encodeBER(baosOID);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return baosOID.toByteArray();
 	}
 	
 }

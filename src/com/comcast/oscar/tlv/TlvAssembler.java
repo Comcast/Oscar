@@ -600,12 +600,12 @@ public class TlvAssembler extends TlvBuilder {
 				//Get String Value HEX String
 				String sTlvValue = joTlvDictionary.getString(Dictionary.VALUE);
 				
-				//Convert Integer to Byte Array
-				HexString hsTlvValue = new HexString(DataTypeFormatConversion.hexStringToByte(sTlvValue));
+				//Convert OID to Byte Array
+				HexString hsOIDObj6 = new HexString(DataTypeFormatConversion.oidObj6ToByteArray(sTlvValue));
 				
 				//Add Byte Array TLV
 				try {
-					tbLocalTlvBuilder.add(iType,hsTlvValue.toByteArray());
+					tbLocalTlvBuilder.add(iType,hsOIDObj6.toByteArray());
 				} catch (TlvException e) {
 					e.printStackTrace();
 				}
