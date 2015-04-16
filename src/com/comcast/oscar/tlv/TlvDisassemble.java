@@ -696,7 +696,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 						
 					    BEROIDConversion bocOidAsnObj5 = new BEROIDConversion(hsHexOID.toByteArray());
 					    
-					    if (debug|true) 
+					    if (debug|localDebug) 
 					    	System.out.println("Hex -> OID-DOT: " + bocOidAsnObj5.getOidDotNotaion());
 					    
 						//Insert Value into JSON Object
