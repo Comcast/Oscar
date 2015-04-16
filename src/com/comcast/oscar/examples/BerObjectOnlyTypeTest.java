@@ -2,7 +2,6 @@ package com.comcast.oscar.examples;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 import org.snmp4j.smi.OID;
 

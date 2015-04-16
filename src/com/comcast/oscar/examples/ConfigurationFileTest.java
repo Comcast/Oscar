@@ -41,10 +41,6 @@ public class ConfigurationFileTest {
 		
 		boolean DOCSIS = true;
 		
-		boolean PACKETCABLE = false;
-		
-		boolean DEXTER_TEST_FILE = false;
-		
 		if (DOCSIS) {
 			System.out.println("+--------------------------------------------------------------------------------------------------------+");
 

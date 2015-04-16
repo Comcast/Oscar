@@ -58,7 +58,6 @@ public class ConfigurationFileToHexDumpTest {
 			System.out.println("+------------------------------------------------------------------------------------------------------------+");
 
 			file = new File("c:" + File.separatorChar + "DocsisTestFile-131220.txt");			
-			String sConfigurationFileName = "c:" + File.separatorChar + "config" + File.separatorChar + "DocsisTestFile-131220.bin";
 
 			ConfigrationFileImport cfi = null;
 
@@ -97,7 +96,6 @@ public class ConfigurationFileToHexDumpTest {
 			System.out.println("+------------------------------------------------------------------------------------------------------------+");
 
 			file = new File("c:" + File.separatorChar + "PacketCable-2.0.txt");
-			String sConfigurationFileName = "c:" + File.separatorChar + "config" + File.separatorChar + "PacketCable-2.0.bin";
 
 			ConfigrationFileImport cfi = null;
 
