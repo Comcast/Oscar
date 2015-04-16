@@ -96,7 +96,7 @@ public class BEROIDConversion {
 
 		oOID = vbBER.getOid();
 		
-		if (true) {
+		if (debug) {
 			System.out.println("BEROIDConversion() " + oOID.toString());
 			System.out.println("BEROIDConversion() " + vbBER.toString());
 			System.out.println("BEROIDConversion() " + vbBER.getSyntax());
