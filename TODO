@@ -10,7 +10,6 @@ If you like help complete or support the of this development of this project, pl
 •	Provide GUI Support to ADD/EDIT TLV Types to Sqlite Database
 
 FIXES
-•	Fix Adding OID TLV to TLV Subtype
 •	Complete CLI Interpreter functionality(API Started)
 •	ADD Extended CMTS MIC
 •	Improve Lexer robustness
