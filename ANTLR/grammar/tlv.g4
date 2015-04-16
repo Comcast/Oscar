@@ -66,7 +66,8 @@ HEX_BYTE_LOWER_CASE   : HEX_NIBBLE_LOWERCASE HEX_NIBBLE_LOWERCASE;
 // Top Level TLV Name or Sub TLV Name
 ALPHA_NUMERIC           : ([a-zA-Z0-9]);
 
-IDENTIFIER              : ([a-zA-Z0-9]|'-'|'_'|'\'')+;
+//mgarcia - 150416 - Added $
+IDENTIFIER              : ([a-zA-Z0-9]|'-'|'_'|'\''|'$')+;
 
 SINGLE_QUOTE_STRING     : SINGLE_QUOTE IDENTIFIER SINGLE_QUOTE;
 
@@ -246,8 +247,7 @@ dataType        :         (
                 |           ('HexString')                
                           );
 
-/*mgarcia 150416 - Added $*/
-value           :         (.|'@'|'='|'/'|'$')+?;
+value           :         (.|'@'|'='|'/')+?;
 
 snmp            :         ( 
                               snmpType 
