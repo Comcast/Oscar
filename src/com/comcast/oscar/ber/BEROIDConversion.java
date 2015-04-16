@@ -63,7 +63,7 @@ public class BEROIDConversion {
 	 */
 	public BEROIDConversion (byte[] bBER) {
 		
-		if (true) {
+		if (debug) {
 			
 			HexString hs = new HexString(bBER);
 			
