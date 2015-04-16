@@ -260,14 +260,15 @@ public class BERService {
 	
 	 * @return OutputStream
 	 */
-	public static OutputStream encodeOID (String oidString) {
+	public static OutputStream encodeOID (String sOID) {
 		
-		OID oid = new OID(oidString);
-
 		OutputStream baosBER = new ByteArrayOutputStream();
 
 		//Make sure that OID is in a valid format to convert to BER ASN.1 Format
 		//If Not return an empty Array
+
+		OID oid = new OID(sOID);
+
 		if (oid.isValid()) {
 
 			try {
@@ -283,9 +284,40 @@ public class BERService {
 			return new ByteArrayOutputStream();
 		}
 
+/*		
+		VariableBinding vbOID = new VariableBinding(new OID(sOID));
+
+		ByteArrayOutputStream baosOID = new ByteArrayOutputStream();
+		
+		try {
+			vbOID.encodeBER(baosOID);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+*/		
 		return baosBER;
 	}
 
+	/**
+	 *
+	 * @param OID oid
+	 * @return VariableBinding
+	 */
+	public static VariableBinding encodeOID (OID oid) {
+		
+		VariableBinding vbOID = new VariableBinding(oid);
+
+		ByteArrayOutputStream baosOID = new ByteArrayOutputStream();
+		
+		try {
+			vbOID.encodeBER(baosOID);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return vbOID;
+	}
+	
 	/**
 	 * 
 	 * @param bBERSetValueTLV

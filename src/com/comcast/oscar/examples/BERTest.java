@@ -101,7 +101,7 @@ public class BERTest {
 
 		System.out.println("+--------------------------------------HEX to OID Conversion------------------------------------------------------+");
 
-		HexString hsBER = new HexString(HexString.toByteArray("060b2b06010201a0130a010e00410101"));    
+		HexString hsBER = new HexString(HexString.toByteArray("3010060b2b06010201a0130a010e00410101"));    
 	    System.out.println("OID-HEX-CHECK: " + hsBER);
 	    BEROIDConversion ocOID = new BEROIDConversion(hsBER.toByteArray());
 	    System.out.println("OID-DOT: " + ocOID.getOidDotNotaion());
@@ -115,7 +115,7 @@ public class BERTest {
 		ByteArrayOutputStream baosOID = new ByteArrayOutputStream();
 		
 		try {
-			baosOID = (ByteArrayOutputStream) BERService.encodeOID(SnmpOIDStringEmbedded);
+			//baosOID =  BERService.encodeOID(new OID(SnmpOIDStringEmbedded));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
