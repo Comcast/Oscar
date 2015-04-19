@@ -38,6 +38,8 @@ public class PrettyPrint {
 	 */
 	private void start() {
 		
+		boolean boolCloseCommentSlash = false;
+		
 		//Remove all long whitespace and clean up each token
 		this.sInputCode = this.sInputCode	.replaceAll("\\s+", " ")
 											.replaceAll("\\*/", " */")
@@ -66,9 +68,7 @@ public class PrettyPrint {
 			
 			//Check for close curly brace
 			} else if (END_INDENT_TOKEN.equals(sToken)) {
-							
-				iIndentCurrentDepth--;
-				
+		
 				sOutputCode += (indentation(--iIndentCurrentDepth));
 				
 				sOutputCode += (sToken);
@@ -83,11 +83,20 @@ public class PrettyPrint {
 				sOutputCode += ('\n');
 				
 				//sOutputCode += (indentation(iIndentCurrentDepth));
+				
+				boolCloseCommentSlash = true;
 
-			} else if (NEW_LINE_TOKEN.equals(sToken)) {				
+			} else if (NEW_LINE_TOKEN.equals(sToken)) {
+				
 				sOutputCode += (sToken);
 				sOutputCode += ('\t');
 			} else {
+				
+				if (boolCloseCommentSlash) {
+					sOutputCode += (indentation(iIndentCurrentDepth));
+					boolCloseCommentSlash = false;
+				}
+				
 				sOutputCode += (" " + sToken);
 			}	
 		}	
