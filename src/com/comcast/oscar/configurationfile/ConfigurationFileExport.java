@@ -74,6 +74,8 @@ public class ConfigurationFileExport {
 	
 	private boolean boolVerboseExport = true;
 	
+	public final String END_OF_CODE_BLOCK = "\\*EOCB*\\";
+	
 	public static final Integer DOCSIS_VER_10 = DocsisConstants.DOCSIS_10;
 	public static final Integer DOCSIS_VER_11 = DocsisConstants.DOCSIS_11;
 	public static final Integer DOCSIS_VER_20 = DocsisConstants.DOCSIS_20;
@@ -349,8 +351,8 @@ public class ConfigurationFileExport {
 	}
 	
 	/**
-	 * @deprecated @ v1.0.1
-	 * 
+	 * @deprecated
+	 * @since v1.0.1
 	 * @param iIndentation
 	
 	 * @return String
@@ -432,7 +434,7 @@ public class ConfigurationFileExport {
 			}
 			
 		}
-		
+			
 		com.comcast.oscar.utilities.PrettyPrint ppConfigurationFile = 
 				new com.comcast.oscar.utilities.PrettyPrint((sConfigurationFileStart + " {\n") + (sConfigurationFile) + ("}\n"));
 		
@@ -1098,7 +1100,7 @@ public class ConfigurationFileExport {
 		}
 		
 		sbTopLevelTLVCodeBlock	.append(sbIndentation)
-								.append("}\n\n");
+								.append("} " + END_OF_CODE_BLOCK + "\n\n");
 		
 		return sbTopLevelTLVCodeBlock;
 	}
