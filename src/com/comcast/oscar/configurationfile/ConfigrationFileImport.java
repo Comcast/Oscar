@@ -43,7 +43,10 @@ import com.comcast.oscar.utilities.HexString;
  * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
  */
 
-
+/**
+ * ConfigrationFileImport takes a OSCAR ASCII Compliant configuration file and convert to its JSON TLV Dictionary
+ * 
+ */
 public class ConfigrationFileImport {
 	
 	private StringBuilder sbConfiguration = null;
