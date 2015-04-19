@@ -1,23 +1,28 @@
 package com.comcast.oscar.utilities;
 
+import java.util.StringTokenizer;
+
 public class PrettyPrint {
 
-	public static String START_INDENT_TOKEN = "{";
-	public static String END_INDENT_TOKEN = "}";
-	public static String NEW_LINE_TOKEN = ";";
+	private static final String START_INDENT_TOKEN	= "{";
+	private static final String END_INDENT_TOKEN 	= "}";
+	private static final String NEW_LINE_TOKEN 		= ";";
+	private static final String OPEN_COMMENT_SLASH 	= "/*";
+	private static final String CLOSE_COMMENT_SLASH = "*/";
 	
-	private StringBuilder sbInputCode ;
-	private StringBuilder sbOutputCode ;
+	private String sInputCode ;
+	private String sOutputCode ;
 	private int iIndentCurrentDepth = 0;
-	private int iIndexPointer = 0;
+
 	
 	/**
 	 * 
 	 * @param sbCode
 	 */
-	public PrettyPrint(StringBuilder sbInputCode) {
-		this.sbInputCode = sbInputCode;
-		sbOutputCode = new StringBuilder();
+	public PrettyPrint(String sInputCode) {
+		
+		this.sInputCode = sInputCode;
+				
 		start();
 	}
 	
@@ -25,7 +30,7 @@ public class PrettyPrint {
 	 * 
 	 */
 	public String toString() {
-		return sbOutputCode.toString();
+		return sOutputCode;
 	}
 	
 	/**
@@ -33,64 +38,76 @@ public class PrettyPrint {
 	 */
 	private void start() {
 		
-		while(iIndexPointer < sbInputCode.length()) {
+		//Remove all long whitespace and clean up each token
+		this.sInputCode = this.sInputCode	.replaceAll("\\s+", " ")
+											.replaceAll("\\*/", " */")
+											.replaceAll(";", " ;");
+		
+		//Create token Stream..bringing legacy back!!!!
+		StringTokenizer stConfiguration = new StringTokenizer(sInputCode);
+		
+		//Cycle thru each token
+		while (stConfiguration.hasMoreTokens()) {
 			
-			String sToken = sbInputCode.charAt(iIndexPointer);
-			
-			if (START_INDENT_TOKEN) {
+			String sToken = stConfiguration.nextToken();
+
+			//Check for open curly brace
+			if (START_INDENT_TOKEN.equals(sToken)) {
 				
-				sbOutputCode.append(cToken);
+				sOutputCode += indentation(iIndentCurrentDepth);
 				
-				sbOutputCode.append("\n");
+				sOutputCode += (sToken);
+				
+				sOutputCode += ('\n');
 				
 				iIndentCurrentDepth++;
-								
-			} else if (END_INDENT_TOKEN.equals(cToken)) {
+				
+				sOutputCode += (indentation(iIndentCurrentDepth));
+			
+			//Check for close curly brace
+			} else if (END_INDENT_TOKEN.equals(sToken)) {
 							
-				sbOutputCode.append(indentation(iIndentCurrentDepth));
-				
-				sbOutputCode.append(cToken);
-				
-				sbOutputCode.append("\n");
-				
 				iIndentCurrentDepth--;
 				
-			} else if (NEW_LINE_TOKEN.equals(cToken)) {
+				sOutputCode += (indentation(--iIndentCurrentDepth));
 				
-				sbOutputCode.append(cToken);
+				sOutputCode += (sToken);
 				
-				sbOutputCode.append("\n");
+				sOutputCode += ('\n');
+			
+			//Check for semi-colon
+			} else if (CLOSE_COMMENT_SLASH.equals(sToken)) {
+				
+				sOutputCode += (sToken);
+				
+				sOutputCode += ('\n');
+				
+				//sOutputCode += (indentation(iIndentCurrentDepth));
 
-			} if (NEW_LINE_TOKEN.equals("\n")) {
-				
-
+			} else if (NEW_LINE_TOKEN.equals(sToken)) {				
+				sOutputCode += (sToken);
+				sOutputCode += ('\t');
 			} else {
-				sbOutputCode.append(indentation(iIndentCurrentDepth));
-				sbOutputCode.append(cToken);
-			}
-			
-			iIndexPointer++;
-			
-		}
-		
+				sOutputCode += (" " + sToken);
+			}	
+		}	
 	}
 	
 	/**
 	 * 
 	 * @param iNumberOfTabs
-	 * @return
+	 * @return String of tabs
 	 */
 	private String indentation(int iNumberOfTabs) {
 		
 		String sIndentation = "";
 		
 		for (int iCounter = 0 ; iCounter < iNumberOfTabs; iCounter++) {
-			System.out.println("TAB");
-			sIndentation = sIndentation + "\t";
+			sIndentation += "\t";
 		}
 		
 		return sIndentation;
 		
 	}
-	
+		
 }
