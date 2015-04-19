@@ -82,6 +82,8 @@ public class ConfigurationFileExport {
 	public static final Integer PKT_CBL_VER_10 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10;
 	public static final Integer PKT_CBL_VER_15 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15;
 	public static final Integer PKT_CBL_VER_20 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20;
+	public static final Boolean EXPORT_DEFAULT_TLV = true;
+	public static final Boolean EXPORT_FOUND_TLV = false;
 	
 	/**
 	 * 
@@ -102,7 +104,6 @@ public class ConfigurationFileExport {
 		} else {
 			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
-					
 		}
 		
 		init();
@@ -348,6 +349,7 @@ public class ConfigurationFileExport {
 	}
 	
 	/**
+	 * @deprecated @ v1.0.1
 	 * 
 	 * @param iIndentation
 	
@@ -393,6 +395,48 @@ public class ConfigurationFileExport {
 		sbTlvPrettyPrint.append("}\n\n");
 		
 		return sbTlvPrettyPrint.toString();
+	}
+	
+
+	/**
+	 * 
+	 * @param boolIncludeDefaultTLV = True == will include default TLV if no value is found 
+	 * @return String of the Compiled Configuration File
+	 */
+	public String toPrettyPrint(boolean boolIncludeDefaultTLV) {
+		
+		//Deprecated setExportVerbose()
+		this.boolVerboseExport = boolIncludeDefaultTLV;
+	
+		//Set ConfigurationFile Type
+		 String sConfigurationFile = "";
+		
+		for (JSONObject joTLV : aljoTopLevelTlvDictionary) {
+			
+			//Added for Default Configuration file option
+			if (joTLV.length() == 0) {continue;}
+			
+			try {
+							
+				if (joTLV.getBoolean(Dictionary.ARE_SUBTYPES)) {
+				
+					sConfigurationFile += ("\n\t") + (joTLV.get(Dictionary.TLV_NAME)) + (" {\n");
+					sConfigurationFile += (topLevelTLVCodeBlock(joTLV.getJSONArray(Dictionary.SUBTYPE_ARRAY),2));
+					
+				} else {
+					sConfigurationFile += (topLevelTLVCodeBlock(joTLV,2));
+				}
+				
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		com.comcast.oscar.utilities.PrettyPrint ppConfigurationFile = 
+				new com.comcast.oscar.utilities.PrettyPrint((sConfigurationFileStart + " {\n") + (sConfigurationFile) + ("}\n"));
+		
+		return (banner().toString()) + ppConfigurationFile.toString();
 	}
 	
 	/**
@@ -701,6 +745,7 @@ public class ConfigurationFileExport {
 	
 	/**
 	 * DEFAULT = true;
+	 * @deprecated
 	 * @param boolVerboseExport
 	 */
 	public void setExportVerbose(boolean boolVerboseExport) {

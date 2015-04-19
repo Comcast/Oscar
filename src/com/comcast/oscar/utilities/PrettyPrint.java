@@ -21,7 +21,12 @@ public class PrettyPrint extends StringTokenizer {
 	public PrettyPrint(String sInputCode)  {		
 		super(sInputCode	.replaceAll("\\s+", " ")
 							.replaceAll("\\*/", " */")
-							.replaceAll(";", " ;"));
+							.replaceAll(";", " ;")
+							.replaceAll("\n", "")
+							.replaceAll("(\\{\\s+\\})+", "{}")
+							.replaceAll("(\\w+\\s+\\{\\})+", "")		
+						
+				);
 		
 		start();
 	}

@@ -1,5 +1,6 @@
 package com.comcast.oscar.examples;
 
+import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.utilities.HexString;
 import com.comcast.oscar.utilities.PrettyPrint;
@@ -12,7 +13,12 @@ public class PrettyPrintTest {
 		
 		PrettyPrint pp = new PrettyPrint(hs.toASCII());
 		
-		System.out.println(pp.toString());
+		//System.out.println(pp.toString());
+		
+		ConfigurationFileExport cfe = new ConfigurationFileExport (TestDirectoryStructure.fInputDirFileName("bsod.cm"));
+		
+		//Does not Export Default TLVs
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
 		
 	}
 
