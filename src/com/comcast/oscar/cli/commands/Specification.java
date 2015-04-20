@@ -30,20 +30,9 @@ public class Specification {
 	
 	public static final String ERROR = "No specification found. Please set the specification and version. EX: -s d 1.1 (DOCSIS 1.1) / -s p 1.5 (PacketCable 1.5).";
 	
-	private final String[] args;
 	private int iConfigurationFileType = DocsisConstants.DOCSIS_10;
 	private String sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
 	private boolean boolPacketCable = false;
-		
-	/**
-	 * Get Specification arguments
-	 * @param args
-	 */
-	public Specification(String[] args) 
-	{
-		this.args = args;
-		setValues();
-	}
 	
 	/**
 	 * Set option parameters for command Specification
@@ -64,23 +53,20 @@ public class Specification {
 	 * Sets the ConfigurationFileType, TlvDisassemble and PacketCable boolean passed on user arguments.
 	 * @param args
 	 */
-	public void setValues() 
+	public void setValues(String[] args) 
 	{
 		
 		String sSpecification = "";
 		String sVersion = "0";
 		
-		if (this.args != null)
+		if (args.length > 0) 
 		{
-			if (this.args.length > 0) 
-			{
-				sSpecification = this.args[0];
-			}
-			
-			if (this.args.length > 1) 
-			{
-				sVersion = this.args[1];
-			}
+			sSpecification = args[0];
+		}
+		
+		if (args.length > 1) 
+		{
+			sVersion = args[1];
 		}
 		
 		if (sSpecification.equalsIgnoreCase("d") || sSpecification.equalsIgnoreCase("docsis")) 

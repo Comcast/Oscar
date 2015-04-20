@@ -74,6 +74,7 @@ public class CommandRun {
 	private FullTLVDisplay comFullTLVDisplay = new FullTLVDisplay();
 	private JSONDisplay comJSONDisplay = new JSONDisplay();
 	private Key comKey = new Key();
+	private Specification comSpecification = new Specification();
 	
 	private CVC comCVC;
 	private DigitmapInsert comDigitmapInsert;
@@ -86,7 +87,6 @@ public class CommandRun {
 	private MIBSCompile comMIBSCompile;
 	private OID comOID;
 	private Output comOutput;
-	private Specification comSpecification;
 	private TFTPServer comTFTPServer;
 	private TLV comTLV;
 	private TLVDescription comTLVDescription;
@@ -193,7 +193,7 @@ public class CommandRun {
 
 	        if (line.hasOption("s")) 
 	        {
-	        	comSpecification = new Specification(line.getOptionValues("s"));
+	        	comSpecification.setValues(line.getOptionValues("s"));
 	        	
 	        	if (comSpecification.getConfigurationFileType() == -1) 
 	        	{
