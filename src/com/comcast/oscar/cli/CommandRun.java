@@ -126,6 +126,7 @@ public class CommandRun {
 		
 		OptionBuilder.withArgName("v{erbose}");
 		OptionBuilder.hasArgs();
+		OptionBuilder.hasOptionalArgs();
         OptionBuilder.withValueSeparator(' ');
         OptionBuilder.withLongOpt("decompile");
         OptionBuilder.withDescription("Decompile binary to text. Option v for full TLV display.");
@@ -133,6 +134,7 @@ public class CommandRun {
 		
 		OptionBuilder.withArgName("bin/txt> <input dir> <*output dir");
 		OptionBuilder.hasArgs();
+		OptionBuilder.hasOptionalArgs();
         OptionBuilder.withValueSeparator(' ');
         OptionBuilder.withLongOpt("bulk");
         OptionBuilder.withDescription("Compile all files to binary from the input directory. Output directory optional.");
@@ -302,11 +304,14 @@ public class CommandRun {
 	        
 	        if (line.hasOption("d")) 
 	        {
-	        	for (String string : line.getOptionValues("d"))
+	        	if (line.getOptionValues("d") != null) 
 	        	{
-		        	if (string.equalsIgnoreCase("v") || string.equalsIgnoreCase("verbose"))
+		        	for (String string : line.getOptionValues("d"))
 		        	{
-		        		boolDecompileDisplay = ConfigurationFileExport.EXPORT_DEFAULT_TLV;
+			        	if (string.equalsIgnoreCase("v") || string.equalsIgnoreCase("verbose"))
+			        	{
+			        		boolDecompileDisplay = ConfigurationFileExport.EXPORT_DEFAULT_TLV;
+			        	}
 		        	}
 	        	}
 	        	
