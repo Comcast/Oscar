@@ -307,18 +307,16 @@ public class DocsisSqlQuery implements Dictionary {
 	 * 
 	 * @param iRowID
 	 * @param iParentID
-	 * @param aliTlvEncodeHistory
-	
-	
+	 * @param aliTlvEncodeHistory	
 	 * @return JSONObject
 	 * @throws JSONException */
 	private JSONObject recursiveTlvDefinitionBuilder (Integer iRowID , Integer iParentID , ArrayList<Integer> aliTlvEncodeHistory) throws JSONException {
 
 		Statement	parentCheckStatement = null, 
-				getRowDefinitionStatement = null;
+					getRowDefinitionStatement = null;
 
 		ResultSet 	resultSetParentCheck = null ,  
-				resultSetGetRowDefinition = null;
+					resultSetGetRowDefinition = null;
 
 		aliTlvEncodeHistory.add(getTypeFromRowID(iParentID));
 

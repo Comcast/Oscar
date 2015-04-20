@@ -1551,4 +1551,28 @@ public class ConfigurationFileBuildCLITestMethods implements TestMethod {
 		/* End Banner */
 		System.out.println("+---------------MIBSCompileTrueSetVerbose End-----------------+");
 	}
+	
+	/**
+	 * Method PrintBinaryToTextDOCSISHexDump.
+	 * @see com.comcast.oscar.test.TestMethod#PrintBinaryToTextDOCSISHexDump()
+	 */
+	public void PrintBinaryToTextDOCSISHexDumpToplevelTLV() {
+		/* Start Banner */
+		System.out.println("+---------------PrintBinaryToTextDOCSISHexDumpToplevelTLV Start---------------+");
+		
+		/* Define arguments */
+		String arguments[] = new String[4];
+		arguments[0] = "-x";
+		arguments[1] = "t";
+		arguments[2] = "-i";
+		arguments[3] = TestDirectoryStructure.fInputDirFileName("DOCSIS-GOLDEN.bin").toString();
+				
+		/* Run commands */
+		CommandRun cmds = new CommandRun();
+		cmds.run(arguments);
+		
+		/* End Banner */
+		System.out.println("+---------------PrintBinaryToTextDOCSISHexDumpToplevelTLV End-----------------+");
+	}
+	
 }

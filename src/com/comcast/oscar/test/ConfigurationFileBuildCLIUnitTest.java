@@ -38,7 +38,7 @@ public class ConfigurationFileBuildCLIUnitTest {
 		//cfbctm.BinaryToTextDOCSISFirmwareFileName();
 		//cfbctm.BinaryToTextDOCSISManCVC();
 		//cfbctm.BinaryToTextDOCSISMaxCPE();
-		//cfbctm.BinaryToTextPacketCable();
+		cfbctm.BinaryToTextPacketCable();
 		//cfbctm.BinaryToTextPacketCableInsertDigitMap();
 		//cfbctm.PrintDefaultDOCSISConfigurationTemplate();
 		//cfbctm.PrintDefaultPacketCableConfigurationTemplate();
@@ -78,7 +78,8 @@ public class ConfigurationFileBuildCLIUnitTest {
 		//cfbctm.MIBSCompileDefault();
 		//cfbctm.MIBSCompileTrueSet();
 		//cfbctm.MIBSCompileFalseSet();
-		cfbctm.MIBSCompileTrueSetVerbose();
+		//cfbctm.MIBSCompileTrueSetVerbose();
+		//cfbctm.PrintBinaryToTextDOCSISHexDumpToplevelTLV();
 	}
 
 }
