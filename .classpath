@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="com/comcast/oscar/sql/dpoequeries/|com/comcast/oscar/compiler/dpoe/" kind="src" path="src"/>
+	<classpathentry excluding="com/comcast/oscar/sql/dpoequeries/|com/comcast/oscar/compiler/dpoe/|com/comcast/oscar/test/|com/comcast/oscar/examples/" kind="src" path="src"/>
 	<classpathentry kind="src" path="res"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-cli-1.2.jar"/>
