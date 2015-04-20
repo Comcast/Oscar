@@ -2,6 +2,7 @@ package com.comcast.oscar.cli.commands;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
@@ -34,6 +35,19 @@ import com.comcast.oscar.utilities.HexString;
  */
 
 public class HexDisplay {
+		
+	private final String[] args;
+	private boolean boolTopLevel = false;
+	
+	/**
+	 * Get HexDisplay arguments
+	 * @param args
+	 */
+	public HexDisplay(String[] args) 
+	{
+		this.args = args;
+		setDisplay();
+	}
 	
 	/**
 	 * Set option parameters for command Hexidecimal display
@@ -41,10 +55,30 @@ public class HexDisplay {
 	 */
 	public static final Option OptionParameters() 
 	{
-		OptionBuilder.withValueSeparator(' ');
-		OptionBuilder.withLongOpt("hex");
-    	OptionBuilder.withDescription("Display the hex of the input file.");
-    	return OptionBuilder.create("x");
+		OptionBuilder.withArgName("t{oplevel}");
+		OptionBuilder.hasArgs(1);
+		OptionBuilder.hasOptionalArgs();
+        OptionBuilder.withValueSeparator(' ');
+        OptionBuilder.withLongOpt("hex");
+        OptionBuilder.withDescription("Display the hex of the input file. Option t creates a newline at the start of every top level TLV (binary files only).");
+		return OptionBuilder.create("x");
+	}
+	/**
+	 * Determine display preference (dump or toplevel)
+	 * @return
+	 */
+	public void setDisplay()
+	{
+		if(this.args != null)
+		{
+			for (String string : this.args) 
+			{
+				if (string.equalsIgnoreCase("t") || string.equalsIgnoreCase("toplevel")) 
+				{
+					boolTopLevel = true;
+				}
+			}
+		}
 	}
 	
 	/**
@@ -53,7 +87,29 @@ public class HexDisplay {
 	 */
 	public void printHexDisplayFromBinary(File file) 
 	{
-		System.out.println(HexDump.dumpHexString(HexString.fileToByteArray(file)));
+		if (boolTopLevel)
+		{
+			HexString hs = new HexString(HexString.fileToByteArray(file));
+	
+			TlvBuilder tb = new TlvBuilder();
+			
+			try {
+				tb.add(hs);
+			} catch (TlvException e) {
+				e.printStackTrace();
+			}
+			
+			ArrayList<byte[]> alb = (ArrayList<byte[]>) tb.sortByTopLevelTlv();
+			
+			for (byte[] ba : alb) {
+				HexString hsTlv = new HexString(ba);
+				System.out.println(hsTlv.toString(":"));		
+			}
+		}
+		else 
+		{
+			System.out.println(HexDump.dumpHexString(HexString.fileToByteArray(file)));
+		}
 	}
 
 	/**
