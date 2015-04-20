@@ -67,8 +67,8 @@ import com.comcast.oscar.utilities.HexString;
 public class CommandRun {
 		
 	private int iBulkBuild = BulkBuild.TEXT_OUTPUT;
-
 	private File fSnmp4JLicence;
+	private boolean boolDecompileDisplay = ConfigurationFileExport.EXPORT_FOUND_TLV;
 			
 	private DigitmapDisplay comDigitmapDisplay = new DigitmapDisplay();
 	private FullTLVDisplay comFullTLVDisplay = new FullTLVDisplay();
@@ -122,10 +122,17 @@ public class CommandRun {
 		options.addOption(TLVDescription.OptionParameters());
 		options.addOption(TLVtoJSON.OptionParameters());
 		options.addOption("c","compile", false, "Compile text to binary.");
-		options.addOption("d","decompile", false, "Decompile binary to text.");
+		//options.addOption("d","decompile", false, "Decompile binary to text.");
+		
+		OptionBuilder.withArgName("v{erbose}");
+		OptionBuilder.hasArgs();
+        OptionBuilder.withValueSeparator(' ');
+        OptionBuilder.withLongOpt("decompile");
+        OptionBuilder.withDescription("Decompile binary to text. Option v for full TLV display.");
+		options.addOption(OptionBuilder.create("d"));
 		
 		OptionBuilder.withArgName("bin/txt> <input dir> <*output dir");
-		OptionBuilder.hasArgs(3);
+		OptionBuilder.hasArgs();
         OptionBuilder.withValueSeparator(' ');
         OptionBuilder.withLongOpt("bulk");
         OptionBuilder.withDescription("Compile all files to binary from the input directory. Output directory optional.");
@@ -295,12 +302,20 @@ public class CommandRun {
 	        
 	        if (line.hasOption("d")) 
 	        {
-	        	decompileCommand();
+	        	for (String string : line.getOptionValues("d"))
+	        	{
+		        	if (string.equalsIgnoreCase("v") || string.equalsIgnoreCase("verbose"))
+		        	{
+		        		boolDecompileDisplay = ConfigurationFileExport.EXPORT_DEFAULT_TLV;
+		        	}
+	        	}
+	        	
+	        	decompile();
 	        }
 	        
 	        if (line.hasOption("c")) 
 	        {
-	        	compileCommand();
+	        	compile();
 	        }
 	        
 	        if (line.hasOption("b")) 
@@ -444,9 +459,9 @@ public class CommandRun {
 	/**
 	 * Decompiles the input file
 	 */
-	public void decompileCommand()  
+	public void decompile()  
 	{	
-		if (comInput !=null && comInput.hasInput()) 
+		if (comInput != null && comInput.hasInput()) 
 		{
 			if (comInput.isBinary()) 
 			{
@@ -466,7 +481,7 @@ public class CommandRun {
 				tlvInsertion(cf);					
 				cf.commit();
 				ConfigurationFileExport cfeSnmp64Insert = new ConfigurationFileExport(cf);	
-				System.out.println(cfeSnmp64Insert.toPrettyPrint(true));
+				System.out.println(cfeSnmp64Insert.toPrettyPrint(boolDecompileDisplay));
 			} 
 			else 
 			{
@@ -483,7 +498,7 @@ public class CommandRun {
 	 * Compiles the input file into the specified output
 	
 	 * @throws ConfigrationFileException  */
-	public void compileCommand() 
+	public void compile() 
 	{
 		if (comInput !=null && comInput.hasInput()) 
 		{	

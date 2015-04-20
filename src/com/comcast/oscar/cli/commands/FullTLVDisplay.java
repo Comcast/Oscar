@@ -25,8 +25,6 @@ import com.comcast.oscar.configurationfile.ConfigurationFileExport;
  */
 
 public class FullTLVDisplay {
-	
-	private boolean boolPrettyPrint = true;
 
 	/**
 	 * Set option parameters for command Full TLV display
@@ -47,6 +45,6 @@ public class FullTLVDisplay {
 	public void printFullTLVDisplay(int configurationFileType) 
 	{
 		ConfigurationFileExport cfe = new ConfigurationFileExport(configurationFileType);
-		System.out.println(cfe.toPrettyPrint(this.boolPrettyPrint));
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_DEFAULT_TLV));
 	}
 }
