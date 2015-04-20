@@ -72,21 +72,21 @@ public class CommandRun {
 			
 	private DigitmapDisplay comDigitmapDisplay = new DigitmapDisplay();
 	private FullTLVDisplay comFullTLVDisplay = new FullTLVDisplay();
-	private HexDisplay comHexDisplay = new HexDisplay();
 	private JSONDisplay comJSONDisplay = new JSONDisplay();
 	private Key comKey = new Key();
-	private MIBSCompile comMIBSCompile = new MIBSCompile();
-	private Specification comSpecification = new Specification();
 	
 	private CVC comCVC;
 	private DigitmapInsert comDigitmapInsert;
 	private DownstreamFrequency comDownstreamFrequency;
 	private Firmware comFirmware;
+	private HexDisplay comHexDisplay;
 	private Input comInput;
 	private JSONtoTLV comJSONtoTLV;
 	private MaxCPE comMaxCPE;
+	private MIBSCompile comMIBSCompile;
 	private OID comOID;
 	private Output comOutput;
+	private Specification comSpecification;
 	private TFTPServer comTFTPServer;
 	private TLV comTLV;
 	private TLVDescription comTLVDescription;
@@ -187,16 +187,13 @@ public class CommandRun {
 	        
 	        if (line.hasOption("M")) 
 	        {
-	        	if(line.getOptionValues("M") != null) {
-	        		comMIBSCompile.setValues(line.getOptionValues("M"));
-	        	}
-	        	
+	        	comMIBSCompile = new MIBSCompile(line.getOptionValues("M"));
 	        	comMIBSCompile.mibsCompile();
 	        }
 
 	        if (line.hasOption("s")) 
 	        {
-	        	comSpecification.setValues(line.getOptionValues("s"));
+	        	comSpecification = new Specification(line.getOptionValues("s"));
 	        	
 	        	if (comSpecification.getConfigurationFileType() == -1) 
 	        	{
@@ -334,6 +331,8 @@ public class CommandRun {
 	        
 	        if (line.hasOption("x")) 
 	        {
+	        	comHexDisplay = new HexDisplay(line.getOptionValues("x"));
+	        	
 	        	if (comInput.hasInput()) 
 	        	{
 	        		if (comInput.isBinary()) 
@@ -467,7 +466,7 @@ public class CommandRun {
 				tlvInsertion(cf);					
 				cf.commit();
 				ConfigurationFileExport cfeSnmp64Insert = new ConfigurationFileExport(cf);	
-				System.out.println(cfeSnmp64Insert.toPrettyPrint(0));
+				System.out.println(cfeSnmp64Insert.toPrettyPrint(true));
 			} 
 			else 
 			{

@@ -27,8 +27,19 @@ import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 
 public class MIBSCompile {
 
+	private final String[] args;
 	private boolean boolSnmpSmiSpecCheck = true;
 	private boolean boolMibCompileOutputVerbose = false;
+		
+	/**
+	 * Get MIBSCompile arguments
+	 * @param args
+	 */
+	public MIBSCompile(String[] args) 
+	{
+		this.args = args;
+		setValues();
+	}
 
 	/**
 	 * Set option parameters for command MIB Compile
@@ -49,25 +60,28 @@ public class MIBSCompile {
 	 * Sets the SNMP_SMI_SPEC_CHECK and MIB_COMPILE_OUTPUT_VERBOSE boolean passed on user arguments.
 	 * @param args
 	 */
-	public void setValues(String[] args) 
+	public void setValues() 
 	{
-		if (args.length > 0) 
+		if (this.args != null)
 		{
-			if (args[0].equals("true") || args[0].equals("t")) 
+			if (this.args.length > 0) 
 			{
-				boolSnmpSmiSpecCheck = true;
+				if (this.args[0].equals("true") || this.args[0].equals("t")) 
+				{
+					boolSnmpSmiSpecCheck = true;
+				}
+				else if (this.args[0].equals("false") || this.args[0].equals("f"))
+				{
+					boolSnmpSmiSpecCheck = false;
+				}
 			}
-			else if (args[0].equals("false") || args[0].equals("f"))
+			
+			if (this.args.length > 1) 
 			{
-				boolSnmpSmiSpecCheck = false;
-			}
-		}
-		
-		if (args.length > 1) 
-		{
-			if (args[1].equals("verbose") || args[1].equals("v")) 
-			{
-				boolMibCompileOutputVerbose = true;
+				if (this.args[1].equals("verbose") || this.args[1].equals("v")) 
+				{
+					boolMibCompileOutputVerbose = true;
+				}
 			}
 		}
 	}
@@ -88,9 +102,6 @@ public class MIBSCompile {
 			e2.printStackTrace();
 		}
 
-		/*
-		 * MIB.txt -> SNMP4J-MIB.bin
-		 */
 		SMIManagerService.CompileMIBS();
 	}
 	
