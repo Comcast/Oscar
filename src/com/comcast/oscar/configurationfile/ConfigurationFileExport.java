@@ -88,7 +88,7 @@ public class ConfigurationFileExport {
 	
 	/**
 	 * 
-	 * @param fTLV
+	 * @param fTLV - Configuration File - Only support DOCSIS and PacketCable
 	 */
 	public ConfigurationFileExport (File fTLV) {
 	
@@ -116,8 +116,8 @@ public class ConfigurationFileExport {
 
 	/**
 	 * 
-	 * @param fTLV
-	 * @param iConfigurationFileType*/
+	 * @param fTLV - Will Support all Configuration file Types: DOCSIS, PacketCable and DPoE
+	 * @param iConfigurationFileType - Set Configuration Type via Static FIELDS*/
 	public ConfigurationFileExport (File fTLV, int iConfigurationFileType) {
 		
 		JSONArray jaTlvDictionary = null;
@@ -160,7 +160,7 @@ public class ConfigurationFileExport {
 	 * This constructor checks the first Byte to determine if it is a Packet Cable File or DOCSIS File
 	 * Byte = 0xFE = Packet Cable
 	 * 
-	 * @param tbTLV
+	 * @param tbTLV - Will ONLY Support Configuration file Types: DOCSIS and PacketCable
 	 */
 	public ConfigurationFileExport (TlvBuilder tbTLV) {
 		
@@ -256,7 +256,7 @@ public class ConfigurationFileExport {
 	}
 	
 	/**
-	 * @param cfConfigurationFile
+	 * @param cfConfigurationFile - Will Support all Configuration file Types: DOCSIS, PacketCable and DPoE
 	 */
 	public ConfigurationFileExport (ConfigurationFile cfConfigurationFile) {
 		
@@ -286,7 +286,7 @@ public class ConfigurationFileExport {
 	
 	/**
 	 * This will only produce the Full Default Configuration Options 
-	 * @param iConfigurationFileType int
+	 * @param iConfigurationFileType - Will Support all Configuration file Types: DOCSIS, PacketCable and DPoE - Set Configuration Type via Static FIELD
 	 */
 	public ConfigurationFileExport (int iConfigurationFileType) {
 		
@@ -332,7 +332,6 @@ public class ConfigurationFileExport {
 	 * @deprecated
 	 * @since v1.0.1
 	 * @param iIndentation
-	
 	 * @return String
 	 */
 	public String toPrettyPrint (int iIndentation) {
