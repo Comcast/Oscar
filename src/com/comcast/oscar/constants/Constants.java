@@ -64,4 +64,6 @@ public class Constants {
 	
 	public static final Integer DPOE_10_CONFIGURATION_TYPE 		= 200;
 	public static final Integer DPOE_20_CONFIGURATION_TYPE 		= 201;
+	
+	public static final Integer DPOG_10_CONFIGURATION_TYPE 		= 300;
 }

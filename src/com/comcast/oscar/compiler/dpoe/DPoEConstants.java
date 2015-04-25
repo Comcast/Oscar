@@ -27,6 +27,6 @@ public class DPoEConstants {
 	public static final Integer DPOE_10_CONFIGURATION_TYPE		= Constants.DPOE_10_CONFIGURATION_TYPE;
 	public static final Integer DPOE_20_CONFIGURATION_TYPE		= Constants.DPOE_20_CONFIGURATION_TYPE;
 	
-	public static final byte 	EOF 		= DocsisConstants.EOF;
+	public static final byte 	EOF 							= DocsisConstants.EOF;
 	
 }

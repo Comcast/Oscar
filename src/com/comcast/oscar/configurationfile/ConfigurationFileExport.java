@@ -115,6 +115,48 @@ public class ConfigurationFileExport {
 	}
 
 	/**
+	 * 
+	 * @param fTLV
+	 * @param iConfigurationFileType*/
+	public ConfigurationFileExport (File fTLV, int iConfigurationFileType) {
+		
+		JSONArray jaTlvDictionary = null;
+
+		this.bTLV = HexString.fileToByteArray(fTLV);
+		
+		this.iConfigurationFileType = iConfigurationFileType;
+		
+		if ((iConfigurationFileType >= DOCSIS_VER_10) && (iConfigurationFileType <= DOCSIS_VER_31)) {
+			
+			if (true) System.out.println("DOCSIS Configuration File");
+			
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+			
+			init();
+			
+		} else if ((iConfigurationFileType >= PKT_CBL_VER_10) && (iConfigurationFileType <= PKT_CBL_VER_20)) {
+			
+			if (true) System.out.println("PacketCable Configuration File");
+			
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+			
+			init();
+			
+		} else if ((iConfigurationFileType >= DPOE_VER_20) && (iConfigurationFileType <= DPOE_VER_20)) {
+			
+			if (true) System.out.println("DPoE Configuration File");
+
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+			
+			init(iConfigurationFileType);
+		}
+		
+		//Build Dictionary
+		tlvToDictionary ();
+		
+	}
+	
+	/**
 	 * This constructor checks the first Byte to determine if it is a Packet Cable File or DOCSIS File
 	 * Byte = 0xFE = Packet Cable
 	 * 
