@@ -354,7 +354,7 @@ public class PacketCableCompiler extends TlvBuilder {
 			e.printStackTrace();
 		}
 		
-		DictionarySQLQueries dsq = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+		DictionarySQLQueries dsq = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 		
 		TlvBuilder tb = new TlvBuilder();
 		
@@ -390,7 +390,7 @@ public class PacketCableCompiler extends TlvBuilder {
 		}
 				
 		//Get Type to Byte Length Mapping
-		DictionarySQLQueries dsq = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+		DictionarySQLQueries dsq = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			
 		//Get TlvVariableBinding due to variable byte Length TLVs
 		TlvVariableBinding tvb = new TlvVariableBinding(baPcTlv,dsq.getTopLevelByteLength());

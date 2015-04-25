@@ -65,7 +65,7 @@ public class EditDocsisFile {
 		/*Output Dictionary*/
 		System.out.println("Before Edit:" + ja);
 		
-		ArrayDeque<String> ads = DictionaryTLV.getTypeHierarchyStack("3", new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE));
+		ArrayDeque<String> ads = DictionaryTLV.getTypeHierarchyStack("3", new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME));
 				
 		try {
 			DictionaryTLV.updateDictionaryValue(ads ,ja.getJSONObject(0),"0");

@@ -276,9 +276,9 @@ public class BulkBuild {
 			 */
 
 			if (baConfigFile[0] == PacketCableConstants.FILE_MARKER) {	
-				dsq = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+				dsq = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			} else {
-				dsq = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+				dsq = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			}
 
 			//At this point, need to check if TLV is of Configuration Type
@@ -373,9 +373,9 @@ public class BulkBuild {
 			 */
 
 			if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31) {	
-				dsq = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+				dsq = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
 			} else {
-				dsq = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+				dsq = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			}
 		
 			//Cycle thru Each Map Entry and insert the TlvBuilder - 
