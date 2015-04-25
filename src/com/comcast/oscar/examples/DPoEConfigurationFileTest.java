@@ -11,7 +11,7 @@ public class DPoEConfigurationFileTest {
 
 		File dpoeConfigFile = TestDirectoryStructure.fInputDirFileName("DPoE-1.cm");
 		
-		ConfigurationFileExport cfeDocsis = new ConfigurationFileExport (dpoeConfigFile);
+		ConfigurationFileExport cfeDocsis = new ConfigurationFileExport (ConfigurationFileExport.DPOE_VER_20, dpoeConfigFile);
 		
 		System.out.println(cfeDocsis.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
 

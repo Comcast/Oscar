@@ -107,7 +107,7 @@ public class CoCVCImportBinaryToBinaryTest {
 
 		System.out.println("+-------------------------------------------AFTER CVC INSERTION-----------------------------------------------------------------+");
 
-		ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport(cf.toByteArray());
+		ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport(cf);
 
 		System.out.println(cfeDOCTLV.toPrettyPrint(0));
 

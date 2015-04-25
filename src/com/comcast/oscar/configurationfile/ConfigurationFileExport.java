@@ -142,8 +142,7 @@ public class ConfigurationFileExport {
 			}
 			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
-			
-			
+						
 		}
 		
 		init();
@@ -215,53 +214,29 @@ public class ConfigurationFileExport {
 	}
 	
 	/**
-	 * 
-	 * @param bTLV
-	 */
-	public ConfigurationFileExport (byte[] bTLV) {
-			
-		//Convert to Byte Array
-		this.bTLV = bTLV;
-
-		if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-					
-			
-		} else {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
-						
-		}
-		
-		init();
-		
-		//Build Dictionary
-		tlvToDictionary ();
-				
-	}
-
-	/**
-	 * 
 	 * @param cfConfigurationFile
 	 */
 	public ConfigurationFileExport (ConfigurationFile cfConfigurationFile) {
 		
 		//Convert to Byte Array
 		this.bTLV = cfConfigurationFile.toByteArray();
-
-		if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-					
+		
+		//Check for DPoE Type Configuration File
+		if ((cfConfigurationFile.getConfigurationFileType() >= DPOE_VER_20) || (cfConfigurationFile.getConfigurationFileType() <= DPOE_VER_20)) {
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+			init(cfConfigurationFile.getConfigurationFileType());				
 		} else {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
-					
+			if (bTLV[0] == PacketCableConstants.FILE_MARKER) {			
+				dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+				init();			
+			} else {			
+				dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+				init();
+			}
+			
 		}
-		
-		init();
-		
+			
 		//Build Dictionary
 		tlvToDictionary ();
 		
@@ -277,7 +252,7 @@ public class ConfigurationFileExport {
 		
 		this.iConfigurationFileType = iConfigurationFileType;
 		
-		if (DOCSIS_VER_10 == iConfigurationFileType) {
+		if ((iConfigurationFileType >= DOCSIS_VER_10) || (iConfigurationFileType <= DOCSIS_VER_31)) {
 			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
@@ -285,39 +260,9 @@ public class ConfigurationFileExport {
 			
 			bTLV = docsisPsuedoTLVArray();
 			
-		} else if (DOCSIS_VER_11 == iConfigurationFileType) {
+			init();
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
-			
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
-			
-			bTLV = docsisPsuedoTLVArray();
-			
-		} else if (DOCSIS_VER_20 == iConfigurationFileType) {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
-			
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
-			
-			bTLV = docsisPsuedoTLVArray();
-			
-		} else if (DOCSIS_VER_30 == iConfigurationFileType) {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
-			
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
-			
-			bTLV = docsisPsuedoTLVArray();
-			
-		} else if (DOCSIS_VER_31 == iConfigurationFileType) {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
-			
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
-			
-			bTLV = docsisPsuedoTLVArray();
-			
-		} else if (PKT_CBL_VER_10 == iConfigurationFileType) {
+		} else if ((iConfigurationFileType >= PKT_CBL_VER_10) || (iConfigurationFileType <= PKT_CBL_VER_20)) {
 			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			
@@ -325,38 +270,18 @@ public class ConfigurationFileExport {
 			
 			bTLV = packetCablePsuedoTLVArray();
 			
-		} else if (PKT_CBL_VER_15 == iConfigurationFileType) {
+			init();
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-			
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
-			
-			bTLV = packetCablePsuedoTLVArray();
-			
-		} else if (PKT_CBL_VER_20 == iConfigurationFileType) {
-						
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-			
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
-			
-			bTLV = packetCablePsuedoTLVArray();
-		} else if (DPOE_VER_10 == iConfigurationFileType) {
+		} else if ((iConfigurationFileType >= DPOE_VER_20) || (iConfigurationFileType <= DPOE_VER_20)) {
 
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
-
-			bTLV = packetCablePsuedoTLVArray();
-		} else if (DPOE_VER_20 == iConfigurationFileType) {
-
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
 
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DPOE);
 
 			bTLV = packetCablePsuedoTLVArray();
+			
+			init(iConfigurationFileType);
 		}
-
-		init();
 		
 		convertJSONArrayDictToJSONObjectArrayList(jaTlvDictionary);
 	}
@@ -1115,12 +1040,10 @@ public class ConfigurationFileExport {
 		
 		return sbTopLevelTLVCodeBlock;
 	}
-	
+
 	/**
-	 * 
-	 */
-	private void init() {
-				
+	 * */
+	private void initBER() {
 		BER_DATA_TYPE.put((int) BER.COUNTER32,   "Counter32");
 		BER_DATA_TYPE.put((int) BER.COUNTER64,   "Counter64");
 		BER_DATA_TYPE.put((int) BER.GAUGE32,     "Gauge32");
@@ -1131,6 +1054,14 @@ public class ConfigurationFileExport {
 		
 		//This Type does not exists as a SNMP DataType, this is only for use in this program
 		BER_DATA_TYPE.put(BinaryConversion.byteToUnsignedInteger(BERService.HEX), "HexString");
+	}
+	
+	/**
+	 * 
+	 */
+	private void init() {
+				
+		initBER();
 		
 		//Figure Out the Configuration file Type DOCSIS vs. PacketCable
 		
@@ -1138,6 +1069,18 @@ public class ConfigurationFileExport {
 			sConfigurationFileStart = "Docsis";
 		} else {
 			sConfigurationFileStart = "PacketCable-X.X";
+		}
+	}
+	
+	/**
+	 * Only Non DOCSIS and PacketCable files*/
+	private void init(int iConfigurationFileType) {
+		
+		initBER();
+		
+		if ((iConfigurationFileType >= DPoEConstants.DPOE_10_CONFIGURATION_TYPE) || 
+				(iConfigurationFileType <= DPoEConstants.DPOE_20_CONFIGURATION_TYPE)) {
+			sConfigurationFileStart = "DPoE";
 		}
 	}
 	

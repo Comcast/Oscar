@@ -193,7 +193,7 @@ public class ConfigurationToBinaryToConfigurationTest {
 
 			System.out.println("+------------------------------------------------------------------------------------------------------------+");
 
-			ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport(cf.toByteArray());
+			ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport(cf);
 
 			System.out.println(cfeDOCTLV.toPrettyPrint(0));
 		}
