@@ -74,22 +74,22 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 		
 		//Determine which Dictionary to select
 		if (ctx.getText().equals("Docsis")) {
-			dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			iConfigurationFileType = ConfigurationFile.DOCSIS_VER_31;
 		} else if (ctx.getText().equals("PacketCable-1.0")) {
-			dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			iConfigurationFileType = ConfigurationFile.PKT_CBL_VER_10;
 		} else if (ctx.getText().equals("PacketCable-1.5")) {
-			dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			iConfigurationFileType = ConfigurationFile.PKT_CBL_VER_15;
 		} else if (ctx.getText().equals("PacketCable-2.0")) {
-			dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			iConfigurationFileType = ConfigurationFile.PKT_CBL_VER_20;
 		} 
 		
 		// Added DPoE as a Configuration File Type
 		else if (ctx.getText().equals("DPoE")) {
-			dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			iConfigurationFileType = ConfigurationFile.DOCSIS_VER_31;
 		}   
 		

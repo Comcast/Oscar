@@ -634,7 +634,7 @@ public class ConfigurationFile {
 		
 		if (iConfigurationFileType < 100) {
 						
-			this.miiTypeToByteLengh = new DictionarySQLQueries().getTypeToByteLengthMap(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			this.miiTypeToByteLengh = new DictionarySQLQueries().getTypeToByteLengthMap(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
 			dcConfigurationFile = new DocsisCompiler(sCmtsSharedSecretKey,iConfigurationFileType);
 			
@@ -665,7 +665,7 @@ public class ConfigurationFile {
 			
 		} else {
 			
-			this.miiTypeToByteLengh = new DictionarySQLQueries().getTypeToByteLengthMap(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			this.miiTypeToByteLengh = new DictionarySQLQueries().getTypeToByteLengthMap(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			
 			pcConfigurationFile = new PacketCableCompiler(iConfigurationFileType);
 			

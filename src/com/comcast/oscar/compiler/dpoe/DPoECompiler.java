@@ -24,7 +24,7 @@ import com.comcast.oscar.compiler.docsiscompiler.DocsisCompiler;
 public class DPoECompiler extends DocsisCompiler {
 
 	
-	private int iDPoEVersion = DPoEConstants.DPOE_10;
+	private int iDPoEVersion = DPoEConstants.DPOE_10_CONFIGURATION_TYPE;
 	
 	/**
 	 * 

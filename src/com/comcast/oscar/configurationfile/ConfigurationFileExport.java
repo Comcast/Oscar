@@ -100,11 +100,11 @@ public class ConfigurationFileExport {
 
 		if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 						
 		} else {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 		}
 		
 		init();
@@ -133,7 +133,7 @@ public class ConfigurationFileExport {
 				System.out.println("ConfigrationFileExport(tb) - PacketCable File");
 			}
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 						
 		} else {
 			
@@ -141,7 +141,7 @@ public class ConfigurationFileExport {
 				System.out.println("ConfigrationFileExport(tb) - DOCSIS File");
 			}
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
 			
 		}
@@ -198,11 +198,11 @@ public class ConfigurationFileExport {
 					
 		if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 						
 		} else {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
 			
 		}
@@ -225,12 +225,12 @@ public class ConfigurationFileExport {
 
 		if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 					
 			
 		} else {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 						
 		}
 		
@@ -252,11 +252,11 @@ public class ConfigurationFileExport {
 
 		if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 					
 		} else {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 					
 		}
 		
@@ -279,7 +279,7 @@ public class ConfigurationFileExport {
 		
 		if (DOCSIS_VER_10 == iConfigurationFileType) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
 			
@@ -287,7 +287,7 @@ public class ConfigurationFileExport {
 			
 		} else if (DOCSIS_VER_11 == iConfigurationFileType) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
 			
@@ -295,7 +295,7 @@ public class ConfigurationFileExport {
 			
 		} else if (DOCSIS_VER_20 == iConfigurationFileType) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
 			
@@ -303,7 +303,7 @@ public class ConfigurationFileExport {
 			
 		} else if (DOCSIS_VER_30 == iConfigurationFileType) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
 			
@@ -311,7 +311,7 @@ public class ConfigurationFileExport {
 			
 		} else if (DOCSIS_VER_31 == iConfigurationFileType) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
 			
@@ -319,7 +319,7 @@ public class ConfigurationFileExport {
 			
 		} else if (PKT_CBL_VER_10 == iConfigurationFileType) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
 			
@@ -327,7 +327,7 @@ public class ConfigurationFileExport {
 			
 		} else if (PKT_CBL_VER_15 == iConfigurationFileType) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
 			
@@ -335,13 +335,27 @@ public class ConfigurationFileExport {
 			
 		} else if (PKT_CBL_VER_20 == iConfigurationFileType) {
 						
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
 			
 			bTLV = packetCablePsuedoTLVArray();
+		} else if (DPOE_VER_10 == iConfigurationFileType) {
+
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+
+			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
+
+			bTLV = packetCablePsuedoTLVArray();
+		} else if (DPOE_VER_20 == iConfigurationFileType) {
+
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+
+			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DPOE);
+
+			bTLV = packetCablePsuedoTLVArray();
 		}
-		
+
 		init();
 		
 		convertJSONArrayDictToJSONObjectArrayList(jaTlvDictionary);
