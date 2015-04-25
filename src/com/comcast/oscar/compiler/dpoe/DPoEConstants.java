@@ -1,6 +1,7 @@
 package com.comcast.oscar.compiler.dpoe;
 
 import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
+import com.comcast.oscar.constants.Constants;
 
 /**
  * @bannerLicense
@@ -23,7 +24,8 @@ import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
 
 public class DPoEConstants {
 	
-	public static final Integer DPOE_10		= DocsisConstants.DOCSIS_30;
+	public static final Integer DPOE_10_CONFIGURATION_TYPE		= Constants.DPOE_10_CONFIGURATION_TYPE;
+	public static final Integer DPOE_20_CONFIGURATION_TYPE		= Constants.DPOE_20_CONFIGURATION_TYPE;
 	
 	public static final byte 	EOF 		= DocsisConstants.EOF;
 	

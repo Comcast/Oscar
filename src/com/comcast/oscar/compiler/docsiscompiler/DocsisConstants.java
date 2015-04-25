@@ -1,5 +1,7 @@
 package com.comcast.oscar.compiler.docsiscompiler;
 
+import com.comcast.oscar.constants.Constants;
+
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>
@@ -21,11 +23,11 @@ package com.comcast.oscar.compiler.docsiscompiler;
 
 public class DocsisConstants {
 	
-	public static final Integer DOCSIS_10 	= 0;
-	public static final Integer DOCSIS_11 	= 1;
-	public static final Integer DOCSIS_20 	= 2;
-	public static final Integer DOCSIS_30 	= 3;
-	public static final Integer DOCSIS_31 	= 4;
+	public static final Integer DOCSIS_10_CONFIGURATION_TYPE 	= Constants.DOCSIS_10_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_11_CONFIGURATION_TYPE 	= Constants.DOCSIS_11_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_20_CONFIGURATION_TYPE 	= Constants.DOCSIS_20_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_30_CONFIGURATION_TYPE 	= Constants.DOCSIS_30_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_31_CONFIGURATION_TYPE 	= Constants.DOCSIS_31_CONFIGURATION_TYPE;
 	
 	public static final byte 	EOF 		= (byte) 0xFF;
 	

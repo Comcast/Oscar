@@ -489,19 +489,19 @@ public class PacketCableCompiler extends TlvBuilder {
 		TlvBuilder tbTlvSHA1 = new TlvBuilder();
 		
 		//Select Correct Packet Cable Version
-		if (iPacketCableVersion == PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10) {
+		if (iPacketCableVersion == PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE) {
 			
 			tbTlvSHA1.add(	PacketCableConstants.SNMP_TLV_11, 
 							new OID(PacketCableConstants.PKT_CABLE_10_BASIC_AUTH_OID), 
 							BER.OCTETSTRING, bSHA1);
 		
-		} else if (iPacketCableVersion == PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15) {
+		} else if (iPacketCableVersion == PacketCableConstants.PKT_CABLE_15_CONFIGURATION_TYPE) {
 		
 			tbTlvSHA1.add(	PacketCableConstants.SNMP_TLV_11, 
 							new OID(PacketCableConstants.PKT_CABLE_15_BASIC_AUTH_OID), 
 							BER.OCTETSTRING, bSHA1);
 		
-		} else if (iPacketCableVersion == PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20) {
+		} else if (iPacketCableVersion == PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE) {
 		
 			tbTlvSHA1.add(	PacketCableConstants.SNMP_TLV_11, 
 							new OID(PacketCableConstants.PKT_CABLE_20_BASIC_AUTH_OID), 

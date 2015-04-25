@@ -1,5 +1,7 @@
 package com.comcast.oscar.compiler.packetcablecompiler;
 
+import com.comcast.oscar.constants.Constants;
+
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>
@@ -21,9 +23,9 @@ package com.comcast.oscar.compiler.packetcablecompiler;
 
 public class PacketCableConstants {
 
-	public static final int	CONFIG_FILE_TYPE_PKT_CABLE_10 = 100;
-	public static final int	CONFIG_FILE_TYPE_PKT_CABLE_15 = 101;
-	public static final int	CONFIG_FILE_TYPE_PKT_CABLE_20 = 102;
+	public static final int	PKT_CABLE_10_CONFIGURATION_TYPE = Constants.PKT_CABLE_10_CONFIGURATION_TYPE;
+	public static final int	PKT_CABLE_15_CONFIGURATION_TYPE = Constants.PKT_CABLE_15_CONFIGURATION_TYPE;
+	public static final int	PKT_CABLE_20_CONFIGURATION_TYPE = Constants.PKT_CABLE_20_CONFIGURATION_TYPE;
 	
 	public static final byte FILE_MARKER 	=	(byte)0xFE;
 	public static final byte START_OF_FILE 	= 	(byte)0x01;

@@ -19,6 +19,7 @@ import org.snmp4j.asn1.BER;
 
 import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
+import com.comcast.oscar.compiler.dpoe.DPoEConstants;
 import com.comcast.oscar.compiler.packetcablecompiler.PacketCableCompiler;
 import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
 import com.comcast.oscar.constants.Constants;
@@ -58,32 +59,30 @@ public class ConfigurationFileExport {
 	
 	private byte[] bTLV;
 	
-	private ArrayList<JSONObject> aljoTopLevelTlvDictionary;
-	
-	private final boolean debug = Boolean.FALSE;
-	
-	private final Integer RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH = -1;
-	
-	private Map<Integer,String> BER_DATA_TYPE = new HashMap<Integer,String>();
-	
-	private DictionarySQLQueries dsqDictionarySQLQueries = null;
-	
-	private String sConfigurationFileStart;
-	
-	private int iConfigurationFileType = -1;
-	
+	private ArrayList<JSONObject> aljoTopLevelTlvDictionary;	
+	private final boolean debug = Boolean.FALSE;	
+	private final Integer RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH = -1;	
+	private Map<Integer,String> BER_DATA_TYPE = new HashMap<Integer,String>();	
+	private DictionarySQLQueries dsqDictionarySQLQueries = null;	
+	private String sConfigurationFileStart;	
+	private int iConfigurationFileType = -1;	
 	private boolean boolVerboseExport = true;
 	
 	public final String END_OF_CODE_BLOCK = "\\*EOCB*\\";
 	
-	public static final Integer DOCSIS_VER_10 = DocsisConstants.DOCSIS_10;
-	public static final Integer DOCSIS_VER_11 = DocsisConstants.DOCSIS_11;
-	public static final Integer DOCSIS_VER_20 = DocsisConstants.DOCSIS_20;
-	public static final Integer DOCSIS_VER_30 = DocsisConstants.DOCSIS_30;
-	public static final Integer DOCSIS_VER_31 = DocsisConstants.DOCSIS_31;
-	public static final Integer PKT_CBL_VER_10 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10;
-	public static final Integer PKT_CBL_VER_15 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15;
-	public static final Integer PKT_CBL_VER_20 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20;
+	public static final Integer DOCSIS_VER_10 = DocsisConstants.DOCSIS_10_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_11 = DocsisConstants.DOCSIS_11_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_20 = DocsisConstants.DOCSIS_20_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_30 = DocsisConstants.DOCSIS_30_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_31 = DocsisConstants.DOCSIS_31_CONFIGURATION_TYPE;
+	
+	public static final Integer PKT_CBL_VER_10 = PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_15 = PacketCableConstants.PKT_CABLE_15_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_20 = PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
+	
+	public static final Integer DPOE_VER_10 = DPoEConstants.DPOE_10_CONFIGURATION_TYPE;
+	public static final Integer DPOE_VER_20 = DPoEConstants.DPOE_20_CONFIGURATION_TYPE;
+	
 	public static final Boolean EXPORT_DEFAULT_TLV = true;
 	public static final Boolean EXPORT_FOUND_TLV = false;
 	
@@ -113,8 +112,6 @@ public class ConfigurationFileExport {
 		//Build Dictionary
 		tlvToDictionary ();
 		
-		//convertJSONArrayDictToJSONObjectArrayList(jaTlvDictionary);
-
 	}
 
 	/**

@@ -15,6 +15,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
+import com.comcast.oscar.compiler.dpoe.DPoEConstants;
 import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
 import com.comcast.oscar.parser.TlvConfigurationFileParser;
 import com.comcast.oscar.parser.tlvLexer;
@@ -57,14 +58,18 @@ public class ConfigrationFileImport {
 	
 	private int iConfigurationFileType = -1;
 	
-	public static final Integer DOCSIS_VER_10 = DocsisConstants.DOCSIS_10;
-	public static final Integer DOCSIS_VER_11 = DocsisConstants.DOCSIS_11;
-	public static final Integer DOCSIS_VER_20 = DocsisConstants.DOCSIS_20;
-	public static final Integer DOCSIS_VER_30 = DocsisConstants.DOCSIS_30;
-	public static final Integer DOCSIS_VER_31 = DocsisConstants.DOCSIS_31;
-	public static final Integer PKT_CBL_VER_10 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10;
-	public static final Integer PKT_CBL_VER_15 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15;
-	public static final Integer PKT_CBL_VER_20 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20;
+	public static final Integer DOCSIS_VER_10 = DocsisConstants.DOCSIS_10_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_11 = DocsisConstants.DOCSIS_11_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_20 = DocsisConstants.DOCSIS_20_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_30 = DocsisConstants.DOCSIS_30_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_31 = DocsisConstants.DOCSIS_31_CONFIGURATION_TYPE;
+	
+	public static final Integer PKT_CBL_VER_10 = PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_15 = PacketCableConstants.PKT_CABLE_15_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_20 = PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
+	
+	public static final Integer DPOE_VER_10 = DPoEConstants.DPOE_10_CONFIGURATION_TYPE;
+	public static final Integer DPOE_VER_20 = DPoEConstants.DPOE_20_CONFIGURATION_TYPE;
 	
 	/**
 	 * 
