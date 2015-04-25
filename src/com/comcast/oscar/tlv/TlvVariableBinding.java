@@ -371,8 +371,6 @@ public class TlvVariableBinding implements TlvBuild {
 	 * 
 	
 	 * @param bParentChildTlvEncodeList
-	
-	
 	 * @param _bTlvBuffer byte[]
 	 * @param iTopLevelTlvNumByteLength int
 	 * @return byte[]
