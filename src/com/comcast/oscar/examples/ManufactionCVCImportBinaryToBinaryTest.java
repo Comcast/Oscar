@@ -102,7 +102,7 @@ public class ManufactionCVCImportBinaryToBinaryTest {
 		
 		ConfigurationFile cfDocsis = null;
 		
-		cfDocsis = new ConfigurationFile(	DocsisConstants.DOCSIS_31,
+		cfDocsis = new ConfigurationFile(	DocsisConstants.DOCSIS_31_CONFIGURATION_TYPE,
 											tb,
 											sSharedSecret);
 		cfDocsis.commit();

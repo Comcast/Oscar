@@ -30,7 +30,7 @@ public class Specification {
 	
 	public static final String ERROR = "No specification found. Please set the specification and version. EX: -s d 1.1 (DOCSIS 1.1) / -s p 1.5 (PacketCable 1.5).";
 	
-	private int iConfigurationFileType = DocsisConstants.DOCSIS_10;
+	private int iConfigurationFileType = DocsisConstants.DOCSIS_10_CONFIGURATION_TYPE;
 	private String sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
 	private boolean boolPacketCable = false;
 	
@@ -76,23 +76,23 @@ public class Specification {
 			
 			if (sVersion.equalsIgnoreCase("1") || sVersion.equalsIgnoreCase("10") || sVersion.equalsIgnoreCase("1.0")) 
 			{
-				this.iConfigurationFileType = DocsisConstants.DOCSIS_10;
+				this.iConfigurationFileType = DocsisConstants.DOCSIS_10_CONFIGURATION_TYPE;
 			}
 			if (sVersion.equalsIgnoreCase("1.1") || sVersion.equalsIgnoreCase("11")) 
 			{
-				this.iConfigurationFileType = DocsisConstants.DOCSIS_11;
+				this.iConfigurationFileType = DocsisConstants.DOCSIS_11_CONFIGURATION_TYPE;
 			}
 			if (sVersion.equalsIgnoreCase("2") || sVersion.equalsIgnoreCase("20") || sVersion.equalsIgnoreCase("2.0")) 
 			{
-				this.iConfigurationFileType = DocsisConstants.DOCSIS_20;
+				this.iConfigurationFileType = DocsisConstants.DOCSIS_20_CONFIGURATION_TYPE;
 			}
 			if (sVersion.equalsIgnoreCase("3") || sVersion.equalsIgnoreCase("30") || sVersion.equalsIgnoreCase("3.0")) 
 			{
-				this.iConfigurationFileType = DocsisConstants.DOCSIS_30;
+				this.iConfigurationFileType = DocsisConstants.DOCSIS_30_CONFIGURATION_TYPE;
 			}
 			if (sVersion.equalsIgnoreCase("3.1") || sVersion.equalsIgnoreCase("11")) 
 			{
-				this.iConfigurationFileType = DocsisConstants.DOCSIS_31;
+				this.iConfigurationFileType = DocsisConstants.DOCSIS_31_CONFIGURATION_TYPE;
 			}
 		} 
 		else if (sSpecification.equalsIgnoreCase("p") || sSpecification.equalsIgnoreCase("packetcable")) 
@@ -103,15 +103,15 @@ public class Specification {
 			
 			if (sVersion.equalsIgnoreCase("1") || sVersion.equalsIgnoreCase("10") || sVersion.equalsIgnoreCase("1.0")) 
 			{
-				this.iConfigurationFileType = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10;
+				this.iConfigurationFileType = PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
 			}
 			if (sVersion.equalsIgnoreCase("1.5") || sVersion.equalsIgnoreCase("15")) 
 			{
-				this.iConfigurationFileType = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15;
+				this.iConfigurationFileType = PacketCableConstants.PKT_CABLE_15_CONFIGURATION_TYPE;
 			}
 			if (sVersion.equalsIgnoreCase("2") || sVersion.equalsIgnoreCase("20") || sVersion.equalsIgnoreCase("2.0")) 
 			{
-				this.iConfigurationFileType = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20;
+				this.iConfigurationFileType = PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
 			}
 		} 
 		else if (sSpecification.equalsIgnoreCase("d1") 
@@ -121,7 +121,7 @@ public class Specification {
 				|| sSpecification.equalsIgnoreCase("d10") 
 				|| sSpecification.equalsIgnoreCase("docsis10")) 
 		{
-			this.iConfigurationFileType = DocsisConstants.DOCSIS_10;
+			this.iConfigurationFileType = DocsisConstants.DOCSIS_10_CONFIGURATION_TYPE;
 			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
 		} 
 		else if (sSpecification.equalsIgnoreCase("d1.1") 
@@ -129,7 +129,7 @@ public class Specification {
 				|| sSpecification.equalsIgnoreCase("d11") 
 				|| sSpecification.equalsIgnoreCase("docsis11")) 
 		{
-			this.iConfigurationFileType = DocsisConstants.DOCSIS_11;
+			this.iConfigurationFileType = DocsisConstants.DOCSIS_11_CONFIGURATION_TYPE;
 			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
 		} 
 		else if (sSpecification.equalsIgnoreCase("d2") 
@@ -139,7 +139,7 @@ public class Specification {
 				|| sSpecification.equalsIgnoreCase("d20") 
 				|| sSpecification.equalsIgnoreCase("docsis20")) 
 		{
-			this.iConfigurationFileType = DocsisConstants.DOCSIS_20;
+			this.iConfigurationFileType = DocsisConstants.DOCSIS_20_CONFIGURATION_TYPE;
 			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
 		} 
 		else if (sSpecification.equalsIgnoreCase("d3") 
@@ -149,7 +149,7 @@ public class Specification {
 				|| sSpecification.equalsIgnoreCase("d30") 
 				|| sSpecification.equalsIgnoreCase("docsis30"))
 		{
-			this.iConfigurationFileType = DocsisConstants.DOCSIS_30;
+			this.iConfigurationFileType = DocsisConstants.DOCSIS_30_CONFIGURATION_TYPE;
 			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
 		} 
 		else if (sSpecification.equalsIgnoreCase("d3.1") 
@@ -157,7 +157,7 @@ public class Specification {
 				|| sSpecification.equalsIgnoreCase("d31") 
 				|| sSpecification.equalsIgnoreCase("docsis31")) 
 		{
-			this.iConfigurationFileType = DocsisConstants.DOCSIS_31;
+			this.iConfigurationFileType = DocsisConstants.DOCSIS_31_CONFIGURATION_TYPE;
 			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
 		} 
 		else if (sSpecification.equalsIgnoreCase("p1") 
@@ -167,7 +167,7 @@ public class Specification {
 				|| sSpecification.equalsIgnoreCase("p10") 
 				|| sSpecification.equalsIgnoreCase("packetcable10")) 
 		{
-			this.iConfigurationFileType = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10;
+			this.iConfigurationFileType = PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
 			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_PACKET_CABLE;
 			this.boolPacketCable = true;
 		} 
@@ -176,7 +176,7 @@ public class Specification {
 				|| sSpecification.equalsIgnoreCase("packetcable15") 
 				|| sSpecification.equalsIgnoreCase("packetcable15")) 
 		{
-			this.iConfigurationFileType = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15;
+			this.iConfigurationFileType = PacketCableConstants.PKT_CABLE_15_CONFIGURATION_TYPE;
 			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_PACKET_CABLE;
 			this.boolPacketCable = true;
 		} 
@@ -187,7 +187,7 @@ public class Specification {
 				|| sSpecification.equalsIgnoreCase("p20") 
 				|| sSpecification.equalsIgnoreCase("packetcable20"))
 		{
-			this.iConfigurationFileType = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20;
+			this.iConfigurationFileType = PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
 			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_PACKET_CABLE;
 			this.boolPacketCable = true;
 		} 

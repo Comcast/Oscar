@@ -78,7 +78,7 @@ public class ManufactionCVCImportTextToBinaryTest {
 			e.printStackTrace();
 		}
 		
-		ConfigurationFile cf = new ConfigurationFile(DocsisConstants.DOCSIS_31,cfi.getTlvBuilder());
+		ConfigurationFile cf = new ConfigurationFile(DocsisConstants.DOCSIS_31_CONFIGURATION_TYPE,cfi.getTlvBuilder());
 		
 															
 		/* Get CVC File */

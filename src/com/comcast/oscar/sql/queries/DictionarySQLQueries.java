@@ -43,9 +43,9 @@ public class DictionarySQLQueries extends SqlConnection {
 	public static final String PACKET_CABLE_QUERY_TYPE 	= DictionarySQLConstants.PACKET_CABLE__DICTIONARY_TABLE_NAME;
 	public static final String DPOE_QUERY_TYPE 			= DictionarySQLConstants.DPOE_DICTIONARY_TABLE_NAME;
 	
-	public static final Integer CONFIGURATION_FILE_TYPE_DOCSIS 			= DocsisConstants.DOCSIS_10;
-	public static final Integer CONFIGURATION_FILE_TYPE_PACKET_CABLE 	= PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10;
-	public static final Integer CONFIGURATION_FILE_TYPE_DPOE 			= DPoEConstants.DPOE_10;
+	public static final Integer CONFIGURATION_FILE_TYPE_DOCSIS 			= DocsisConstants.DOCSIS_10_CONFIGURATION_TYPE;
+	public static final Integer CONFIGURATION_FILE_TYPE_PACKET_CABLE 	= PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
+	public static final Integer CONFIGURATION_FILE_TYPE_DPOE 			= DPoEConstants.DPOE_10_CONFIGURATION_TYPE;
 	
 	private static final Integer TOP_LEVEL_TLV = 0;
 	
@@ -233,7 +233,7 @@ public class DictionarySQLQueries extends SqlConnection {
 			}
 
 
-		} else if (PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10 == iCableLabsConfigType) {
+		} else if (PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE == iCableLabsConfigType) {
 			
 			for (int tlvCounter = Constants.DOCSIS_TLV_MIN ; tlvCounter <= Constants.DOCSIS_TLV_MAX ; tlvCounter++) {
 				
@@ -245,7 +245,7 @@ public class DictionarySQLQueries extends SqlConnection {
 				jsonArrTlvDictionary.put(getTlvDefinition(tlvCounter));
 			}
 			
-		} else if (PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15 == iCableLabsConfigType) {
+		} else if (PacketCableConstants.PKT_CABLE_15_CONFIGURATION_TYPE == iCableLabsConfigType) {
 			
 			for (int tlvCounter = Constants.DOCSIS_TLV_MIN ; tlvCounter <= Constants.DOCSIS_TLV_MAX ; tlvCounter++) {
 				
@@ -257,7 +257,7 @@ public class DictionarySQLQueries extends SqlConnection {
 				jsonArrTlvDictionary.put(getTlvDefinition(tlvCounter));
 			}
 			
-		} else if (PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20 == iCableLabsConfigType) {
+		} else if (PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE == iCableLabsConfigType) {
 			
 			for (int tlvCounter = Constants.DOCSIS_TLV_MIN ; tlvCounter <= Constants.DOCSIS_TLV_MAX ; tlvCounter++) {
 				
