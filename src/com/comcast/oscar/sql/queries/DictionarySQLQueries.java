@@ -13,6 +13,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
+import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
+import com.comcast.oscar.compiler.dpoe.DPoEConstants;
 import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
 import com.comcast.oscar.sql.SqlConnection;
 import com.comcast.oscar.tlv.dictionary.Dictionary;
@@ -39,9 +41,11 @@ public class DictionarySQLQueries extends SqlConnection {
 	
 	public static final String DOCSIS_QUERY_TYPE 		= DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;
 	public static final String PACKET_CABLE_QUERY_TYPE 	= DictionarySQLConstants.PACKET_CABLE__DICTIONARY_TABLE_NAME;
+	public static final String DPOE_QUERY_TYPE 			= DictionarySQLConstants.DPOE_DICTIONARY_TABLE_NAME;
 	
-	public static final Integer CONFIGURATION_FILE_TYPE_DOCSIS 			= Constants.CONFIGURATION_FILE_TYPE_DOCSIS;
+	public static final Integer CONFIGURATION_FILE_TYPE_DOCSIS 			= DocsisConstants.DOCSIS_10;
 	public static final Integer CONFIGURATION_FILE_TYPE_PACKET_CABLE 	= PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10;
+	public static final Integer CONFIGURATION_FILE_TYPE_DPOE 			= DPoEConstants.DPOE_10;
 	
 	private static final Integer TOP_LEVEL_TLV = 0;
 	
@@ -656,7 +660,7 @@ public class DictionarySQLQueries extends SqlConnection {
 				
 				tlvJsonObj.put(Dictionary.TYPE, 				resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_TYPE));
 				tlvJsonObj.put(Dictionary.TLV_NAME, 			resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_TLV_NAME));
-				tlvJsonObj.put(Dictionary.TLV_DESCRIPTION, 	resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_TLV_DESCRIPTION));
+				tlvJsonObj.put(Dictionary.TLV_DESCRIPTION, 		resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_TLV_DESCRIPTION));
 				tlvJsonObj.put(Dictionary.LENGTH_MIN, 			resultSetGetRowDefinition.getInt(Dictionary.DB_TBL_COL_LENGTH_MIN));
 				tlvJsonObj.put(Dictionary.LENGTH_MAX, 			resultSetGetRowDefinition.getInt(Dictionary.DB_TBL_COL_LENGTH_MAX));
 				tlvJsonObj.put(Dictionary.SUPPORTED_VERSIONS,	resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_SUPPORTED_VERSIONS));

@@ -21,4 +21,5 @@ package com.comcast.oscar.sql.queries;
 public class DictionarySQLConstants {
 	public final static String DOCSIS_DICTIONARY_TABLE_NAME = "DOCSIS_TLV_DEFINITION";
 	public final static String PACKET_CABLE__DICTIONARY_TABLE_NAME = "PACKET_CABLE_TLV_DEFINITION";
+	public final static String DPOE_DICTIONARY_TABLE_NAME = "DPOE_TLV_DEFINITION";
 }

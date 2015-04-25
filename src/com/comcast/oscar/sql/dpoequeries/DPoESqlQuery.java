@@ -32,6 +32,12 @@ public class DPoESqlQuery extends DocsisSqlQuery {
 
 	}
 	
+	/**
+	 * */
+	public void commit() {
+		
+	}
+	
 	
 
 }
