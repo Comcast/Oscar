@@ -245,6 +245,7 @@ public class BulkBuild {
 	 * @param sSharedSecretKey String
 	 * @return boolean
 	 */
+	@SuppressWarnings("deprecation")
 	public boolean binaryToText(File fBinInput , File fTextOutput , String sSharedSecretKey) {
 
 		boolean localDebug = Boolean.FALSE;
@@ -321,6 +322,7 @@ public class BulkBuild {
 		if (debug|localDebug)
 			System.out.println("BulkBuild.binaryToBinary(f,f,s)");
 		
+		@SuppressWarnings("deprecation")
 		ConfigurationFileExport cfe = new ConfigurationFileExport (fBinInput);
 
 		ConfigurationFile cf = null;
