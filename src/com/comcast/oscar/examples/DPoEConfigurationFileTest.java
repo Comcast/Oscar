@@ -3,6 +3,7 @@ package com.comcast.oscar.examples;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.tlv.TlvBuilder;
@@ -13,30 +14,40 @@ public class DPoEConfigurationFileTest {
 
 	public static void main(String[] args) {
 
+		
+		/* BINARY FILE TO TEXT */
 		File dpoeConfigFile = TestDirectoryStructure.fInputDirFileName("DPoE-1.cm");
 		
-		HexString hs = new HexString(HexString.fileToByteArray(dpoeConfigFile));
-
-		TlvBuilder tb = new TlvBuilder();
+		ConfigurationFileExport cfe = new ConfigurationFileExport (dpoeConfigFile,ConfigurationFileExport.DPOE_VER_20);
 		
+		//System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
+
+		
+		/*CONFIGURATION FILE OBJECT TO TEXT*/
+		ConfigurationFile cf = null;
 		try {
-			tb.add(hs);
+			cf = new ConfigurationFile(ConfigurationFile.DPOE_VER_20,cfe.getTlvBuilder());
+		} catch (TlvException e) {
+			e.printStackTrace();
+		}
+				
+		cfe = new ConfigurationFileExport (cf);
+		
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
+				
+		/*TlvBuilder to Text*/
+		
+		TlvBuilder tb = new TlvBuilder();
+		try {
+			tb.add(new HexString(cf.toByteArray()));
 		} catch (TlvException e) {
 			e.printStackTrace();
 		}
 		
-		ArrayList<byte[]> alb = (ArrayList<byte[]>) tb.sortByTopLevelTlv();
+		cfe = new ConfigurationFileExport (tb,ConfigurationFileExport.DPOE_VER_20);
 		
-		for (byte[] ba : alb) {
-			HexString hsTlv = new HexString(ba);
-			System.out.println(hsTlv.toString(":"));		
-		}
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
 		
-		
-		ConfigurationFileExport cfeDocsis = new ConfigurationFileExport (dpoeConfigFile,ConfigurationFileExport.DPOE_VER_20);
-		
-		System.out.println(cfeDocsis.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
-
 	}
 
 }

@@ -70,24 +70,24 @@ public class ConfigurationFileExport {
 	
 	public final String END_OF_CODE_BLOCK = "\\*EOCB*\\";
 	
-	public static final Integer DOCSIS_VER_10 = DocsisConstants.DOCSIS_10_CONFIGURATION_TYPE;
-	public static final Integer DOCSIS_VER_11 = DocsisConstants.DOCSIS_11_CONFIGURATION_TYPE;
-	public static final Integer DOCSIS_VER_20 = DocsisConstants.DOCSIS_20_CONFIGURATION_TYPE;
-	public static final Integer DOCSIS_VER_30 = DocsisConstants.DOCSIS_30_CONFIGURATION_TYPE;
-	public static final Integer DOCSIS_VER_31 = DocsisConstants.DOCSIS_31_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_10 	= DocsisConstants.DOCSIS_10_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_11 	= DocsisConstants.DOCSIS_11_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_20 	= DocsisConstants.DOCSIS_20_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_30 	= DocsisConstants.DOCSIS_30_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_31 	= DocsisConstants.DOCSIS_31_CONFIGURATION_TYPE;
 	
-	public static final Integer PKT_CBL_VER_10 = PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
-	public static final Integer PKT_CBL_VER_15 = PacketCableConstants.PKT_CABLE_15_CONFIGURATION_TYPE;
-	public static final Integer PKT_CBL_VER_20 = PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_10 	= PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_15 	= PacketCableConstants.PKT_CABLE_15_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_20 	= PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
 	
-	public static final Integer DPOE_VER_10 = DPoEConstants.DPOE_10_CONFIGURATION_TYPE;
-	public static final Integer DPOE_VER_20 = DPoEConstants.DPOE_20_CONFIGURATION_TYPE;
+	public static final Integer DPOE_VER_10 	= DPoEConstants.DPOE_10_CONFIGURATION_TYPE;
+	public static final Integer DPOE_VER_20 	= DPoEConstants.DPOE_20_CONFIGURATION_TYPE;
 	
 	public static final Boolean EXPORT_DEFAULT_TLV = true;
 	public static final Boolean EXPORT_FOUND_TLV = false;
 	
 	/**
-	 * 
+	 * @deprecated - This is no longer supported but will work Only support DOCSIS and PacketCable 
 	 * @param fTLV - Configuration File - Only support DOCSIS and PacketCable
 	 */
 	public ConfigurationFileExport (File fTLV) {
@@ -119,16 +119,16 @@ public class ConfigurationFileExport {
 	 * @param fTLV - Will Support all Configuration file Types: DOCSIS, PacketCable and DPoE
 	 * @param iConfigurationFileType - Set Configuration Type via Static FIELDS*/
 	public ConfigurationFileExport (File fTLV, int iConfigurationFileType) {
-		
-		JSONArray jaTlvDictionary = null;
 
+		boolean localDebug = Boolean.FALSE;
+		
 		this.bTLV = HexString.fileToByteArray(fTLV);
 		
 		this.iConfigurationFileType = iConfigurationFileType;
 		
 		if ((iConfigurationFileType >= DOCSIS_VER_10) && (iConfigurationFileType <= DOCSIS_VER_31)) {
 			
-			if (true) System.out.println("DOCSIS Configuration File");
+			if (localDebug) System.out.println("DOCSIS Configuration File");
 			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
@@ -136,7 +136,7 @@ public class ConfigurationFileExport {
 			
 		} else if ((iConfigurationFileType >= PKT_CBL_VER_10) && (iConfigurationFileType <= PKT_CBL_VER_20)) {
 			
-			if (true) System.out.println("PacketCable Configuration File");
+			if (localDebug) System.out.println("PacketCable Configuration File");
 			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			
@@ -144,7 +144,7 @@ public class ConfigurationFileExport {
 			
 		} else if ((iConfigurationFileType >= DPOE_VER_20) && (iConfigurationFileType <= DPOE_VER_20)) {
 			
-			if (true) System.out.println("DPoE Configuration File");
+			if (localDebug) System.out.println("DPoE Configuration File");
 
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
 			
@@ -159,7 +159,7 @@ public class ConfigurationFileExport {
 	/**
 	 * This constructor checks the first Byte to determine if it is a Packet Cable File or DOCSIS File
 	 * Byte = 0xFE = Packet Cable
-	 * 
+	 * @deprecated - This is no longer supported but will work Only support DOCSIS and PacketCable 
 	 * @param tbTLV - Will ONLY Support Configuration file Types: DOCSIS and PacketCable
 	 */
 	public ConfigurationFileExport (TlvBuilder tbTLV) {
@@ -196,6 +196,50 @@ public class ConfigurationFileExport {
 	
 	/**
 	 * 
+	 * @param tbTLV
+	 * @param iConfigurationFileType
+	 */
+	public ConfigurationFileExport (TlvBuilder tbTLV, int iConfigurationFileType) {
+		
+		boolean localDebug = Boolean.FALSE;
+		
+		//Convert to Byte Array
+		this.bTLV = tbTLV.toByteArray();
+		
+		this.iConfigurationFileType = iConfigurationFileType;
+		
+		if ((iConfigurationFileType >= DOCSIS_VER_10) && (iConfigurationFileType <= DOCSIS_VER_31)) {
+			
+			if (localDebug) System.out.println("DOCSIS Configuration File");
+			
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+			
+			init();
+			
+		} else if ((iConfigurationFileType >= PKT_CBL_VER_10) && (iConfigurationFileType <= PKT_CBL_VER_20)) {
+			
+			if (localDebug) System.out.println("PacketCable Configuration File");
+			
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+			
+			init();
+			
+		} else if ((iConfigurationFileType >= DPOE_VER_20) && (iConfigurationFileType <= DPOE_VER_20)) {
+			
+			if (localDebug) System.out.println("DPoE Configuration File");
+
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+			
+			init(iConfigurationFileType);
+		}
+				
+		//Build Dictionary
+		tlvToDictionary ();
+			
+	}	
+	
+	/**
+	 * @deprecated - This is no longer supported but will work Only support DOCSIS and PacketCable 
 	 * @param tbTLV
 	 * @param boolStripFinalize boolean
 	 */

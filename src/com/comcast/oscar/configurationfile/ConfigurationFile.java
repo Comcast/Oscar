@@ -496,8 +496,7 @@ public class ConfigurationFile {
 		    	
 		return true;
 	}
-	
-	
+		
 	/**
 	 *  Need to work on this
 	 * 
@@ -557,10 +556,15 @@ public class ConfigurationFile {
 	}
 	
 	/**
+	 * Removal of CM/CMTS MIC MD5 and BASIC.1 SHA-1 HASHS
+	 */
+	public void removeAllSecurityHash() {
+		
+	}
+	
+	/**
 	 * 
 	 * @param bTLV - ByteArray of TLV File
-	
-	
 	 * @return true = DOCSIS , false if PacketCable * @throws NullPointerException */
 	public static boolean configurationFileTypeCheck(byte[] bTLV) throws NullPointerException{
 		
