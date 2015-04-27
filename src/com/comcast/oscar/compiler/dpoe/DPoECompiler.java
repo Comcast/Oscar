@@ -22,7 +22,6 @@ import com.comcast.oscar.compiler.docsiscompiler.DocsisCompiler;
 
 
 public class DPoECompiler extends DocsisCompiler {
-
 	
 	private int iDPoEVersion = DPoEConstants.DPOE_10_CONFIGURATION_TYPE;
 	
@@ -32,6 +31,7 @@ public class DPoECompiler extends DocsisCompiler {
 	 */
 	public DPoECompiler(int iDPoEVersion) {		
 		super(iDPoEVersion);
+		this.iDPoEVersion = iDPoEVersion;
 	}
 	
 	/**
@@ -41,8 +41,16 @@ public class DPoECompiler extends DocsisCompiler {
 	 */
 	public DPoECompiler(String sSharedSecretKey , int iDPoEVersion) {		
 		super(sSharedSecretKey , iDPoEVersion);
+		this.iDPoEVersion = iDPoEVersion;
 	}
 	
+	/**
+	 * 
+	 * @return OSCAR Internal Version tracking
+	 */
+	public int getDPoEVersion() {
+		return this.iDPoEVersion;
+	}
 	
 	
 }
