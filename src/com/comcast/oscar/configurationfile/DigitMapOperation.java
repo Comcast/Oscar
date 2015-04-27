@@ -46,7 +46,7 @@ public class DigitMapOperation {
 	
 	private ConfigurationFileExport cfe = null;
 	
-	private ConfigrationFileImport cfi = null;
+	private ConfigurationFileImport cfi = null;
 	
 	private JSONArray jaTLV64 = null;
 	
@@ -65,7 +65,7 @@ public class DigitMapOperation {
 	 * 
 	 * @param cfi
 	 */
-	public DigitMapOperation(ConfigrationFileImport cfi) {
+	public DigitMapOperation(ConfigurationFileImport cfi) {
 		
 		this.cfi = cfi;
 		

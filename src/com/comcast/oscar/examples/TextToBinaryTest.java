@@ -21,7 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
@@ -51,7 +51,7 @@ public class TextToBinaryTest {
 			e2.printStackTrace();
 		}
 
-		ConfigrationFileImport cfiDocsis = null;
+		ConfigurationFileImport cfiDocsis = null;
 		
 		boolean DOCSIS 	= true, 
 				PC 		= false;
@@ -60,7 +60,7 @@ public class TextToBinaryTest {
 
 			try {
 				try {
-					cfiDocsis = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName("DOCSIS-US-FLOW.txt"));
+					cfiDocsis = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName("DOCSIS-US-FLOW.txt"));
 				} catch (ConfigrationFileException e) {
 					e.printStackTrace();
 				}
@@ -84,10 +84,10 @@ public class TextToBinaryTest {
 
 		if (PC) {
 			
-			ConfigrationFileImport cfiPacketCable = null;
+			ConfigurationFileImport cfiPacketCable = null;
 
 			try {
-				cfiPacketCable = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName("xxxx.txt"));
+				cfiPacketCable = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName("xxxx.txt"));
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

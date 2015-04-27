@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.tlv.TlvBuilder;
@@ -66,11 +66,11 @@ public class ConfigurationToBinaryToConfigurationTest {
 				e.printStackTrace();
 			}
 		
-			ConfigrationFileImport cfi = null;
+			ConfigurationFileImport cfi = null;
 
 			try {
 				try {
-					cfi = new ConfigrationFileImport(file);
+					cfi = new ConfigurationFileImport(file);
 				} catch (ConfigrationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -140,11 +140,11 @@ public class ConfigurationToBinaryToConfigurationTest {
 				e.printStackTrace();
 			}
 	
-			ConfigrationFileImport cfi = null;
+			ConfigurationFileImport cfi = null;
 
 			try {
 				try {
-					cfi = new ConfigrationFileImport(file);
+					cfi = new ConfigurationFileImport(file);
 				} catch (ConfigrationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

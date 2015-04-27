@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.tlv.TlvDisassemble;
@@ -46,7 +46,7 @@ public class JSONDumpDocsisTest {
 		File fDocsisText = null;		
 		File fDocsisBin = null;
 		TlvDisassemble tdDOCSIS = null;
-		ConfigrationFileImport cfiDOCSIS = null;
+		ConfigurationFileImport cfiDOCSIS = null;
 		
 		
 		
@@ -73,7 +73,7 @@ public class JSONDumpDocsisTest {
 
 			try {
 				try {
-					cfiDOCSIS = new ConfigrationFileImport(fDocsisText);
+					cfiDOCSIS = new ConfigurationFileImport(fDocsisText);
 				} catch (ConfigrationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

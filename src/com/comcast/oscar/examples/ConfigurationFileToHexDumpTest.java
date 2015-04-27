@@ -3,7 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
@@ -59,11 +59,11 @@ public class ConfigurationFileToHexDumpTest {
 
 			file = new File("c:" + File.separatorChar + "DocsisTestFile-131220.txt");			
 
-			ConfigrationFileImport cfi = null;
+			ConfigurationFileImport cfi = null;
 
 			try {
 				try {
-					cfi = new ConfigrationFileImport(file);
+					cfi = new ConfigurationFileImport(file);
 				} catch (ConfigrationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -97,11 +97,11 @@ public class ConfigurationFileToHexDumpTest {
 
 			file = new File("c:" + File.separatorChar + "PacketCable-2.0.txt");
 
-			ConfigrationFileImport cfi = null;
+			ConfigurationFileImport cfi = null;
 
 			try {
 				try {
-					cfi = new ConfigrationFileImport(file);
+					cfi = new ConfigurationFileImport(file);
 				} catch (ConfigrationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

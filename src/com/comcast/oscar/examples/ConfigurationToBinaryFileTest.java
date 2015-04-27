@@ -3,7 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
@@ -50,11 +50,11 @@ public class ConfigurationToBinaryFileTest {
 		
 			file = new File("c:" + File.separatorChar + "testfiles" + File.separatorChar + "DOCSIS-GOLDEN.txt");
 			
-			ConfigrationFileImport cfi = null;
+			ConfigurationFileImport cfi = null;
 
 			try {
 				try {
-					cfi = new ConfigrationFileImport(file);
+					cfi = new ConfigurationFileImport(file);
 				} catch (ConfigrationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -88,11 +88,11 @@ public class ConfigurationToBinaryFileTest {
 			file = new File("c:" + File.separatorChar + "PacketCable-2.0.txt");
 			String sConfigurationFileName = "c:" + File.separatorChar + "config" + File.separatorChar + "PacketCable-2.0.bin";
 			
-			ConfigrationFileImport cfi = null;
+			ConfigurationFileImport cfi = null;
 
 			try {
 				try {
-					cfi = new ConfigrationFileImport(file);
+					cfi = new ConfigurationFileImport(file);
 				} catch (ConfigrationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

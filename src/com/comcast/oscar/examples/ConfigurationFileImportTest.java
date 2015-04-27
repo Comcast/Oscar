@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 
@@ -49,11 +49,11 @@ public class ConfigurationFileImportTest {
 			e1.printStackTrace();
 		}
 		
-		ConfigrationFileImport 	cfiDocsisConfig = null;
+		ConfigurationFileImport 	cfiDocsisConfig = null;
 		
 		try {
 			try {
-				cfiDocsisConfig = new ConfigrationFileImport(file);
+				cfiDocsisConfig = new ConfigurationFileImport(file);
 			} catch (ConfigrationFileException e) {
 				e.printStackTrace();
 			}

@@ -10,7 +10,7 @@ import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvBuilder;
@@ -175,10 +175,10 @@ public class BulkBuild {
 		
 		if (HexString.verifyAsciiPlainText(bConfigurationFile)) {
 			
-			ConfigrationFileImport cfi = null;
+			ConfigurationFileImport cfi = null;
 			
 			try {
-				cfi = new ConfigrationFileImport(bConfigurationFile);
+				cfi = new ConfigurationFileImport(bConfigurationFile);
 			} catch (NullPointerException e) {
 				e.printStackTrace();
 			} catch (ConfigrationFileException e) {
@@ -213,11 +213,11 @@ public class BulkBuild {
 	 */
 	public boolean textToBinary (File fTextInput , File fBinOutput , String sSharedSecretKey) {
 				
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
 			try {
-				cfi = new ConfigrationFileImport(fTextInput);
+				cfi = new ConfigurationFileImport(fTextInput);
 			} catch (ConfigrationFileException e) {
 				e.printStackTrace();
 			}

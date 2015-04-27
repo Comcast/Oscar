@@ -3,7 +3,7 @@ package com.comcast.oscar.examples.defects;
 import java.io.FileNotFoundException;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.test.TestDirectoryStructure;
@@ -33,9 +33,9 @@ public class PrettyPrint_Issue_11_v2 {
 		/***************************
 		 * Text to Binary
 		 ***************************/
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName("Issue-11-Parsing-Error-v2.txt"));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName("Issue-11-Parsing-Error-v2.txt"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (ConfigrationFileException e) {

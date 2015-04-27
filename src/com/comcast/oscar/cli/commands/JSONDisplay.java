@@ -8,7 +8,7 @@ import org.apache.commons.cli.OptionBuilder;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.tlv.TlvDisassemble;
 import com.comcast.oscar.tlv.TlvException;
 
@@ -75,11 +75,11 @@ public class JSONDisplay {
 	public void printJSONDisplayFromText(File file, String tlvDisassemble) 
 	{
 		TlvDisassemble td = null;
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 		
 		try 
 		{
-			cfi = new ConfigrationFileImport(file);
+			cfi = new ConfigurationFileImport(file);
 		} 
 		catch (FileNotFoundException e) 
 		{

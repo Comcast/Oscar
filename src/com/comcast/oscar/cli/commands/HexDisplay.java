@@ -8,7 +8,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
@@ -119,10 +119,10 @@ public class HexDisplay {
 	 */
 	public void printHexDisplayFromText(File file, int configurationFileType) 
 	{
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 		try 
 		{
-			cfi = new ConfigrationFileImport(file);
+			cfi = new ConfigurationFileImport(file);
 		} 
 		catch (FileNotFoundException e1) 
 		{

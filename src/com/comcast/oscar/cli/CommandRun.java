@@ -37,7 +37,7 @@ import com.comcast.oscar.cli.commands.TLVtoJSON;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.constants.Constants;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
@@ -524,11 +524,11 @@ public class CommandRun {
 			} 
 			else 
 			{
-				ConfigrationFileImport cfi = null;
+				ConfigurationFileImport cfi = null;
 
 				try 
 				{
-					cfi = new ConfigrationFileImport(comInput.getInput());
+					cfi = new ConfigurationFileImport(comInput.getInput());
 				} 
 				catch (FileNotFoundException e) 
 				{

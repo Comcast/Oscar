@@ -48,14 +48,11 @@ import com.comcast.oscar.utilities.HexString;
  * ConfigrationFileImport takes a OSCAR ASCII Compliant configuration file and convert to its JSON TLV Dictionary
  * 
  */
-public class ConfigrationFileImport {
+public class ConfigurationFileImport {
 	
-	private StringBuilder sbConfiguration = null;
-	
-	private TlvConfigurationFileParser tcfpConfig = null;
-	
-	private JSONArray jaTlvDefinition = new JSONArray();
-	
+	private StringBuilder sbConfiguration = null;	
+	private TlvConfigurationFileParser tcfpConfig = null;	
+	private JSONArray jaTlvDefinition = new JSONArray();	
 	private int iConfigurationFileType = -1;
 	
 	public static final Integer DOCSIS_VER_10 = DocsisConstants.DOCSIS_10_CONFIGURATION_TYPE;
@@ -75,7 +72,7 @@ public class ConfigrationFileImport {
 	 * 
 	 * @param sbConfiguration
 	 */
- 	public ConfigrationFileImport(StringBuilder sbConfiguration) {
+ 	public ConfigurationFileImport(StringBuilder sbConfiguration) {
 
 		this.sbConfiguration = sbConfiguration;
 		
@@ -88,7 +85,7 @@ public class ConfigrationFileImport {
 	
 	 * @throws FileNotFoundException * @throws ConfigrationFileException
 	 */
-	public ConfigrationFileImport (File fConfigfile) throws FileNotFoundException , ConfigrationFileException {
+	public ConfigurationFileImport (File fConfigfile) throws FileNotFoundException , ConfigrationFileException {
 	
 		//Check to see if file is a ASCII
 		if (!HexString.verifyAsciiPlainText(HexString.fileToByteArray(fConfigfile)))  {
@@ -110,7 +107,7 @@ public class ConfigrationFileImport {
 	
 	
 	 * @throws NullPointerException * @throws ConfigrationFileException  */
-	public ConfigrationFileImport (byte[] bConfigfile) throws NullPointerException, ConfigrationFileException {
+	public ConfigurationFileImport (byte[] bConfigfile) throws NullPointerException, ConfigrationFileException {
 		
 		if (bConfigfile == null)
 			throw new NullPointerException("ConfigrationFileImport() - ByteArray is null");

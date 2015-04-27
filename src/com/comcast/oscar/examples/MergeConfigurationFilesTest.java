@@ -23,7 +23,7 @@ import java.io.FileNotFoundException;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
@@ -51,12 +51,12 @@ public class MergeConfigurationFilesTest {
 		String SHARED_SECRET = "SHAREDSECRET";
 		
 		//Template File
-		ConfigrationFileImport cfiTemplate = null;
+		ConfigurationFileImport cfiTemplate = null;
 		ConfigurationFileExport cfeTemplate = null;
 		TlvBuilder tbTemplate = null;
 		
 		//Input File
-		ConfigrationFileImport cfiInput = null;
+		ConfigurationFileImport cfiInput = null;
 		ConfigurationFileExport cfeInput = null;
 		TlvBuilder tbInput = null;
 		
@@ -69,7 +69,7 @@ public class MergeConfigurationFilesTest {
 		if (HexString.verifyAsciiPlainText(HexString.fileToByteArray(fInput))){
 			
 			try {
-				cfiInput = new ConfigrationFileImport(fInput);
+				cfiInput = new ConfigurationFileImport(fInput);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (ConfigrationFileException e) {
@@ -99,7 +99,7 @@ public class MergeConfigurationFilesTest {
 		if (HexString.verifyAsciiPlainText(HexString.fileToByteArray(fTemplate))){
 			
 			try {
-				cfiTemplate = new ConfigrationFileImport(fTemplate);
+				cfiTemplate = new ConfigurationFileImport(fTemplate);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (ConfigrationFileException e) {

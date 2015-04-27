@@ -1,6 +1,6 @@
 package com.comcast.oscar.examples.defects;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.test.TestDirectoryStructure;
@@ -30,7 +30,7 @@ public class PrettyPrint_Issue_11 {
 		
 		String sPrettyPrintConfig = "";
 		ConfigurationFileExport cfe = null;
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 		
 		/***************************
 		 * Binary to Text
@@ -51,7 +51,7 @@ public class PrettyPrint_Issue_11 {
 		/***************************
 		 * Text to Binary
 		 ***************************/	
-		cfi = new ConfigrationFileImport(new StringBuilder(sPrettyPrintConfig));		
+		cfi = new ConfigurationFileImport(new StringBuilder(sPrettyPrintConfig));		
 		ConfigurationFile cf = new ConfigurationFile(ConfigurationFile.DOCSIS_VER_30,cfi.getTlvBuilder());	
 		
 		cfe =  new ConfigurationFileExport (cf);

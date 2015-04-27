@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.DigitMapOperation;
 
 /*
@@ -80,11 +80,11 @@ public class DigitMapFromPacketCableFileTest {
 				e.printStackTrace();
 			}
 
-			ConfigrationFileImport cfiPacketCable = null;
+			ConfigurationFileImport cfiPacketCable = null;
 
 			try {
 				try {
-					cfiPacketCable = new ConfigrationFileImport (fPacketCableTxt);
+					cfiPacketCable = new ConfigurationFileImport (fPacketCableTxt);
 				} catch (ConfigrationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

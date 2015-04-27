@@ -12,7 +12,7 @@ public class TlvDumpTest {
 	public static void main(String[] args) {
 
 		
-		HexString hs = new HexString(HexString.fileToByteArray(TestDirectoryStructure.fInputDirFileName("bsod.cm")));
+		HexString hs = new HexString(HexString.fileToByteArray(TestDirectoryStructure.fOutputDirFileName("DPoE-1-Test.bin")));
 
 		TlvBuilder tb = new TlvBuilder();
 		

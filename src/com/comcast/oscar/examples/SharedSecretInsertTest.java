@@ -24,7 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
@@ -57,11 +57,11 @@ public class SharedSecretInsertTest {
 			e1.printStackTrace();
 		}
 		
-		ConfigrationFileImport cfiDocsis = null;
+		ConfigurationFileImport cfiDocsis = null;
 
 		try {
 			try {
-				cfiDocsis = new ConfigrationFileImport(fDocsisText);
+				cfiDocsis = new ConfigurationFileImport(fDocsisText);
 			} catch (ConfigrationFileException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

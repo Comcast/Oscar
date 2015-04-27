@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.tlv.TlvDisassemble;
@@ -46,7 +46,7 @@ public class JSONDumpPacketCableTest {
 		File fPacketCableTxt = null;
 		File fPacketCableBin = null;
 		
-		ConfigrationFileImport cfiPacketCable = null;
+		ConfigurationFileImport cfiPacketCable = null;
 	
 		try {
 			SMIManagerService.SmiManagerStart();
@@ -70,7 +70,7 @@ public class JSONDumpPacketCableTest {
 
 			try {
 				try {
-					cfiPacketCable = new ConfigrationFileImport(fPacketCableTxt);
+					cfiPacketCable = new ConfigurationFileImport(fPacketCableTxt);
 				} catch (ConfigrationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

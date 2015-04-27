@@ -13,7 +13,7 @@ import org.snmp4j.smi.OID;
 
 import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.cablelabsdefinitions.Constants;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 
@@ -66,7 +66,7 @@ public class TlvBuilder implements TlvBuild {
 	 * 
 	 * @param cfi
 	 */
-	public void add (ConfigrationFileImport cfi) {
+	public void add (ConfigurationFileImport cfi) {
 				
 		try {
 			add(new HexString(cfi.toByteArray()));
