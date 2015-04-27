@@ -15,4 +15,6 @@
 #########################################################################################
 mkdir TlvParser
 java -jar antlr-4.1-complete.jar -o TlvParser tlv.g4
- 
+
+java -jar C:\Users\mgarci00\Documents\Workspace\Oscar\lib\antlr-4.1-complete.jar -o C:\Users\mgarci00\Documents\Workspace\Oscar\src\com\comcast\oscar\parser C:\Users\mgarci00\Documents\Workspace\Oscar\ANTLR\grammar\tlv.g4
+
