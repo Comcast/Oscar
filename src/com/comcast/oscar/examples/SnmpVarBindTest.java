@@ -52,6 +52,8 @@ public class SnmpVarBindTest {
 	        stringBuilder.append( line );
 	        stringBuilder.append( ls );
 	    }
+	    
+	    reader.close();
 
 	    return stringBuilder.toString();
 	}

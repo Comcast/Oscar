@@ -39,6 +39,7 @@ public class MergeConfigurationFilesTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {	
 
 		try {

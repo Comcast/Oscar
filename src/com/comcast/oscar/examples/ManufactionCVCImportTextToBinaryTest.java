@@ -42,6 +42,7 @@ public class ManufactionCVCImportTextToBinaryTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		try {
@@ -107,7 +108,7 @@ public class ManufactionCVCImportTextToBinaryTest {
 
 		System.out.println("+-------------------------------------------AFTER CVC INSERTION-----------------------------------------------------------------+");
 
-		ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport(cf.toByteArray());
+		ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport(cf);
 
 		System.out.println(cfeDOCTLV.toPrettyPrint(0));
 

@@ -32,6 +32,7 @@ public class DigitMapFromPacketCableFileTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		File fPacketCableBin = null;

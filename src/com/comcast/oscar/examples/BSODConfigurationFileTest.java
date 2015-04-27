@@ -10,6 +10,7 @@ import com.comcast.oscar.test.TestDirectoryStructure;
 
 public class BSODConfigurationFileTest {
 
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		ConfigurationFileImport cfi = null;

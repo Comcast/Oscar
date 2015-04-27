@@ -46,6 +46,7 @@ public class InsertDigitMapToConfigurationBinaryTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		boolean debug = Boolean.FALSE;
@@ -79,7 +80,7 @@ public class InsertDigitMapToConfigurationBinaryTest {
 		byte[] bDigitMap = HexString.fileToByteArray(fDigitMap);
 		
 		//Need to get the JSON Dictionary Object, in this case, we need to use Snmp64
-		DictionarySQLQueries dsqSnmp64 = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+		DictionarySQLQueries dsqSnmp64 = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 		
 		//Get JSON Dictionary Object
 		JSONObject joDictSnmp64 = dsqSnmp64.getTlvDictionary(64);
@@ -202,7 +203,7 @@ public class InsertDigitMapToConfigurationBinaryTest {
 		cfSnmp64.add(taSnmp64);
 		
 		ConfigurationFileExport cfeSnmp64Insert = new ConfigurationFileExport(cfSnmp64);
-		
+
 		System.out.println(cfeSnmp64Insert.toPrettyPrint(0));	
 				
 	}

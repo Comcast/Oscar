@@ -38,6 +38,7 @@ public class JSONDumpDocsisTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		boolean TEXT = true;

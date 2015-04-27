@@ -36,6 +36,7 @@ public class ConfigurationToBinaryToConfigurationTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		boolean DOCSIS = true;
