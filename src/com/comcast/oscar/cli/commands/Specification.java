@@ -39,7 +39,7 @@ public class Specification {
 	 */
 	public static final Option OptionParameters() 
 	{
-		OptionBuilder.withArgName("d{ocsis}/p{acketcable}> <version");
+		OptionBuilder.withArgName("d{ocsis}|p{acketcable}|dp{oe}> <version");
 		OptionBuilder.hasArgs();
 		OptionBuilder.hasOptionalArgs();
 		OptionBuilder.withValueSeparator(' ');
@@ -89,7 +89,7 @@ public class Specification {
 			{
 				this.iConfigurationFileType = ConfigurationFileTypeConstants.DOCSIS_30_CONFIGURATION_TYPE;
 			}
-			if (sVersion.equalsIgnoreCase("3.1") || sVersion.equalsIgnoreCase("11")) 
+			if (sVersion.equalsIgnoreCase("3.1") || sVersion.equalsIgnoreCase("31")) 
 			{
 				this.iConfigurationFileType = ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE;
 			}
