@@ -14,9 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
-import com.comcast.oscar.compiler.dpoe.DPoEConstants;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
 import com.comcast.oscar.parser.TlvConfigurationFileParser;
 import com.comcast.oscar.parser.tlvLexer;
 import com.comcast.oscar.parser.tlvParser;

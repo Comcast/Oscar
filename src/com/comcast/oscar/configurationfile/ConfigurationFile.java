@@ -18,8 +18,6 @@ import net.lingala.zip4j.util.Zip4jConstants;
 import com.comcast.oscar.ber.BEROIDConversion;
 import com.comcast.oscar.ber.OIDCollectionDuplicationValidation;
 import com.comcast.oscar.compiler.docsiscompiler.DocsisCompiler;
-import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
-import com.comcast.oscar.compiler.dpoe.DPoEConstants;
 import com.comcast.oscar.compiler.packetcablecompiler.PacketCableCompiler;
 import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;
