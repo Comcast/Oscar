@@ -137,13 +137,13 @@ public class ConfigurationFileExport {
 
 			if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
 				
-				if (localDebug) System.out.println("Packet Cable Configuration File");
+				if (localDebug) System.out.println("Packet Cable Configuration File - Anonomous - ConfigType -> (" + iConfigurationFileType + ")");
 				
 				dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 							
 			} else {
 				
-				if (localDebug) System.out.println("DOCSIS Configuration File");
+				if (localDebug) System.out.println("DOCSIS Configuration File - Anonomous - ConfigType -> (" + iConfigurationFileType + ")");
 				
 				dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			}
@@ -152,7 +152,7 @@ public class ConfigurationFileExport {
 			
 		} else if ((iConfigurationFileType >= DOCSIS_VER_10) && (iConfigurationFileType <= DOCSIS_VER_31)) {
 			
-			if (localDebug) System.out.println("DOCSIS Configuration File");
+			if (localDebug) System.out.println("DOCSIS Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
 			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
@@ -160,7 +160,7 @@ public class ConfigurationFileExport {
 			
 		} else if ((iConfigurationFileType >= PKT_CBL_VER_10) && (iConfigurationFileType <= PKT_CBL_VER_20)) {
 			
-			if (localDebug) System.out.println("PacketCable Configuration File");
+			if (localDebug) System.out.println("PacketCable Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
 			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			
@@ -168,7 +168,7 @@ public class ConfigurationFileExport {
 			
 		} else if ((iConfigurationFileType >= DPOE_VER_20) && (iConfigurationFileType <= DPOE_VER_20)) {
 			
-			if (localDebug) System.out.println("DPoE Configuration File");
+			if (localDebug) System.out.println("DPoE Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
 
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
 			
@@ -328,20 +328,35 @@ public class ConfigurationFileExport {
 	 */
 	public ConfigurationFileExport (ConfigurationFile cfConfigurationFile) {
 		
+		boolean localDebug = Boolean.FALSE;
+		
 		//Convert to Byte Array
 		this.bTLV = cfConfigurationFile.toByteArray();
 		
 		//Check for DPoE Type Configuration File
-		if ((cfConfigurationFile.getConfigurationFileType() >= DPOE_VER_20) || (cfConfigurationFile.getConfigurationFileType() <= DPOE_VER_20)) {
+		if ((cfConfigurationFile.getConfigurationFileType() >= DPOE_VER_20) && (cfConfigurationFile.getConfigurationFileType() <= DPOE_VER_20)) {
+			
+			if (localDebug) System.out.println("DPoE Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
+			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+		
 			init(cfConfigurationFile.getConfigurationFileType());				
+		
 		} else {
 			
-			if (bTLV[0] == PacketCableConstants.FILE_MARKER) {			
+			if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
+				
+				if (localDebug) System.out.println("PacketCable Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
+				
 				dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+				
 				init();			
-			} else {			
+			} else {
+				
+				if (localDebug) System.out.println("DOCSIS Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
+				
 				dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+				
 				init();
 			}
 			
