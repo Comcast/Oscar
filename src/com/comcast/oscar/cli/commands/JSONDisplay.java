@@ -50,10 +50,10 @@ public class JSONDisplay {
 	 * @param file
 	 * @param tlvDisassemble
 	 */
-	public void printJSONDisplayFromBinary(File file, String tlvDisassemble) 
+	public void printJSONDisplayFromBinary(File file, String tlvDisassemble, int configurationFileType) 
 	{
 		TlvDisassemble td = null;
-		ConfigurationFileExport cfe = new ConfigurationFileExport(file);
+		ConfigurationFileExport cfe = new ConfigurationFileExport(file, configurationFileType);
 
 		try 
 		{

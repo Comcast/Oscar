@@ -372,7 +372,7 @@ public class CommandRun {
 	        	{
 	        		if (comInput.isBinary()) 
 	        		{
-	        			comJSONDisplay.printJSONDisplayFromBinary(comInput.getInput(), comSpecification.getTlvDisassemble());
+	        			comJSONDisplay.printJSONDisplayFromBinary(comInput.getInput(), comSpecification.getTlvDisassemble(), comSpecification.getConfigurationFileType());
 	        		} 
 	        		else 
 	        		{
@@ -470,7 +470,7 @@ public class CommandRun {
 		{
 			if (comInput.isBinary()) 
 			{
-				ConfigurationFileExport cfe = new ConfigurationFileExport(comInput.getInput());	
+				ConfigurationFileExport cfe = new ConfigurationFileExport(comInput.getInput(), comSpecification.getConfigurationFileType());	
 				ConfigurationFile cf = null;
 								
 				try 
@@ -511,7 +511,7 @@ public class CommandRun {
 			
 			if(comInput.isBinary()) 
 			{		
-				ConfigurationFileExport cfe = new ConfigurationFileExport(comInput.getInput());
+				ConfigurationFileExport cfe = new ConfigurationFileExport(comInput.getInput(),comSpecification.getConfigurationFileType());
 				
 				try 
 				{

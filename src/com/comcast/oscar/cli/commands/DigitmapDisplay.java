@@ -50,7 +50,7 @@ public class DigitmapDisplay {
 	 */
 	public void printDigitmapDisplayFromBinary(File file) 
 	{
-		ConfigurationFileExport cfePacketCable = new ConfigurationFileExport(file);	
+		ConfigurationFileExport cfePacketCable = new ConfigurationFileExport(file, ConfigurationFileExport.DOCSIS_PKTCBL);	
 		DigitMapOperation dmo = new DigitMapOperation(cfePacketCable);
 		System.out.println(dmo.getDigitMap());
 	}
