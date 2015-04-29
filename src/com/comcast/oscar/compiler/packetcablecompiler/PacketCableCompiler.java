@@ -10,6 +10,7 @@ import java.util.List;
 import org.snmp4j.asn1.BER;
 import org.snmp4j.smi.OID;
 
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
@@ -489,19 +490,19 @@ public class PacketCableCompiler extends TlvBuilder {
 		TlvBuilder tbTlvSHA1 = new TlvBuilder();
 		
 		//Select Correct Packet Cable Version
-		if (iPacketCableVersion == PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE) {
+		if (iPacketCableVersion == ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE) {
 			
 			tbTlvSHA1.add(	PacketCableConstants.SNMP_TLV_11, 
 							new OID(PacketCableConstants.PKT_CABLE_10_BASIC_AUTH_OID), 
 							BER.OCTETSTRING, bSHA1);
 		
-		} else if (iPacketCableVersion == PacketCableConstants.PKT_CABLE_15_CONFIGURATION_TYPE) {
+		} else if (iPacketCableVersion == ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE) {
 		
 			tbTlvSHA1.add(	PacketCableConstants.SNMP_TLV_11, 
 							new OID(PacketCableConstants.PKT_CABLE_15_BASIC_AUTH_OID), 
 							BER.OCTETSTRING, bSHA1);
 		
-		} else if (iPacketCableVersion == PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE) {
+		} else if (iPacketCableVersion == ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE) {
 		
 			tbTlvSHA1.add(	PacketCableConstants.SNMP_TLV_11, 
 							new OID(PacketCableConstants.PKT_CABLE_20_BASIC_AUTH_OID), 

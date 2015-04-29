@@ -23,12 +23,6 @@ import com.comcast.oscar.constants.Constants;
 
 public class DocsisConstants {
 	
-	public static final Integer DOCSIS_10_CONFIGURATION_TYPE 	= Constants.DOCSIS_10_CONFIGURATION_TYPE;
-	public static final Integer DOCSIS_11_CONFIGURATION_TYPE 	= Constants.DOCSIS_11_CONFIGURATION_TYPE;
-	public static final Integer DOCSIS_20_CONFIGURATION_TYPE 	= Constants.DOCSIS_20_CONFIGURATION_TYPE;
-	public static final Integer DOCSIS_30_CONFIGURATION_TYPE 	= Constants.DOCSIS_30_CONFIGURATION_TYPE;
-	public static final Integer DOCSIS_31_CONFIGURATION_TYPE 	= Constants.DOCSIS_31_CONFIGURATION_TYPE;
-	
 	public static final byte 	EOF 		= (byte) 0xFF;
 	
 }

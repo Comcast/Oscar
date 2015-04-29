@@ -1,6 +1,7 @@
 package com.comcast.oscar.compiler.dpoe;
 
 import com.comcast.oscar.compiler.docsiscompiler.DocsisCompiler;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 
 /**
  * @bannerLicense
@@ -23,7 +24,7 @@ import com.comcast.oscar.compiler.docsiscompiler.DocsisCompiler;
 
 public class DPoECompiler extends DocsisCompiler {
 	
-	private int iDPoEVersion = DPoEConstants.DPOE_10_CONFIGURATION_TYPE;
+	private int iDPoEVersion = ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
 	
 	/**
 	 * 

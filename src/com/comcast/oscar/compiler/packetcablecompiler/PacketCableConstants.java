@@ -22,10 +22,6 @@ import com.comcast.oscar.constants.Constants;
 
 
 public class PacketCableConstants {
-
-	public static final int	PKT_CABLE_10_CONFIGURATION_TYPE = Constants.PKT_CABLE_10_CONFIGURATION_TYPE;
-	public static final int	PKT_CABLE_15_CONFIGURATION_TYPE = Constants.PKT_CABLE_15_CONFIGURATION_TYPE;
-	public static final int	PKT_CABLE_20_CONFIGURATION_TYPE = Constants.PKT_CABLE_20_CONFIGURATION_TYPE;
 	
 	public static final byte FILE_MARKER 	=	(byte)0xFE;
 	public static final byte START_OF_FILE 	= 	(byte)0x01;
