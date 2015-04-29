@@ -29,16 +29,16 @@ public class ConfigurationFileBuildCLIUnitTest {
 		
 		ConfigurationFileBuildCLITestMethods cfbctm = new ConfigurationFileBuildCLITestMethods();
 		//cfbctm.PrintVAR();
-		cfbctm.BinaryToBinaryDOCSIS();
-		cfbctm.BinaryToBinaryDOCSIS_TLV_MaxCPE_Firmware_Man_CoSignCVC();
-		cfbctm.BinaryToBinaryPacketCable();
+		//cfbctm.BinaryToBinaryDOCSIS();
+		//cfbctm.BinaryToBinaryDOCSIS_TLV_MaxCPE_Firmware_Man_CoSignCVC();
+		//cfbctm.BinaryToBinaryPacketCable();
 		cfbctm.BinaryToTextDOCSIS();
-		cfbctm.BinaryToTextDOCSIS_TLV_MaxCPE_Firmware_Man_CoSignCVC();
-		cfbctm.BinaryToTextDOCSISCoSignCVC();
-		cfbctm.BinaryToTextDOCSISFirmwareFileName();
-		cfbctm.BinaryToTextDOCSISManCVC();
-		cfbctm.BinaryToTextDOCSISMaxCPE();
-		cfbctm.BinaryToTextPacketCable();
+		//cfbctm.BinaryToTextDOCSIS_TLV_MaxCPE_Firmware_Man_CoSignCVC();
+		//cfbctm.BinaryToTextDOCSISCoSignCVC();
+		//cfbctm.BinaryToTextDOCSISFirmwareFileName();
+		//cfbctm.BinaryToTextDOCSISManCVC();
+		//cfbctm.BinaryToTextDOCSISMaxCPE();
+		//cfbctm.BinaryToTextPacketCable();
 		//cfbctm.BinaryToTextPacketCableInsertDigitMap();
 		//cfbctm.PrintDefaultDOCSISConfigurationTemplate();
 		//cfbctm.PrintDefaultPacketCableConfigurationTemplate();
