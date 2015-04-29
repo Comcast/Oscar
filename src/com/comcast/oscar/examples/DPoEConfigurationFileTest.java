@@ -20,7 +20,7 @@ public class DPoEConfigurationFileTest {
 		
 		ConfigurationFileExport cfe = new ConfigurationFileExport (dpoeConfigFile,ConfigurationFileExport.DPOE_VER_20);
 		
-		//System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
 
 		
 		/*CONFIGURATION FILE OBJECT TO TEXT*/
@@ -33,7 +33,7 @@ public class DPoEConfigurationFileTest {
 				
 		cfe = new ConfigurationFileExport (cf);
 		
-		//System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
 				
 		/*TlvBuilder to Text*/
 		
@@ -46,7 +46,7 @@ public class DPoEConfigurationFileTest {
 		
 		cfe = new ConfigurationFileExport (tb,ConfigurationFileExport.DPOE_VER_20);
 		
-		//System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
 		
 		/*Text to Text*/		
 		ConfigurationFileImport cfi = new ConfigurationFileImport(new StringBuilder(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV)));
@@ -55,7 +55,7 @@ public class DPoEConfigurationFileTest {
 		
 		cfe = new ConfigurationFileExport (cf);
 		
-		//System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
 		
 		/*Text To Binary*/
 		cfi = new ConfigurationFileImport(new StringBuilder(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV)));
