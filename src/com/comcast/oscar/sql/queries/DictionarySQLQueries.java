@@ -16,6 +16,7 @@ import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
 import com.comcast.oscar.compiler.dpoe.DPoEConstants;
 import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.sql.SqlConnection;
 import com.comcast.oscar.tlv.dictionary.Dictionary;
 
@@ -43,9 +44,9 @@ public class DictionarySQLQueries extends SqlConnection {
 	public static final String PACKET_CABLE_DICTIONARY_TABLE_NAME 		= DictionarySQLConstants.PACKET_CABLE__DICTIONARY_TABLE_NAME;
 	public static final String DPOE_DICTIONARY_TABLE_NAME 				= DictionarySQLConstants.DPOE_DICTIONARY_TABLE_NAME;
 	
-	public static final Integer CONFIGURATION_FILE_TYPE_DOCSIS 			= DocsisConstants.DOCSIS_10_CONFIGURATION_TYPE;
-	public static final Integer CONFIGURATION_FILE_TYPE_PACKET_CABLE 	= PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
-	public static final Integer CONFIGURATION_FILE_TYPE_DPOE 			= DPoEConstants.DPOE_10_CONFIGURATION_TYPE;
+	public static final Integer CONFIGURATION_FILE_TYPE_DOCSIS 			= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE;
+	public static final Integer CONFIGURATION_FILE_TYPE_PACKET_CABLE 	= ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
+	public static final Integer CONFIGURATION_FILE_TYPE_DPOE 			= ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
 	
 	private static final Integer TOP_LEVEL_TLV = 0;
 	
@@ -233,7 +234,7 @@ public class DictionarySQLQueries extends SqlConnection {
 			}
 
 
-		} else if (PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE == iCableLabsConfigType) {
+		} else if (ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE == iCableLabsConfigType) {
 			
 			for (int tlvCounter = Constants.DOCSIS_TLV_MIN ; tlvCounter <= Constants.DOCSIS_TLV_MAX ; tlvCounter++) {
 				
@@ -245,7 +246,7 @@ public class DictionarySQLQueries extends SqlConnection {
 				jsonArrTlvDictionary.put(getTlvDefinition(tlvCounter));
 			}
 			
-		} else if (PacketCableConstants.PKT_CABLE_15_CONFIGURATION_TYPE == iCableLabsConfigType) {
+		} else if (ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE == iCableLabsConfigType) {
 			
 			for (int tlvCounter = Constants.DOCSIS_TLV_MIN ; tlvCounter <= Constants.DOCSIS_TLV_MAX ; tlvCounter++) {
 				
@@ -257,7 +258,7 @@ public class DictionarySQLQueries extends SqlConnection {
 				jsonArrTlvDictionary.put(getTlvDefinition(tlvCounter));
 			}
 			
-		} else if (PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE == iCableLabsConfigType) {
+		} else if (ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE == iCableLabsConfigType) {
 			
 			for (int tlvCounter = Constants.DOCSIS_TLV_MIN ; tlvCounter <= Constants.DOCSIS_TLV_MAX ; tlvCounter++) {
 				

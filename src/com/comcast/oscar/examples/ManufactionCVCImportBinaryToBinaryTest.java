@@ -24,6 +24,7 @@ import java.io.IOException;
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.tlv.TlvBuilder;
@@ -102,7 +103,7 @@ public class ManufactionCVCImportBinaryToBinaryTest {
 		
 		ConfigurationFile cfDocsis = null;
 		
-		cfDocsis = new ConfigurationFile(	DocsisConstants.DOCSIS_31_CONFIGURATION_TYPE,
+		cfDocsis = new ConfigurationFile(	ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE,
 											tb,
 											sSharedSecret);
 		cfDocsis.commit();
