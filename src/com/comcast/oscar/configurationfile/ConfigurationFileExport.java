@@ -19,7 +19,6 @@ import org.snmp4j.asn1.BER;
 
 import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
-import com.comcast.oscar.compiler.dpoe.DPoEConstants;
 import com.comcast.oscar.compiler.packetcablecompiler.PacketCableCompiler;
 import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
 import com.comcast.oscar.constants.Constants;
