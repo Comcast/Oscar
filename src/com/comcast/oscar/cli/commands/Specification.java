@@ -112,7 +112,28 @@ public class Specification {
 			{
 				this.iConfigurationFileType = ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
 			}
-		} 
+		}
+		else if (sSpecification.equalsIgnoreCase("de") || sSpecification.equalsIgnoreCase("dpoe")) 
+		{
+			this.iConfigurationFileType = -1;
+			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
+			this.boolPacketCable = true;
+			
+			if (sVersion.equalsIgnoreCase("1")|| sVersion.equalsIgnoreCase("1.0")) 
+			{
+				this.iConfigurationFileType = ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
+			}
+			if (sVersion.equalsIgnoreCase("2") || sVersion.equalsIgnoreCase("2.0")) 
+			{
+				this.iConfigurationFileType = ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE;
+			}
+		}
+		else if (sSpecification.equalsIgnoreCase("dg") || sSpecification.equalsIgnoreCase("dpog")) 
+		{
+			this.iConfigurationFileType = ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE;
+			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
+			this.boolPacketCable = true;
+		}
 		else if (sSpecification.equalsIgnoreCase("d1") 
 				|| sSpecification.equalsIgnoreCase("docsis1") 
 				|| sSpecification.equalsIgnoreCase("d1.0") 
@@ -190,6 +211,30 @@ public class Specification {
 			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_PACKET_CABLE;
 			this.boolPacketCable = true;
 		} 
+		else if (sSpecification.equalsIgnoreCase("de1") 
+				|| sSpecification.equalsIgnoreCase("de1.0") 
+				|| sSpecification.equalsIgnoreCase("dpoe1") 
+				|| sSpecification.equalsIgnoreCase("dpoe1.0"))
+		{
+			this.iConfigurationFileType = ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
+			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
+		}
+		else if (sSpecification.equalsIgnoreCase("de2") 
+				|| sSpecification.equalsIgnoreCase("de2.0") 
+				|| sSpecification.equalsIgnoreCase("dpoe2") 
+				|| sSpecification.equalsIgnoreCase("dpoe2.0"))
+		{
+			this.iConfigurationFileType = ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE;
+			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
+		}
+		else if (sSpecification.equalsIgnoreCase("dg1") 
+				|| sSpecification.equalsIgnoreCase("dg1.0") 
+				|| sSpecification.equalsIgnoreCase("dpog1") 
+				|| sSpecification.equalsIgnoreCase("dpog1.0"))
+		{
+			this.iConfigurationFileType = ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE;
+			this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
+		}
 		else {
 			this.iConfigurationFileType = -1;
 			this.sTlvDisassemble = null;
