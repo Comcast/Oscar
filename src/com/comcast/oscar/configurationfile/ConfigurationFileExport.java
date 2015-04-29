@@ -1188,8 +1188,8 @@ public class ConfigurationFileExport {
 		
 		initBER();
 		
-		if ((iConfigurationFileType >= DPoEConstants.DPOE_10_CONFIGURATION_TYPE) || 
-				(iConfigurationFileType <= DPoEConstants.DPOE_20_CONFIGURATION_TYPE)) {
+		if ((iConfigurationFileType >= DPOE_VER_10) || 
+				(iConfigurationFileType <= DPOE_VER_20)) {
 			sConfigurationFileStart = "DPoE";
 		}
 	}
