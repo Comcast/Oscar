@@ -28,6 +28,7 @@ import com.comcast.oscar.configurationfile.ConfigrationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.tlv.TlvBuilder;
@@ -79,7 +80,7 @@ public class ManufactionCVCImportTextToBinaryTest {
 			e.printStackTrace();
 		}
 		
-		ConfigurationFile cf = new ConfigurationFile(DocsisConstants.DOCSIS_31_CONFIGURATION_TYPE,cfi.getTlvBuilder());
+		ConfigurationFile cf = new ConfigurationFile(ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE,cfi.getTlvBuilder());
 		
 															
 		/* Get CVC File */
