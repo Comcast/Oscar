@@ -36,6 +36,7 @@ import com.comcast.oscar.configurationfile.ConfigrationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.configurationfile.DigitMapOperation;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvAssembler;
@@ -108,11 +109,11 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		String sTestMD5 = "";
 		
-		if (iPacketCableVersion == PacketCableConstants.PKT_CABLE_10_CONFIGURATION_TYPE) {
+		if (iPacketCableVersion == ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE) {
 			 sTestMD5 = "D0:CE:7D:E6:01:E0:92:1A:0F:EA:FE:96:B7:91:0A:D1";
-		} else if(iPacketCableVersion == PacketCableConstants.PKT_CABLE_15_CONFIGURATION_TYPE) {
+		} else if(iPacketCableVersion == ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE) {
 			 sTestMD5 = "D0:CE:7D:E6:01:E0:92:1A:0F:EA:FE:96:B7:91:0A:D1";
-		} else if(iPacketCableVersion == PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE) {
+		} else if(iPacketCableVersion == ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE) {
 			 sTestMD5 = "B8:65:65:3D:0C:35:17:D1:07:BD:C1:C3:C8:98:09:5C";
 		}
 		
@@ -430,7 +431,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		String sFileName = "IMS-PKT-CABLE-CONFIG-DIGIT-MAP.txt";
 		String sDigitMap = "digitMap.txt";
 		
-		int iPacketCableVersion = PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
+		int iPacketCableVersion = ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
 		
 		String sTestMD5 = "BB:77:BC:71:9C:4A:4A:59:D7:3B:C4:B5:16:5A:8B:7E";
 		
@@ -1621,7 +1622,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		String sDigitMapOID2 = "1.3.6.1.4.1.4491.2.2.8.2.1.1.3.1.1.2.2";
 		
 		
-		int iPacketCableVersion = PacketCableConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
+		int iPacketCableVersion = ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
 		
 		String sTestMD5 = "FA:4E:3F:01:D3:CA:F1:09:5D:E2:6A:0E:30:A7:58:44";
 		
