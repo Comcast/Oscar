@@ -70,6 +70,7 @@ public class ConfigurationFileExport {
 	
 	public final String END_OF_CODE_BLOCK = "\\*EOCB*\\";
 	
+	public static final Integer DOCSIS_PKTCBL 	= -1;
 	public static final Integer DOCSIS_VER_10 	= DocsisConstants.DOCSIS_10_CONFIGURATION_TYPE;
 	public static final Integer DOCSIS_VER_11 	= DocsisConstants.DOCSIS_11_CONFIGURATION_TYPE;
 	public static final Integer DOCSIS_VER_20 	= DocsisConstants.DOCSIS_20_CONFIGURATION_TYPE;
@@ -126,7 +127,31 @@ public class ConfigurationFileExport {
 		
 		this.iConfigurationFileType = iConfigurationFileType;
 		
-		if ((iConfigurationFileType >= DOCSIS_VER_10) && (iConfigurationFileType <= DOCSIS_VER_31)) {
+		/* This is to support the deprecated method public ConfigurationFileExport (File fTLV) */
+		if ((iConfigurationFileType <= DOCSIS_PKTCBL)) {
+					
+			//Convert to Byte Array
+			this.bTLV = HexString.fileToByteArray(fTLV);
+			
+			if (debug) 
+				System.out.println("ConfigrationFileExport(f,i) -> FileByteLength: " +   this.bTLV.length);
+
+			if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
+				
+				if (localDebug) System.out.println("Packet Cable Configuration File");
+				
+				dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+							
+			} else {
+				
+				if (localDebug) System.out.println("DOCSIS Configuration File");
+				
+				dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+			}
+			
+			init();
+			
+		} else if ((iConfigurationFileType >= DOCSIS_VER_10) && (iConfigurationFileType <= DOCSIS_VER_31)) {
 			
 			if (localDebug) System.out.println("DOCSIS Configuration File");
 			
