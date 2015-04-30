@@ -111,8 +111,20 @@ public class BERService {
 			berString = new HexString(baosGauge32.toByteArray()).hexCompressed();
 				
 		} else if ((BER.INTEGER == bBerDataType) || (BER.INTEGER32 == bBerDataType)) {
-						
-			VariableBinding vbInteger32BER  = new VariableBinding(new OID(sObjectID) , new Integer32((int)lNumber));
+			
+			VariableBinding vbInteger32BER = null;
+			
+			try {
+				vbInteger32BER  = new VariableBinding(new OID(sObjectID) , new Integer32((int)lNumber));
+			} catch (Exception e)  {
+				
+				System.out.println("OID Conversion Error Found, Most Likley unable to convert OID name to BER encoding");
+				System.out.println("Verify OID Syntaxx or You did not install SNMP4J License Key");
+				
+			} finally {
+				System.exit(2);
+			}
+			
 
 			ByteArrayOutputStream baosInteger32BER = new ByteArrayOutputStream();
 			
