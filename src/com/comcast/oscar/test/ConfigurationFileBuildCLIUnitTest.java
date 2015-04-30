@@ -32,7 +32,7 @@ public class ConfigurationFileBuildCLIUnitTest {
 		//cfbctm.BinaryToBinaryDOCSIS();
 		//cfbctm.BinaryToBinaryDOCSIS_TLV_MaxCPE_Firmware_Man_CoSignCVC();
 		//cfbctm.BinaryToBinaryPacketCable();
-		cfbctm.BinaryToTextDOCSIS();
+		//cfbctm.BinaryToTextDOCSIS();
 		//cfbctm.BinaryToTextDOCSIS_TLV_MaxCPE_Firmware_Man_CoSignCVC();
 		//cfbctm.BinaryToTextDOCSISCoSignCVC();
 		//cfbctm.BinaryToTextDOCSISFirmwareFileName();
@@ -50,7 +50,7 @@ public class ConfigurationFileBuildCLIUnitTest {
 		//cfbctm.PrintTextToBinaryDOCSISHexDump();
 		//cfbctm.PrintTextToBinaryDOCSISJSONDump();
 		//cfbctm.PrintTextToBinaryPacketCableDigitMap();
-		//cfbctm.PrintTextToBinaryPacketCableHexDump();
+		cfbctm.PrintTextToBinaryPacketCableHexDump();
 		//cfbctm.PrintTextToBinaryPacketCableJSONDump();
 		//cfbctm.PrintJSONToTlv();
 		//cfbctm.PrintTlvDotNotationDOCSISDefinition();
