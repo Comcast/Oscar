@@ -268,9 +268,7 @@ public class BERService {
 	 * 
 	 * @param sObjectID
 	 * @param bBerDataType
-	 * @param bValue
-	
-	
+	 * @param bValue	
 	 * @return String
 	 * @throws Exception */
 	public static String setOIDEncoding (String sObjectID , byte bBerDataType , byte[] bValue) throws Exception {
@@ -315,8 +313,6 @@ public class BERService {
 	 * @param sObjectID
 	 * @param bBerDataType
 	 * @param sValue
-	
-	
 	 * @return byte[]
 	 * @throws Exception */
 	public static byte[] setOIDEncodingToByteArray (String sObjectID , byte bBerDataType , String sValue) throws Exception {		
