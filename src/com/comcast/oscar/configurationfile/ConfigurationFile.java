@@ -81,6 +81,12 @@ public class ConfigurationFile {
 		
  		boolean localDebug = Boolean.FALSE;
  		
+		//DumpTLV to STDOUT
+		if (localDebug) {		
+			System.out.println("ConfigurationFile(i,tb)");		
+			System.out.println(TlvBuilder.tlvDump(tbConfigurationFile.toByteArray()));			
+		}
+ 		
 		this.iConfigurationFileType = iConfigurationFileType;
 		
 		this.tbConfigurationFile = tbConfigurationFile;

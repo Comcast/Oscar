@@ -2176,6 +2176,36 @@ public class TlvBuilder implements TlvBuild {
 		return baosStripZeroByteTLV.toByteArray();
 	}
 	
+	/**
+	 * 
+	 * @param ba
+	 * @return - return in Hex TopLevel TLV Dump separated by newline
+	 */
+	public static String tlvDump(byte[] ba) {
+		
+		String sTlvDump = "";
+		
+		HexString hs = new HexString(ba);
+
+		TlvBuilder tb = new TlvBuilder();
+		
+		try {
+			tb.add(hs);
+		} catch (TlvException e) {
+			e.printStackTrace();
+		}
+		
+		ArrayList<byte[]> alb = (ArrayList<byte[]>) tb.sortByTopLevelTlv();
+		
+		for (byte[] ba1 : alb) {
+			HexString hsTlv = new HexString(ba1);
+			sTlvDump += (hsTlv.toString(":") + "\n");
+		}
+		
+		return sTlvDump;
+	}
+	
+	
 	/* *****************************************************************************
 	 * 							Private Methods
 	 *******************************************************************************/
