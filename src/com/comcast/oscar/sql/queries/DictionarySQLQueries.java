@@ -382,6 +382,14 @@ public class DictionarySQLQueries extends SqlConnection {
 				
 	}
 	
+	/**
+	 * 
+	 * @return Get DictionaryTableName
+	 */
+	public String getDictionaryTableName() {
+		return sDictionaryTableName;
+	}
+	
 	/* ******************************************************************************************************
 	 * 										Private Methods
 	  *******************************************************************************************************/
