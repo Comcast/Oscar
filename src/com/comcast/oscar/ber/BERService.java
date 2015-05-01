@@ -93,7 +93,7 @@ public class BERService {
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
 			} finally {
-				System.exit(2);
+				//System.exit(2);
 			}
 			
 			ByteArrayOutputStream baosCounter32 = new ByteArrayOutputStream();
@@ -115,7 +115,7 @@ public class BERService {
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
 			} finally {
-				System.exit(2);
+				//System.exit(2);
 			}
 			
 			ByteArrayOutputStream baosCounter64 = new ByteArrayOutputStream();
@@ -137,7 +137,7 @@ public class BERService {
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
 			} finally {
-				System.exit(2);
+				//System.exit(2);
 			}
 			
 			ByteArrayOutputStream baosGauge32 = new ByteArrayOutputStream();
@@ -159,7 +159,7 @@ public class BERService {
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
 			} finally {
-				System.exit(2);
+				//System.exit(2);
 			}
 			
 			ByteArrayOutputStream baosInteger32BER = new ByteArrayOutputStream();
@@ -181,7 +181,7 @@ public class BERService {
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
 			} finally {
-				System.exit(2);
+				//System.exit(2);
 			}	
 			
 			ByteArrayOutputStream baosTimeTicksBER = new ByteArrayOutputStream();
@@ -228,7 +228,7 @@ public class BERService {
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
 			} finally {
-				System.exit(2);
+				//System.exit(2);
 			}
 			
 			ByteArrayOutputStream baosIpAddress = new ByteArrayOutputStream();
@@ -250,7 +250,7 @@ public class BERService {
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
 			} finally {
-				System.exit(2);
+				//System.exit(2);
 			}		
 			
 			ByteArrayOutputStream baosOctetString = new ByteArrayOutputStream();
@@ -296,7 +296,7 @@ public class BERService {
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
 			} finally {
-				System.exit(2);
+				//System.exit(2);
 			}
 			
 			ByteArrayOutputStream baosOctetString = new ByteArrayOutputStream();
