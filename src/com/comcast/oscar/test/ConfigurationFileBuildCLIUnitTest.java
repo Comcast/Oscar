@@ -50,7 +50,7 @@ public class ConfigurationFileBuildCLIUnitTest {
 		//cfbctm.PrintTextToBinaryDOCSISHexDump();
 		//cfbctm.PrintTextToBinaryDOCSISJSONDump();
 		//cfbctm.PrintTextToBinaryPacketCableDigitMap();
-		cfbctm.PrintTextToBinaryPacketCableHexDump();
+		//cfbctm.PrintTextToBinaryPacketCableHexDump();
 		//cfbctm.PrintTextToBinaryPacketCableJSONDump();
 		//cfbctm.PrintJSONToTlv();
 		//cfbctm.PrintTlvDotNotationDOCSISDefinition();
@@ -61,7 +61,7 @@ public class ConfigurationFileBuildCLIUnitTest {
 		//cfbctm.TextToBinaryInsertCoSignCVC();
 		//cfbctm.TextToBinaryInsertDownstreamFrequecy();
 		//cfbctm.TextToBinaryInsertManufactureCVC();
-		//cfbctm.TextToBinaryInsertMaxCPE();
+		cfbctm.TextToBinaryInsertMaxCPE();
 		//cfbctm.TextToBinaryInsertTLV();
 		//cfbctm.TextToBinaryPacketCable();
 		//cfbctm.TextToBinaryPacketCableInsertDigitMap();
