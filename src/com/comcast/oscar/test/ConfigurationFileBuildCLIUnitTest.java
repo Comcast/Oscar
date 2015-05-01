@@ -58,10 +58,10 @@ public class ConfigurationFileBuildCLIUnitTest {
 		//cfbctm.PrintDOCSISTlvToJSON();
 		//cfbctm.PrintPacketCableTlvToJSON();
 		//cfbctm.TextToBinaryDOCSIS();
-		//cfbctm.TextToBinaryInsertCoSignCVC();
+		cfbctm.TextToBinaryInsertCoSignCVC();
 		//cfbctm.TextToBinaryInsertDownstreamFrequecy();
 		//cfbctm.TextToBinaryInsertManufactureCVC();
-		cfbctm.TextToBinaryInsertMaxCPE();
+		//cfbctm.TextToBinaryInsertMaxCPE();
 		//cfbctm.TextToBinaryInsertTLV();
 		//cfbctm.TextToBinaryPacketCable();
 		//cfbctm.TextToBinaryPacketCableInsertDigitMap();
