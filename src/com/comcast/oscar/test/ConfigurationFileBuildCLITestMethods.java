@@ -1575,4 +1575,30 @@ public class ConfigurationFileBuildCLITestMethods implements TestMethod {
 		System.out.println("+---------------PrintBinaryToTextDOCSISHexDumpToplevelTLV End-----------------+");
 	}
 	
+	/**
+	 * Method BinaryToTextDPoE.
+	 * @see com.comcast.oscar.test.TestMethod#BinaryToTextDPoE()
+	 */
+	public void BinaryToTextDPoE() {
+		/* Start Banner */
+		System.out.println("+---------------BinaryToTextDPoE Start---------------+");
+
+		/* Define arguments */
+		String arguments[] = new String[6];
+		arguments[0] = "-d";
+		arguments[1] = "-i";
+		arguments[2] = TestDirectoryStructure.fInputDirFileName("d11_m_fte6083_encap1q_3950.cm").toString();
+		arguments[3] = "-s";
+		arguments[4] = "de";
+		arguments[5] = "2.0";
+		
+
+		/* Run commands */
+		CommandRun cmds = new CommandRun();
+		cmds.run(arguments);
+
+		/* End Banner */
+		System.out.println("+---------------BinaryToTextDPoE End-----------------+");
+	}
+	
 }

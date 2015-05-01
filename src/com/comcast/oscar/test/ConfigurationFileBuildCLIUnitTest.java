@@ -80,6 +80,7 @@ public class ConfigurationFileBuildCLIUnitTest {
 		//cfbctm.MIBSCompileFalseSet();
 		//cfbctm.MIBSCompileTrueSetVerbose();
 		//cfbctm.PrintBinaryToTextDOCSISHexDumpToplevelTLV();
+		cfbctm.BinaryToTextDPoE();
 	}
 
 }
