@@ -2,7 +2,6 @@ package com.comcast.oscar.cli;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.commons.cli.BasicParser;
@@ -25,8 +24,8 @@ import com.comcast.oscar.cli.commands.Input;
 import com.comcast.oscar.cli.commands.JSONDisplay;
 import com.comcast.oscar.cli.commands.JSONtoTLV;
 import com.comcast.oscar.cli.commands.Key;
-import com.comcast.oscar.cli.commands.MaxCPE;
 import com.comcast.oscar.cli.commands.MIBSCompile;
+import com.comcast.oscar.cli.commands.MaxCPE;
 import com.comcast.oscar.cli.commands.OID;
 import com.comcast.oscar.cli.commands.Output;
 import com.comcast.oscar.cli.commands.SNMP4JLicense;
@@ -37,12 +36,11 @@ import com.comcast.oscar.cli.commands.TLVDescription;
 import com.comcast.oscar.cli.commands.TLVtoJSON;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
-import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.constants.Constants;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
-import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.DirectoryStructure;
 import com.comcast.oscar.utilities.HexString;
@@ -485,17 +483,11 @@ public class CommandRun {
 					Thread.dumpStack();
 					e.printStackTrace();
 				}
-				
-				System.out.println(TlvBuilder.tlvDump(cf.toByteArray()));
-				
+						
 				tlvInsertion(cf);
 				
-				//System.out.println(TlvBuilder.tlvDump(cf.toByteArray()));
-				
 				cf.commit();
-				
-				//System.out.println(TlvBuilder.tlvDump(cf.toByteArray()));
-							
+								
 				ConfigurationFileExport cfeSnmp64Insert = new ConfigurationFileExport(cf);	
 				System.out.println(cfeSnmp64Insert.toPrettyPrint(boolDecompileDisplay));
 			} 

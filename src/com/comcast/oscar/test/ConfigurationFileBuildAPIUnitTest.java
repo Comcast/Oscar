@@ -17,7 +17,6 @@ package com.comcast.oscar.test;
 
 */
 
-import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;

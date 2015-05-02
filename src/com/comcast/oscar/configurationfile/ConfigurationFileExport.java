@@ -24,7 +24,6 @@ import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.constants.Constants;
 import com.comcast.oscar.sql.queries.DictionarySQLConstants;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;
-import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvDisassemble;
 import com.comcast.oscar.tlv.TlvException;

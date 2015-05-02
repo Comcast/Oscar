@@ -150,7 +150,7 @@ public class DocsisCompiler extends TlvBuilder {
 	 */
 	public void commit() {
 		
- 		boolean localDebug = Boolean.TRUE;
+ 		boolean localDebug = Boolean.FALSE;
  		
 		byte[] bTlvFinalizeArray = null;
 		
@@ -298,7 +298,7 @@ public class DocsisCompiler extends TlvBuilder {
 	 * @return the TLV byte array with the CM/CMTS MICs */
 	private byte[] setCmCmtsMIC(byte[] bTlvArray) {
 		
-		boolean localDebug = Boolean.TRUE;
+		boolean localDebug = Boolean.FALSE;
 		
 		byte[] bTlvArrayNoCmCmtsMIC = null;
 		
