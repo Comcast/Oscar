@@ -1,6 +1,5 @@
-package com.comcast.oscar.compiler.dpoe;
+package com.comcast.oscar.compiler;
 
-import com.comcast.oscar.compiler.docsiscompiler.DocsisCompiler;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 
 /**
@@ -53,5 +52,5 @@ public class DPoECompiler extends DocsisCompiler {
 		return this.iDPoEVersion;
 	}
 	
-	
+
 }

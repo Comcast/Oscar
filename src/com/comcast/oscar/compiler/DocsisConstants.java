@@ -1,4 +1,4 @@
-package com.comcast.oscar.compiler.docsiscompiler;
+package com.comcast.oscar.compiler;
 
 import com.comcast.oscar.constants.Constants;
 

@@ -1,6 +1,5 @@
-package com.comcast.oscar.compiler.dpoe;
+package com.comcast.oscar.compiler;
 
-import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
 import com.comcast.oscar.constants.Constants;
 
 /**

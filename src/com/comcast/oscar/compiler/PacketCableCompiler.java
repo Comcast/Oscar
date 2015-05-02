@@ -1,4 +1,4 @@
-package com.comcast.oscar.compiler.packetcablecompiler;
+package com.comcast.oscar.compiler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
