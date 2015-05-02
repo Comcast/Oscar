@@ -82,7 +82,7 @@ public class ConfigurationFile {
 	 */
  	public ConfigurationFile(int iConfigurationFileType, TlvBuilder tbConfigurationFile) {
 		
- 		boolean localDebug = Boolean.TRUE;
+ 		boolean localDebug = Boolean.FALSE;
  				
 		this.iConfigurationFileType = iConfigurationFileType;
 		
@@ -280,7 +280,7 @@ public class ConfigurationFile {
 	 */
 	public void commit() {
  		
- 		boolean localDebug = Boolean.TRUE;
+ 		boolean localDebug = Boolean.FALSE;
  				
 		if (dcConfigurationFile != null) {
 			
@@ -646,7 +646,7 @@ public class ConfigurationFile {
 	 */
 	private void init() {
 		
-		boolean localDebug = Boolean.TRUE;
+		boolean localDebug = Boolean.FALSE;
 		
 		if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE) && 
 				(iConfigurationFileType <= ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE)) {
