@@ -1,7 +1,7 @@
 package com.comcast.oscar.examples;
 import java.io.File;
 
-import com.comcast.oscar.compiler.docsiscompiler.DocsisCompiler;
+import com.comcast.oscar.compiler.DocsisCompiler;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;
 

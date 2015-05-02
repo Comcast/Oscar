@@ -13,9 +13,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
-import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
-import com.comcast.oscar.compiler.dpoe.DPoEConstants;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.compiler.DPoEConstants;
+import com.comcast.oscar.compiler.DocsisConstants;
+import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.sql.SqlConnection;
 import com.comcast.oscar.tlv.dictionary.Dictionary;

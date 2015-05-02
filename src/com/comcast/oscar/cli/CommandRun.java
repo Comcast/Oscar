@@ -473,8 +473,9 @@ public class CommandRun {
 			if (comInput.isBinary()) 
 			{
 				ConfigurationFileExport cfe = new ConfigurationFileExport(comInput.getInput(), comSpecification.getConfigurationFileType());	
+
 				ConfigurationFile cf = null;
-								
+							
 				try 
 				{	
 					cf = new ConfigurationFile(comSpecification.getConfigurationFileType(), cfe.getTlvBuilder());
@@ -485,10 +486,15 @@ public class CommandRun {
 					e.printStackTrace();
 				}
 				
-				tlvInsertion(cf);							
+				System.out.println(TlvBuilder.tlvDump(cf.toByteArray()));
+				
+				tlvInsertion(cf);
+				
+				//System.out.println(TlvBuilder.tlvDump(cf.toByteArray()));
+				
 				cf.commit();
 				
-				System.out.println(TlvBuilder.tlvDump(cf.toByteArray()));
+				//System.out.println(TlvBuilder.tlvDump(cf.toByteArray()));
 							
 				ConfigurationFileExport cfeSnmp64Insert = new ConfigurationFileExport(cf);	
 				System.out.println(cfeSnmp64Insert.toPrettyPrint(boolDecompileDisplay));

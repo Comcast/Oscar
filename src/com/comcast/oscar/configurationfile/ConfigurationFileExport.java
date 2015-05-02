@@ -18,9 +18,9 @@ import org.json.JSONObject;
 import org.snmp4j.asn1.BER;
 
 import com.comcast.oscar.ber.BERService;
-import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableCompiler;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.compiler.DocsisConstants;
+import com.comcast.oscar.compiler.PacketCableCompiler;
+import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.constants.Constants;
 import com.comcast.oscar.sql.queries.DictionarySQLConstants;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;

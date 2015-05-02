@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.utilities.HexString;
 
 /**

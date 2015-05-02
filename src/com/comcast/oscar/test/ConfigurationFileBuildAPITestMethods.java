@@ -29,8 +29,8 @@ import org.json.JSONException;
 
 import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.buildbulk.BulkBuild;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableCompiler;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.compiler.PacketCableCompiler;
+import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
