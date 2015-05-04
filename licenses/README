@@ -2,3 +2,15 @@ In order to use the SNMP object names instead of numeric OIDs feature please go 
 
 * SNMP4J-SMI JAR File Version: 1.2.0 (Tested)
 * SNMP4J-SMI (User License)
+
+OSCAR will work without the License Key. It only required a license key to resolve SNMP OID Names:
+
+Example:
+
+Requires a License Key to resolve this OID
+* Snmp11 docsDevNmAccessIp.1 IpAddress "0.0.0.0";
+
+Does NOT require a License Key to resolve the same Numeric OID
+* Snmp11 1.3.6.1.2.1.69.1.2.1.2.1 IpAddress "0.0.0.0";
+
+OSCAR v2.0 will have Net-SNMP Support to support OID Name resolution for FREE!!!
