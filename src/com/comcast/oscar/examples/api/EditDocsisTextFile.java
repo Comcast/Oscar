@@ -49,7 +49,7 @@ public class EditDocsisTextFile {
 		
 		ConfigurationFileExport cfe = new ConfigurationFileExport(cf);
 		
-		System.out.print(cfe.toPrettyPrint(1));
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
 
 	}
 

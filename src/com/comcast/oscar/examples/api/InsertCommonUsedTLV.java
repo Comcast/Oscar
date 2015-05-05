@@ -55,7 +55,7 @@ public class InsertCommonUsedTLV {
 	
 		ConfigurationFileExport cfe = new ConfigurationFileExport(cf);
 		
-		System.out.println(cfe.toPrettyPrint(0));
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
 		
 	}
 }

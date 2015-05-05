@@ -76,9 +76,9 @@ public class EditDocsisFile {
 		/*Output Dictionary*/
 		System.out.println("After Edit: " + ja);
 			
-		ConfigurationFileExport cfe = new ConfigurationFileExport(new TlvAssembler(ja).clone());
+		ConfigurationFileExport cfe = new ConfigurationFileExport(new TlvAssembler(ja).clone(),ConfigurationFileExport.DOCSIS_VER_10);
 		
-		System.out.println(cfe.toPrettyPrint(0));
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
 		
 	}
 
