@@ -3,7 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.DigitMapOperation;
@@ -86,7 +86,7 @@ public class DigitMapFromPacketCableFileTest {
 			try {
 				try {
 					cfiPacketCable = new ConfigurationFileImport (fPacketCableTxt);
-				} catch (ConfigrationFileException e) {
+				} catch (ConfigurationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

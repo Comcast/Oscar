@@ -82,11 +82,11 @@ public class ConfigurationFileImport {
 	
 	 * @throws FileNotFoundException * @throws ConfigrationFileException
 	 */
-	public ConfigurationFileImport (File fConfigfile) throws FileNotFoundException , ConfigrationFileException {
+	public ConfigurationFileImport (File fConfigfile) throws FileNotFoundException , ConfigurationFileException {
 	
 		//Check to see if file is a ASCII
 		if (!HexString.verifyAsciiPlainText(HexString.fileToByteArray(fConfigfile)))  {
-			throw new ConfigrationFileException("ConfigrationFileImport() - File is not a text File: " + fConfigfile.getName());
+			throw new ConfigurationFileException("ConfigrationFileImport() - File is not a text File: " + fConfigfile.getName());
 		}
 		
 		@SuppressWarnings("resource")
@@ -104,13 +104,13 @@ public class ConfigurationFileImport {
 	
 	
 	 * @throws NullPointerException * @throws ConfigrationFileException  */
-	public ConfigurationFileImport (byte[] bConfigfile) throws NullPointerException, ConfigrationFileException {
+	public ConfigurationFileImport (byte[] bConfigfile) throws NullPointerException, ConfigurationFileException {
 		
 		if (bConfigfile == null)
 			throw new NullPointerException("ConfigrationFileImport() - ByteArray is null");
 		
 		if (!HexString.verifyAsciiPlainText(bConfigfile))
-			throw new ConfigrationFileException("ConfigrationFileImport () - Input ByteArray is not of Text Characters");
+			throw new ConfigurationFileException("ConfigrationFileImport () - Input ByteArray is not of Text Characters");
 		
 		this.sbConfiguration = new StringBuilder(new HexString(bConfigfile).toASCII());
 		

@@ -20,7 +20,7 @@ package com.comcast.oscar.examples;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
@@ -61,7 +61,7 @@ public class TextToBinaryTest {
 			try {
 				try {
 					cfiDocsis = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName("DOCSIS-US-FLOW.txt"));
-				} catch (ConfigrationFileException e) {
+				} catch (ConfigurationFileException e) {
 					e.printStackTrace();
 				}
 			} catch (IOException e1) {
@@ -91,7 +91,7 @@ public class TextToBinaryTest {
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (ConfigrationFileException e) {
+			} catch (ConfigurationFileException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

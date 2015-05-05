@@ -31,7 +31,7 @@ import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.buildbulk.BulkBuild;
 import com.comcast.oscar.compiler.PacketCableCompiler;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
@@ -71,7 +71,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -126,7 +126,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -173,7 +173,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -184,7 +184,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		try {
 
 			CommonTlvInsertions.insertManufactureCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
@@ -227,7 +227,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -238,7 +238,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		try {
 
 			CommonTlvInsertions.insertCoSignCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
@@ -281,7 +281,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -291,7 +291,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 
 		try {
 			CommonTlvInsertions.insertDownstreamFrequency(723000000, cf , false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
@@ -334,7 +334,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -344,7 +344,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 
 		try {
 			CommonTlvInsertions.insertMaxCPE(32, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
@@ -386,7 +386,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -444,7 +444,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -675,7 +675,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertMaxCPE(32, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -719,7 +719,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertFirmwareFileName(sFileName, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -763,7 +763,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertManufactureCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, true);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -807,7 +807,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertCoSignCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, true);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -853,13 +853,13 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertCoSignCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 	
 		try {
 			CommonTlvInsertions.insertMaxCPE(32, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
@@ -871,13 +871,13 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 
 		try {
 			CommonTlvInsertions.insertFirmwareFileName("FirmwareFileName.bin", cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
 		try {
 			CommonTlvInsertions.insertManufactureCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -930,19 +930,19 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertCoSignCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
 		try {
 			CommonTlvInsertions.insertManufactureCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 	
 		try {
 			CommonTlvInsertions.insertMaxCPE(32, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
@@ -1116,7 +1116,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -1157,7 +1157,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -1635,7 +1635,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -1689,7 +1689,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -1740,7 +1740,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			e1.printStackTrace();
 		}
 
@@ -1749,13 +1749,13 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 
 		try {
 			CommonTlvInsertions.insertTftpServerAddress(sIPv4, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
 		try {
 			CommonTlvInsertions.insertTftpServerAddress(sIPv6, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -1807,13 +1807,13 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertTftpServerAddress(sIPv4, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
 		try {
 			CommonTlvInsertions.insertTftpServerAddress(sIPv6, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -1865,7 +1865,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 				cfiInput = new ConfigurationFileImport(fInput);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-			} catch (ConfigrationFileException e) {
+			} catch (ConfigurationFileException e) {
 				e.printStackTrace();
 			}
 			
@@ -1896,7 +1896,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 				cfiTemplate = new ConfigurationFileImport(fTemplate);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-			} catch (ConfigrationFileException e) {
+			} catch (ConfigurationFileException e) {
 				e.printStackTrace();
 			}
 			
@@ -2030,7 +2030,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			e1.printStackTrace();
 		}
 

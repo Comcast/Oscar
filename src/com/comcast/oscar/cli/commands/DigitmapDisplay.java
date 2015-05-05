@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.DigitMapOperation;
@@ -70,7 +70,7 @@ public class DigitmapDisplay {
 		{
 			e.printStackTrace();
 		} 
-		catch (ConfigrationFileException e) 
+		catch (ConfigurationFileException e) 
 		{
 			e.printStackTrace();
 		}

@@ -1,7 +1,7 @@
 package com.comcast.oscar.examples.api;
 
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
@@ -43,7 +43,7 @@ public class EditDocsisTextFile {
 		//Add TFTP Server Address
 		try {
 			CommonTlvInsertions.insertTftpServerAddress("10.10.10.10", cf, true);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		

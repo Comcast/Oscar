@@ -21,7 +21,7 @@ package com.comcast.oscar.examples;
 import java.io.File;
 import java.io.FileNotFoundException;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
@@ -73,7 +73,7 @@ public class MergeConfigurationFilesTest {
 				cfiInput = new ConfigurationFileImport(fInput);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-			} catch (ConfigrationFileException e) {
+			} catch (ConfigurationFileException e) {
 				e.printStackTrace();
 			}
 			
@@ -103,7 +103,7 @@ public class MergeConfigurationFilesTest {
 				cfiTemplate = new ConfigurationFileImport(fTemplate);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-			} catch (ConfigrationFileException e) {
+			} catch (ConfigurationFileException e) {
 				e.printStackTrace();
 			}
 			

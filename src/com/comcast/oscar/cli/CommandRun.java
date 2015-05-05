@@ -35,7 +35,7 @@ import com.comcast.oscar.cli.commands.TLV;
 import com.comcast.oscar.cli.commands.TLVDescription;
 import com.comcast.oscar.cli.commands.TLVtoJSON;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
@@ -505,7 +505,7 @@ public class CommandRun {
 	/**
 	 * Compiles the input file into the specified output
 	
-	 * @throws ConfigrationFileException  */
+	 * @throws ConfigurationFileException  */
 	public void compile() 
 	{
 		if (comInput !=null && comInput.hasInput()) 
@@ -537,7 +537,7 @@ public class CommandRun {
 				{
 					e.printStackTrace();
 				} 
-				catch (ConfigrationFileException e) 
+				catch (ConfigurationFileException e) 
 				{
 					e.printStackTrace();
 				}
@@ -615,7 +615,7 @@ public class CommandRun {
 			{
 				CommonTlvInsertions.insertFirmwareFileName(this.comFirmware.getFirmware(), configurationFile, false);
 			} 
-			catch (ConfigrationFileException e) 
+			catch (ConfigurationFileException e) 
 			{
 				e.printStackTrace();
 			}
@@ -628,7 +628,7 @@ public class CommandRun {
 				{
 					CommonTlvInsertions.insertTftpServerAddress(this.comTFTPServer.getIpv4Address(), configurationFile, false);
 				} 
-				catch (ConfigrationFileException e) 
+				catch (ConfigurationFileException e) 
 				{
 					e.printStackTrace();
 				}
@@ -640,7 +640,7 @@ public class CommandRun {
 				{
 					CommonTlvInsertions.insertTftpServerAddress(this.comTFTPServer.getIpv6Address(), configurationFile, false);
 				} 
-				catch (ConfigrationFileException e) 
+				catch (ConfigurationFileException e) 
 				{
 					e.printStackTrace();
 				}
@@ -653,7 +653,7 @@ public class CommandRun {
 			{
 				CommonTlvInsertions.insertMaxCPE(this.comMaxCPE.getMaxCPE(), configurationFile, false);
 			} 
-			catch (ConfigrationFileException e) 
+			catch (ConfigurationFileException e) 
 			{
 				e.printStackTrace();
 			}
@@ -665,7 +665,7 @@ public class CommandRun {
 			{
 				CommonTlvInsertions.insertDownstreamFrequency(this.comDownstreamFrequency.getDownstreamFrequency(), configurationFile, false);
 			} 
-			catch (ConfigrationFileException e) 
+			catch (ConfigurationFileException e) 
 			{
 				e.printStackTrace();
 			}
@@ -679,7 +679,7 @@ public class CommandRun {
 				{
 					CommonTlvInsertions.insertCoSignCVC(this.comCVC.getCoSigner(), configurationFile, false);
 				} 
-				catch (ConfigrationFileException e) 
+				catch (ConfigurationFileException e) 
 				{
 					e.printStackTrace();
 				}
@@ -690,7 +690,7 @@ public class CommandRun {
 				{
 					CommonTlvInsertions.insertManufactureCVC(this.comCVC.getManufacturer(), configurationFile, false);
 				} 
-				catch (ConfigrationFileException e) 
+				catch (ConfigurationFileException e) 
 				{
 					e.printStackTrace();
 				}
@@ -705,7 +705,7 @@ public class CommandRun {
 				{
 					CommonTlvInsertions.insertDigitMap(entry.getValue(), entry.getKey(), configurationFile, false);
 				} 
-				catch (ConfigrationFileException e) 
+				catch (ConfigurationFileException e) 
 				{
 					e.printStackTrace();
 				}

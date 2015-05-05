@@ -27,7 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.comcast.oscar.ber.OIDToJSONArray;
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
@@ -139,7 +139,7 @@ public class InsertDigitMapToConfigurationBinaryTest {
 		try {
 			try {
 				cfiPacketCable = new ConfigurationFileImport(fPacketCableTxt);
-			} catch (ConfigrationFileException e) {
+			} catch (ConfigurationFileException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

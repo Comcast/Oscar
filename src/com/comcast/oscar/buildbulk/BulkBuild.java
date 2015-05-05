@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 
 import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
@@ -181,7 +181,7 @@ public class BulkBuild {
 				cfi = new ConfigurationFileImport(bConfigurationFile);
 			} catch (NullPointerException e) {
 				e.printStackTrace();
-			} catch (ConfigrationFileException e) {
+			} catch (ConfigurationFileException e) {
 				e.printStackTrace();
 			}
 			
@@ -218,7 +218,7 @@ public class BulkBuild {
 		try {
 			try {
 				cfi = new ConfigurationFileImport(fTextInput);
-			} catch (ConfigrationFileException e) {
+			} catch (ConfigurationFileException e) {
 				e.printStackTrace();
 			}
 		} catch (FileNotFoundException e) {
