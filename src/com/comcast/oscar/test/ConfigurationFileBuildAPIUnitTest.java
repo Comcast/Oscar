@@ -17,7 +17,7 @@ package com.comcast.oscar.test;
 
 */
 
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 
@@ -116,11 +116,11 @@ public class ConfigurationFileBuildAPIUnitTest {
 
 		/* Text To Binary */
 		if (PACKET_CABLE|PKTC_TEXT_BINARY) {
-			cfbatm.TextToBinaryPacketCable(PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10);
+			cfbatm.TextToBinaryPacketCable(ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE);
 
-			cfbatm.TextToBinaryPacketCable(PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15);
+			cfbatm.TextToBinaryPacketCable(ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE);
 
-			cfbatm.TextToBinaryPacketCable(PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20);
+			cfbatm.TextToBinaryPacketCable(ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE);
 		}
 
 		/* Binary To Text */

@@ -82,8 +82,20 @@ public class BERService {
 		    
 		if ((BER.COUNTER == bBerDataType)  || (BER.COUNTER32 == bBerDataType)) {
 			
-			VariableBinding vbCounter32BER = new VariableBinding(new OID(sObjectID) , new Counter32(lNumber));
+			VariableBinding vbCounter32BER = null;
 
+			try {
+				vbCounter32BER = new VariableBinding(new OID(sObjectID) , new Counter32(lNumber));
+			} catch (Exception e)  {
+								
+				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
+				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				
+			} finally {
+				//System.exit(2);
+			}
+			
 			ByteArrayOutputStream baosCounter32 = new ByteArrayOutputStream();
 			
 			vbCounter32BER.encodeBER(baosCounter32);
@@ -91,9 +103,21 @@ public class BERService {
 			berString = new HexString(baosCounter32.toByteArray()).hexCompressed();
 			
 		} else if (BER.COUNTER64 == bBerDataType) {
-							
-			VariableBinding vbCounter64BER = new VariableBinding(new OID(sObjectID) , new Counter64(lNumber));
 
+			VariableBinding vbCounter64BER = null;
+
+			try {
+				vbCounter64BER = new VariableBinding(new OID(sObjectID) , new Counter64(lNumber));
+			} catch (Exception e)  {
+								
+				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
+				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				
+			} finally {
+				//System.exit(2);
+			}
+			
 			ByteArrayOutputStream baosCounter64 = new ByteArrayOutputStream();
 			
 			vbCounter64BER.encodeBER(baosCounter64);
@@ -101,9 +125,21 @@ public class BERService {
 			berString = new HexString(baosCounter64.toByteArray()).hexCompressed();
 						
 		} else if ((BER.GAUGE == bBerDataType) || (BER.GAUGE32 == bBerDataType)) {
-					
-			VariableBinding vbGauge32BER  = new VariableBinding(new OID(sObjectID) , new Gauge32(lNumber));
 
+			VariableBinding vbGauge32BER = null;
+
+			try {
+				vbGauge32BER  = new VariableBinding(new OID(sObjectID) , new Gauge32(lNumber));
+			} catch (Exception e)  {
+								
+				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
+				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				
+			} finally {
+				//System.exit(2);
+			}
+			
 			ByteArrayOutputStream baosGauge32 = new ByteArrayOutputStream();
 			
 			vbGauge32BER.encodeBER(baosGauge32);
@@ -111,9 +147,21 @@ public class BERService {
 			berString = new HexString(baosGauge32.toByteArray()).hexCompressed();
 				
 		} else if ((BER.INTEGER == bBerDataType) || (BER.INTEGER32 == bBerDataType)) {
-						
-			VariableBinding vbInteger32BER  = new VariableBinding(new OID(sObjectID) , new Integer32((int)lNumber));
-
+			
+			VariableBinding vbInteger32BER = null;
+			
+			try {
+				vbInteger32BER  = new VariableBinding(new OID(sObjectID) , new Integer32((int)lNumber));
+			} catch (Exception e)  {
+				
+				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
+				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				
+			} finally {
+				//System.exit(2);
+			}
+			
 			ByteArrayOutputStream baosInteger32BER = new ByteArrayOutputStream();
 			
 			vbInteger32BER.encodeBER(baosInteger32BER);
@@ -122,8 +170,20 @@ public class BERService {
 			
 		} else if ((BER.TIMETICKS == bBerDataType)) {
 			
-			VariableBinding vbTimeTicksBER  = new VariableBinding(new OID(sObjectID) , new TimeTicks(lNumber));
+			VariableBinding vbTimeTicksBER = null;
 
+			try {
+				vbTimeTicksBER  = new VariableBinding(new OID(sObjectID) , new TimeTicks(lNumber));
+			} catch (Exception e)  {
+								
+				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
+				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				
+			} finally {
+				//System.exit(2);
+			}	
+			
 			ByteArrayOutputStream baosTimeTicksBER = new ByteArrayOutputStream();
 			
 			vbTimeTicksBER.encodeBER(baosTimeTicksBER);
@@ -139,9 +199,7 @@ public class BERService {
 	 * 
 	 * @param sObjectID
 	 * @param bBerDataType
-	 * @param sValue
-	
-	
+	 * @param sValue	
 	 * @return String
 	 * @throws Exception */
 	public static String setOIDEncoding (String sObjectID , byte bBerDataType , String sValue) throws Exception {
@@ -159,8 +217,20 @@ public class BERService {
 			if (localDebug|debug)
 				System.out.println("BERService.setOIDEncoding() -> StringOID: " + sObjectID);
 			
-			VariableBinding vbIpBER = new VariableBinding(new OID(sObjectID) , new IpAddress(sValue));
+			VariableBinding vbIpBER = null;
 
+			try {
+				vbIpBER  = new VariableBinding(new OID(sObjectID) , new IpAddress(sValue));
+			} catch (Exception e)  {
+								
+				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
+				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				
+			} finally {
+				//System.exit(2);
+			}
+			
 			ByteArrayOutputStream baosIpAddress = new ByteArrayOutputStream();
 			
 			vbIpBER.encodeBER(baosIpAddress);
@@ -169,8 +239,20 @@ public class BERService {
 			
 		} else if (BER.OCTETSTRING == bBerDataType) {
 			
-			VariableBinding vbOctBER = new VariableBinding(new OID(sObjectID) , new OctetString(sValue));
+			VariableBinding vbOctBER = null;
 
+			try {
+				vbOctBER  = new VariableBinding(new OID(sObjectID) , new OctetString(sValue));
+			} catch (Exception e)  {
+								
+				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
+				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				
+			} finally {
+				//System.exit(2);
+			}		
+			
 			ByteArrayOutputStream baosOctetString = new ByteArrayOutputStream();
 			
 			vbOctBER.encodeBER(baosOctetString);
@@ -186,9 +268,7 @@ public class BERService {
 	 * 
 	 * @param sObjectID
 	 * @param bBerDataType
-	 * @param bValue
-	
-	
+	 * @param bValue	
 	 * @return String
 	 * @throws Exception */
 	public static String setOIDEncoding (String sObjectID , byte bBerDataType , byte[] bValue) throws Exception {
@@ -202,9 +282,21 @@ public class BERService {
 		String berString = "";
 		
 		if (BER.OCTETSTRING == bBerDataType) {
-			
-			VariableBinding vbOctBER = new VariableBinding(new OID(sObjectID) , new OctetString(bValue));
 
+			VariableBinding vbOctBER = null;
+
+			try {
+				vbOctBER = new VariableBinding(new OID(sObjectID) , new OctetString(bValue));
+			} catch (Exception e)  {
+								
+				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
+				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				
+			} finally {
+				//System.exit(2);
+			}
+			
 			ByteArrayOutputStream baosOctetString = new ByteArrayOutputStream();
 			
 			vbOctBER.encodeBER(baosOctetString);
@@ -221,8 +313,6 @@ public class BERService {
 	 * @param sObjectID
 	 * @param bBerDataType
 	 * @param sValue
-	
-	
 	 * @return byte[]
 	 * @throws Exception */
 	public static byte[] setOIDEncodingToByteArray (String sObjectID , byte bBerDataType , String sValue) throws Exception {		
@@ -284,17 +374,6 @@ public class BERService {
 			return new ByteArrayOutputStream();
 		}
 
-/*		
-		VariableBinding vbOID = new VariableBinding(new OID(sOID));
-
-		ByteArrayOutputStream baosOID = new ByteArrayOutputStream();
-		
-		try {
-			vbOID.encodeBER(baosOID);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-*/		
 		return baosBER;
 	}
 
@@ -320,9 +399,7 @@ public class BERService {
 	
 	/**
 	 * 
-	 * @param bBERSetValueTLV
-	
-	
+	 * @param bBERSetValueTLV	
 	 * @return String
 	 * @throws TlvException */
 	public static String getBERSetValue (byte[] bBERSetValueTLV) throws TlvException {
@@ -456,8 +533,7 @@ public class BERService {
 	}
 	
 	/**
-	 * @param sDataType
-	
+	 * @param sDataType	
 	 * @return byte */
 	public static byte berStringDataTypeToByte (String sDataType) {
 		

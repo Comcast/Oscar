@@ -23,11 +23,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
-import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
+import com.comcast.oscar.configurationfile.ConfigurationFileExport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.tlv.TlvBuilder;
@@ -42,6 +42,7 @@ public class ManufactionCVCImportTextToBinaryTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		try {
@@ -65,12 +66,12 @@ public class ManufactionCVCImportTextToBinaryTest {
 		
 		System.out.println(new HexString(HexString.fileToByteArray(file)).toASCII());
 		
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
 			try {
-				cfi = new ConfigrationFileImport(file);
-			} catch (ConfigrationFileException e) {
+				cfi = new ConfigurationFileImport(file);
+			} catch (ConfigurationFileException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -78,7 +79,7 @@ public class ManufactionCVCImportTextToBinaryTest {
 			e.printStackTrace();
 		}
 		
-		ConfigurationFile cf = new ConfigurationFile(DocsisConstants.DOCSIS_31,cfi.getTlvBuilder());
+		ConfigurationFile cf = new ConfigurationFile(ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE,cfi.getTlvBuilder());
 		
 															
 		/* Get CVC File */
@@ -107,7 +108,7 @@ public class ManufactionCVCImportTextToBinaryTest {
 
 		System.out.println("+-------------------------------------------AFTER CVC INSERTION-----------------------------------------------------------------+");
 
-		ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport(cf.toByteArray());
+		ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport(cf);
 
 		System.out.println(cfeDOCTLV.toPrettyPrint(0));
 

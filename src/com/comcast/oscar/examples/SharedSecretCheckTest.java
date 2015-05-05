@@ -22,8 +22,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
@@ -49,12 +49,12 @@ public class SharedSecretCheckTest {
 			e.printStackTrace();
 		}
 		
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
 			try {
-				cfi = new ConfigrationFileImport(file);
-			} catch (ConfigrationFileException e) {
+				cfi = new ConfigurationFileImport(file);
+			} catch (ConfigurationFileException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

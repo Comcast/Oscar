@@ -18,9 +18,9 @@ import org.json.JSONObject;
 import org.snmp4j.asn1.BER;
 
 import com.comcast.oscar.ber.BERService;
-import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableCompiler;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.compiler.DocsisConstants;
+import com.comcast.oscar.compiler.PacketCableCompiler;
+import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.constants.Constants;
 import com.comcast.oscar.sql.queries.DictionarySQLConstants;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;
@@ -57,39 +57,39 @@ import com.comcast.oscar.utilities.JSONTools;
 public class ConfigurationFileExport {
 	
 	private byte[] bTLV;
+
+	private final boolean debug = Boolean.FALSE;	
 	
-	private ArrayList<JSONObject> aljoTopLevelTlvDictionary;
-	
-	private final boolean debug = Boolean.FALSE;
-	
-	private final Integer RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH = -1;
-	
-	private Map<Integer,String> BER_DATA_TYPE = new HashMap<Integer,String>();
-	
-	private DictionarySQLQueries dsqDictionarySQLQueries = null;
-	
-	private String sConfigurationFileStart;
-	
-	private int iConfigurationFileType = -1;
-	
+	private ArrayList<JSONObject> aljoTopLevelTlvDictionary;	
+	private final Integer RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH = -1;	
+	private Map<Integer,String> BER_DATA_TYPE = new HashMap<Integer,String>();	
+	private DictionarySQLQueries dsqDictionarySQLQueries = null;	
+	private String sConfigurationFileStart;	
+	private int iConfigurationFileType = -1;	
 	private boolean boolVerboseExport = true;
 	
 	public final String END_OF_CODE_BLOCK = "\\*EOCB*\\";
 	
-	public static final Integer DOCSIS_VER_10 = DocsisConstants.DOCSIS_10;
-	public static final Integer DOCSIS_VER_11 = DocsisConstants.DOCSIS_11;
-	public static final Integer DOCSIS_VER_20 = DocsisConstants.DOCSIS_20;
-	public static final Integer DOCSIS_VER_30 = DocsisConstants.DOCSIS_30;
-	public static final Integer DOCSIS_VER_31 = DocsisConstants.DOCSIS_31;
-	public static final Integer PKT_CBL_VER_10 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10;
-	public static final Integer PKT_CBL_VER_15 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15;
-	public static final Integer PKT_CBL_VER_20 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20;
+	public static final Integer DOCSIS_PKTCBL 	= -1;
+	public static final Integer DOCSIS_VER_10 	= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_11 	= ConfigurationFileTypeConstants.DOCSIS_11_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_20 	= ConfigurationFileTypeConstants.DOCSIS_20_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_30 	= ConfigurationFileTypeConstants.DOCSIS_30_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_31 	= ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE;
+	
+	public static final Integer PKT_CBL_VER_10 	= ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_15 	= ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_20 	= ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
+	
+	public static final Integer DPOE_VER_10 	= ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
+	public static final Integer DPOE_VER_20 	= ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE;
+	
 	public static final Boolean EXPORT_DEFAULT_TLV = true;
 	public static final Boolean EXPORT_FOUND_TLV = false;
 	
 	/**
-	 * 
-	 * @param fTLV
+	 * @deprecated - This is no longer supported but will work Only support DOCSIS and PacketCable 
+	 * @param fTLV - Configuration File - Only support DOCSIS and PacketCable
 	 */
 	public ConfigurationFileExport (File fTLV) {
 	
@@ -101,11 +101,11 @@ public class ConfigurationFileExport {
 
 		if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 						
 		} else {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 		}
 		
 		init();
@@ -113,15 +113,84 @@ public class ConfigurationFileExport {
 		//Build Dictionary
 		tlvToDictionary ();
 		
-		//convertJSONArrayDictToJSONObjectArrayList(jaTlvDictionary);
-
 	}
 
 	/**
+	 * 
+	 * @param fTLV - Will Support all Configuration file Types: DOCSIS, PacketCable and DPoE
+	 * @param iConfigurationFileType - Set Configuration Type via Static FIELDS*/
+	public ConfigurationFileExport (File fTLV, int iConfigurationFileType) {
+
+		boolean localDebug = Boolean.FALSE;
+		
+		this.bTLV = HexString.fileToByteArray(fTLV);
+		
+		//DumpTLV to STDOUT
+		if (localDebug) {
+			System.out.println(TlvBuilder.tlvDump(this.bTLV));
+		}
+		
+		this.iConfigurationFileType = iConfigurationFileType;
+		
+		/* This is to support the deprecated method public ConfigurationFileExport (File fTLV) */
+		if ((iConfigurationFileType <= DOCSIS_PKTCBL)) {
+					
+			//Convert to Byte Array
+			this.bTLV = HexString.fileToByteArray(fTLV);
+			
+			if (debug) 
+				System.out.println("ConfigrationFileExport(f,i) -> FileByteLength: " +   this.bTLV.length);
+
+			if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
+				
+				if (localDebug) System.out.println("Packet Cable Configuration File - Anonomous - ConfigType -> (" + iConfigurationFileType + ")");
+				
+				dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+							
+			} else {
+				
+				if (localDebug) System.out.println("DOCSIS Configuration File - Anonomous - ConfigType -> (" + iConfigurationFileType + ")");
+				
+				dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+			}
+			
+			init();
+			
+		} else if ((iConfigurationFileType >= DOCSIS_VER_10) && (iConfigurationFileType <= DOCSIS_VER_31)) {
+			
+			if (localDebug) System.out.println("DOCSIS Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
+			
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+			
+			init();
+			
+		} else if ((iConfigurationFileType >= PKT_CBL_VER_10) && (iConfigurationFileType <= PKT_CBL_VER_20)) {
+			
+			if (localDebug) System.out.println("PacketCable Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
+			
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+			
+			init();
+			
+		} else if ((iConfigurationFileType >= DPOE_VER_20) && (iConfigurationFileType <= DPOE_VER_20)) {
+			
+			if (localDebug) System.out.println("DPoE Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
+
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+			
+			init(iConfigurationFileType);
+		}
+		
+		//Build Dictionary
+		tlvToDictionary ();
+		
+	}
+	
+	/**
 	 * This constructor checks the first Byte to determine if it is a Packet Cable File or DOCSIS File
 	 * Byte = 0xFE = Packet Cable
-	 * 
-	 * @param tbTLV
+	 * @deprecated - This is no longer supported but will work Only support DOCSIS and PacketCable 
+	 * @param tbTLV - Will ONLY Support Configuration file Types: DOCSIS and PacketCable
 	 */
 	public ConfigurationFileExport (TlvBuilder tbTLV) {
 		
@@ -136,7 +205,7 @@ public class ConfigurationFileExport {
 				System.out.println("ConfigrationFileExport(tb) - PacketCable File");
 			}
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 						
 		} else {
 			
@@ -144,9 +213,8 @@ public class ConfigurationFileExport {
 				System.out.println("ConfigrationFileExport(tb) - DOCSIS File");
 			}
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
-			
-			
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+						
 		}
 		
 		init();
@@ -158,6 +226,50 @@ public class ConfigurationFileExport {
 	
 	/**
 	 * 
+	 * @param tbTLV
+	 * @param iConfigurationFileType
+	 */
+	public ConfigurationFileExport (TlvBuilder tbTLV, int iConfigurationFileType) {
+		
+		boolean localDebug = Boolean.FALSE;
+		
+		//Convert to Byte Array
+		this.bTLV = tbTLV.toByteArray();
+		
+		this.iConfigurationFileType = iConfigurationFileType;
+		
+		if ((iConfigurationFileType >= DOCSIS_VER_10) && (iConfigurationFileType <= DOCSIS_VER_31)) {
+			
+			if (localDebug) System.out.println("DOCSIS Configuration File");
+			
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+			
+			init();
+			
+		} else if ((iConfigurationFileType >= PKT_CBL_VER_10) && (iConfigurationFileType <= PKT_CBL_VER_20)) {
+			
+			if (localDebug) System.out.println("PacketCable Configuration File");
+			
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+			
+			init();
+			
+		} else if ((iConfigurationFileType >= DPOE_VER_20) && (iConfigurationFileType <= DPOE_VER_20)) {
+			
+			if (localDebug) System.out.println("DPoE Configuration File");
+
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+			
+			init(iConfigurationFileType);
+		}
+				
+		//Build Dictionary
+		tlvToDictionary ();
+			
+	}	
+	
+	/**
+	 * @deprecated - This is no longer supported but will work Only support DOCSIS and PacketCable 
 	 * @param tbTLV
 	 * @param boolStripFinalize boolean
 	 */
@@ -201,11 +313,11 @@ public class ConfigurationFileExport {
 					
 		if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 						
 		} else {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
 			
 		}
@@ -218,53 +330,53 @@ public class ConfigurationFileExport {
 	}
 	
 	/**
-	 * 
-	 * @param bTLV
-	 */
-	public ConfigurationFileExport (byte[] bTLV) {
-			
-		//Convert to Byte Array
-		this.bTLV = bTLV;
-
-		if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
-					
-			
-		} else {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
-						
-		}
-		
-		init();
-		
-		//Build Dictionary
-		tlvToDictionary ();
-				
-	}
-
-	/**
-	 * 
-	 * @param cfConfigurationFile
+	 * @param cfConfigurationFile - Will Support all Configuration file Types: DOCSIS, PacketCable and DPoE
 	 */
 	public ConfigurationFileExport (ConfigurationFile cfConfigurationFile) {
 		
+		boolean localDebug = Boolean.FALSE;
+		
 		//Convert to Byte Array
 		this.bTLV = cfConfigurationFile.toByteArray();
-
-		if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
-					
-		} else {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
-					
+		
+		//DumpTLV to STDOUT
+		if (localDebug) {	
+			System.out.println(TlvBuilder.tlvDump(this.bTLV));		
 		}
 		
-		init();
+		//Update to determine what type of configuration is selected
+		this.iConfigurationFileType = cfConfigurationFile.getConfigurationFileType();
 		
+		//Check for DPoE Type Configuration File
+		if ((this.iConfigurationFileType >= DPOE_VER_20) && (this.iConfigurationFileType <= DPOE_VER_20)) {
+			
+			if (localDebug) System.out.println("ConfigurationFileExport(cf) -> DPoE Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
+			
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+		
+			init(this.iConfigurationFileType);				
+		
+		} else {
+			
+			if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
+				
+				if (localDebug) System.out.println("ConfigurationFileExport(cf) -> PacketCable Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
+				
+				dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+				
+				init();	
+				
+			} else {
+				
+				if (localDebug) System.out.println("ConfigurationFileExport(cf) -> DOCSIS Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
+				
+				dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+				
+				init();
+			}
+			
+		}
+			
 		//Build Dictionary
 		tlvToDictionary ();
 		
@@ -272,7 +384,7 @@ public class ConfigurationFileExport {
 	
 	/**
 	 * This will only produce the Full Default Configuration Options 
-	 * @param iConfigurationFileType int
+	 * @param iConfigurationFileType - Will Support all Configuration file Types: DOCSIS, PacketCable and DPoE - Set Configuration Type via Static FIELD
 	 */
 	public ConfigurationFileExport (int iConfigurationFileType) {
 		
@@ -280,72 +392,36 @@ public class ConfigurationFileExport {
 		
 		this.iConfigurationFileType = iConfigurationFileType;
 		
-		if (DOCSIS_VER_10 == iConfigurationFileType) {
+		if ((this.iConfigurationFileType >= DOCSIS_VER_10) || (this.iConfigurationFileType <= DOCSIS_VER_31)) {
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
-			
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
-			
-			bTLV = docsisPsuedoTLVArray();
-			
-		} else if (DOCSIS_VER_11 == iConfigurationFileType) {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
 			
 			bTLV = docsisPsuedoTLVArray();
 			
-		} else if (DOCSIS_VER_20 == iConfigurationFileType) {
+			init();
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+		} else if ((this.iConfigurationFileType >= PKT_CBL_VER_10) || (this.iConfigurationFileType <= PKT_CBL_VER_20)) {
 			
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
-			
-			bTLV = docsisPsuedoTLVArray();
-			
-		} else if (DOCSIS_VER_30 == iConfigurationFileType) {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
-			
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
-			
-			bTLV = docsisPsuedoTLVArray();
-			
-		} else if (DOCSIS_VER_31 == iConfigurationFileType) {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
-			
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
-			
-			bTLV = docsisPsuedoTLVArray();
-			
-		} else if (PKT_CBL_VER_10 == iConfigurationFileType) {
-			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
 			
 			bTLV = packetCablePsuedoTLVArray();
 			
-		} else if (PKT_CBL_VER_15 == iConfigurationFileType) {
+			init();
 			
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
-			
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
-			
+		} else if ((this.iConfigurationFileType >= DPOE_VER_20) || (this.iConfigurationFileType <= DPOE_VER_20)) {
+
+			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+
+			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DPOE);
+
 			bTLV = packetCablePsuedoTLVArray();
 			
-		} else if (PKT_CBL_VER_20 == iConfigurationFileType) {
-						
-			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
-			
-			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
-			
-			bTLV = packetCablePsuedoTLVArray();
+			init(iConfigurationFileType);
 		}
-		
-		init();
 		
 		convertJSONArrayDictToJSONObjectArrayList(jaTlvDictionary);
 	}
@@ -354,9 +430,7 @@ public class ConfigurationFileExport {
 	 * @deprecated
 	 * @since v1.0.1
 	 * @param iIndentation
-	
-	 * @return String
-	 */
+	 * @return String*/
 	public String toPrettyPrint (int iIndentation) {
 		
 		boolean localDebug = Boolean.FALSE;
@@ -403,8 +477,7 @@ public class ConfigurationFileExport {
 	/**
 	 * 
 	 * @param boolIncludeDefaultTLV = True == will include default TLV if no value is found 
-	 * @return String of the Compiled Configuration File
-	 */
+	 * @return String of the Compiled Configuration File*/
 	public String toPrettyPrint(boolean boolIncludeDefaultTLV) {
 		
 		//Deprecated setExportVerbose()
@@ -442,18 +515,14 @@ public class ConfigurationFileExport {
 	}
 	
 	/**
-	 * 
-	
-	 * @return Map<Integer,String>
-	 */
+	 *
+	 * @return Map<Integer,String>*/
 	public Map<Integer,String> toHex () {
 		return null;
 	}
 	
 	/**
 	 * 
-	
-	
 	 * @return TlvBuilder
 	 * @throws TlvException */
 	public TlvBuilder getTlvBuilder() throws TlvException {
@@ -470,9 +539,7 @@ public class ConfigurationFileExport {
 	 * Example: TLV Dot Notation: 25.1.2
 	 * 
 	 * @param sTlvDotNotation
-	
-	 * @return String
-	 */
+	 * @return String*/
 	public String getTlvDefintion (String sTlvDotNotation) {
 		
 		boolean localDebug = Boolean.FALSE;
@@ -614,14 +681,11 @@ public class ConfigurationFileExport {
 				
 				} catch (JSONException e1) {
 					e1.printStackTrace();
-				}
-				
-			}
-			
+				}	
+			}			
 		}
 			
-		return "\n\n" + sTlvName + ":\n\n" + sTlvDescription + "\n\n" + "String Format:\n\n" + sDisplayHint;
-		
+		return "\n\n" + sTlvName + ":\n\n" + sTlvDescription + "\n\n" + "String Format:\n\n" + sDisplayHint;		
 	}
 	
 	/**
@@ -645,15 +709,13 @@ public class ConfigurationFileExport {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-		}
-		
+		}		
 		return jaTopLevelTLV;
 	}
 	
 	/**
 	 * 
-	 * @param fOutput
-	
+	 * @param fOutput	
 	 * @return true is write, false is it did not write */
 	public boolean writeToDisk(File fOutput) {
 
@@ -732,8 +794,7 @@ public class ConfigurationFileExport {
 	}
 	
 	/**
-	 * 
-	
+	 * 	
 	 * @return the ConfigurationFile Type per the ConfigurationFile() field statics */
 	public int getConfigurationFileType () {
 		
@@ -748,8 +809,7 @@ public class ConfigurationFileExport {
 	/**
 	 * DEFAULT = true;
 	 * @deprecated
-	 * @param boolVerboseExport
-	 */
+	 * @param boolVerboseExport*/
 	public void setExportVerbose(boolean boolVerboseExport) {
 		this.boolVerboseExport = boolVerboseExport;
 	}
@@ -781,26 +841,31 @@ public class ConfigurationFileExport {
 		
 		//Create a TLV Builder
 		TlvBuilder tbTLV = new TlvBuilder();
-			
-		//Determine what kind of file: DOCSIS or PACKET CABLE
-		if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
-			
-			if (debug|localDebug) System.out.println("ConfigrationFileExport: PACKET-CABLE-FILE-FOUND");
-			
-			sDictionaryTableName = DictionarySQLConstants.PACKET_CABLE__DICTIONARY_TABLE_NAME;
-			
-		} else {
-			
-			if (debug|localDebug) System.out.println("ConfigrationFileExport: DOCSIS-CABLE-FILE-FOUND");
-			
-			sDictionaryTableName = DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;			
-		}
 		
-		//Get Top Level TLV Dictionary
-		DictionarySQLQueries dsqTopLevelTLV = new DictionarySQLQueries(sDictionaryTableName);
+		if (iConfigurationFileType == DOCSIS_PKTCBL) {
+			//Determine what kind of file: DOCSIS or PACKET CABLE
+			if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
+				
+				if (debug|localDebug) System.out.println("ConfigrationFileExport.tlvToDictionary() -> PACKET-CABLE-FILE-FOUND");
+				
+				sDictionaryTableName = DictionarySQLConstants.PACKET_CABLE_DICTIONARY_TABLE_NAME;
+				
+			} else {
+				
+				if (debug|localDebug) System.out.println("ConfigrationFileExport.tlvToDictionary() -> DOCSIS-CABLE-FILE-FOUND");
+				
+				sDictionaryTableName = DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;			
+			}
+			
+			//Get Top Level TLV Dictionary
+			dsqDictionarySQLQueries = new DictionarySQLQueries(sDictionaryTableName);
+		} else {
+			sDictionaryTableName = dsqDictionarySQLQueries.getDictionaryTableName();
+		}
+
 		
 		//Build Map to determine the Type to ByteLength Mapping
-		Map<Integer,Integer> miiTopLevelTLV = dsqTopLevelTLV.getTopLevelByteLength();
+		Map<Integer,Integer> miiTopLevelTLV = dsqDictionarySQLQueries.getTopLevelByteLength();
 
 		//Add TLV Byte Array from Constructor for later processing
 		tbTLV.add(new TlvVariableBinding(bTLV,miiTopLevelTLV));
@@ -955,8 +1020,6 @@ public class ConfigurationFileExport {
 	 * 
 	 * @param joTopLevelTLV
 	 * @param iIndentation
-	
-	
 	 * @return StringBuilder
 	 * @throws JSONException */
 	private StringBuilder topLevelTLVCodeBlock (JSONObject joTopLevelTLV, int iIndentation) throws JSONException {
@@ -1104,12 +1167,10 @@ public class ConfigurationFileExport {
 		
 		return sbTopLevelTLVCodeBlock;
 	}
-	
+
 	/**
-	 * 
-	 */
-	private void init() {
-				
+	 * */
+	private void initBER() {
 		BER_DATA_TYPE.put((int) BER.COUNTER32,   "Counter32");
 		BER_DATA_TYPE.put((int) BER.COUNTER64,   "Counter64");
 		BER_DATA_TYPE.put((int) BER.GAUGE32,     "Gauge32");
@@ -1120,6 +1181,14 @@ public class ConfigurationFileExport {
 		
 		//This Type does not exists as a SNMP DataType, this is only for use in this program
 		BER_DATA_TYPE.put(BinaryConversion.byteToUnsignedInteger(BERService.HEX), "HexString");
+	}
+	
+	/**
+	 * 
+	 */
+	private void init() {
+				
+		initBER();
 		
 		//Figure Out the Configuration file Type DOCSIS vs. PacketCable
 		
@@ -1127,6 +1196,18 @@ public class ConfigurationFileExport {
 			sConfigurationFileStart = "Docsis";
 		} else {
 			sConfigurationFileStart = "PacketCable-X.X";
+		}
+	}
+	
+	/**
+	 * Only Non DOCSIS and PacketCable files*/
+	private void init(int iConfigurationFileType) {
+		
+		initBER();
+		
+		if ((iConfigurationFileType >= DPOE_VER_10) || 
+				(iConfigurationFileType <= DPOE_VER_20)) {
+			sConfigurationFileStart = "DPoE";
 		}
 	}
 	

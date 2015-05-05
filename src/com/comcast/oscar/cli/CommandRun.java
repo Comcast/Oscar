@@ -24,8 +24,8 @@ import com.comcast.oscar.cli.commands.Input;
 import com.comcast.oscar.cli.commands.JSONDisplay;
 import com.comcast.oscar.cli.commands.JSONtoTLV;
 import com.comcast.oscar.cli.commands.Key;
-import com.comcast.oscar.cli.commands.MaxCPE;
 import com.comcast.oscar.cli.commands.MIBSCompile;
+import com.comcast.oscar.cli.commands.MaxCPE;
 import com.comcast.oscar.cli.commands.OID;
 import com.comcast.oscar.cli.commands.Output;
 import com.comcast.oscar.cli.commands.SNMP4JLicense;
@@ -35,10 +35,10 @@ import com.comcast.oscar.cli.commands.TLV;
 import com.comcast.oscar.cli.commands.TLVDescription;
 import com.comcast.oscar.cli.commands.TLVtoJSON;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
+import com.comcast.oscar.configurationfile.ConfigurationFileExport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.constants.Constants;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.tlv.TlvException;
@@ -372,7 +372,7 @@ public class CommandRun {
 	        	{
 	        		if (comInput.isBinary()) 
 	        		{
-	        			comJSONDisplay.printJSONDisplayFromBinary(comInput.getInput(), comSpecification.getTlvDisassemble());
+	        			comJSONDisplay.printJSONDisplayFromBinary(comInput.getInput(), comSpecification.getTlvDisassemble(), comSpecification.getConfigurationFileType());
 	        		} 
 	        		else 
 	        		{
@@ -470,9 +470,10 @@ public class CommandRun {
 		{
 			if (comInput.isBinary()) 
 			{
-				ConfigurationFileExport cfe = new ConfigurationFileExport(comInput.getInput());	
+				ConfigurationFileExport cfe = new ConfigurationFileExport(comInput.getInput(), comSpecification.getConfigurationFileType());	
+
 				ConfigurationFile cf = null;
-								
+							
 				try 
 				{	
 					cf = new ConfigurationFile(comSpecification.getConfigurationFileType(), cfe.getTlvBuilder());
@@ -482,9 +483,11 @@ public class CommandRun {
 					Thread.dumpStack();
 					e.printStackTrace();
 				}
-								
-				tlvInsertion(cf);					
+						
+				tlvInsertion(cf);
+				
 				cf.commit();
+								
 				ConfigurationFileExport cfeSnmp64Insert = new ConfigurationFileExport(cf);	
 				System.out.println(cfeSnmp64Insert.toPrettyPrint(boolDecompileDisplay));
 			} 
@@ -502,7 +505,7 @@ public class CommandRun {
 	/**
 	 * Compiles the input file into the specified output
 	
-	 * @throws ConfigrationFileException  */
+	 * @throws ConfigurationFileException  */
 	public void compile() 
 	{
 		if (comInput !=null && comInput.hasInput()) 
@@ -511,7 +514,7 @@ public class CommandRun {
 			
 			if(comInput.isBinary()) 
 			{		
-				ConfigurationFileExport cfe = new ConfigurationFileExport(comInput.getInput());
+				ConfigurationFileExport cfe = new ConfigurationFileExport(comInput.getInput(),comSpecification.getConfigurationFileType());
 				
 				try 
 				{
@@ -524,17 +527,17 @@ public class CommandRun {
 			} 
 			else 
 			{
-				ConfigrationFileImport cfi = null;
+				ConfigurationFileImport cfi = null;
 
 				try 
 				{
-					cfi = new ConfigrationFileImport(comInput.getInput());
+					cfi = new ConfigurationFileImport(comInput.getInput());
 				} 
 				catch (FileNotFoundException e) 
 				{
 					e.printStackTrace();
 				} 
-				catch (ConfigrationFileException e) 
+				catch (ConfigurationFileException e) 
 				{
 					e.printStackTrace();
 				}
@@ -612,7 +615,7 @@ public class CommandRun {
 			{
 				CommonTlvInsertions.insertFirmwareFileName(this.comFirmware.getFirmware(), configurationFile, false);
 			} 
-			catch (ConfigrationFileException e) 
+			catch (ConfigurationFileException e) 
 			{
 				e.printStackTrace();
 			}
@@ -625,7 +628,7 @@ public class CommandRun {
 				{
 					CommonTlvInsertions.insertTftpServerAddress(this.comTFTPServer.getIpv4Address(), configurationFile, false);
 				} 
-				catch (ConfigrationFileException e) 
+				catch (ConfigurationFileException e) 
 				{
 					e.printStackTrace();
 				}
@@ -637,7 +640,7 @@ public class CommandRun {
 				{
 					CommonTlvInsertions.insertTftpServerAddress(this.comTFTPServer.getIpv6Address(), configurationFile, false);
 				} 
-				catch (ConfigrationFileException e) 
+				catch (ConfigurationFileException e) 
 				{
 					e.printStackTrace();
 				}
@@ -650,7 +653,7 @@ public class CommandRun {
 			{
 				CommonTlvInsertions.insertMaxCPE(this.comMaxCPE.getMaxCPE(), configurationFile, false);
 			} 
-			catch (ConfigrationFileException e) 
+			catch (ConfigurationFileException e) 
 			{
 				e.printStackTrace();
 			}
@@ -662,7 +665,7 @@ public class CommandRun {
 			{
 				CommonTlvInsertions.insertDownstreamFrequency(this.comDownstreamFrequency.getDownstreamFrequency(), configurationFile, false);
 			} 
-			catch (ConfigrationFileException e) 
+			catch (ConfigurationFileException e) 
 			{
 				e.printStackTrace();
 			}
@@ -676,7 +679,7 @@ public class CommandRun {
 				{
 					CommonTlvInsertions.insertCoSignCVC(this.comCVC.getCoSigner(), configurationFile, false);
 				} 
-				catch (ConfigrationFileException e) 
+				catch (ConfigurationFileException e) 
 				{
 					e.printStackTrace();
 				}
@@ -687,7 +690,7 @@ public class CommandRun {
 				{
 					CommonTlvInsertions.insertManufactureCVC(this.comCVC.getManufacturer(), configurationFile, false);
 				} 
-				catch (ConfigrationFileException e) 
+				catch (ConfigurationFileException e) 
 				{
 					e.printStackTrace();
 				}
@@ -702,7 +705,7 @@ public class CommandRun {
 				{
 					CommonTlvInsertions.insertDigitMap(entry.getValue(), entry.getKey(), configurationFile, false);
 				} 
-				catch (ConfigrationFileException e) 
+				catch (ConfigurationFileException e) 
 				{
 					e.printStackTrace();
 				}

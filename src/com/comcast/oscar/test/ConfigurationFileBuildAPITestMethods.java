@@ -29,13 +29,13 @@ import org.json.JSONException;
 
 import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.buildbulk.BulkBuild;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableCompiler;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.compiler.PacketCableCompiler;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
+import com.comcast.oscar.configurationfile.ConfigurationFileExport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.configurationfile.DigitMapOperation;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvAssembler;
@@ -64,14 +64,14 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		System.out.println("--------------------------------------------------------------------");
 
 
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -108,25 +108,25 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		String sTestMD5 = "";
 		
-		if (iPacketCableVersion == PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10) {
+		if (iPacketCableVersion == ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE) {
 			 sTestMD5 = "D0:CE:7D:E6:01:E0:92:1A:0F:EA:FE:96:B7:91:0A:D1";
-		} else if(iPacketCableVersion == PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15) {
+		} else if(iPacketCableVersion == ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE) {
 			 sTestMD5 = "D0:CE:7D:E6:01:E0:92:1A:0F:EA:FE:96:B7:91:0A:D1";
-		} else if(iPacketCableVersion == PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20) {
+		} else if(iPacketCableVersion == ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE) {
 			 sTestMD5 = "B8:65:65:3D:0C:35:17:D1:07:BD:C1:C3:C8:98:09:5C";
 		}
 		
 		System.out.println("Testing Text Configuration File to Binary Configuation File - PACKET-CABLE-" + iPacketCableVersion);
 		System.out.println("-----------------------------------------------------------------------------");
 		
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -166,14 +166,14 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		System.out.println("Testing Text Configuration File to Binary Configuation File - DOCSIS - Insert - Manufacture CVC");
 		System.out.println("-----------------------------------------------------------------------------------------------");
 
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -184,7 +184,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		try {
 
 			CommonTlvInsertions.insertManufactureCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
@@ -220,14 +220,14 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		System.out.println("------------------------------------------------------------------------------------------");
 
 
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -238,7 +238,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		try {
 
 			CommonTlvInsertions.insertCoSignCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
@@ -274,14 +274,14 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		System.out.println("Testing Text Configuration File to Binary Configuation File - DOCSIS - Insert - Downstream Frequency");
 		System.out.println("----------------------------------------------------------------------------------------------------");
 
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -291,7 +291,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 
 		try {
 			CommonTlvInsertions.insertDownstreamFrequency(723000000, cf , false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
@@ -327,14 +327,14 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		System.out.println("Testing Text Configuration File to Binary Configuation File - DOCSIS - Insert - Max CPE - 32");
 		System.out.println("--------------------------------------------------------------------------------------------");
 
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -344,7 +344,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 
 		try {
 			CommonTlvInsertions.insertMaxCPE(32, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
@@ -379,14 +379,14 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		System.out.println("Testing Text Configuration File to Binary Configuation File - DOCSIS - Insert - TLV - 020101");
 		System.out.println("--------------------------------------------------------------------------------------------");
 
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -430,21 +430,21 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		String sFileName = "IMS-PKT-CABLE-CONFIG-DIGIT-MAP.txt";
 		String sDigitMap = "digitMap.txt";
 		
-		int iPacketCableVersion = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20;
+		int iPacketCableVersion = ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
 		
 		String sTestMD5 = "BB:77:BC:71:9C:4A:4A:59:D7:3B:C4:B5:16:5A:8B:7E";
 		
 		System.out.println("Testing Text Configuration File to Binary Configuation File - PACKET-CABLE-20");
 		System.out.println("-----------------------------------------------------------------------------");
 		
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -675,7 +675,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertMaxCPE(32, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -719,7 +719,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertFirmwareFileName(sFileName, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -763,7 +763,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertManufactureCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, true);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -807,7 +807,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertCoSignCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, true);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -853,13 +853,13 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertCoSignCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 	
 		try {
 			CommonTlvInsertions.insertMaxCPE(32, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
@@ -871,13 +871,13 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 
 		try {
 			CommonTlvInsertions.insertFirmwareFileName("FirmwareFileName.bin", cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
 		try {
 			CommonTlvInsertions.insertManufactureCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -930,19 +930,19 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertCoSignCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
 		try {
 			CommonTlvInsertions.insertManufactureCVC(TestDirectoryStructure.fCertificateDirFileName("COMCAST_CVC.der"), cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 	
 		try {
 			CommonTlvInsertions.insertMaxCPE(32, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
@@ -1109,14 +1109,14 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		System.out.println("------------------------");
 
 		
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 		
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -1150,19 +1150,19 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		System.out.println("Testing Packet Cable JSON Dump");
 		System.out.println("------------------------------");
 		
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 		
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		TlvDisassemble td = new TlvDisassemble(cfi.getTlvBuilder(),DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+		TlvDisassemble td = new TlvDisassemble(cfi.getTlvBuilder(),DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
 		Disk.writeToDisk(td.getTlvDictionary().toString(), TestDirectoryStructure.fOutputDirFileName(sFileName + "-JSON.txt"));
 			
@@ -1556,6 +1556,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 	 * Method BinaryToTextInsertMultiDigitMap.
 	 * @see com.comcast.oscar.test.TestMethod#BinaryToTextInsertMultiDigitMap()
 	 */
+	@SuppressWarnings("deprecation")
 	public void BinaryToTextInsertMultiDigitMap() {
 		
 		String sFileName = "IMS-PKT-CABLE-CONFIG.bin";
@@ -1589,7 +1590,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		//ReSet FileMarkers because the DigitMaps are Appended to the end of the config file
 		tb = PacketCableCompiler.setFileMarkers(tb.toByteArray());
 		
-		cfe = new ConfigurationFileExport(tb);
+		cfe = new ConfigurationFileExport(tb,ConfigurationFileExport.PKT_CBL_VER_20);
 		
 		cfe.writeToDisk(TestDirectoryStructure.fOutputDirFileName(sFileName + ".txt"));
 		
@@ -1621,21 +1622,21 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		String sDigitMapOID2 = "1.3.6.1.4.1.4491.2.2.8.2.1.1.3.1.1.2.2";
 		
 		
-		int iPacketCableVersion = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20;
+		int iPacketCableVersion = ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
 		
 		String sTestMD5 = "FA:4E:3F:01:D3:CA:F1:09:5D:E2:6A:0E:30:A7:58:44";
 		
 		System.out.println("Testing Text Configuration File to Binary Configuation File - PACKET-CABLE-20");
 		System.out.println("-----------------------------------------------------------------------------");
 		
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -1682,14 +1683,14 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		System.out.println("--------------------------------------------------------------------------------");
 
 
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -1734,13 +1735,13 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		System.out.println("Testing Text Configuration File to Binary Configuation File - DOCSIS - Insert - TFTP Server IPv4 & IPv6 Address");
 		System.out.println("---------------------------------------------------------------------------------------------------------------");
 
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			e1.printStackTrace();
 		}
 
@@ -1749,13 +1750,13 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 
 		try {
 			CommonTlvInsertions.insertTftpServerAddress(sIPv4, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 
 		try {
 			CommonTlvInsertions.insertTftpServerAddress(sIPv6, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -1807,13 +1808,13 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		try {
 			CommonTlvInsertions.insertTftpServerAddress(sIPv4, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
 		try {
 			CommonTlvInsertions.insertTftpServerAddress(sIPv6, cf, false);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
@@ -1843,12 +1844,12 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 	public void TextToTextMergeTemplateDOCSIS() {
 
 		//Template File
-		ConfigrationFileImport cfiTemplate = null;
+		ConfigurationFileImport cfiTemplate = null;
 		ConfigurationFileExport cfeTemplate = null;
 		TlvBuilder tbTemplate = null;
 		
 		//Input File
-		ConfigrationFileImport cfiInput = null;
+		ConfigurationFileImport cfiInput = null;
 		ConfigurationFileExport cfeInput = null;
 		TlvBuilder tbInput = null;
 		
@@ -1862,10 +1863,10 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		if (HexString.verifyAsciiPlainText(HexString.fileToByteArray(fInput))){
 			
 			try {
-				cfiInput = new ConfigrationFileImport(fInput);
+				cfiInput = new ConfigurationFileImport(fInput);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-			} catch (ConfigrationFileException e) {
+			} catch (ConfigurationFileException e) {
 				e.printStackTrace();
 			}
 			
@@ -1893,10 +1894,10 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		if (HexString.verifyAsciiPlainText(HexString.fileToByteArray(fTemplate))){
 			
 			try {
-				cfiTemplate = new ConfigrationFileImport(fTemplate);
+				cfiTemplate = new ConfigurationFileImport(fTemplate);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-			} catch (ConfigrationFileException e) {
+			} catch (ConfigurationFileException e) {
 				e.printStackTrace();
 			}
 			
@@ -2024,19 +2025,19 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		System.out.println("Testing Text Configuration File to Binary Configuation File - DOCSIS - Insert - SNMP-OID");
 		System.out.println("-----------------------------------------------------------------------------------------------");
 
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName(sFileName));
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
-		} catch (ConfigrationFileException e1) {
+		} catch (ConfigurationFileException e1) {
 			e1.printStackTrace();
 		}
 
 		ConfigurationFile cf = null;
 		
-		if (cfi.getConfigurationFileType() > ConfigrationFileImport.DOCSIS_VER_31) {
+		if (cfi.getConfigurationFileType() > ConfigurationFileImport.DOCSIS_VER_31) {
 			cf = new ConfigurationFile(cfi.getConfigurationFileType(), cfi.getTlvBuilder());		
 		} else {
 			cf = new ConfigurationFile(cfi.getConfigurationFileType(), cfi.getTlvBuilder(),SHARED_SECRET);

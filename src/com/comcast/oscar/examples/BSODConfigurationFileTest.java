@@ -2,23 +2,24 @@ package com.comcast.oscar.examples;
 
 import java.io.FileNotFoundException;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.test.TestDirectoryStructure;
 
 public class BSODConfigurationFileTest {
 
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
-			cfi = new ConfigrationFileImport(TestDirectoryStructure.fInputDirFileName("bsod.txt"));
+			cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName("bsod.txt"));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		

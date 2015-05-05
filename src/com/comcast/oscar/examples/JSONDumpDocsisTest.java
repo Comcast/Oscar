@@ -22,9 +22,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.tlv.TlvDisassemble;
@@ -38,6 +38,7 @@ public class JSONDumpDocsisTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		boolean TEXT = true;
@@ -46,7 +47,7 @@ public class JSONDumpDocsisTest {
 		File fDocsisText = null;		
 		File fDocsisBin = null;
 		TlvDisassemble tdDOCSIS = null;
-		ConfigrationFileImport cfiDOCSIS = null;
+		ConfigurationFileImport cfiDOCSIS = null;
 		
 		
 		
@@ -73,8 +74,8 @@ public class JSONDumpDocsisTest {
 
 			try {
 				try {
-					cfiDOCSIS = new ConfigrationFileImport(fDocsisText);
-				} catch (ConfigrationFileException e) {
+					cfiDOCSIS = new ConfigurationFileImport(fDocsisText);
+				} catch (ConfigurationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

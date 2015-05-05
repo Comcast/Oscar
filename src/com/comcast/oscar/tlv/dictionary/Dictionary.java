@@ -72,6 +72,7 @@ public interface Dictionary {
 
 	public final static Integer	DOCSIS 							= 0;	
 	public final static Integer PACKET_CABLE 			   		= 1;
+	public final static Integer DPOE							= 2;
 	
 	/* *****************************************************************************
 	 *  								Methods

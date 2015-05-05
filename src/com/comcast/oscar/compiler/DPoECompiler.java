@@ -1,8 +1,7 @@
-package com.comcast.oscar.sql.dpoequeries;
+package com.comcast.oscar.compiler;
 
-import java.sql.Connection;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 
-import com.comcast.oscar.sql.docsisqueries.DocsisSqlQuery;
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>
@@ -21,23 +20,37 @@ import com.comcast.oscar.sql.docsisqueries.DocsisSqlQuery;
  * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
  */
 
-public class DPoESqlQuery extends DocsisSqlQuery {
 
+public class DPoECompiler extends DocsisCompiler {
+	
+	private int iDPoEVersion = ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
+	
 	/**
-	 * Constructor for DPoESqlQuery.
-	 * @param sqlConnection Connection
+	 * 
+	 * @param iDPoEVersion
 	 */
-	public DPoESqlQuery(Connection sqlConnection) {
-		super(sqlConnection);
-
+	public DPoECompiler(int iDPoEVersion) {		
+		super(iDPoEVersion);
+		this.iDPoEVersion = iDPoEVersion;
 	}
 	
 	/**
-	 * */
-	public void commit() {
-		
+	 * 
+	 * @param sSharedSecretKey
+	 * @param iDPoEVersion
+	 */
+	public DPoECompiler(String sSharedSecretKey , int iDPoEVersion) {		
+		super(sSharedSecretKey , iDPoEVersion);
+		this.iDPoEVersion = iDPoEVersion;
 	}
 	
+	/**
+	 * 
+	 * @return OSCAR Internal Version tracking
+	 */
+	public int getDPoEVersion() {
+		return this.iDPoEVersion;
+	}
 	
 
 }

@@ -25,6 +25,7 @@ public class DisplayFullDefaultsTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		ConfigurationFileExport cfeDOCSIS = new ConfigurationFileExport(ConfigurationFileExport.DOCSIS_VER_31);

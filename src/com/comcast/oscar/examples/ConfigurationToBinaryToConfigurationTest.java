@@ -3,9 +3,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.tlv.TlvBuilder;
@@ -36,6 +36,7 @@ public class ConfigurationToBinaryToConfigurationTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		boolean DOCSIS = true;
@@ -66,12 +67,12 @@ public class ConfigurationToBinaryToConfigurationTest {
 				e.printStackTrace();
 			}
 		
-			ConfigrationFileImport cfi = null;
+			ConfigurationFileImport cfi = null;
 
 			try {
 				try {
-					cfi = new ConfigrationFileImport(file);
-				} catch (ConfigrationFileException e) {
+					cfi = new ConfigurationFileImport(file);
+				} catch (ConfigurationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -140,12 +141,12 @@ public class ConfigurationToBinaryToConfigurationTest {
 				e.printStackTrace();
 			}
 	
-			ConfigrationFileImport cfi = null;
+			ConfigurationFileImport cfi = null;
 
 			try {
 				try {
-					cfi = new ConfigrationFileImport(file);
-				} catch (ConfigrationFileException e) {
+					cfi = new ConfigurationFileImport(file);
+				} catch (ConfigurationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -193,7 +194,7 @@ public class ConfigurationToBinaryToConfigurationTest {
 
 			System.out.println("+------------------------------------------------------------------------------------------------------------+");
 
-			ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport(cf.toByteArray());
+			ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport(cf);
 
 			System.out.println(cfeDOCTLV.toPrettyPrint(0));
 		}

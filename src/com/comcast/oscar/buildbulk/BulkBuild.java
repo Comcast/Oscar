@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvBuilder;
@@ -175,13 +175,13 @@ public class BulkBuild {
 		
 		if (HexString.verifyAsciiPlainText(bConfigurationFile)) {
 			
-			ConfigrationFileImport cfi = null;
+			ConfigurationFileImport cfi = null;
 			
 			try {
-				cfi = new ConfigrationFileImport(bConfigurationFile);
+				cfi = new ConfigurationFileImport(bConfigurationFile);
 			} catch (NullPointerException e) {
 				e.printStackTrace();
-			} catch (ConfigrationFileException e) {
+			} catch (ConfigurationFileException e) {
 				e.printStackTrace();
 			}
 			
@@ -213,12 +213,12 @@ public class BulkBuild {
 	 */
 	public boolean textToBinary (File fTextInput , File fBinOutput , String sSharedSecretKey) {
 				
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 
 		try {
 			try {
-				cfi = new ConfigrationFileImport(fTextInput);
-			} catch (ConfigrationFileException e) {
+				cfi = new ConfigurationFileImport(fTextInput);
+			} catch (ConfigurationFileException e) {
 				e.printStackTrace();
 			}
 		} catch (FileNotFoundException e) {
@@ -245,6 +245,7 @@ public class BulkBuild {
 	 * @param sSharedSecretKey String
 	 * @return boolean
 	 */
+	@SuppressWarnings("deprecation")
 	public boolean binaryToText(File fBinInput , File fTextOutput , String sSharedSecretKey) {
 
 		boolean localDebug = Boolean.FALSE;
@@ -276,9 +277,9 @@ public class BulkBuild {
 			 */
 
 			if (baConfigFile[0] == PacketCableConstants.FILE_MARKER) {	
-				dsq = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+				dsq = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			} else {
-				dsq = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+				dsq = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			}
 
 			//At this point, need to check if TLV is of Configuration Type
@@ -321,6 +322,7 @@ public class BulkBuild {
 		if (debug|localDebug)
 			System.out.println("BulkBuild.binaryToBinary(f,f,s)");
 		
+		@SuppressWarnings("deprecation")
 		ConfigurationFileExport cfe = new ConfigurationFileExport (fBinInput);
 
 		ConfigurationFile cf = null;
@@ -373,9 +375,9 @@ public class BulkBuild {
 			 */
 
 			if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31) {	
-				dsq = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+				dsq = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
 			} else {
-				dsq = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+				dsq = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			}
 		
 			//Cycle thru Each Map Entry and insert the TlvBuilder - 

@@ -22,9 +22,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.tlv.TlvDisassemble;
@@ -38,6 +38,7 @@ public class JSONDumpPacketCableTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		boolean TEXT = true;
@@ -46,7 +47,7 @@ public class JSONDumpPacketCableTest {
 		File fPacketCableTxt = null;
 		File fPacketCableBin = null;
 		
-		ConfigrationFileImport cfiPacketCable = null;
+		ConfigurationFileImport cfiPacketCable = null;
 	
 		try {
 			SMIManagerService.SmiManagerStart();
@@ -70,8 +71,8 @@ public class JSONDumpPacketCableTest {
 
 			try {
 				try {
-					cfiPacketCable = new ConfigrationFileImport(fPacketCableTxt);
-				} catch (ConfigrationFileException e) {
+					cfiPacketCable = new ConfigurationFileImport(fPacketCableTxt);
+				} catch (ConfigurationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

@@ -6,9 +6,9 @@ import java.io.FileNotFoundException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.DigitMapOperation;
 
 /**
@@ -50,7 +50,7 @@ public class DigitmapDisplay {
 	 */
 	public void printDigitmapDisplayFromBinary(File file) 
 	{
-		ConfigurationFileExport cfePacketCable = new ConfigurationFileExport(file);	
+		ConfigurationFileExport cfePacketCable = new ConfigurationFileExport(file, ConfigurationFileExport.DOCSIS_PKTCBL);	
 		DigitMapOperation dmo = new DigitMapOperation(cfePacketCable);
 		System.out.println(dmo.getDigitMap());
 	}
@@ -61,16 +61,16 @@ public class DigitmapDisplay {
 	 */
 	public void printDigitmapDisplayFromText(File file) 
 	{
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 		try 
 		{
-			cfi = new ConfigrationFileImport(file);
+			cfi = new ConfigurationFileImport(file);
 		} 
 		catch (FileNotFoundException e) 
 		{
 			e.printStackTrace();
 		} 
-		catch (ConfigrationFileException e) 
+		catch (ConfigurationFileException e) 
 		{
 			e.printStackTrace();
 		}

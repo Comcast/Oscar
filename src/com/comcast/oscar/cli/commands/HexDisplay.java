@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
@@ -119,16 +119,16 @@ public class HexDisplay {
 	 */
 	public void printHexDisplayFromText(File file, int configurationFileType) 
 	{
-		ConfigrationFileImport cfi = null;
+		ConfigurationFileImport cfi = null;
 		try 
 		{
-			cfi = new ConfigrationFileImport(file);
+			cfi = new ConfigurationFileImport(file);
 		} 
 		catch (FileNotFoundException e1) 
 		{
 			e1.printStackTrace();
 		} 
-		catch (ConfigrationFileException e1) 
+		catch (ConfigurationFileException e1) 
 		{
 			e1.printStackTrace();
 		}

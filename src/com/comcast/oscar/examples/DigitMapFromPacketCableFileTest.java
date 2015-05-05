@@ -3,9 +3,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.DigitMapOperation;
 
 /*
@@ -32,6 +32,7 @@ public class DigitMapFromPacketCableFileTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		File fPacketCableBin = null;
@@ -80,12 +81,12 @@ public class DigitMapFromPacketCableFileTest {
 				e.printStackTrace();
 			}
 
-			ConfigrationFileImport cfiPacketCable = null;
+			ConfigurationFileImport cfiPacketCable = null;
 
 			try {
 				try {
-					cfiPacketCable = new ConfigrationFileImport (fPacketCableTxt);
-				} catch (ConfigrationFileException e) {
+					cfiPacketCable = new ConfigurationFileImport (fPacketCableTxt);
+				} catch (ConfigurationFileException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

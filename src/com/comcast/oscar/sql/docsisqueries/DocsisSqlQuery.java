@@ -12,7 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.sql.SqlConnection;
 import com.comcast.oscar.tlv.dictionary.Dictionary;
 
@@ -182,11 +182,11 @@ public class DocsisSqlQuery implements Dictionary {
 				}
 			}
 
-		} else if (PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10 == iCableLabsConfigType) {
+		} else if (ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE == iCableLabsConfigType) {
 
-		} else if (PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15 == iCableLabsConfigType) {
+		} else if (ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE == iCableLabsConfigType) {
 
-		} else if (PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20 == iCableLabsConfigType) {
+		} else if (ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE == iCableLabsConfigType) {
 
 		}
 

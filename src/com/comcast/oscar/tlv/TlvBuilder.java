@@ -13,7 +13,7 @@ import org.snmp4j.smi.OID;
 
 import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.cablelabsdefinitions.Constants;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 
@@ -66,7 +66,7 @@ public class TlvBuilder implements TlvBuild {
 	 * 
 	 * @param cfi
 	 */
-	public void add (ConfigrationFileImport cfi) {
+	public void add (ConfigurationFileImport cfi) {
 				
 		try {
 			add(new HexString(cfi.toByteArray()));
@@ -2175,6 +2175,36 @@ public class TlvBuilder implements TlvBuild {
 		
 		return baosStripZeroByteTLV.toByteArray();
 	}
+	
+	/**
+	 * 
+	 * @param ba
+	 * @return - return in Hex TopLevel TLV Dump separated by newline
+	 */
+	public static String tlvDump(byte[] ba) {
+		
+		String sTlvDump = "";
+		
+		HexString hs = new HexString(ba);
+
+		TlvBuilder tb = new TlvBuilder();
+		
+		try {
+			tb.add(hs);
+		} catch (TlvException e) {
+			e.printStackTrace();
+		}
+		
+		ArrayList<byte[]> alb = (ArrayList<byte[]>) tb.sortByTopLevelTlv();
+		
+		for (byte[] ba1 : alb) {
+			HexString hsTlv = new HexString(ba1);
+			sTlvDump += (hsTlv.toString(":") + "\n");
+		}
+		
+		return sTlvDump;
+	}
+	
 	
 	/* *****************************************************************************
 	 * 							Private Methods

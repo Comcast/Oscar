@@ -17,10 +17,11 @@ import net.lingala.zip4j.util.Zip4jConstants;
 
 import com.comcast.oscar.ber.BEROIDConversion;
 import com.comcast.oscar.ber.OIDCollectionDuplicationValidation;
-import com.comcast.oscar.compiler.docsiscompiler.DocsisCompiler;
-import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableCompiler;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.cablelabsdefinitions.Constants;
+import com.comcast.oscar.compiler.DPoECompiler;
+import com.comcast.oscar.compiler.DocsisCompiler;
+import com.comcast.oscar.compiler.PacketCableCompiler;
+import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
@@ -51,31 +52,29 @@ public class ConfigurationFile {
 	
 	private boolean debug = Boolean.FALSE;
 	
-	private int iConfigurationFileType;
-	
-	private TlvBuilder tbConfigurationFile;
-	
+	private int iConfigurationFileType;	
+	private TlvBuilder tbConfigurationFile;	
 	private DocsisCompiler dcConfigurationFile = null;
-
 	private PacketCableCompiler pcConfigurationFile = null;
-	
-	private String sCmtsSharedSecretKey = "SHAREDSECRET";
-	
-	private String sConfigurationFileName = "";
-	
-	private File fConfigurationFileName = null;
-	
+	private DPoECompiler dpoeConfigurationFile = null;
+	private String sCmtsSharedSecretKey = "SHAREDSECRET";	
+	private String sConfigurationFileName = "";	
+	private File fConfigurationFileName = null;	
 	private Map<Integer,Integer> miiTypeToByteLengh = null;
 	
-	public static final Integer DOCSIS_VER_10 = DocsisConstants.DOCSIS_10;
-	public static final Integer DOCSIS_VER_11 = DocsisConstants.DOCSIS_11;
-	public static final Integer DOCSIS_VER_20 = DocsisConstants.DOCSIS_20;
-	public static final Integer DOCSIS_VER_30 = DocsisConstants.DOCSIS_30;
-	public static final Integer DOCSIS_VER_31 = DocsisConstants.DOCSIS_31;
-	public static final Integer PKT_CBL_VER_10 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10;
-	public static final Integer PKT_CBL_VER_15 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15;
-	public static final Integer PKT_CBL_VER_20 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20;
+	public static final Integer DOCSIS_VER_10 	= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_11 	= ConfigurationFileTypeConstants.DOCSIS_11_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_20 	= ConfigurationFileTypeConstants.DOCSIS_20_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_30 	= ConfigurationFileTypeConstants.DOCSIS_30_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_31 	= ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE;
+	
+	public static final Integer PKT_CBL_VER_10 	= ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_15 	= ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_20 	= ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
 
+	public static final Integer DPOE_VER_10 	= ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
+	public static final Integer DPOE_VER_20 	= ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE;
+	
 	/**
 	 * 
 	 * @param iConfigurationFileType
@@ -84,11 +83,17 @@ public class ConfigurationFile {
  	public ConfigurationFile(int iConfigurationFileType, TlvBuilder tbConfigurationFile) {
 		
  		boolean localDebug = Boolean.FALSE;
- 		
+ 				
 		this.iConfigurationFileType = iConfigurationFileType;
 		
 		this.tbConfigurationFile = tbConfigurationFile;
 	
+		//DumpTLV to STDOUT
+		if (localDebug) {		
+			System.out.println("ConfigurationFile(i,tb)");		
+			System.out.println(TlvBuilder.tlvDump(tbConfigurationFile.toByteArray()));			
+		}
+		
 		if (localDebug|debug) {
 			System.out.println("ConfigurationFile(i,tb) " +
 					" ConfigType: " + iConfigurationFileType +
@@ -221,6 +226,8 @@ public class ConfigurationFile {
 			
 			return pcConfigurationFile.toByteArray();
 		
+		} else if (dpoeConfigurationFile != null) {
+			return dpoeConfigurationFile.toByteArray();
 		}
 		
 		return null;		
@@ -278,21 +285,28 @@ public class ConfigurationFile {
 		if (dcConfigurationFile != null) {
 			
 			if (localDebug|debug) 
-				System.out.println("ConfigurationFile.finalize() - DOCSIS");
+				System.out.println("ConfigurationFile.commit() - DOCSIS - ByteLength: " + dcConfigurationFile.length());
 			
 			removeZeroLengthTopLevelTLV ();
 			
 			dcConfigurationFile.commit();
-			
-			
-			
+				
 		} else if (pcConfigurationFile != null) {
 			
 			if (localDebug|debug) 
-				System.out.println("ConfigurationFile.finalize() - PACKET-CABLE");
+				System.out.println("ConfigurationFile.commit() - PACKET-CABLE - ByteLength: " + pcConfigurationFile.length());
 			
-			pcConfigurationFile.commit();					
+			pcConfigurationFile.commit();
+			
+		} else if (dpoeConfigurationFile != null) {
+			
+			if (localDebug|debug) 
+				System.out.println("ConfigurationFile.commit() - DPoE-CABLE - ByteLength: " + dpoeConfigurationFile.length());
+			
+			dpoeConfigurationFile.commit();
 		}
+		
+		
 		 		
 	}
 
@@ -498,8 +512,7 @@ public class ConfigurationFile {
 		    	
 		return true;
 	}
-	
-	
+		
 	/**
 	 *  Need to work on this
 	 * 
@@ -550,19 +563,20 @@ public class ConfigurationFile {
 		
 		this.updateConfigurationFileTlvBuilder(tvb);
 
-		if (dcConfigurationFile != null) {
-			updateDocsisCompiler(tvb);
-		} else if (pcConfigurationFile != null) {
-			updatePacketCableCompiler(tvb);
-		}	
+		updateCompiler(tvb);	
+		
+	}
+	
+	/**
+	 * Removal of CM/CMTS MIC MD5 and BASIC.1 SHA-1 HASHS
+	 */
+	public void removeAllSecurityHash() {
 		
 	}
 	
 	/**
 	 * 
 	 * @param bTLV - ByteArray of TLV File
-	
-	
 	 * @return true = DOCSIS , false if PacketCable * @throws NullPointerException */
 	public static boolean configurationFileTypeCheck(byte[] bTLV) throws NullPointerException{
 		
@@ -634,9 +648,10 @@ public class ConfigurationFile {
 		
 		boolean localDebug = Boolean.FALSE;
 		
-		if (iConfigurationFileType < 100) {
+		if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE) && 
+				(iConfigurationFileType <= ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE)) {
 						
-			this.miiTypeToByteLengh = new DictionarySQLQueries().getTypeToByteLengthMap(DictionarySQLQueries.DOCSIS_QUERY_TYPE);
+			this.miiTypeToByteLengh = new DictionarySQLQueries().getTypeToByteLengthMap(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
 			dcConfigurationFile = new DocsisCompiler(sCmtsSharedSecretKey,iConfigurationFileType);
 			
@@ -655,7 +670,7 @@ public class ConfigurationFile {
 			updateConfigurationFileTlvBuilder(tbNoFinalize);
 			
 			//Update DOCSIS Compiler
-			updateDocsisCompiler(this.tbConfigurationFile);
+			updateCompiler(this.tbConfigurationFile);
 			
 			if (debug|localDebug)
 				System.out.println(
@@ -665,19 +680,57 @@ public class ConfigurationFile {
 						" -> DocsisCompiler-Length: " + dcConfigurationFile.toByteArray().length
 				);
 			
-		} else {
+		} else if ((iConfigurationFileType >= ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE) && 
+				(iConfigurationFileType <= ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE)) {
 			
-			this.miiTypeToByteLengh = new DictionarySQLQueries().getTypeToByteLengthMap(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+			this.miiTypeToByteLengh = new DictionarySQLQueries().getTypeToByteLengthMap(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			
 			pcConfigurationFile = new PacketCableCompiler(iConfigurationFileType);
 			
-			updatePacketCableCompiler(this.tbConfigurationFile);
+			updateCompiler(this.tbConfigurationFile);
 						
 			if (debug|localDebug)
 				System.out.println(
 						"ConfigurationFile.init() - PACKET-CABLE-TYPE " +
 						" -> TlvBuilder: " + tbConfigurationFile.toString()
 				);
+			
+		} else if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE) && 
+				(iConfigurationFileType <= ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE)) {
+
+			this.miiTypeToByteLengh = new DictionarySQLQueries().getTypeToByteLengthMap(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+			
+			dpoeConfigurationFile = new DPoECompiler(sCmtsSharedSecretKey, iConfigurationFileType);
+						
+			TlvBuilder tbNoFinalize = null;
+			
+			//Update without CM/CMST/EOF and PADDs
+			try {
+				tbNoFinalize = stripFinalize(dpoeConfigurationFile);
+			} catch (TlvException e) {
+				e.printStackTrace();
+			}
+
+			//Clear ConfigurationFile TlvBuilder 		
+			tbConfigurationFile.clear();
+
+			updateConfigurationFileTlvBuilder(tbNoFinalize);
+			
+			if (localDebug)
+				System.out.println("ConfigurationFile.init() -> " + TlvBuilder.tlvDump(tbConfigurationFile.toByteArray()));
+			
+			//Update DOCSIS Compiler
+			updateCompiler(this.tbConfigurationFile);
+			
+			if (debug|localDebug)
+				System.out.println(
+						"ConfigurationFile.init()" + "\n" + 
+						" -> DPOE-TYPE " + "\n" +
+						" -> ConfigurationFileTlvBuilder: " + tbConfigurationFile.toString() + "\n" +
+						" -> DPoECompiler: \t\t " + dpoeConfigurationFile.toString() + "\n" +
+						" -> ConfigurationFileTlvBuilder - ByteArray Length: " + tbConfigurationFile.toByteArray().length + "\n" +
+						" -> DPoECompiler - ByteArray Length:                " + dpoeConfigurationFile.toByteArray().length + "\n"
+				);		
 		}
 		
 	}
@@ -712,11 +765,7 @@ public class ConfigurationFile {
 			System.out.println("ConfigurationFile.addFinalize(): Length-After-Add: " 	+ tbConfigurationFile.length() 
 																						+ " - " + tbConfigurationFile.toString());
 				
-		if (dcConfigurationFile != null) {
-			updateDocsisCompiler(tbTLV);
-		} else if (pcConfigurationFile != null) {
-			updatePacketCableCompiler(tbTLV);		
-		}
+		updateCompiler(tbTLV);
 		
 	}
 	
@@ -749,19 +798,13 @@ public class ConfigurationFile {
 			System.out.println("ConfigurationFile.addFirstTlvBuilder(): Length-After-Add: " 	+ tbConfigurationFile.length() 
 																								+ " - " + tbConfigurationFile.toString());
 				
-		if (dcConfigurationFile != null) {
-			updateDocsisCompiler(tbTLV);
-		} else if (pcConfigurationFile != null) {
-			updatePacketCableCompiler(tbTLV);		
-		}
-		
+		updateCompiler(tbTLV);
 	}
 
 	/**
 	 * 
 	 * @param tbTLV
-	 * @param liStripTlvList
-	 */
+	 * @param liStripTlvList*/
 	private void addTlvBuilder(TlvBuilder tbTLV, List<Integer> liStripTlvList) {
 		
 		boolean localDebug = Boolean.FALSE;
@@ -778,9 +821,7 @@ public class ConfigurationFile {
 	}
 	
 	/**
-	 * 
-	
-	
+	 * @deprecated - Will need to replace as needed - Will no longer support this method
 	 * @return TlvBuilder
 	 * @throws TlvException */
 	private TlvBuilder stripFinalize() throws TlvException {
@@ -789,15 +830,15 @@ public class ConfigurationFile {
 			
 		//Lets Strip TLV 6,7,255 and PADDs
 		byte[] bTLV = null;
-		
+			
 		if (dcConfigurationFile != null) {
 			
 			//140109 - Added miiSnmp64TwoByteLength
 			try {
-				bTLV = TlvBuilder.stripTlv(6, this.tbConfigurationFile.toByteArray(),this.getTypeToByteLengthMap());
-				bTLV = TlvBuilder.stripTlv(7, bTLV,this.getTypeToByteLengthMap());
-				bTLV = TlvBuilder.stripTlv(255, bTLV,this.getTypeToByteLengthMap());
-				bTLV = TlvBuilder.stripTlv(0, bTLV,this.getTypeToByteLengthMap());
+				bTLV = TlvBuilder.stripTlv(Constants.CM_MIC, this.tbConfigurationFile.toByteArray(),this.getTypeToByteLengthMap());
+				bTLV = TlvBuilder.stripTlv(Constants.CMTS_MIC, bTLV,this.getTypeToByteLengthMap());
+				bTLV = TlvBuilder.stripTlv(Constants.END_OF_FILE, bTLV,this.getTypeToByteLengthMap());
+				bTLV = TlvBuilder.stripTlv(Constants.PAD, bTLV,this.getTypeToByteLengthMap());
 			} catch (TlvException e) {
 				e.printStackTrace();
 			}
@@ -812,44 +853,82 @@ public class ConfigurationFile {
 	
 	/**
 	 * 
+	 * @param oCompiler - ConfigurationFileCompiler
+	 * @return A new TlvBuilder object of the Configuration File.
+	 * @throws TlvException */
+	private TlvBuilder stripFinalize(Object oCompiler) throws TlvException {
+		
+		TlvBuilder tb = new TlvBuilder();
+			
+		//Lets Strip TLV 6,7,255 and PADDs
+		byte[] bTLV = null;
+			
+		/* DocsisCompiler Super Classes Support this Striping of TLV -> DPoE and DPoG Configuration File Types*/
+		if (oCompiler.getClass().getSuperclass().getSimpleName().equalsIgnoreCase("DocsisCompiler")) {
+		
+			try {
+				bTLV = TlvBuilder.stripTlv(Constants.CM_MIC, this.tbConfigurationFile.toByteArray(),this.getTypeToByteLengthMap());
+				bTLV = TlvBuilder.stripTlv(Constants.CMTS_MIC, bTLV,this.getTypeToByteLengthMap());
+				bTLV = TlvBuilder.stripTlv(Constants.END_OF_FILE, bTLV,this.getTypeToByteLengthMap());
+				bTLV = TlvBuilder.stripTlv(Constants.PAD, bTLV,this.getTypeToByteLengthMap());
+			} catch (TlvException e) {
+				e.printStackTrace();
+			} 
+			
+			tb.add(new HexString(bTLV));
+			
+		/* All other Configuration file Type bypass */	
+		} else {
+			tb.add(this.tbConfigurationFile.clone());
+		}
+
+		return tb;
+		
+	}
+		
+	/**
+	 * 
+	 * @param tb*/
+	private void updateCompiler(TlvBuilder tb) {
+		
+		if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE) && 
+				(iConfigurationFileType <= ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE)) {
+			this.dcConfigurationFile.add(tb);
+		} else if ((iConfigurationFileType >= ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE) && 
+				(iConfigurationFileType <= ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE)) {
+			this.pcConfigurationFile.add(tb);
+		} else if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE) && 
+				(iConfigurationFileType <= ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE)) {
+			this.dpoeConfigurationFile.add(tb);
+		}
+		
+	}
 	
+	/**
+	 * 
+	 * @param tvb*/
+	private void updateCompiler(TlvVariableBinding tvb) {
+		
+		if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE) && 
+				(iConfigurationFileType <= ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE)) {
+			this.dcConfigurationFile.add(tvb);
+		} else if ((iConfigurationFileType >= ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE) && 
+				(iConfigurationFileType <= ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE)) {
+			this.pcConfigurationFile.add(tvb);
+		} else if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE) && 
+				(iConfigurationFileType <= ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE)) {
+			this.dpoeConfigurationFile.add(tvb);
+		}
+		
+	}
+	
+	/**
+	 * 	
 	 * @return Type to ByteLength Map */
 	private Map<Integer,Integer> getTypeToByteLengthMap() {
 		return miiTypeToByteLengh;
 	}
-	
-	/**
-	 * 
-	 * @param tb
-	 */
- 	private void updateDocsisCompiler(TlvBuilder tb) {
-		this.dcConfigurationFile.add(tb);
-	}
-
- 	/**
- 	 * 
- 	 * @param tvb
- 	 */
- 	private void updateDocsisCompiler(TlvVariableBinding tvb) {
-		this.dcConfigurationFile.add(tvb);
-	}
- 	
-	/**
-	 * 
-	 * @param tb
-	 */
-	private void updatePacketCableCompiler(TlvBuilder tb) {
-		this.pcConfigurationFile.add(tb);
-	}
-	
-	/**
-	 * 
-	 * @param tvb
-	 */
-	private void updatePacketCableCompiler(TlvVariableBinding tvb) {
-		this.pcConfigurationFile.add(tvb);
-	}
-	
+		
 	/**
 	 * 
 	 * @param tb

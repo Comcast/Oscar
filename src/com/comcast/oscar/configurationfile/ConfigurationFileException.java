@@ -1,8 +1,5 @@
-package com.comcast.oscar.sql.dpoequeries;
+package com.comcast.oscar.configurationfile;
 
-import java.sql.Connection;
-
-import com.comcast.oscar.sql.docsisqueries.DocsisSqlQuery;
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>
@@ -21,23 +18,37 @@ import com.comcast.oscar.sql.docsisqueries.DocsisSqlQuery;
  * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
  */
 
-public class DPoESqlQuery extends DocsisSqlQuery {
+
+public class ConfigurationFileException extends Exception {
+
+	private static final long serialVersionUID = 28977801456447351L;
+
+	private Throwable cause;
 
 	/**
-	 * Constructor for DPoESqlQuery.
-	 * @param sqlConnection Connection
+	 * 
+	 * @param message
 	 */
-	public DPoESqlQuery(Connection sqlConnection) {
-		super(sqlConnection);
-
-	}
-	
+	public ConfigurationFileException(String message) {
+        super(message);
+    }
+    
 	/**
-	 * */
-	public void commit() {
-		
-	}
+	 * 
+	 * @param cause
+	 */
+    public ConfigurationFileException (Throwable cause) {
+        super(cause.getMessage());
+        this.cause = cause;
+    }
+    
+    /**
+     * 
+     * @return Throwable
+     */
+    @Override
+	public Throwable getCause() {
+        return this.cause;
+    }
 	
-	
-
 }

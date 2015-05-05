@@ -30,6 +30,7 @@ public class ConfigurationFileExportTest {
 	 * Method main.
 	 * @param args String[]
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		try {

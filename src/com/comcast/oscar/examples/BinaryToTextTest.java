@@ -33,6 +33,7 @@ public class BinaryToTextTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		try {

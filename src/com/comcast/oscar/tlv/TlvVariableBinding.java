@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 
@@ -371,8 +371,6 @@ public class TlvVariableBinding implements TlvBuild {
 	 * 
 	
 	 * @param bParentChildTlvEncodeList
-	
-	
 	 * @param _bTlvBuffer byte[]
 	 * @param iTopLevelTlvNumByteLength int
 	 * @return byte[]

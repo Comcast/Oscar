@@ -27,9 +27,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.comcast.oscar.ber.OIDToJSONArray;
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
@@ -46,6 +46,7 @@ public class InsertDigitMapToConfigurationBinaryTest {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
 		boolean debug = Boolean.FALSE;
@@ -79,7 +80,7 @@ public class InsertDigitMapToConfigurationBinaryTest {
 		byte[] bDigitMap = HexString.fileToByteArray(fDigitMap);
 		
 		//Need to get the JSON Dictionary Object, in this case, we need to use Snmp64
-		DictionarySQLQueries dsqSnmp64 = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_QUERY_TYPE);
+		DictionarySQLQueries dsqSnmp64 = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 		
 		//Get JSON Dictionary Object
 		JSONObject joDictSnmp64 = dsqSnmp64.getTlvDictionary(64);
@@ -133,12 +134,12 @@ public class InsertDigitMapToConfigurationBinaryTest {
 			e.printStackTrace();
 		}
 		
-		ConfigrationFileImport cfiPacketCable = null;
+		ConfigurationFileImport cfiPacketCable = null;
 		
 		try {
 			try {
-				cfiPacketCable = new ConfigrationFileImport(fPacketCableTxt);
-			} catch (ConfigrationFileException e) {
+				cfiPacketCable = new ConfigurationFileImport(fPacketCableTxt);
+			} catch (ConfigurationFileException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -202,7 +203,7 @@ public class InsertDigitMapToConfigurationBinaryTest {
 		cfSnmp64.add(taSnmp64);
 		
 		ConfigurationFileExport cfeSnmp64Insert = new ConfigurationFileExport(cfSnmp64);
-		
+
 		System.out.println(cfeSnmp64Insert.toPrettyPrint(0));	
 				
 	}

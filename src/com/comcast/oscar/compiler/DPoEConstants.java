@@ -1,8 +1,6 @@
-package com.comcast.oscar.sql.dpoequeries;
+package com.comcast.oscar.compiler;
 
-import java.sql.Connection;
 
-import com.comcast.oscar.sql.docsisqueries.DocsisSqlQuery;
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>
@@ -21,23 +19,9 @@ import com.comcast.oscar.sql.docsisqueries.DocsisSqlQuery;
  * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
  */
 
-public class DPoESqlQuery extends DocsisSqlQuery {
 
-	/**
-	 * Constructor for DPoESqlQuery.
-	 * @param sqlConnection Connection
-	 */
-	public DPoESqlQuery(Connection sqlConnection) {
-		super(sqlConnection);
-
-	}
+public class DPoEConstants {
 	
-	/**
-	 * */
-	public void commit() {
-		
-	}
+	public static final byte 	EOF 							= DocsisConstants.EOF;
 	
-	
-
 }

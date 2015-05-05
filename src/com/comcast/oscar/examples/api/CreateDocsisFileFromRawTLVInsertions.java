@@ -83,14 +83,9 @@ public class CreateDocsisFileFromRawTLVInsertions {
 		
 		/*View Configuration*/
 		ConfigurationFileExport cfe = new ConfigurationFileExport(cf);
-		
-		/* Disable Verbose Export */
-		cfe.setExportVerbose(false);
-		
-		
-		/* OUTPUT */
-		
-		System.out.println(cfe.toPrettyPrint(0));
+				
+		/* OUTPUT */	
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
 		
 		System.out.println("Hex Representatation: ");
 		try {

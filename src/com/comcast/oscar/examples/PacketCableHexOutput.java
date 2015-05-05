@@ -19,7 +19,7 @@ package com.comcast.oscar.examples;
 
 
 
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableCompiler;
+import com.comcast.oscar.compiler.PacketCableCompiler;
 import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;

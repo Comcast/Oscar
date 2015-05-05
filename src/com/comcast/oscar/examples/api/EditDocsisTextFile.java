@@ -1,8 +1,8 @@
 package com.comcast.oscar.examples.api;
 
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
-import com.comcast.oscar.configurationfile.ConfigrationFileException;
-import com.comcast.oscar.configurationfile.ConfigrationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 
@@ -35,7 +35,7 @@ public class EditDocsisTextFile {
 		StringBuilder sbDocsisConfiguration = new StringBuilder(sDocsisConfiguration);
 		
 		//Import Configuration
-		ConfigrationFileImport cfiDocsis = new ConfigrationFileImport(sbDocsisConfiguration);
+		ConfigurationFileImport cfiDocsis = new ConfigurationFileImport(sbDocsisConfiguration);
 		
 		//Conver to a Configuration File Object
 		ConfigurationFile cf = new ConfigurationFile(ConfigurationFile.DOCSIS_VER_30,cfiDocsis.getTlvBuilder());
@@ -43,13 +43,13 @@ public class EditDocsisTextFile {
 		//Add TFTP Server Address
 		try {
 			CommonTlvInsertions.insertTftpServerAddress("10.10.10.10", cf, true);
-		} catch (ConfigrationFileException e) {
+		} catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		
 		ConfigurationFileExport cfe = new ConfigurationFileExport(cf);
 		
-		System.out.print(cfe.toPrettyPrint(1));
+		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
 
 	}
 

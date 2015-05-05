@@ -3,7 +3,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import com.comcast.oscar.compiler.docsiscompiler.DocsisCompiler;
+import com.comcast.oscar.compiler.DocsisCompiler;
 import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;

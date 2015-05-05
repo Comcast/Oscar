@@ -14,8 +14,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.comcast.oscar.compiler.docsiscompiler.DocsisConstants;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
 import com.comcast.oscar.parser.TlvConfigurationFileParser;
 import com.comcast.oscar.parser.tlvLexer;
 import com.comcast.oscar.parser.tlvParser;
@@ -47,30 +45,31 @@ import com.comcast.oscar.utilities.HexString;
  * ConfigrationFileImport takes a OSCAR ASCII Compliant configuration file and convert to its JSON TLV Dictionary
  * 
  */
-public class ConfigrationFileImport {
+public class ConfigurationFileImport {
 	
-	private StringBuilder sbConfiguration = null;
-	
-	private TlvConfigurationFileParser tcfpConfig = null;
-	
-	private JSONArray jaTlvDefinition = new JSONArray();
-	
+	private StringBuilder sbConfiguration = null;	
+	private TlvConfigurationFileParser tcfpConfig = null;	
+	private JSONArray jaTlvDefinition = new JSONArray();	
 	private int iConfigurationFileType = -1;
 	
-	public static final Integer DOCSIS_VER_10 = DocsisConstants.DOCSIS_10;
-	public static final Integer DOCSIS_VER_11 = DocsisConstants.DOCSIS_11;
-	public static final Integer DOCSIS_VER_20 = DocsisConstants.DOCSIS_20;
-	public static final Integer DOCSIS_VER_30 = DocsisConstants.DOCSIS_30;
-	public static final Integer DOCSIS_VER_31 = DocsisConstants.DOCSIS_31;
-	public static final Integer PKT_CBL_VER_10 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10;
-	public static final Integer PKT_CBL_VER_15 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15;
-	public static final Integer PKT_CBL_VER_20 = PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20;
+	public static final Integer DOCSIS_VER_10 = ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_11 = ConfigurationFileTypeConstants.DOCSIS_11_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_20 = ConfigurationFileTypeConstants.DOCSIS_20_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_30 = ConfigurationFileTypeConstants.DOCSIS_30_CONFIGURATION_TYPE;
+	public static final Integer DOCSIS_VER_31 = ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE;
+	
+	public static final Integer PKT_CBL_VER_10 = ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_15 = ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE;
+	public static final Integer PKT_CBL_VER_20 = ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE;
+	
+	public static final Integer DPOE_VER_10 = ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
+	public static final Integer DPOE_VER_20 = ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE;
 	
 	/**
 	 * 
 	 * @param sbConfiguration
 	 */
- 	public ConfigrationFileImport(StringBuilder sbConfiguration) {
+ 	public ConfigurationFileImport(StringBuilder sbConfiguration) {
 
 		this.sbConfiguration = sbConfiguration;
 		
@@ -83,11 +82,11 @@ public class ConfigrationFileImport {
 	
 	 * @throws FileNotFoundException * @throws ConfigrationFileException
 	 */
-	public ConfigrationFileImport (File fConfigfile) throws FileNotFoundException , ConfigrationFileException {
+	public ConfigurationFileImport (File fConfigfile) throws FileNotFoundException , ConfigurationFileException {
 	
 		//Check to see if file is a ASCII
 		if (!HexString.verifyAsciiPlainText(HexString.fileToByteArray(fConfigfile)))  {
-			throw new ConfigrationFileException("ConfigrationFileImport() - File is not a text File: " + fConfigfile.getName());
+			throw new ConfigurationFileException("ConfigrationFileImport() - File is not a text File: " + fConfigfile.getName());
 		}
 		
 		@SuppressWarnings("resource")
@@ -105,13 +104,13 @@ public class ConfigrationFileImport {
 	
 	
 	 * @throws NullPointerException * @throws ConfigrationFileException  */
-	public ConfigrationFileImport (byte[] bConfigfile) throws NullPointerException, ConfigrationFileException {
+	public ConfigurationFileImport (byte[] bConfigfile) throws NullPointerException, ConfigurationFileException {
 		
 		if (bConfigfile == null)
 			throw new NullPointerException("ConfigrationFileImport() - ByteArray is null");
 		
 		if (!HexString.verifyAsciiPlainText(bConfigfile))
-			throw new ConfigrationFileException("ConfigrationFileImport () - Input ByteArray is not of Text Characters");
+			throw new ConfigurationFileException("ConfigrationFileImport () - Input ByteArray is not of Text Characters");
 		
 		this.sbConfiguration = new StringBuilder(new HexString(bConfigfile).toASCII());
 		

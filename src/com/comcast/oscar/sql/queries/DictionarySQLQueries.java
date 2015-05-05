@@ -13,7 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
-import com.comcast.oscar.compiler.packetcablecompiler.PacketCableConstants;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.sql.SqlConnection;
 import com.comcast.oscar.tlv.dictionary.Dictionary;
 
@@ -37,11 +37,13 @@ import com.comcast.oscar.tlv.dictionary.Dictionary;
 
 public class DictionarySQLQueries extends SqlConnection {
 	
-	public static final String DOCSIS_QUERY_TYPE 		= DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;
-	public static final String PACKET_CABLE_QUERY_TYPE 	= DictionarySQLConstants.PACKET_CABLE__DICTIONARY_TABLE_NAME;
+	public static final String DOCSIS_DICTIONARY_TABLE_NAME 			= DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;
+	public static final String PACKET_CABLE_DICTIONARY_TABLE_NAME 		= DictionarySQLConstants.PACKET_CABLE_DICTIONARY_TABLE_NAME;
+	public static final String DPOE_DICTIONARY_TABLE_NAME 				= DictionarySQLConstants.DPOE_DICTIONARY_TABLE_NAME;
 	
-	public static final Integer CONFIGURATION_FILE_TYPE_DOCSIS 			= Constants.CONFIGURATION_FILE_TYPE_DOCSIS;
-	public static final Integer CONFIGURATION_FILE_TYPE_PACKET_CABLE 	= PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10;
+	public static final Integer CONFIGURATION_FILE_TYPE_DOCSIS 			= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE;
+	public static final Integer CONFIGURATION_FILE_TYPE_PACKET_CABLE 	= ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
+	public static final Integer CONFIGURATION_FILE_TYPE_DPOE 			= ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
 	
 	private static final Integer TOP_LEVEL_TLV = 0;
 	
@@ -229,7 +231,7 @@ public class DictionarySQLQueries extends SqlConnection {
 			}
 
 
-		} else if (PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_10 == iCableLabsConfigType) {
+		} else if (ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE == iCableLabsConfigType) {
 			
 			for (int tlvCounter = Constants.DOCSIS_TLV_MIN ; tlvCounter <= Constants.DOCSIS_TLV_MAX ; tlvCounter++) {
 				
@@ -241,7 +243,7 @@ public class DictionarySQLQueries extends SqlConnection {
 				jsonArrTlvDictionary.put(getTlvDefinition(tlvCounter));
 			}
 			
-		} else if (PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_15 == iCableLabsConfigType) {
+		} else if (ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE == iCableLabsConfigType) {
 			
 			for (int tlvCounter = Constants.DOCSIS_TLV_MIN ; tlvCounter <= Constants.DOCSIS_TLV_MAX ; tlvCounter++) {
 				
@@ -253,7 +255,7 @@ public class DictionarySQLQueries extends SqlConnection {
 				jsonArrTlvDictionary.put(getTlvDefinition(tlvCounter));
 			}
 			
-		} else if (PacketCableConstants.CONFIG_FILE_TYPE_PKT_CABLE_20 == iCableLabsConfigType) {
+		} else if (ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE == iCableLabsConfigType) {
 			
 			for (int tlvCounter = Constants.DOCSIS_TLV_MIN ; tlvCounter <= Constants.DOCSIS_TLV_MAX ; tlvCounter++) {
 				
@@ -375,6 +377,14 @@ public class DictionarySQLQueries extends SqlConnection {
 		
 		return msiTopLevelTypeNameToType;
 				
+	}
+	
+	/**
+	 * 
+	 * @return Get DictionaryTableName
+	 */
+	public String getDictionaryTableName() {
+		return sDictionaryTableName;
 	}
 	
 	/* ******************************************************************************************************
@@ -656,7 +666,7 @@ public class DictionarySQLQueries extends SqlConnection {
 				
 				tlvJsonObj.put(Dictionary.TYPE, 				resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_TYPE));
 				tlvJsonObj.put(Dictionary.TLV_NAME, 			resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_TLV_NAME));
-				tlvJsonObj.put(Dictionary.TLV_DESCRIPTION, 	resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_TLV_DESCRIPTION));
+				tlvJsonObj.put(Dictionary.TLV_DESCRIPTION, 		resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_TLV_DESCRIPTION));
 				tlvJsonObj.put(Dictionary.LENGTH_MIN, 			resultSetGetRowDefinition.getInt(Dictionary.DB_TBL_COL_LENGTH_MIN));
 				tlvJsonObj.put(Dictionary.LENGTH_MAX, 			resultSetGetRowDefinition.getInt(Dictionary.DB_TBL_COL_LENGTH_MAX));
 				tlvJsonObj.put(Dictionary.SUPPORTED_VERSIONS,	resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_SUPPORTED_VERSIONS));

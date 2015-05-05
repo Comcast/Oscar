@@ -96,11 +96,11 @@ public class CommonTlvInsertions {
 	 * @param cf
 	 * @param boolFinalize
 	
-	 * @throws ConfigrationFileException */
-	public static void insertMaxCPE(int iMaxCPE , ConfigurationFile cf , boolean boolFinalize) throws ConfigrationFileException {
+	 * @throws ConfigurationFileException */
+	public static void insertMaxCPE(int iMaxCPE , ConfigurationFile cf , boolean boolFinalize) throws ConfigurationFileException {
 		
 		if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31) 
-			throw new ConfigrationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
+			throw new ConfigurationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
 		
 		TlvBuilder tb = new TlvBuilder();
 		
@@ -146,13 +146,13 @@ public class CommonTlvInsertions {
 	 * @param cf
 	 * @param boolFinalize
 	
-	 * @throws ConfigrationFileException */
-	public static void insertDownstreamFrequency(int iDownstreamFrequency , ConfigurationFile cf , boolean boolFinalize) throws ConfigrationFileException {
+	 * @throws ConfigurationFileException */
+	public static void insertDownstreamFrequency(int iDownstreamFrequency , ConfigurationFile cf , boolean boolFinalize) throws ConfigurationFileException {
 		
 		boolean localDebug = Boolean.FALSE;
 		
 		if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31) 
-			throw new ConfigrationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
+			throw new ConfigurationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
 		
 		if (debug|localDebug)
 			System.out.println("CommonTlvInsertions.insertDownstreamFrequency() - DS: " + iDownstreamFrequency);
@@ -205,11 +205,11 @@ public class CommonTlvInsertions {
 	 * @param cf
 	
 	 * @param boolFinalize boolean
-	 * @throws ConfigrationFileException if not a DOCSIS ConfigurationFile */
-	public static void insertFirmwareFileName(String sFileName, ConfigurationFile cf , boolean boolFinalize) throws ConfigrationFileException {
+	 * @throws ConfigurationFileException if not a DOCSIS ConfigurationFile */
+	public static void insertFirmwareFileName(String sFileName, ConfigurationFile cf , boolean boolFinalize) throws ConfigurationFileException {
 		
 		if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31) 
-			throw new ConfigrationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
+			throw new ConfigurationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
 		
 		TlvBuilder tb = new TlvBuilder();
 		
@@ -241,8 +241,8 @@ public class CommonTlvInsertions {
 	 * @param cf
 	
 	 * @param boolFinalize boolean
-	 * @throws ConfigrationFileException if not a DOCSIS ConfigurationFile  */
-	public static void insertManufactureCVC(File fCertificate, ConfigurationFile cf , boolean boolFinalize) throws ConfigrationFileException {
+	 * @throws ConfigurationFileException if not a DOCSIS ConfigurationFile  */
+	public static void insertManufactureCVC(File fCertificate, ConfigurationFile cf , boolean boolFinalize) throws ConfigurationFileException {
 
 		boolean localDebug = Boolean.FALSE;
 		
@@ -252,7 +252,7 @@ public class CommonTlvInsertions {
 		}
 		
 		if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31) 
-			throw new ConfigrationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
+			throw new ConfigurationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
 
 		TlvBuilder tb = new TlvBuilder();
 				
@@ -280,8 +280,8 @@ public class CommonTlvInsertions {
 	
 	 * @param bCertificate byte[]
 	 * @param boolFinalize boolean
-	 * @throws ConfigrationFileException if not a DOCSIS ConfigurationFile  */
-	public static void insertManufactureCVC(byte[] bCertificate, ConfigurationFile cf , boolean boolFinalize) throws ConfigrationFileException {
+	 * @throws ConfigurationFileException if not a DOCSIS ConfigurationFile  */
+	public static void insertManufactureCVC(byte[] bCertificate, ConfigurationFile cf , boolean boolFinalize) throws ConfigurationFileException {
 
 		boolean localDebug = Boolean.FALSE;
 		
@@ -291,7 +291,7 @@ public class CommonTlvInsertions {
 		}
 		
 		if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31) 
-			throw new ConfigrationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
+			throw new ConfigurationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
 	
 		TlvBuilder tb = new TlvBuilder();
 		
@@ -319,8 +319,8 @@ public class CommonTlvInsertions {
 	 * @param cf
 	
 	 * @param boolFinalize boolean
-	 * @throws ConfigrationFileException if not a DOCSIS ConfigurationFile  */
-	public static void insertCoSignCVC(File fCertificate, ConfigurationFile cf , boolean boolFinalize) throws ConfigrationFileException {
+	 * @throws ConfigurationFileException if not a DOCSIS ConfigurationFile  */
+	public static void insertCoSignCVC(File fCertificate, ConfigurationFile cf , boolean boolFinalize) throws ConfigurationFileException {
 		
 		boolean localDebug = Boolean.FALSE;
 		
@@ -330,7 +330,7 @@ public class CommonTlvInsertions {
 		}
 		
 		if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31) 
-			throw new ConfigrationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
+			throw new ConfigurationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
 	
 		TlvBuilder tb = new TlvBuilder();
 		
@@ -357,11 +357,11 @@ public class CommonTlvInsertions {
 	
 	 * @param bCertificate byte[]
 	 * @param boolFinalize boolean
-	 * @throws ConfigrationFileException if not a DOCSIS ConfigurationFile  */
-	public static void insertCoSignCVC(byte[] bCertificate, ConfigurationFile cf, boolean boolFinalize) throws ConfigrationFileException {
+	 * @throws ConfigurationFileException if not a DOCSIS ConfigurationFile  */
+	public static void insertCoSignCVC(byte[] bCertificate, ConfigurationFile cf, boolean boolFinalize) throws ConfigurationFileException {
 		
 		if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31) 
-			throw new ConfigrationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
+			throw new ConfigurationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
 		
 		TlvBuilder tb = new TlvBuilder();
 		
@@ -514,11 +514,11 @@ public class CommonTlvInsertions {
 	 * @param cf
 	 * @param boolFinalize
 	
-	 * @throws ConfigrationFileException */
-	public static void insertDigitMap(byte[] baDigitMap, String sOID , ConfigurationFile cf, boolean boolFinalize) throws ConfigrationFileException {
+	 * @throws ConfigurationFileException */
+	public static void insertDigitMap(byte[] baDigitMap, String sOID , ConfigurationFile cf, boolean boolFinalize) throws ConfigurationFileException {
 		
 		if (cf.getConfigurationFileType() > ConfigurationFile.PKT_CBL_VER_20) 
-			throw new ConfigrationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
+			throw new ConfigurationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
 		
 		if (sOID == null) {
 			cf.add(DigitMapOperation.getDigitMapTlvBuilder(baDigitMap, DigitMapOperation.DEFAULT_DIGIT_MAP_OID));	
@@ -644,11 +644,11 @@ public class CommonTlvInsertions {
 	 * @param cf
 	 * @param boolFinalize
 	
-	 * @throws ConfigrationFileException */
-	public static void insertTftpServerAddress(String sInetAddress , ConfigurationFile cf , boolean boolFinalize) throws ConfigrationFileException {
+	 * @throws ConfigurationFileException */
+	public static void insertTftpServerAddress(String sInetAddress , ConfigurationFile cf , boolean boolFinalize) throws ConfigurationFileException {
 		
 		if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31) 
-			throw new ConfigrationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
+			throw new ConfigurationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
 		
 		TlvBuilder tb = new TlvBuilder();
 		
