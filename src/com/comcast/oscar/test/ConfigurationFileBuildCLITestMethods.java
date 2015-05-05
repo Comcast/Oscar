@@ -1007,7 +1007,6 @@ public class ConfigurationFileBuildCLITestMethods implements TestMethod {
 		/* End Banner */
 		System.out.println("+---------------TextToBinaryInsertMaxCPE End-----------------+");
 	}
-
 	 
 	/**
 	 * Method TextToBinaryInsertTLV.
@@ -1041,7 +1040,6 @@ public class ConfigurationFileBuildCLITestMethods implements TestMethod {
 		/* End Banner */
 		System.out.println("+---------------TextToBinaryInsertMaxCPE End-----------------+");
 	}
-	
 	 
 	/**
 	 * Method TextToBinaryPacketCable.
@@ -1576,6 +1574,37 @@ public class ConfigurationFileBuildCLITestMethods implements TestMethod {
 	}
 	
 	/**
+	 * Method TextToBinaryInsertTLV.
+	 * @see com.comcast.oscar.test.TestMethod#TextToBinaryInsertTLV()
+	 */
+	public void BinaryToBinaryDPoE() {
+		/* Start Banner */
+		System.out.println("+---------------BinaryToBinaryDPoE Start---------------+");
+
+		/* Define arguments */
+		String arguments[] = new String[5];
+		arguments[0] = "-c";
+		arguments[1] = "-i";
+		arguments[2] = TestDirectoryStructure.fInputDirFileName("d11_m_fte6083_encap1q_3950.cm").toString();
+		arguments[3] = "-o";
+		arguments[4] = TestDirectoryStructure.fOutputDirFileName("d11_m_fte6083_encap1q_3950.cm").toString();
+
+		/* Run commands */
+		CommandRun cmds = new CommandRun();
+		cmds.run(arguments);
+
+		/* Checks */
+		if(new File(arguments[4]).exists()) {
+			System.out.println("Output file " + arguments[4] + " exists");
+		} else {
+			System.err.println("Output file " + arguments[4] + " does not exist");
+		}
+
+		/* End Banner */
+		System.out.println("+---------------BinaryToBinaryDPoE End-----------------+");
+	}
+	
+	/**
 	 * Method BinaryToTextDPoE.
 	 * @see com.comcast.oscar.test.TestMethod#BinaryToTextDPoE()
 	 */
@@ -1601,4 +1630,34 @@ public class ConfigurationFileBuildCLITestMethods implements TestMethod {
 		System.out.println("+---------------BinaryToTextDPoE End-----------------+");
 	}
 	
+	/**
+	 * Method TextToBinaryDPoE.
+	 * @see com.comcast.oscar.test.TestMethod#TextToBinaryDPoE()
+	 */
+	public void TextToBinaryDPoE() {
+		/* Start Banner */
+		System.out.println("+---------------TextToBinaryDPoE Start---------------+");
+
+		/* Define arguments */
+		String arguments[] = new String[5];
+		arguments[0] = "-c";
+		arguments[1] = "-i";
+		arguments[2] = TestDirectoryStructure.fInputDirFileName("d11_m_fte6083_encap1q_3950.cm.txt").toString();
+		arguments[3] = "-o";
+		arguments[4] = TestDirectoryStructure.fOutputDirFileName("d11_m_fte6083_encap1q_3950.cm").toString();
+
+		/* Run commands */
+		CommandRun cmds = new CommandRun();
+		cmds.run(arguments);
+
+		/* Checks */
+		if(new File(arguments[4]).exists()) {
+			System.out.println("Output file " + arguments[4] + " exists");
+		} else {
+			System.err.println("Output file " + arguments[4] + " does not exist");
+		}
+
+		/* End Banner */
+		System.out.println("+---------------TextToBinaryDPoE End-----------------+");
+	}
 }
