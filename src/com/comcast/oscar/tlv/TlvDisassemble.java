@@ -50,13 +50,13 @@ public class TlvDisassemble extends DictionarySQLQueries {
 	
 	private boolean debug = Boolean.FALSE;
 	
-	public final static String TLV_TYPE_DOCSIS = DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;	
-	public final static String TLV_TYPE_PACKET_CABLE = DictionarySQLConstants.PACKET_CABLE__DICTIONARY_TABLE_NAME;
+	public final static String TLV_TYPE_DOCSIS 			= DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;	
+	public final static String TLV_TYPE_PACKET_CABLE 	= DictionarySQLConstants.PACKET_CABLE__DICTIONARY_TABLE_NAME;
+	public final static String TLV_TYPE_DPOE			= DictionarySQLConstants.DPOE_DICTIONARY_TABLE_NAME;
 
 	/**
 	 * 
-	 * @param tbTlvBuffer
-	
+	 * @param tbTlvBuffer	
 	 * @param sTlvType String
 	 */
 	public TlvDisassemble (TlvBuilder tbTlvBuffer, String sTlvType) {
@@ -78,8 +78,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 
 	/**
 	 * 
-	 * @param tvbTlvBuffer
-	
+	 * @param tvbTlvBuffer	
 	 * @param sTlvType String
 	 */
 	public TlvDisassemble (TlvVariableBinding tvbTlvBuffer, String sTlvType) {
@@ -102,8 +101,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 	
 	/**
 	 * 
-	 * @param fTlvBuffer
-	
+	 * @param fTlvBuffer	
 	 * @param sTlvType String
 	 */
 	public TlvDisassemble (File fTlvBuffer , String sTlvType) {
@@ -143,8 +141,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 	}
 	
 	/**
-	 * 
-	
+	 * 	
 	 * @return JSONArray
 	 */
 	public JSONArray getTlvDictionary() {
