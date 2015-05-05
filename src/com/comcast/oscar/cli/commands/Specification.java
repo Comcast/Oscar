@@ -39,7 +39,7 @@ public class Specification {
 	 */
 	public static final Option OptionParameters() 
 	{
-		OptionBuilder.withArgName("d{ocsis}|p{acketcable}|dp{oe}> <version");
+		OptionBuilder.withArgName("d{ocsis}|p{acketcable}|d{po}e> <version");
 		OptionBuilder.hasArgs();
 		OptionBuilder.hasOptionalArgs();
 		OptionBuilder.withValueSeparator(' ');
