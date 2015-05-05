@@ -1590,7 +1590,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		//ReSet FileMarkers because the DigitMaps are Appended to the end of the config file
 		tb = PacketCableCompiler.setFileMarkers(tb.toByteArray());
 		
-		cfe = new ConfigurationFileExport(tb);
+		cfe = new ConfigurationFileExport(tb,ConfigurationFileExport.PKT_CBL_VER_20);
 		
 		cfe.writeToDisk(TestDirectoryStructure.fOutputDirFileName(sFileName + ".txt"));
 		
