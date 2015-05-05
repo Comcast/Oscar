@@ -61,7 +61,7 @@ public class TlvAssembler extends TlvBuilder {
 	public String toJSONArray() {
 		return jaTlvDictionary.toString();	
 	}
-		
+	
 	/**
 	 * 
 	 */
