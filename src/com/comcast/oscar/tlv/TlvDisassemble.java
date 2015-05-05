@@ -51,7 +51,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 	private boolean debug = Boolean.FALSE;
 	
 	public final static String TLV_TYPE_DOCSIS 			= DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;	
-	public final static String TLV_TYPE_PACKET_CABLE 	= DictionarySQLConstants.PACKET_CABLE__DICTIONARY_TABLE_NAME;
+	public final static String TLV_TYPE_PACKET_CABLE 	= DictionarySQLConstants.PACKET_CABLE_DICTIONARY_TABLE_NAME;
 	public final static String TLV_TYPE_DPOE			= DictionarySQLConstants.DPOE_DICTIONARY_TABLE_NAME;
 
 	/**

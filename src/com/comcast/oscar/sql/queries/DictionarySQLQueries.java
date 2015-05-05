@@ -38,7 +38,7 @@ import com.comcast.oscar.tlv.dictionary.Dictionary;
 public class DictionarySQLQueries extends SqlConnection {
 	
 	public static final String DOCSIS_DICTIONARY_TABLE_NAME 			= DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;
-	public static final String PACKET_CABLE_DICTIONARY_TABLE_NAME 		= DictionarySQLConstants.PACKET_CABLE__DICTIONARY_TABLE_NAME;
+	public static final String PACKET_CABLE_DICTIONARY_TABLE_NAME 		= DictionarySQLConstants.PACKET_CABLE_DICTIONARY_TABLE_NAME;
 	public static final String DPOE_DICTIONARY_TABLE_NAME 				= DictionarySQLConstants.DPOE_DICTIONARY_TABLE_NAME;
 	
 	public static final Integer CONFIGURATION_FILE_TYPE_DOCSIS 			= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE;

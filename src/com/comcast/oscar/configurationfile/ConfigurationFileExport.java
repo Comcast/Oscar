@@ -848,7 +848,7 @@ public class ConfigurationFileExport {
 				
 				if (debug|localDebug) System.out.println("ConfigrationFileExport.tlvToDictionary() -> PACKET-CABLE-FILE-FOUND");
 				
-				sDictionaryTableName = DictionarySQLConstants.PACKET_CABLE__DICTIONARY_TABLE_NAME;
+				sDictionaryTableName = DictionarySQLConstants.PACKET_CABLE_DICTIONARY_TABLE_NAME;
 				
 			} else {
 				
