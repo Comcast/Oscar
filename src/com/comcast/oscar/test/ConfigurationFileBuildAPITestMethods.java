@@ -1556,6 +1556,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 	 * Method BinaryToTextInsertMultiDigitMap.
 	 * @see com.comcast.oscar.test.TestMethod#BinaryToTextInsertMultiDigitMap()
 	 */
+	@SuppressWarnings("deprecation")
 	public void BinaryToTextInsertMultiDigitMap() {
 		
 		String sFileName = "IMS-PKT-CABLE-CONFIG.bin";
