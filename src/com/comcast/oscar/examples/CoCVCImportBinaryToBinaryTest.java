@@ -4,11 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
-import com.comcast.oscar.compiler.DocsisConstants;
 import com.comcast.oscar.configurationfile.ConfigrationFileException;
+import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
-import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;

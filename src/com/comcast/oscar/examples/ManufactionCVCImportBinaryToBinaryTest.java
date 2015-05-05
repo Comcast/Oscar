@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
-import com.comcast.oscar.compiler.DocsisConstants;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.snmp4j.smi.SMIManagerService;
