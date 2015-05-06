@@ -1,0 +1,498 @@
+CABH-CTP-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE           FROM SNMPv2-SMI
+    TimeStamp,
+    TruthValue            FROM SNMPv2-TC
+    OBJECT-GROUP,
+    MODULE-COMPLIANCE     FROM SNMPv2-CONF
+    InetAddressType,
+    InetAddress,
+    InetAddressIPv4,
+    InetAddressIPv6       FROM INET-ADDRESS-MIB
+    clabProjCableHome     FROM CLAB-DEF-MIB;
+
+cabhCtpMib MODULE-IDENTITY
+    LAST-UPDATED  "200308010000Z" -- August 1, 2003  -br was 2003080100000Z (net-snmp wasn't happy)
+    ORGANIZATION    "CableLabs Broadband Access Department"
+    CONTACT-INFO
+            "Kevin Luehrs
+            Postal: Cable Television Laboratories, Inc.
+            400 Centennial Parkway
+            Louisville, Colorado 80027-1266
+            U.S.A.
+            Phone:  +1 303-661-9100
+            Fax:    +1 303-661-9199
+            E-mail: k.luehrs@cablelabs.com or mibs@cablelabs.com"
+    DESCRIPTION
+            "This MIB module defines control and monitoring objects
+            for remote diagnostic tools for a CableHome LAN
+            supported by the CableHome Test Portal (CTP) as
+            defined and described in CableLabs’ CableHome
+            specifications."
+--    REFERENCE
+--            "CableHome 1.0 Specification, CH-SP-CH1.0-I05-030801,
+--            6.4 and CableHome 1.1 Specification, 
+--            CH-SP-CH1.1-I02-030801, 6.4."
+    ::=  { clabProjCableHome 5 }
+
+-- Textual conventions
+
+
+cabhCtpObjects           OBJECT IDENTIFIER ::= { cabhCtpMib 1 }
+cabhCtpBase              OBJECT IDENTIFIER ::= { cabhCtpObjects 1 }
+cabhCtpConnSpeed         OBJECT IDENTIFIER ::= { cabhCtpObjects 2 }
+cabhCtpPing              OBJECT IDENTIFIER ::= { cabhCtpObjects 3 }
+
+--
+--    The following group describes the base objects in the CableHome
+--    Management Portal. 
+--
+
+cabhCtpSetToFactory OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION    
+            "Setting this object to true(1) causes all the tables
+            in the CTP MIB to be cleared, and all CTP MIB objects
+            with default values set back to those default values.
+            Reading this object always returns false(2)."
+    ::={ cabhCtpBase 1 }
+
+cabhCtpLastSetToFactory OBJECT-TYPE
+    SYNTAX      TimeStamp
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The value of sysUpTime when cabhCtpSetToFactory 
+            was last set to true. Zero if never reset."
+    ::={ cabhCtpBase 2 }
+
+--
+--    Parameter and results from Connection Speed Command
+--
+
+cabhCtpConnSrcIpType OBJECT-TYPE
+    SYNTAX      InetAddressType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The IP Address type used as the source address for the 
+            Connection Speed Test."  
+    DEFVAL { ipv4 } 
+    ::= { cabhCtpConnSpeed 1 }
+
+cabhCtpConnSrcIp OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The IP Address used as the source address for the 
+            Connection Speed Test. The default value is the value 
+            of cabhCdpServerRouter (192.168.0.1). The type of
+            this address is specified by cabhCtpConnSrcIpType."
+    REFERENCE
+            "CableHome 1.0 Specification, CH-SP-CH1.0-I05-030801,
+            6.4.4.1 and CableHome 1.1 Specification, 
+            CH-SP-CH1.1-I02-030801, 6.4.3.1."
+    DEFVAL { 'c0a80001'h }    -- 192.168.0.1
+    ::= { cabhCtpConnSpeed 2 }
+
+cabhCtpConnDestIpType OBJECT-TYPE
+    SYNTAX      InetAddressType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The IP Address Type for the CTP Connection Speed Tool 
+            destination address."
+    DEFVAL { ipv4 }
+    ::={ cabhCtpConnSpeed 3 }
+
+cabhCtpConnDestIp OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The IP Address used as the destination address for the 
+            Connection Speed Test. The type of this address is specified
+            by cabhCtpConnDestIpType."
+    ::= { cabhCtpConnSpeed 4 }
+
+cabhCtpConnProto OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    udp(1),
+                    tcp(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The protocol used in the Connection Speed Test. TCP
+            testing is optional."
+    DEFVAL { udp }
+    ::= { cabhCtpConnSpeed 5 }
+
+cabhCtpConnNumPkts OBJECT-TYPE
+    SYNTAX      INTEGER (1..65535)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The number of packets the CTP is to send when 
+            triggered to execute the Connection Speed Tool."
+    DEFVAL { 100 }
+    ::= { cabhCtpConnSpeed 6 }
+
+cabhCtpConnPktSize OBJECT-TYPE
+    SYNTAX      INTEGER (64..1518)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The size of each OSI Layer 2 frame to be
+            sent by the PS CableHome Test Portal
+            function when configured to execute the
+            Connection Speed remote diagnostic tool." 
+    REFERENCE
+            "CableHome 1.0 Specification, CH-SP-CH1.0-I05-030801,
+            6.4.4.1 and CableHome 1.1 Specification, 
+            CH-SP-CH1.1-I02-030801, 6.4.3.1."
+    DEFVAL { 1518 }
+    ::= { cabhCtpConnSpeed 7 }
+
+cabhCtpConnTimeOut OBJECT-TYPE
+    SYNTAX      INTEGER (0..600000)           -- Max 10 minutes
+    UNITS       "milliseconds"
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The timeout value for the response.  A value of zero 
+            indicates no time out and can be used for TCP only."
+    DEFVAL {30000}  -- 30 seconds
+    ::= { cabhCtpConnSpeed 8 }
+
+cabhCtpConnControl OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    start(1),
+                    abort(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The control for the Connection Speed Tool. Setting this 
+            object to start(1) causes the Connection Speed Tool to 
+            execute. Setting this object to abort(2) causes the 
+            Connection Speed Tool to stop running. This parameter 
+            should only be set via SNMP."
+    DEFVAL  {abort }
+    ::={ cabhCtpConnSpeed 9 }
+
+cabhCtpConnStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    notRun(1),
+                    running(2),
+                    complete(3),
+                    aborted(4),
+                    timedOut(5)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The status of the Connection Speed Tool."
+    DEFVAL { notRun }
+    ::={ cabhCtpConnSpeed 10 }
+
+cabhCtpConnPktsSent OBJECT-TYPE
+    SYNTAX      INTEGER (0..65535)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The number of packets the CTP sent after it was 
+            triggered to execute the Connection Speed Tool."
+    ::= { cabhCtpConnSpeed 11 }
+
+cabhCtpConnPktsRecv OBJECT-TYPE
+    SYNTAX      INTEGER (0..65535)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The number of packets the CTP received after it 
+            executed the Connection Speed Tool."
+    ::= { cabhCtpConnSpeed 12 }
+
+cabhCtpConnRTT OBJECT-TYPE
+    SYNTAX      INTEGER (0..600000)
+    UNITS       "millisec"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The resulting round trip time for the set of
+            packets sent to and received from the target 
+            LAN IP Device."
+    ::= { cabhCtpConnSpeed 13 }
+
+cabhCtpConnThroughput OBJECT-TYPE
+    SYNTAX      INTEGER (0..65535)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The average round-trip throughput measured in 
+            kilobits per second."
+    ::= { cabhCtpConnSpeed 14 }
+
+--
+--    Parameters and Results for Ping Command
+--
+
+cabhCtpPingSrcIpType OBJECT-TYPE
+    SYNTAX      InetAddressType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The IP Address Type for CTP Ping Tool source address."
+    DEFVAL { ipv4 }
+    ::={ cabhCtpPing 1 }
+
+cabhCtpPingSrcIp OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The IP Address used as the source address for the Ping 
+            Test. The default value is the value of 
+            CabhCdpServerRouter (192.168.0.1). The type of this 
+            address is specified by cabhCtpPingSrcIpType."
+    REFERENCE
+            "CableHome 1.0 Specification, CH-SP-CH1.0-I05-030801,
+            6.4.4.2 and CableHome 1.1 Specification, 
+            CH-SP-CH1.1-I02-030801, 6.4.3.2."
+    DEFVAL { 'c0a80001'h } --192.168.0.1
+    ::= { cabhCtpPing 2 }
+
+cabhCtpPingDestIpType OBJECT-TYPE
+    SYNTAX      InetAddressType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The IP Address Type for the CTP Ping Tool destination
+            address."
+    DEFVAL { ipv4 }
+    ::={ cabhCtpPing 3 }
+
+cabhCtpPingDestIp OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The Destination IP Address used as the destination 
+            address for the Ping Test."
+    ::= { cabhCtpPing 4 }
+
+cabhCtpPingNumPkts OBJECT-TYPE
+    SYNTAX      INTEGER (1..4)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The number of packets to send to each host."
+    DEFVAL {1}
+    ::= { cabhCtpPing 5 }
+
+cabhCtpPingPktSize OBJECT-TYPE
+    SYNTAX      INTEGER (64..1518)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The size of the test frames."
+    DEFVAL {64}
+    ::= { cabhCtpPing 6 }
+
+cabhCtpPingTimeBetween OBJECT-TYPE
+    SYNTAX      INTEGER (0..600000)
+    UNITS       "milliseconds"
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The time between sending one ping and the next."
+    DEFVAL { 1000 }
+    ::= { cabhCtpPing 7 }
+
+cabhCtpPingTimeOut OBJECT-TYPE
+    SYNTAX      INTEGER (1..600000)
+    UNITS       "milliseconds"
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The time out for ping response (ICMP reply) for a 
+            single transmitted ping message (ICMP request)."
+    DEFVAL { 1000 } -- 1 second
+    ::={ cabhCtpPing 8 }
+
+cabhCtpPingControl OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    start(1),
+                    abort(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The control for the Ping Tool. Setting this object 
+            to start(1) causes the Ping Tool to execute. Setting 
+            this object to abort(2) causes the Ping Tool to stop 
+            running. This parameter should only be set via SNMP."
+    DEFVAL {abort }
+    ::={ cabhCtpPing 9 }
+
+cabhCtpPingStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    notRun(1),
+                    running(2),    
+                    complete(3),
+                    aborted(4),
+                    timedOut(5)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The status of the Ping Tool."
+    DEFVAL { notRun }
+    ::={ cabhCtpPing 10 }
+
+cabhCtpPingNumSent OBJECT-TYPE
+    SYNTAX      INTEGER (0..4)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The number of Pings sent."
+    ::={ cabhCtpPing 11 }
+
+cabhCtpPingNumRecv OBJECT-TYPE
+    SYNTAX      INTEGER (0..255)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The number of pings received."
+    ::= { cabhCtpPing 12 }
+
+cabhCtpPingAvgRTT OBJECT-TYPE
+    SYNTAX      INTEGER (0..600000)
+    UNITS       "millisec"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The resulting average of round trip times for 
+            acknowledged packets."
+    ::= { cabhCtpPing 13 }
+
+cabhCtpPingMaxRTT OBJECT-TYPE
+    SYNTAX      INTEGER (0..600000)
+    UNITS       "millisec"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The resulting maximum of round trip times for 
+            acknowledged packets."
+    ::= { cabhCtpPing 14 }
+
+cabhCtpPingMinRTT OBJECT-TYPE
+    SYNTAX      INTEGER (0..600000)
+    UNITS       "millisec"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The resulting minimum of round trip times for 
+            acknowledged packets."
+    ::= { cabhCtpPing 15 }
+
+cabhCtpPingNumIcmpError OBJECT-TYPE
+    SYNTAX      INTEGER (0..255)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Number of ICMP errors."
+    ::= { cabhCtpPing 16 }
+
+cabhCtpPingIcmpError OBJECT-TYPE
+    SYNTAX      INTEGER (0..255)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The last ICMP error."
+    ::= { cabhCtpPing 17 }
+
+--====================================================================
+
+--
+-- notification group is for future extension.
+-- 
+
+cabhCtpNotification  OBJECT IDENTIFIER ::= { cabhCtpMib 2 }
+cabhCtpNotifications OBJECT IDENTIFIER ::= { cabhCtpNotification 0 }
+cabhCtpConformance   OBJECT IDENTIFIER ::= { cabhCtpMib 3 }
+cabhCtpCompliances   OBJECT IDENTIFIER ::= { cabhCtpConformance 1 }
+cabhCtpGroups        OBJECT IDENTIFIER ::= { cabhCtpConformance 2 }
+
+--
+--    Notification Group
+--
+
+-- compliance statements
+
+cabhCtpBasicCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+            "The compliance statement for devices that implement 
+            Portal Service feature."
+    MODULE   --cabhCtpMib
+
+
+-- unconditionally mandatory groups
+
+    MANDATORY-GROUPS {
+          cabhCtpGroup
+    }
+
+    ::= { cabhCtpCompliances 3 }
+
+
+cabhCtpGroup OBJECT-GROUP
+    OBJECTS {
+             
+        cabhCtpSetToFactory,
+        cabhCtpLastSetToFactory,
+        cabhCtpConnSrcIpType,
+        cabhCtpConnSrcIp,
+        cabhCtpConnDestIpType,
+        cabhCtpConnDestIp,
+        cabhCtpConnProto,
+        cabhCtpConnNumPkts,
+        cabhCtpConnPktSize,
+        cabhCtpConnTimeOut,
+        cabhCtpConnControl,
+        cabhCtpConnStatus,
+        cabhCtpConnPktsSent,
+        cabhCtpConnPktsRecv,
+        cabhCtpConnRTT,
+        cabhCtpConnThroughput,
+       
+        cabhCtpPingSrcIpType,
+        cabhCtpPingSrcIp,
+        cabhCtpPingDestIpType,
+        cabhCtpPingDestIp,
+        cabhCtpPingNumPkts,
+        cabhCtpPingPktSize,
+        cabhCtpPingTimeBetween,
+        cabhCtpPingTimeOut,
+        cabhCtpPingControl,
+        cabhCtpPingStatus,
+        cabhCtpPingNumSent,
+        cabhCtpPingNumRecv,
+        cabhCtpPingAvgRTT,
+        cabhCtpPingMinRTT,
+        cabhCtpPingMaxRTT,
+        cabhCtpPingNumIcmpError,
+        cabhCtpPingIcmpError
+        }
+    STATUS      current
+    DESCRIPTION
+            "Group of objects for CableHome CTP MIB."
+    ::= { cabhCtpGroups 1 } 
+ 
+END

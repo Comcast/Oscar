@@ -1,0 +1,1037 @@
+CABH-SEC-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY,
+    Unsigned32,
+    zeroDotZero,
+    OBJECT-TYPE                FROM SNMPv2-SMI  -- RFC2578
+
+    RowStatus,
+    DateAndTime,
+    TruthValue,
+    TimeStamp,
+    TEXTUAL-CONVENTION,
+    VariablePointer            FROM SNMPv2-TC  -- RFC2579
+    
+    OBJECT-GROUP,
+    MODULE-COMPLIANCE          FROM SNMPv2-CONF -- RFC2580
+    InetPortNumber,
+    InetAddress                FROM INET-ADDRESS-MIB --RFC3291
+     
+    SnmpAdminString            FROM SNMP-FRAMEWORK-MIB --RFC2571
+
+    X509Certificate            FROM DOCS-BPI2-MIB
+
+    ZeroBasedCounter32         FROM RMON2-MIB
+    docsDevFilterIpEntry       FROM DOCS-CABLE-DEVICE-MIB
+    
+    clabProjCableHome          FROM CLAB-DEF-MIB;
+    
+    cabhSecMib MODULE-IDENTITY
+    LAST-UPDATED    "200308010000Z" -- August 1, 2003
+    ORGANIZATION    "CableLabs Broadband Access Department"
+    CONTACT-INFO
+            "Kevin Luehrs
+            Postal: Cable Television Laboratories, Inc.
+            400 Centennial Parkway
+            Louisville, Colorado 80027-1266
+            U.S.A.
+            Phone:  +1 303-661-9100
+            Fax:    +1 303-661-9199
+            E-mail: k.luehrs@cablelabs.com; mibs@cablelabs.com"
+    DESCRIPTION
+            "This MIB module supplies the basic management
+            objects for the Security Portal Services."
+    ::=  { clabProjCableHome 2 }
+
+
+
+-- Textual conventions
+
+   cabhSecMibObjects  OBJECT IDENTIFIER ::= { cabhSecMib 5 }
+   cabhSecFwObjects   OBJECT IDENTIFIER ::= { cabhSecMib 1 }
+   cabhSecFwBase      OBJECT IDENTIFIER ::= { cabhSecFwObjects 1 }
+   cabhSecFwLogCtl    OBJECT IDENTIFIER ::= { cabhSecFwObjects 2 }
+
+   cabhSecCertObjects OBJECT IDENTIFIER ::= { cabhSecMib 2 }
+   cabhSecKerbObjects OBJECT IDENTIFIER ::= { cabhSecMibObjects 3 }
+   cabhSecKerbBase    OBJECT IDENTIFIER ::= { cabhSecKerbObjects 1 }
+
+   cabhSec2FwObjects  OBJECT IDENTIFIER ::= { cabhSecMibObjects 4 }
+   cabhSec2FwBase     OBJECT IDENTIFIER ::= { cabhSec2FwObjects 1 }
+   cabhSec2FwEvent    OBJECT IDENTIFIER ::= { cabhSec2FwObjects 2 }
+   cabhSec2FwLog      OBJECT IDENTIFIER ::= { cabhSec2FwObjects 3 }
+   cabhSec2FwFilter   OBJECT IDENTIFIER ::= { cabhSec2FwObjects 4 }
+
+--
+--    CableHome 1.0 Base Firewall Functions
+--
+
+cabhSecFwPolicyFileEnable OBJECT-TYPE
+    SYNTAX      INTEGER {
+                enable (1),
+                disable(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This parameter indicates whether or not to enable
+            the firewall functionality."
+    DEFVAL { enable }
+    ::= { cabhSecFwBase 1 }
+
+cabhSecFwPolicyFileURL OBJECT-TYPE
+    SYNTAX      SnmpAdminString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "A policy rule set file download is triggered when the
+            value used to SET this object is different than the value
+            in the cabhSecFwPolicySuccessfulFileURL object."
+    REFERENCE
+            "CableHome 1.0 Specification, CH-SP-CH1.0-I05-030801,
+            11.3.5.2 Firewall Rule Set Management Parameters."
+    DEFVAL { "" }
+    ::= { cabhSecFwBase 2 }
+
+cabhSecFwPolicyFileHash OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(0|20))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Hash of the contents of the rules set file,
+            calculated and sent to the PS prior to sending
+            the rules set file.  For the SHA-1 authentication 
+            algorithm the length of the hash is 160 bits.
+            This hash value is encoded in binary format."
+    DEFVAL { ''h }
+    ::= { cabhSecFwBase 3 }
+        
+cabhSecFwPolicyFileOperStatus OBJECT-TYPE
+    SYNTAX     INTEGER    {
+                   inProgress(1),
+                   complete(2),
+                   -- completeFromMgt(3), deprecated
+                   failed(4)
+               }
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+            "inProgress(1) indicates a firewall configuration
+            file download is underway.
+            complete (2) indicates the firewall configuration
+            file downloaded and configured successfully.
+            completeFromMgt(3) This state is deprecated.
+            failed(4) indicates the last attempted firewall
+            configuration file download or processing 
+            failed ordinarily due to TFTP timeout."
+    ::= { cabhSecFwBase 4 }
+
+cabhSecFwPolicyFileCurrentVersion OBJECT-TYPE
+    SYNTAX      SnmpAdminString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The rule set version currently operating in the
+            PS device. This object should be in the syntax
+            used by the individual vendor to identify software
+            versions.  Any PS element MUST return a string
+            descriptive of the current rule set file load.
+            If this is not applicable, this object MUST
+            contain an empty string."
+    ::= { cabhSecFwBase 5 }
+
+cabhSecFwPolicySuccessfulFileURL OBJECT-TYPE
+    SYNTAX      SnmpAdminString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Contains the location of the last successful downloaded 
+            policy rule set file in the format pointed in the 
+            reference. If a successful download has never occurred,
+            this MIB object MUST report empty string."
+    REFERENCE
+            "CableHome 1.0 Specification, CH-SP-CH1.0-I05-030801,
+            11.3.5.2 Firewall Rule Set Management Parameters."
+    DEFVAL { "" } 
+    ::= { cabhSecFwBase 6 }
+
+--
+--    CableHome 1.0 Firewall Event MIBs
+--
+
+
+cabhSecFwEventType1Enable OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    enable(1), -- log event
+                    disable(2) -- do not log event 
+                }
+    MAX-ACCESS read-write
+    STATUS    current
+    DESCRIPTION
+            "This object enables or disables logging of type 1
+            firewall event messages. Type 1 event messages report
+            attempts from both private and public clients to
+            traverse the firewall that violate the Security
+            Policy."
+    DEFVAL { disable }
+    ::= { cabhSecFwLogCtl 1 }
+
+cabhSecFwEventType2Enable OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    enable(1), -- log event
+                    disable(2) -- do not log event
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This object enables or disables logging of
+            type 2 firewall event messages. Type 2 event
+            messages report identified Denial of Service
+            attack attempts."
+    DEFVAL { disable }
+    ::= { cabhSecFwLogCtl 2 }
+
+cabhSecFwEventType3Enable OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    enable(1), -- log event
+                    disable(2) -- do not log event
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Enables or disables logging of type 3 firewall
+            event messages. Type 3 event messages report
+            changes made to the following firewall management
+            parameters: cabhSecFwPolicyFileURL,
+            cabhSecFwPolicyFileCurrentVersion,
+            cabhSecFwPolicyFileEnable"
+    DEFVAL { disable }
+    ::= { cabhSecFwLogCtl 3 }
+
+cabhSecFwEventAttackAlertThreshold OBJECT-TYPE
+    SYNTAX      INTEGER    (0..65535)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "If the number of type 1 or 2 hacker attacks
+            exceeds this threshold in the period define
+            by cabhSecFwEventAttackAlertPeriod, a firewall
+            message event MUST be logged with priority
+            level 4."
+    DEFVAL { 65535 }
+    ::= { cabhSecFwLogCtl 4 }
+
+cabhSecFwEventAttackAlertPeriod OBJECT-TYPE
+    SYNTAX      INTEGER (0..65535)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+            "Indicates the period to be used (in hours) for
+            the cabhSecFwEventAttackAlertThreshold. This MIB
+            variable should always keep track of the last x
+            hours of events meaning that if the variable is
+            set to track events for 10 hours then when the
+            11th hour is reached, the 1st hour of events is
+            deleted from the tracking log. A default value
+            is set to zero, meaning zero time, so that this
+            MIB variable will not track any events unless
+            configured."
+    DEFVAL { 0 }
+    ::= { cabhSecFwLogCtl 5 }
+
+--
+-- CableHome PS device certificate
+-- 
+
+    cabhSecCertPsCert OBJECT-TYPE
+    SYNTAX      X509Certificate
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The X509 DER-encoded PS certificate."
+    ::= { cabhSecCertObjects 1 }
+
+--
+--  CableHome 1.1 Firewall Management MIBs 
+--
+
+cabhSec2FwEnable OBJECT-TYPE
+    SYNTAX      INTEGER    {
+                    enabled(1),
+                    disabled(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This parameter indicates whether to enable or disable the
+            firewall."
+    DEFVAL { enabled }
+    ::= { cabhSec2FwBase 1 }
+
+cabhSec2FwPolicyFileURL OBJECT-TYPE
+    SYNTAX      SnmpAdminString 
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "A policy rule set file download is triggered when the
+            value used to SET this object is different than the value 
+            in the cabhSec2FwPolicySuccessfulFileURL object."
+    REFERENCE
+            "CableHome 1.1 Specification, CH-SP-CH1.1-I02-030801,
+            11.6.4.7.1 Firewall Rule Set Management MIB Objects."
+    DEFVAL { "" }
+    ::= { cabhSec2FwBase 2 }
+
+cabhSec2FwPolicyFileHash OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(0|20))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Hash of the contents of the firewall
+            configuration file. For the SHA-1 authentication
+            algorithm the length of the hash is 160 bits.
+            This hash value is encoded in binary format."
+    DEFVAL { ''h }
+    ::= { cabhSec2FwBase 3 }
+
+cabhSec2FwPolicyFileOperStatus OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    inProgress(1),
+                    complete(2),
+                    failed(3)
+                }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "InProgress(1) indicates a firewall configuration
+            file download is underway. Complete(2) indicates
+            the firewall configuration file was downloaded
+            and processed successfully. Failed(3) indicates
+            that the last attempted firewall configuration
+            file download or processing failed."
+    ::= { cabhSec2FwBase 4 }
+
+cabhSec2FwPolicyFileCurrentVersion OBJECT-TYPE
+    SYNTAX      SnmpAdminString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "A label set by the cable operator that can be 
+            used to track various versions of configured 
+            rulesets. Once the label is set and configured
+            rules are changed, it may not accurately reflect 
+            the version of configured rules running on the box.
+            If this object has never been configured, it MUST 
+            contain an empty string."
+    DEFVAL { "" }
+    ::= { cabhSec2FwBase 5 }
+
+cabhSec2FwClearPreviousRuleset OBJECT-TYPE
+    SYNTAX      INTEGER    {
+                    increment(1),
+                    complete(2),
+                    incrementDefault(3)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Allows PS or firewall configuration files to contain
+            either a complete firewall configured ruleset or an
+            incremental to the already established configured 
+            ruleset depending up on its existence in the 
+            configuration file. If the PS receives a 
+            configuration file with firewall settings which
+            includes a cabhSec2FwClearPreviousRuleset object
+            setting marked as increment(1) or if this object
+            setting is not included in a configuration file 
+            which contains filter settings for the firewall, 
+            then the PS MUST treat the firewall filter settings 
+            in the configuration file as an increment to the 
+            configured ruleset. If the PS receives a configuration
+            file with firewall settings which includes a 
+            cabhSec2FwClearPreviousRuleset object setting marked
+            as incrementDefault(3) then the PS MUST remove all 
+            previously configured rules from the configured ruleset,
+            including any rules in the filter schedule table and 
+            increment the newly downloaded rules on top of (i.e. 
+            subsequent to) the factory default policy.  If the PS
+            receives a configuration file with firewall settings 
+            which includes a cabhSec2FwClearPreviousRuleset object 
+            setting marked as complete(2), then the PS MUST remove 
+            all previously configured rules from the configured 
+            ruleset, including any rules in the 
+            cabhSec2FwFilterScheduleTable table before applying 
+            the firewall filter settings contained in the 
+            configuration file. 
+
+            If cabhSec2FwClearPreviousRuleset is set to increment(1)
+            using SNMP, the PS MUST treat all of the following 
+            firewall filter settings using SNMP as an increment to 
+            the configured ruleset. If cabhSec2FwClearPreviousRuleset
+            is set to incrementDefault(3) using SNMP, the PS MUST 
+            remove all previously configured rules from the 
+            configured ruleset, including any rules in the filter
+            schedule table and treat all of the following firewall 
+            filter settings using SNMP as an increment on top of 
+            the factory default policy. If 
+            cabhSec2FwClearPreviousRuleset is set to complete(2) 
+            using SNMP, then the PS MUST remove all rules from 
+            the configured ruleset, including any rules in the 
+            filter schedule table. In this scenario the PS will 
+            operate without any configured rules, (e.g. there will
+            be no defined filtering rules, but the firewall will 
+            still provide the minimum set of capabilities and 
+            architecture)."
+    REFERENCE
+            "CableHome 1.1 Specification, CH-SP-CH1.1-I02-030801,
+            11.6.4.4 Firewall Filtering."
+    DEFVAL { increment }
+    ::= { cabhSec2FwBase 6 }
+
+cabhSec2FwPolicySelection OBJECT-TYPE
+    SYNTAX      INTEGER {
+                    factoryDefault(1),
+                    configuredRuleset(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This parameter indicates which policy should currently be
+            running in the firewall, either the factoryDefault policy
+            or the configuredRuleset."
+    DEFVAL { factoryDefault }
+    ::= { cabhSec2FwBase 7 }
+    
+cabhSec2FwEventSetToFactory OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "If set to 'true', entries in cabhSec2FwEventControlEntry
+            are set to their default values. 
+            Reading this value always returns false."
+    DEFVAL { false }
+    ::= { cabhSec2FwBase 8 }
+
+cabhSec2FwEventLastSetToFactory OBJECT-TYPE
+    SYNTAX      TimeStamp
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The value of sysUpTime when cabhSec2FwEventSetToFactory
+            was Last set to true. Zero if never reset."
+    ::= { cabhSec2FwBase 9 }
+
+cabhSec2FwPolicySuccessfulFileURL OBJECT-TYPE
+    SYNTAX      SnmpAdminString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Contains the location of the last successful downloaded 
+            policy rule set file in the format pointed in the 
+            reference. If a successful download has not yet 
+            occurred, this MIB object should report empty string."
+    REFERENCE
+            "CableHome 1.1 Specification, CH-SP-CH1.1-I02-030801,
+            11.6.4.7.1 Firewall Rule Set Management MIB Objects."
+    DEFVAL { "" }
+    ::= { cabhSec2FwBase 10 }
+
+-- +++++++++++
+
+--
+-- CableHome 1.1 Firewall Event MIBS
+--
+
+
+cabhSec2FwEventControlTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CabhSec2FwEventControlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "This table controls the reporting of the
+            Firewall Attacks events"
+    ::= { cabhSec2FwEvent 1 }
+
+cabhSec2FwEventControlEntry OBJECT-TYPE
+    SYNTAX      CabhSec2FwEventControlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Allows configuration of the reporting mechanisms
+            for a particular type of attack."
+    INDEX { cabhSec2FwEventType }
+    ::= { cabhSec2FwEventControlTable 1 }
+
+CabhSec2FwEventControlEntry ::= SEQUENCE {
+    cabhSec2FwEventType         INTEGER,
+    cabhSec2FwEventEnable       INTEGER,
+    cabhSec2FwEventThreshold    Unsigned32,
+    cabhSec2FwEventInterval     Unsigned32,
+    cabhSec2FwEventCount        ZeroBasedCounter32,
+    cabhSec2FwEventLogReset     TruthValue,
+    cabhSec2FwEventLogLastReset TimeStamp  
+    }
+
+cabhSec2FwEventType OBJECT-TYPE
+    SYNTAX      INTEGER     {
+                    type1(1),
+                    type2(2),
+                    type3(3),
+                    type4(4),
+                    type5(5),
+                    type6(6)
+                }
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Classification of the different types of
+            attacks. 
+            Type 1  logs all attempts from both LAN and WAN
+            clients to traverse the Firewall that violate the
+            Security Policy. 
+            Type 2 logs identified Denial of Service attack
+            attempts. 
+            Type 3 logs all changes made to the
+            cabhSec2FwPolicyFileURL, 
+            cabhSec2FwPolicyFileCurrentVersion or 
+            cabhSec2FwPolicyFileEnable objects. 
+            Type 4 logs all failed attempts to modify 
+            cabhSec2FwPolicyFileURL and
+            cabhSec2FwPolicyFileEnable objects. 
+            Type 5 logs allowed inbound packets from the WAN. 
+            Type 6 logs allowed outbound packets from the
+            LAN."
+    ::= { cabhSec2FwEventControlEntry 1 }
+
+cabhSec2FwEventEnable OBJECT-TYPE
+    SYNTAX      INTEGER    {
+                    enabled(1),
+                    disabled(2)
+                }
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "Enables or disables counting and logging of
+            firewall events by type as assigned by
+            cabhSec2FwEventType."
+    DEFVAL { disabled } 
+    ::= { cabhSec2FwEventControlEntry 2 }
+
+cabhSec2FwEventThreshold OBJECT-TYPE
+    SYNTAX       Unsigned32 (0..65535)
+    MAX-ACCESS   read-write
+    STATUS       current
+    DESCRIPTION
+            "Number of attacks to count before sending the
+            appropriate event by type as assigned by
+            cabhSec2FwEventType."
+    DEFVAL { 0 } 
+    ::= { cabhSec2FwEventControlEntry 3 }
+
+cabhSec2FwEventInterval OBJECT-TYPE
+    SYNTAX       Unsigned32 (0..65535)
+    UNITS        "hours"
+    MAX-ACCESS   read-write
+    STATUS       current
+    DESCRIPTION
+            "Indicates the time interval in hours to count
+            and log occurrences of a firewall event type as
+            assigned in cabhSec2FwEventType. If this MIB has
+            a value of zero then there is no interval assigned
+            and the PS will not count or log events."
+    DEFVAL { 0 } 
+    ::= { cabhSec2FwEventControlEntry 4 }
+
+cabhSec2FwEventCount OBJECT-TYPE
+    SYNTAX       ZeroBasedCounter32
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+           "Indicates the current count up to the 
+            cabhSec2FwEventThreshold value by type as
+            assigned by cabhSec2FwEventType."
+    ::= { cabhSec2FwEventControlEntry 5 }
+
+cabhSec2FwEventLogReset OBJECT-TYPE
+    SYNTAX       TruthValue
+    MAX-ACCESS   read-write
+    STATUS       current
+    DESCRIPTION
+            "Setting this object to true clears the log table
+            for the specified event type. Reading this object
+            always returns false."
+    DEFVAL { false }
+    ::= { cabhSec2FwEventControlEntry 6 }
+
+cabhSec2FwEventLogLastReset OBJECT-TYPE
+    SYNTAX       TimeStamp
+    MAX-ACCESS   read-only
+    STATUS       current
+    DESCRIPTION
+            "The value of sysUpTime when cabhSec2FwEventLogReset was 
+            last set to true. Zero if never reset."
+    ::= { cabhSec2FwEventControlEntry 7 }
+
+--
+-- CableHome 1.1 Firewall Log Tables
+--
+ 
+cabhSec2FwLogTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CabhSec2FwLogEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Contains a log of packet information as related
+            to events enabled by the cable operator. The types
+            are defined in the CableHome 1.1 specification and
+            require various objects to be included in the log.
+            The following is a description for what is
+            expected in the log for each type Type 1, Type 2,
+            Type 5 and Type 6 table MUST include
+            cabhSec2FwEventType, cabhSec2FwEventPriority,
+            cabhSec2FwEventId, cabhSec2FwLogTime,
+            cabhSec2FwIpProtocol, cabhSec2FwIpSourceAddr,
+            cabhSec2FwIpDestAddr, cabhSec2FwIpSourcePort,
+            cabhSec2FwIpDestPort, cabhSec2Fw,
+            cabhSec2FwReplayCount.  The other values not used
+            by Types 1, 2, 5 and 6 are default values. Type 3 
+            and Type 4 MUST include cabhSec2FwEventType,
+            cabhSec2FwEventPriority, cabhSec2FwEventId,
+            cabhSec2FwLogTime, cabhSec2FwIpSourceAddr,
+            cabhSec2FwLogMIBPointer.  The other values not used
+            by type 3 and 4 are default values."
+    ::= { cabhSec2FwLog 1 }
+
+cabhSec2FwLogEntry OBJECT-TYPE
+    SYNTAX      CabhSec2FwLogEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Each entry contains the log of firewall events"
+    INDEX {cabhSec2FwLogIndex}            
+    ::= { cabhSec2FwLogTable 1 }
+
+CabhSec2FwLogEntry ::= SEQUENCE {
+    cabhSec2FwLogIndex             Unsigned32,
+    cabhSec2FwLogEventType         INTEGER,
+    cabhSec2FwLogEventPriority     INTEGER,
+    cabhSec2FwLogEventId           Unsigned32,
+    cabhSec2FwLogTime              DateAndTime,
+    cabhSec2FwLogIpProtocol        Unsigned32,
+    cabhSec2FwLogIpSourceAddr      InetAddress,
+    cabhSec2FwLogIpDestAddr        InetAddress,
+    cabhSec2FwLogIpSourcePort      InetPortNumber,
+    cabhSec2FwLogIpDestPort        InetPortNumber,
+    cabhSec2FwLogMessageType       Unsigned32,
+    cabhSec2FwLogReplayCount       Unsigned32,
+    cabhSec2FwLogMIBPointer        VariablePointer
+    }
+
+cabhSec2FwLogIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (1..2147483647)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "A sequence number for the specific events
+            under a cabhSec2FwEventType." 
+    ::= { cabhSec2FwLogEntry 1 }
+
+cabhSec2FwLogEventType OBJECT-TYPE
+    SYNTAX INTEGER     {
+               type1(1),
+               type2(2),
+               type3(3),
+               type4(4),
+               type5(5),
+               type6(6)
+           }
+    MAX-ACCESS  read-only 
+    STATUS      current
+    DESCRIPTION
+            "Classification of the different types of
+            attacks.
+            Type 1 logs all attempts from both LAN and WAN
+            clients to traverse the Firewall that violate
+            the Security Policy.
+            Type 2 logs identified Denial of Service attack
+            attempts.
+            Type 3 logs all changes made to the
+            cabhSec2FwPolicyFileURL,
+            cabhSec2FwPolicyFileCurrentVersion or
+            cabhSec2FwPolicyFileEnable objects.
+            Type 4 logs all failed attempts to modify
+            cabhSec2FwPolicyFileURL and
+            cabhSec2FwPolicyFileEnable objects.
+            Type 5 logs allowed inbound packets from the WAN.
+            Type 6 logs allowed outbound packets from the
+            LAN."
+    ::= { cabhSec2FwLogEntry 2 }
+
+cabhSec2FwLogEventPriority OBJECT-TYPE
+    SYNTAX     INTEGER     {
+                   emergency(1),
+                   alert(2),
+                   critical(3),
+                   error(4),
+                   warning(5),
+                   notice(6),
+                   information(7),
+                   debug(8)
+               }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The priority level of this event as defined
+            by CableHome Specification. If a priority is
+            not assigned in the CableHome specification for
+            a particular event then the vendor or cable
+            operator may assign priorities. These are
+            ordered from most serious (emergency)to least
+            serious (debug)."
+    ::= { cabhSec2FwLogEntry 3 }
+
+cabhSec2FwLogEventId  OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The assigned event ID."
+    ::= { cabhSec2FwLogEntry 4 }
+
+cabhSec2FwLogTime OBJECT-TYPE
+    SYNTAX      DateAndTime
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The time that this entry was created by the PS."
+    ::= { cabhSec2FwLogEntry 5 }
+
+cabhSec2FwLogIpProtocol OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..256)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The IP Protocol."
+    ::= { cabhSec2FwLogEntry 6 }
+
+cabhSec2FwLogIpSourceAddr OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The Source IP Address of the packet logged."
+    ::= { cabhSec2FwLogEntry 7 }
+
+cabhSec2FwLogIpDestAddr OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The Destination IP Address of the packet logged."
+    ::= { cabhSec2FwLogEntry 8 }
+
+cabhSec2FwLogIpSourcePort OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The Source IP Port of the packet logged."
+    ::= { cabhSec2FwLogEntry 9 }
+
+cabhSec2FwLogIpDestPort OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The Source IP Port of the packet logged."
+    ::= { cabhSec2FwLogEntry 10 }
+
+cabhSec2FwLogMessageType OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The ICMP defined types."
+    ::= { cabhSec2FwLogEntry 11}
+
+cabhSec2FwLogReplayCount OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "The number of identical attack packets that
+            were seen by the firewall based on
+            cabhSec2FwLogIpProtocol, cabhSec2FwLogIpSourceAddr,
+            cabhSec2FwLogIpDestAddr, cabhSec2FwLogIpSourcePort,
+            cabhSec2FwLogIpDestPort and cabhSec2FwLogMessageType."
+    DEFVAL { 0 }
+    ::= { cabhSec2FwLogEntry 12 }
+
+cabhSec2FwLogMIBPointer OBJECT-TYPE
+    SYNTAX      VariablePointer 
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+            "Identifies if the cabhSec2FwPolicyFileURL or the 
+            cabhSec2FwEnable MIB object changed or an attempt
+            was made to change it."
+    DEFVAL { zeroDotZero }
+    ::= { cabhSec2FwLogEntry 13 }
+
+-- ============================================================
+--
+--  CableHome 1.1 PS IP Filter Scheduling Table
+--
+--  The cabhSec2FwFilterScheduleTable contains the firewall
+--  policy identification and links that policy as defined
+--  in RFC 2669 to specific time of day restrictions.
+--
+-- =============================================================
+
+cabhSec2FwFilterScheduleTable OBJECT-TYPE
+    SYNTAX SEQUENCE OF CabhSec2FwFilterScheduleEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION 
+            "Extends the filtering matching parameters of 
+            docsDevFilterIpTable defined in RFC 2669 for CableHome 
+            Residential Gateways to include time day intervals and days
+            of the week."
+    ::= { cabhSec2FwFilter 1 }
+
+
+cabhSec2FwFilterScheduleEntry OBJECT-TYPE
+    SYNTAX      CabhSec2FwFilterScheduleEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "Extended values for entries of docsDevFilterIpTable.
+            If the PS has not aqcuire ToD the entire
+            docsDevFilterIpEntry rule set is ignored."
+    AUGMENTS { docsDevFilterIpEntry }
+    ::= { cabhSec2FwFilterScheduleTable 1 }
+
+CabhSec2FwFilterScheduleEntry ::= SEQUENCE {
+    cabhSec2FwFilterScheduleStartTime    DateAndTime,
+    cabhSec2FwFilterScheduleEndTime      DateAndTime,
+    cabhSec2FwFilterScheduleDOW          BITS
+    }
+
+cabhSec2FwFilterScheduleStartTime OBJECT-TYPE
+    SYNTAX      DateAndTime
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The start time, with optional time zone, for a firewall 
+            filter ruleset. Only the time portion of the DateAndTime 
+            TEXTUAL-CONVENTION have a meaning." 
+    ::= { cabhSec2FwFilterScheduleEntry 1 }
+
+cabhSec2FwFilterScheduleEndTime OBJECT-TYPE
+    SYNTAX      DateAndTime
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "The end time, with optional time zone, for a firewall
+            filter ruleset. Only the time portion of the
+            DateAndTime TEXTUAL-CONVENTION have a meaning."
+    ::= { cabhSec2FwFilterScheduleEntry 2 }
+
+cabhSec2FwFilterScheduleDOW OBJECT-TYPE
+    SYNTAX BITS {
+                    sunday(0),
+                    monday(1),
+                    tuesday(2),
+                    wednesday(3),
+                    thursday(4),
+                    friday(5),
+                    saturday(6)
+                }
+    MAX-ACCESS  read-create
+    STATUS      current
+    DESCRIPTION
+            "If the day of week bit associated with the PS given day 
+            is '1', this object criteria matches."
+    ::= { cabhSec2FwFilterScheduleEntry 3 }
+
+--
+-- Kerberos MIBs
+--
+
+cabhSecKerbPKINITGracePeriod OBJECT-TYPE
+    SYNTAX      Unsigned32 (15..600)
+    UNITS       "minutes"
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The PKINIT Grace Period is needed by the PS
+            to know when it should start retrying to get
+            a new ticket. The PS MUST obtain a new Kerberos
+            ticket (with a PKINIT exchange)this many minutes
+            before the old ticket expires."
+    DEFVAL { 30 }
+    ::= { cabhSecKerbBase 1}
+
+cabhSecKerbTGSGracePeriod OBJECT-TYPE
+    SYNTAX      Unsigned32 (1..600)
+    UNITS       "minutes"
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The TGS Grace Period is needed by the PS to
+            know when it should start retrying to get a new
+            ticket. The PS MUST obtain a new Kerberos ticket
+            (with a TGS Request) this many minutes before the
+            old ticket expires."
+    DEFVAL { 10 }
+    ::= { cabhSecKerbBase 2 }
+
+cabhSecKerbUnsolicitedKeyMaxTimeout OBJECT-TYPE
+    SYNTAX      Unsigned32 (15..600)
+    UNITS       "seconds"
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "This timeout applies to PS initiated AP-REQ/REP
+            key management exchange with NMS. The maximum
+            timeout is the value which may not be exceeded in
+            the exponential backoff algorithm."
+    DEFVAL { 600 }
+    ::= { cabhSecKerbBase 3 }
+
+cabhSecKerbUnsolicitedKeyMaxRetries OBJECT-TYPE
+    SYNTAX      Unsigned32 (1..32)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+            "The number of retries the PS is allowed for
+            AP-REQ/REP key management exchange initiation
+            with the NMS. This is the maximum number of
+            retries before the PS gives up attempting to
+            establish an SNMPv3 security association 
+            with NMS."
+    DEFVAL { 8 }
+    ::= { cabhSecKerbBase 4 }
+
+ cabhSecNotification OBJECT IDENTIFIER ::= { cabhSecMib 3 }
+ cabhSecConformance  OBJECT IDENTIFIER ::= { cabhSecMib 4 }
+ cabhSecCompliances  OBJECT IDENTIFIER ::= { cabhSecConformance 1 }
+ cabhSecGroups       OBJECT IDENTIFIER ::= { cabhSecConformance 2 }
+
+--
+--    Notification Group for future extension
+--
+
+-- compliance statements
+
+cabhSecCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+            "The compliance statement for CableHome Security."
+    MODULE   --cabhSecMib
+
+
+-- unconditionally mandatory groups
+
+    MANDATORY-GROUPS {
+        cabhSecCertGroup,
+        cabhSecKerbGroup
+        }
+
+
+-- conditional mandatory groups
+       
+    GROUP      cabhSecGroup
+    DESCRIPTION
+            "This group is implemented only for CH 1.0 gateways."
+    
+         
+    GROUP      cabhSec2Group
+    DESCRIPTION
+            "This group is implemented only for CH 1.1 gateways."
+
+    ::= { cabhSecCompliances 1 }
+            
+cabhSecGroup OBJECT-GROUP
+    OBJECTS {
+        cabhSecFwPolicyFileEnable,
+        cabhSecFwPolicyFileURL,
+        cabhSecFwPolicyFileHash,
+        cabhSecFwPolicyFileOperStatus,
+        cabhSecFwPolicyFileCurrentVersion,
+        cabhSecFwPolicySuccessfulFileURL,
+         
+        cabhSecFwEventType1Enable,
+        cabhSecFwEventType2Enable,
+        cabhSecFwEventType3Enable,
+        cabhSecFwEventAttackAlertThreshold,
+        cabhSecFwEventAttackAlertPeriod
+        }
+    STATUS      current
+    DESCRIPTION
+            "Group of objects in CableHome 1.0 Firewall MIB."
+    ::= { cabhSecGroups 1 } 
+
+cabhSecCertGroup OBJECT-GROUP
+    OBJECTS { 
+        cabhSecCertPsCert
+        }
+    STATUS      current
+    DESCRIPTION
+            "Group of objects in CableHome gateway for PS
+            Certificate."
+    ::= { cabhSecGroups 2 } 
+
+cabhSecKerbGroup OBJECT-GROUP
+    OBJECTS {
+        cabhSecKerbPKINITGracePeriod,
+        cabhSecKerbTGSGracePeriod,
+        cabhSecKerbUnsolicitedKeyMaxTimeout,
+        cabhSecKerbUnsolicitedKeyMaxRetries
+        }
+    STATUS      current
+    DESCRIPTION
+            "Group of objects in CableHome gateway for Kerberos."
+    ::= { cabhSecGroups 3 }
+
+cabhSec2Group OBJECT-GROUP
+    OBJECTS {
+        cabhSec2FwEnable,
+        cabhSec2FwPolicyFileURL,
+        cabhSec2FwPolicyFileHash,
+        cabhSec2FwPolicyFileOperStatus,
+        cabhSec2FwPolicyFileCurrentVersion,
+        cabhSec2FwClearPreviousRuleset,
+        cabhSec2FwPolicySelection,
+        cabhSec2FwEventSetToFactory,
+        cabhSec2FwEventLastSetToFactory,
+        cabhSec2FwPolicySuccessfulFileURL,
+        cabhSec2FwEventEnable,
+        cabhSec2FwEventThreshold,
+        cabhSec2FwEventInterval,
+        cabhSec2FwEventCount,
+        cabhSec2FwEventLogReset,
+        cabhSec2FwEventLogLastReset,
+        cabhSec2FwLogEventType,
+        cabhSec2FwLogEventPriority,
+        cabhSec2FwLogEventId,
+        cabhSec2FwLogTime,
+        cabhSec2FwLogIpProtocol,
+        cabhSec2FwLogIpSourceAddr,
+        cabhSec2FwLogIpDestAddr,
+        cabhSec2FwLogIpSourcePort,
+        cabhSec2FwLogIpDestPort,
+        cabhSec2FwLogMessageType,
+        cabhSec2FwLogReplayCount,
+        cabhSec2FwLogMIBPointer,
+        cabhSec2FwFilterScheduleStartTime,
+        cabhSec2FwFilterScheduleEndTime,
+        cabhSec2FwFilterScheduleDOW
+        }
+    STATUS      current
+    DESCRIPTION
+            "Group of objects in CableHome 1.1 Firewall MIB."
+    ::= { cabhSecGroups 4 } 
+
+END
