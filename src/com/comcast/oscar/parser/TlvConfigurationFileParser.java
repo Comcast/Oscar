@@ -89,8 +89,8 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 		
 		// Added DPoE as a Configuration File Type
 		else if (ctx.getText().equals("DPoE")) {
-			dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
-			iConfigurationFileType = ConfigurationFile.DOCSIS_VER_31;
+			dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+			iConfigurationFileType = ConfigurationFile.DPOE_VER_20;
 		}   
 		
 		if (debug|localDebug) 
