@@ -192,7 +192,7 @@ public class ConfigurationFileImport {
 	
 	/**
 	 * 
-	 * @param iTlvType
+	 * @param iTlvType - Top Level TLV
 	
 	 * @return JSONArray
 	 */
