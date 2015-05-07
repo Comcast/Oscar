@@ -1,5 +1,7 @@
 package com.comcast.oscar.netsnmp;
 
+import java.util.regex.Pattern;
+
 import com.comcast.oscar.utilities.DirectoryStructure;
 
 public class Constants {
@@ -10,5 +12,7 @@ public class Constants {
 	public final static String SNMP_TRANSLATE_OID_DEC_2_OID_NAME = " -Oas ";
 	public final static String SNMP_TRANSLATE_DEBUG 	= " -D all ";
 	public final static String SNMP_TRANSLATE_VERSION 	= " -V ";
+	
+	public static final Pattern ISO_ORG_DOD_DOTTED = Pattern.compile("^\\.1\\.3\\.6");
 	
 }
