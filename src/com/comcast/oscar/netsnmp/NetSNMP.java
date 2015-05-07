@@ -83,7 +83,7 @@ public class NetSNMP extends ArrayList<String> {
 
 	/**
 	 * 
-	 * @param sOID
+	 * @param sOID - Input MUST be a DottedOID - .1.3.6
 	 * @return
 	 */
 	public static String toTextualOID(String sOID) {
