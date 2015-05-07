@@ -35,7 +35,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class NetSNMP extends ArrayList<String> {
 
 	private static final long serialVersionUID = -2264150856597322191L;
+	
 	private static Boolean debug = Boolean.FALSE;
+	
 	private final static String DOTTED_TEXTUAL_NetSNMP_MAP_FILE = "DottedTextualNetSNMPMap.json";
 	
 	private static ObjectMapper omNetSNMP = null;
@@ -159,6 +161,10 @@ public class NetSNMP extends ArrayList<String> {
 			System.out.println("NetSNMP.toTextualOID(): " + sOID);
 		
 		if (!CheckOIDDBLookup(sOID).isEmpty()) {
+			
+			if (debug|localDebug)
+				System.out.println("NetSNMP.toTextualOID(): (" + CheckOIDDBLookup(sOID) + ")");
+			
 			return CheckOIDDBLookup(sOID);
 		}
 		
@@ -329,7 +335,7 @@ public class NetSNMP extends ArrayList<String> {
 	 */
 	private static String CheckOIDDBLookup(String sOID) {
 		
-		String sReturn = " ";
+		String sReturn = "";
 				
 		if (hmDotTextMap.containsKey(sOID)) {
 			
