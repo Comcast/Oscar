@@ -313,6 +313,7 @@ public class NetSNMP extends ArrayList<String> {
 	 */
 	private static void UpdateJsonDB(String sOIDKey, String sOIDConvert) {
 		
+		/*TODO to go back and use a bidirectional collector */
 		hmDotTextMap.put(sOIDKey, sOIDConvert);
 		hmDotTextMap.put(sOIDConvert, sOIDKey);
 		
