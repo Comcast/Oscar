@@ -48,7 +48,7 @@ public class OIDToJSONArray {
 	 * @param sValue
 	 */
 	public OIDToJSONArray (String sOID, String sDataType , String sValue) {
-		this.sOID = sOID;
+		this.sOID = NetSNMP.toDottedOID(sOID);
 		this.sDataType = sDataType;
 		this.sValue = sValue;	
 	}
@@ -59,7 +59,7 @@ public class OIDToJSONArray {
 	 * @param bValue
 	 */
 	public OIDToJSONArray (String sOID , byte[] bValue) {
-		this.sOID = sOID;
+		this.sOID = NetSNMP.toDottedOID(sOID);
 		this.sDataType = Integer.toString(BinaryConversion.byteToUnsignedInteger(BERService.HEX));
 		this.sValue = new HexString(bValue).toString(":");	
 	}
@@ -123,9 +123,7 @@ public class OIDToJSONArray {
 	
 	/**
 	 * 
-	 * @param joSnmpDictionary
-	
-	
+	 * @param joSnmpDictionary	
 	 * @return JSONObject
 	 * @throws JSONException  */
 	public JSONObject updateSnmpJsonObject (JSONObject joSnmpDictionary) throws JSONException {	
