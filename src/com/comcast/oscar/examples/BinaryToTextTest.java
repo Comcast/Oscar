@@ -3,8 +3,6 @@ import java.io.File;
 import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.snmp4j.smi.SMIManagerService;
-import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.test.TestDirectoryStructure;
 
 
@@ -35,13 +33,6 @@ public class BinaryToTextTest {
 	 */
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
-
-		try {
-			SMIManagerService.SmiManagerStart();
-		} catch (SMIManagerServiceException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 
 		boolean DOCSIS = false;
 		boolean PC = true;

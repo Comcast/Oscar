@@ -21,12 +21,10 @@ package com.comcast.oscar.examples;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
-import com.comcast.oscar.configurationfile.ConfigurationFile;
-import com.comcast.oscar.snmp4j.smi.SMIManagerService;
-import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
@@ -41,13 +39,6 @@ public class MergeConfigurationFilesTest {
 	 */
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {	
-
-		try {
-			SMIManagerService.SmiManagerStart();
-		} catch (SMIManagerServiceException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
 		
 		String SHARED_SECRET = "SHAREDSECRET";
 		

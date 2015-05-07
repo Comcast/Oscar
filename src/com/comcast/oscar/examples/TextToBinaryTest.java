@@ -20,11 +20,9 @@ package com.comcast.oscar.examples;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
-import com.comcast.oscar.configurationfile.ConfigurationFile;
-import com.comcast.oscar.snmp4j.smi.SMIManagerService;
-import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.test.TestDirectoryStructure;
 
 /**
@@ -44,12 +42,6 @@ public class TextToBinaryTest {
 	 * @param args String[]
 	 */
 	public static void main(String[] args) {
-
-		try {
-			SMIManagerService.SmiManagerStart();
-		} catch (SMIManagerServiceException e2) {
-			e2.printStackTrace();
-		}
 
 		ConfigurationFileImport cfiDocsis = null;
 		

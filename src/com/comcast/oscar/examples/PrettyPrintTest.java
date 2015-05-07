@@ -2,8 +2,8 @@ package com.comcast.oscar.examples;
 
 import java.io.FileNotFoundException;
 
-import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.test.TestDirectoryStructure;

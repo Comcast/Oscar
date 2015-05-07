@@ -18,8 +18,7 @@ package com.comcast.oscar.test;
 */
 
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
-import com.comcast.oscar.snmp4j.smi.SMIManagerService;
-import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
+
 
 /**
  */
@@ -30,12 +29,6 @@ public class ConfigurationFileBuildAPIUnitTest {
 	 * @param args String[]
 	 */
 	public static void main(String[] args) {
-
-		try {
-			SMIManagerService.SmiManagerStart();
-		} catch (SMIManagerServiceException e2) {
-			e2.printStackTrace();
-		}
 
 		boolean DOCSIS 					= false;
 		boolean PACKET_CABLE 			= false;

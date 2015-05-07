@@ -3,11 +3,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
-import com.comcast.oscar.configurationfile.ConfigurationFile;
-import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;
@@ -52,7 +51,6 @@ public class ConfigurationToBinaryToConfigurationTest {
 			e.printStackTrace();
 		}
 		
-		SMIManagerService.SmiManagerStart(fSnmp4JLic);
 
 		if (DOCSIS) {
 			System.out.println("+------------------------------------------------------------------------------------------------------------+");
