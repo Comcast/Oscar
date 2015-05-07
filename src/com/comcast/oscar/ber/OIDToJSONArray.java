@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.comcast.oscar.netsnmp.NetSNMP;
 import com.comcast.oscar.parser.tlvParser;
 import com.comcast.oscar.tlv.dictionary.Dictionary;
 import com.comcast.oscar.utilities.BinaryConversion;
@@ -64,11 +65,11 @@ public class OIDToJSONArray {
 	}
 	
 	/**
-	 * 
+	 * Takes tlvParser that contains SNMP OID Values and Builds a JSONArray
 	 * @param ctx
 	 */
 	public OIDToJSONArray (tlvParser.SnmpContext ctx) {
-		this.sOID = ctx.oid().getText();
+		this.sOID = NetSNMP.toDottedOID(ctx.oid().getText());
 		this.sDataType = Integer.toString(BinaryConversion.byteToUnsignedInteger(BERService.berStringDataTypeToByte(ctx.dataType().getText())));
 		this.sValue = ctx.value().getText();
 	}
