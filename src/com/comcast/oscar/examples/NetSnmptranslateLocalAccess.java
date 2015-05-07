@@ -17,13 +17,17 @@ public class NetSnmptranslateLocalAccess {
 
 	public static void main(String[] args) {
 
+		
+		System.out.println(NetSNMP.toTextualOID("sysContact.0"));
+		
+		
 		NetSNMP netSNMP = new NetSNMP();
 
 		ConfigurationFileImport cfi = null;
 		
 		try {
 			try {
-				cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName("DOCSIS-GOLDEN.bin.txt"));
+				cfi = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName("bsod.txt"));
 			} catch (ConfigurationFileException e) {
 				e.printStackTrace();
 			}
@@ -63,7 +67,7 @@ public class NetSnmptranslateLocalAccess {
 			
 		}
 		
-		ArrayList<String> als = netSNMP.OidName2OidDec();
+		ArrayList<String> als = netSNMP.toDottedOID();
 		
 		System.out.println(als.toString());
 		
@@ -71,7 +75,7 @@ public class NetSnmptranslateLocalAccess {
 		
 		netSNMP.addAll(als);
 		
-		als = netSNMP.OidDec2OidName();
+		als = netSNMP.toTextualOID();
 		
 		System.out.println(als.toString());
 		

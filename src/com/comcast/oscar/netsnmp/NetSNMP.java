@@ -11,15 +11,15 @@ public class NetSNMP extends ArrayList<String> {
 	 * 
 	 */
 	private static final long serialVersionUID = -2264150856597322191L;
-	private Boolean debug = Boolean.FALSE;
-	
+	private static Boolean debug = Boolean.FALSE;
+
 	/**
 	 * 
 	 */
 	public NetSNMP() {
 		super();
 	}
-	
+
 	/**
 	 * 
 	 * Convert: docsDevNmAccessIp.1 -> .1.3.6.1.2.1.69.1.2.1.2.1
@@ -27,18 +27,38 @@ public class NetSNMP extends ArrayList<String> {
 	 * @return - ArrayList<String> -> .1.3.6.1.2.1.69.1.2.1.2.1 ....
 	 */
 	public ArrayList<String> toDottedOID() {
-		
+
 		/* Not a clean way to do it, but it works */
 		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD + 	
-								Constants.MIB_PARAMETER + 
-								Constants.SNMP_TRANSLATE_OID_NAME_2_OID_DEC +
-								super.toString().replace(',', ' ')
-												.replace('[', ' ')
-												.replace(']', ' ')
-												.replaceAll("\\s+1", " .iso")
-												.replaceAll("\\s+\\.1", " .iso");
-		
+				Constants.MIB_PARAMETER + 
+				Constants.SNMP_TRANSLATE_OID_NAME_2_OID_DEC +
+				super.toString().replace(',', ' ')
+				.replace('[', ' ')
+				.replace(']', ' ')
+				.replaceAll("\\s+1", " .iso")
+				.replaceAll("\\s+\\.1", " .iso");
+
 		return runSnmpTranslate(sSnmpTranslate);
+	}
+	
+	/**
+	 * 
+	 * 
+	 * Convert: docsDevNmAccessIp.1 -> .1.3.6.1.2.1.69.1.2.1.2.1
+	 * 
+	 * @param sOID
+	 * @return
+	 */
+	public static String toDottedOID(String sOID) {
+
+		/* Not a clean way to do it, but it works */
+		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD + 	
+				Constants.MIB_PARAMETER + 
+				Constants.SNMP_TRANSLATE_OID_NAME_2_OID_DEC +
+				sOID.replaceAll("\\s+1", " .iso")
+					.replaceAll("\\s+\\.1", " .iso");
+
+		return runSnmpTranslate(sSnmpTranslate).get(0);
 	}
 
 	/**
@@ -48,29 +68,48 @@ public class NetSNMP extends ArrayList<String> {
 	 * @return ArrayList<String> -> docsDevNmAccessIp.1 ....
 	 */
 	public ArrayList<String> toTextualOID() {
-		
+
 		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD +  	
-								Constants.MIB_PARAMETER + 
-								Constants.SNMP_TRANSLATE_OID_DEC_2_OID_NAME +
-								super.toString().replace(',', ' ').replace('[', ' ').replace(']', ' ');
-		
+				Constants.MIB_PARAMETER + 
+				Constants.SNMP_TRANSLATE_OID_DEC_2_OID_NAME +
+				super.toString().replace(',', ' ').replace('[', ' ').replace(']', ' ');
+
 		if (debug)
 			System.out.println("NetSNMP.OidDec2OidName(): " + sSnmpTranslate);
-		
+
 		return runSnmpTranslate(sSnmpTranslate);
 
 	}
-	
+
+	/**
+	 * 
+	 * @param sOID
+	 * @return
+	 */
+	public static String toTextualOID(String sOID) {
+
+		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD +  	
+				Constants.MIB_PARAMETER + 
+				Constants.SNMP_TRANSLATE_OID_DEC_2_OID_NAME +
+				sOID;
+
+		if (true)
+			System.out.println("NetSNMP.OidDec2OidName(): " + sSnmpTranslate);
+
+		return runSnmpTranslate(sSnmpTranslate).get(0);
+
+	}
+
 	/**
 	 * 
 	 * @return
 	 */
 	public boolean isSnmptranslateInstalled() {
-		
+
 		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD +  	
-								Constants.SNMP_TRANSLATE_VERSION;
-		
-		 return runSnmpTranslate(sSnmpTranslate).get(0).contains("NET-SNMP");
+				Constants.SNMP_TRANSLATE_VERSION;
+
+		return runSnmpTranslate(sSnmpTranslate).get(0).contains("NET-SNMP");
 	}
 
 	/**
@@ -81,28 +120,28 @@ public class NetSNMP extends ArrayList<String> {
 	 * @return
 	 */
 	public static boolean isDottedOID(String sOID) {
-		
+
 		if (Constants.ISO_ORG_DOD_DOTTED.matcher(sOID).find()) {
 			return true;
 		}
-		
+
 		return false;	
 	}
-	
+
 	/**
 	 * 
 	 * @param sSnmpTranslateCMD
 	 * @return
 	 */
-	private ArrayList<String> runSnmpTranslate(String sSnmpTranslateCMD) {
-		
-		boolean localDebug = Boolean.TRUE;
-		
+	private static ArrayList<String> runSnmpTranslate(String sSnmpTranslateCMD) {
+
+		boolean localDebug = Boolean.FALSE;
+
 		if (debug|localDebug)
 			System.out.println(sSnmpTranslateCMD);
-		
+
 		ArrayList<String> als = new ArrayList<String>();
-		
+
 		Process p = null;
 		try {
 			p = Runtime.getRuntime().exec(sSnmpTranslateCMD);
@@ -121,11 +160,11 @@ public class NetSNMP extends ArrayList<String> {
 		int iCounter = 0;
 		try {
 			while ((sStd_IO = stdInput.readLine()) != null) {
-				
+
 				//Clean up White Space
 				if (!sStd_IO.isEmpty())
 					als.add(sStd_IO);
-				
+
 				if (debug|localDebug)
 					System.out.println(++iCounter + " IN: " + sStd_IO);
 			}
@@ -135,16 +174,16 @@ public class NetSNMP extends ArrayList<String> {
 
 		try {
 			while ((sStd_IO = stdError.readLine()) != null) {
-				
+
 				als.add(sStd_IO);
-				
+
 				if (debug|localDebug)
 					System.out.println(++iCounter + " OUT: " + sStd_IO);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		return als;
 	}
 }
