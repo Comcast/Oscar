@@ -161,24 +161,6 @@ public class DirectoryStructure {
 	}
 	
 	/**
-	 * SMI README file
-	
-	 * @return SMI README file */
-	public static File fSMIREADMEFile() 
-	{
-		return new File(fLicensesDir() + File.separator + "README");	
-	}
-	
-	/**
-	 * SNMP4J license file
-	
-	 * @return snmp4j license file */
-	public static File fSnmp4jLicenseFile() 
-	{
-		return new File(fLicensesDir() + File.separator + "snmp4jLicence.txt");	
-	}
-	
-	/**
 	 * 
 	
 	 * @return timestamped directory */
@@ -219,68 +201,6 @@ public class DirectoryStructure {
 	}
 	
 	/**
-	 * Export the SMI README file from the jar
-	 */
-	public void exportSMIREADME() 
-	{	
-		InputStream is = this.getClass().getResourceAsStream("/README");
-		OutputStream os = null;
-
-		try
-		{
-			os = new FileOutputStream(fSMIREADMEFile());
-			byte[] buffer = new byte[1024];
-			int length;
-			
-			//copy the file content in bytes 
-			while ((length = is.read(buffer)) > 0) 
-			{
-				os.write(buffer, 0, length);
-			}
-
-			is.close();
-			os.close();
-
-			System.out.println("/* SMI README export successful! */");
-		} 
-		catch(IOException e) 
-		{
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Export the snmp4jLicence.txt file from the jar
-	 */
-	public void exportSnmp4jLicense() 
-	{	
-		InputStream is = this.getClass().getResourceAsStream("/snmp4jLicence.txt");
-		OutputStream os = null;
-
-		try
-		{
-			os = new FileOutputStream(fSnmp4jLicenseFile());
-			byte[] buffer = new byte[1024];
-			int length;
-			
-			//copy the file content in bytes 
-			while ((length = is.read(buffer)) > 0) 
-			{
-				os.write(buffer, 0, length);
-			}
-
-			is.close();
-			os.close();
-
-			System.out.println("/* SNMP4J License export successful! */");
-		} 
-		catch(IOException e) 
-		{
-			e.printStackTrace();
-		}
-	}
-	
-	/**
 	 * 
 	
 	 * @return Date in yyyMMdd_HHmmss format */
@@ -308,11 +228,6 @@ public class DirectoryStructure {
 			fDbDir().mkdir();
 		}
 		
-		if(!fLicensesDir().exists()) 
-		{
-			fLicensesDir().mkdir();
-		}
-		
 		if(!fMibsDir().exists())
 		{
 			fMibsDir().mkdir();
@@ -337,16 +252,6 @@ public class DirectoryStructure {
 		if(!fDictionaryFile().exists())
 		{
 			exportDictionary();
-		}
-		
-		if(!fSMIREADMEFile().exists())
-		{
-			exportSMIREADME();
-		}
-		
-		if(!fSnmp4jLicenseFile().exists()) 
-		{
-			exportSnmp4jLicense();
 		}
 	}
 }
