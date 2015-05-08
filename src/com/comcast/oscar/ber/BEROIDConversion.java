@@ -11,6 +11,7 @@ import org.snmp4j.asn1.BERInputStream;
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.VariableBinding;
 
+import com.comcast.oscar.netsnmp.NetSNMP;
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 
@@ -158,7 +159,7 @@ public class BEROIDConversion {
 		
 		HashMap<String, String> hmssReturn = new HashMap<String,String>();
 		
-		hmssReturn.put(OID, getOidName());
+		hmssReturn.put(OID, NetSNMP.toTextualOID(getOidName()));
 		hmssReturn.put(DATA_TYPE, getDataType().toString());
 		hmssReturn.put(VALUE, getOidValue());
 		
@@ -176,7 +177,7 @@ public class BEROIDConversion {
 		
 		Map<String, String> mssReturn = new HashMap<String,String>();
 
-		mssReturn.put(OID, getOidName());
+		mssReturn.put(OID, NetSNMP.toTextualOID(getOidName()));
 				
 		//Make sure it is a OCTET String and a HexString with : and is it contains NON PlainText ASCII Char
 		//mgarcia - 140224 - Added Logic to figure out a HexString vs. OctetString in some conditions from Packet ACE Tool

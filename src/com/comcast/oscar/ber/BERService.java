@@ -17,6 +17,7 @@ import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.TimeTicks;
 import org.snmp4j.smi.VariableBinding;
 
+import com.comcast.oscar.netsnmp.NetSNMP;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.BinaryConversion;
@@ -74,6 +75,12 @@ public class BERService {
 		
 		boolean localDebug = Boolean.FALSE;
 		
+		if (localDebug|debug) {
+			System.out.println("BERService.setOIDEncoding(s,b,l) - OID: " + sObjectID + " -> Value: " + lNumber);
+		}
+		
+		sObjectID = NetSNMP.toDottedOID(sObjectID);
+	
 		if (localDebug|debug) {
 			System.out.println("BERService.setOIDEncoding(s,b,l) - OID: " + sObjectID + " -> Value: " + lNumber);
 		}
@@ -210,6 +217,8 @@ public class BERService {
 			System.out.println("BERService.setOIDEncoding(s,b,s) - OID: " + sObjectID + " -> Value: " + sValue);
 		}
 		
+		sObjectID = NetSNMP.toDottedOID(sObjectID);
+		
 		String berString = null;
 		
 		if (BER.IPADDRESS == bBerDataType) {
@@ -279,6 +288,8 @@ public class BERService {
 			System.out.println("BERService.setOIDEncoding(s,b,b) - OID: " + sObjectID + " -> Value: " + new HexString(bValue).toString(":"));
 		}
 		
+		sObjectID = NetSNMP.toDottedOID(sObjectID);
+		
 		String berString = "";
 		
 		if (BER.OCTETSTRING == bBerDataType) {
@@ -323,6 +334,8 @@ public class BERService {
 			System.out.println("BERService.setOIDEncodingToByteArray(s,b,s) - OID: " + sObjectID + " -> Value: " + sValue);
 		}
 		
+		sObjectID = NetSNMP.toDottedOID(sObjectID);
+		
 		if (bBerDataType == HEX) {		
 			return HexString.toByteArray(setOIDEncoding ( sObjectID ,  BER.OCTETSTRING ,  HexString.toByteArray(sValue)));
 		} else {
@@ -357,6 +370,8 @@ public class BERService {
 		//Make sure that OID is in a valid format to convert to BER ASN.1 Format
 		//If Not return an empty Array
 
+		sOID = NetSNMP.toDottedOID(sOID);
+		
 		OID oid = new OID(sOID);
 
 		if (oid.isValid()) {

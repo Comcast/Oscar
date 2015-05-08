@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.cablelabsdefinitions.Constants;
+import com.comcast.oscar.netsnmp.NetSNMP;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.BinaryConversion;
@@ -42,6 +43,9 @@ public class CommonTlvInsertions {
 	private Map<Integer,TlvBuilder> mitb;
 	private static boolean debug = Boolean.FALSE;
 	
+	public static boolean FINALIZE_TRUE = true;
+	public static boolean FINALIZE_FALSE= false;
+	
 	/**
 	 * 
 	 */
@@ -55,8 +59,6 @@ public class CommonTlvInsertions {
 	 * @param sTLV
 	 * @param cf
 	 * @param boolFinalize
-	
-	
 	 * @throws TlvException  * @throws ConfigrationFileException */
 	public static void insertTLV (String sTLV, ConfigurationFile cf , boolean boolFinalize) throws TlvException {
 		
@@ -539,7 +541,6 @@ public class CommonTlvInsertions {
 	 * @param boolFinalize
 	 */
 	public static void insertSnmpOID(String sOID , byte bDataType , long lValue , ConfigurationFile cf, boolean boolFinalize) {
-		
 		
 		byte[] baSnmpOID = null;
 		try {
