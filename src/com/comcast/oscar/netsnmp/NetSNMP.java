@@ -32,21 +32,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
  * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
  */
-public class NetSNMP extends ArrayList<String> {
+public class NetSNMP  {
 
-	private static final long serialVersionUID = -2264150856597322191L;
-	
-	private static Boolean debug = Boolean.FALSE;
-	
-	private final static String DOTTED_TEXTUAL_NetSNMP_MAP_FILE = "DottedTextualNetSNMPMap.json";
-	
-	private static ObjectMapper omNetSNMP = null;
-	
-	private static Map<String,String> hmDotTextMap = new HashMap<String,String>();
+	private static Boolean debug = Boolean.FALSE;	
+		
+	private static ObjectMapper omNetSNMP = null;	
+	private static Map<String,String> hmDotTextMap = null;
 	
 	static {
 		
 		omNetSNMP = new ObjectMapper();
+		
+		hmDotTextMap = new HashMap<String,String>();
 		
 		try {
 			hmDotTextMap = omNetSNMP.readValue(DirectoryStructureNetSNMP.fNetSNMPJSON(), 
@@ -70,8 +67,16 @@ public class NetSNMP extends ArrayList<String> {
 	
 		boolean localDebug = Boolean.FALSE;
 		
+		if (debug|localDebug)
+			System.out.println("NetSNMP.toDottedOID(): " + sOID);
+				
 		if (!CheckOIDDBLookup(sOID).isEmpty()) {
 			return CheckOIDDBLookup(sOID);
+		}
+		
+		/* If not installed, bypass and return input */
+		if (!isSnmptranslateInstalled()) {
+			return sOID;
 		}
 		
 		String sDottedOID = "";
@@ -109,13 +114,18 @@ public class NetSNMP extends ArrayList<String> {
 	
 		if (debug|localDebug)
 			System.out.println("NetSNMP.toTextualOID(): " + sOID);
-		
+				
 		if (!CheckOIDDBLookup(sOID).isEmpty()) {
 			
 			if (debug|localDebug)
 				System.out.println("NetSNMP.toTextualOID(): (" + CheckOIDDBLookup(sOID) + ")");
 			
 			return CheckOIDDBLookup(sOID);
+		}
+		
+		/* If not installed, bypass and return input */
+		if (!isSnmptranslateInstalled()) {
+			return sOID;
 		}
 		
 		String sTextualOID = "";
@@ -142,14 +152,18 @@ public class NetSNMP extends ArrayList<String> {
 
 	/**
 	 * 
-	 * @return
-	 */
-	public boolean isSnmptranslateInstalled() {
+	 * @return True = Install | False = Not-Install*/
+	public static boolean isSnmptranslateInstalled() {
 
 		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD +  	
-				Constants.SNMP_TRANSLATE_VERSION;
+								Constants.SNMP_TRANSLATE_VERSION;
 
-		return runSnmpTranslate(sSnmpTranslate).get(0).contains("NET-SNMP");
+		if (runSnmpTranslate(sSnmpTranslate) == null) {
+			return false;
+		} else {
+			return true;
+		}
+				
 	}
 
 	/**
@@ -170,7 +184,7 @@ public class NetSNMP extends ArrayList<String> {
 	/**
 	 * 
 	 * @param sSnmpTranslateCMD
-	 * @return */
+	 * @return OID Translation - Null is snmptranslate is not installed*/
 	private static ArrayList<String> runSnmpTranslate(String sSnmpTranslateCMD) {
 
 		boolean localDebug = Boolean.FALSE;
@@ -184,7 +198,8 @@ public class NetSNMP extends ArrayList<String> {
 		try {
 			p = Runtime.getRuntime().exec(sSnmpTranslateCMD);
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			/* If not found or installed */
+			return null;
 		}
 
 		BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -249,7 +264,7 @@ public class NetSNMP extends ArrayList<String> {
 		 * @return NetSNMP subdirectory*/
 		public static File fNetSNMPJSON() 
 		{
-			return new File(fDbDir().getName() + File.separator + DOTTED_TEXTUAL_NetSNMP_MAP_FILE) ;
+			return new File(fDbDir().getName() + File.separator + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE) ;
 		}
 		
 	}
