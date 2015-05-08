@@ -5,8 +5,6 @@ import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
-import com.comcast.oscar.snmp4j.smi.SMIManagerService;
-import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 
 /*
 	Copyright 2015 Comcast Cable Communications Management, LLC
@@ -33,13 +31,7 @@ public class ConfigurationFileImportTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		
-		try {
-			SMIManagerService.SmiManagerStart();
-		} catch (SMIManagerServiceException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
+	
 		
 		File file = null;
 		

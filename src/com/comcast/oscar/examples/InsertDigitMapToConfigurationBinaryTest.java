@@ -27,12 +27,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.comcast.oscar.ber.OIDToJSONArray;
+import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
-import com.comcast.oscar.configurationfile.ConfigurationFile;
-import com.comcast.oscar.snmp4j.smi.SMIManagerService;
-import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvException;
@@ -50,14 +48,7 @@ public class InsertDigitMapToConfigurationBinaryTest {
 	public static void main(String[] args) {
 
 		boolean debug = Boolean.FALSE;
-		
-		try {
-			SMIManagerService.SmiManagerStart();
-		} catch (SMIManagerServiceException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		
+	
 		File fDigitMap = null;
 		File fPacketCableTxt = null;
 		File fPacketCableBin = null;

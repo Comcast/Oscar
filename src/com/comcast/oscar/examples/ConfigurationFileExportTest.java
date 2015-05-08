@@ -2,8 +2,6 @@ package com.comcast.oscar.examples;
 import java.io.File;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.snmp4j.smi.SMIManagerService;
-import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 
 /*
 	Copyright 2015 Comcast Cable Communications Management, LLC
@@ -32,13 +30,6 @@ public class ConfigurationFileExportTest {
 	 */
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
-
-		try {
-			SMIManagerService.SmiManagerStart();
-		} catch (SMIManagerServiceException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
 		
 		boolean DOCSIS = false;
 		

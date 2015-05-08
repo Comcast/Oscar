@@ -24,8 +24,6 @@ import java.io.IOException;
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
-import com.comcast.oscar.snmp4j.smi.SMIManagerService;
-import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;
@@ -40,13 +38,7 @@ public class ManufactionCVCImportBinaryToBinaryTest {
 	 */
 	public static void main(String[] args) {
 
-		/*******************************DEFAULT SECTION*************************************/
-		try {
-			SMIManagerService.SmiManagerStart();
-		} catch (SMIManagerServiceException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}	
+		/*******************************DEFAULT SECTION*************************************/	
 		String sSharedSecret = "SHAREDSECRET";		
 		/*******************************DEFAULT SECTION*************************************/
 

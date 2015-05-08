@@ -5,8 +5,6 @@ import java.io.IOException;
 
 import com.comcast.oscar.buildbulk.BulkBuild;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
-import com.comcast.oscar.snmp4j.smi.SMIManagerService;
-import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.tlv.TlvException;
 
@@ -36,13 +34,6 @@ public class BulkBuildTextToBinaryTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-
-		try {
-			SMIManagerService.SmiManagerStart();
-		} catch (SMIManagerServiceException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 
 		String sSharedSecret = "SHAREDSECRET";
 

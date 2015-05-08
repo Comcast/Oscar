@@ -6,8 +6,6 @@ import java.io.IOException;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
-import com.comcast.oscar.snmp4j.smi.SMIManagerService;
-import com.comcast.oscar.snmp4j.smi.SMIManagerServiceException;
 
 
 /*
@@ -37,14 +35,7 @@ public class CheckConfigurationFileOIDDuplicationTest {
 	 */
 	public static void main(String[] args) {
 		
-		try {
-			SMIManagerService.SmiManagerStart();
-		} catch (SMIManagerServiceException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
-		}
-		
-								/*Text*/
+			/*Text*/
 		
 		File file = null;
 		

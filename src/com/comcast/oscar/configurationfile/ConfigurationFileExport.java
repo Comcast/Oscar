@@ -22,6 +22,7 @@ import com.comcast.oscar.compiler.DocsisConstants;
 import com.comcast.oscar.compiler.PacketCableCompiler;
 import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.constants.Constants;
+import com.comcast.oscar.netsnmp.NetSNMP;
 import com.comcast.oscar.sql.queries.DictionarySQLConstants;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvBuilder;
@@ -1048,7 +1049,7 @@ public class ConfigurationFileExport {
 				sbTopLevelTLVCodeBlock	.append('\t')
 										.append(joTopLevelTLV.get(Dictionary.TLV_NAME))
 										.append(' ')
-										.append(jaTopLevelTLVOID.getJSONObject(0).getString("OID"))
+										.append(NetSNMP.toTextualOID(jaTopLevelTLVOID.getJSONObject(0).getString("OID")))
 										.append(' ')
 										.append(BER_DATA_TYPE.get(Integer.decode(jaTopLevelTLVOID.getJSONObject(0).getString("DATA_TYPE"))))
 										.append(" \"")
@@ -1062,7 +1063,7 @@ public class ConfigurationFileExport {
 				sbTopLevelTLVCodeBlock	.append('\t')
 										.append(joTopLevelTLV.get(Dictionary.TLV_NAME))
 										.append(' ')
-										.append(jaTopLevelTLVOID.getJSONObject(0).getString("OID"))
+										.append(NetSNMP.toTextualOID(jaTopLevelTLVOID.getJSONObject(0).getString("OID")))
 										.append(' ')
 										.append(BER_DATA_TYPE.get(Integer.decode(jaTopLevelTLVOID.getJSONObject(0).getString("DATA_TYPE"))))
 										.append(" \"")

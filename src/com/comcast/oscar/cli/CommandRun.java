@@ -24,11 +24,9 @@ import com.comcast.oscar.cli.commands.Input;
 import com.comcast.oscar.cli.commands.JSONDisplay;
 import com.comcast.oscar.cli.commands.JSONtoTLV;
 import com.comcast.oscar.cli.commands.Key;
-import com.comcast.oscar.cli.commands.MIBSCompile;
 import com.comcast.oscar.cli.commands.MaxCPE;
 import com.comcast.oscar.cli.commands.OID;
 import com.comcast.oscar.cli.commands.Output;
-import com.comcast.oscar.cli.commands.SNMP4JLicense;
 import com.comcast.oscar.cli.commands.Specification;
 import com.comcast.oscar.cli.commands.TFTPServer;
 import com.comcast.oscar.cli.commands.TLV;
@@ -40,10 +38,8 @@ import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.constants.Constants;
-import com.comcast.oscar.snmp4j.smi.SMIManagerService;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.DirectoryStructure;
-import com.comcast.oscar.utilities.HexString;
 
 /**
  * 
@@ -67,7 +63,6 @@ import com.comcast.oscar.utilities.HexString;
 public class CommandRun {
 		
 	private int iBulkBuild = BulkBuild.TEXT_OUTPUT;
-	private File fSnmp4JLicence;
 	private boolean boolDecompileDisplay = ConfigurationFileExport.EXPORT_FOUND_TLV;
 			
 	private DigitmapDisplay comDigitmapDisplay = new DigitmapDisplay();
@@ -84,7 +79,6 @@ public class CommandRun {
 	private Input comInput;
 	private JSONtoTLV comJSONtoTLV;
 	private MaxCPE comMaxCPE;
-	private MIBSCompile comMIBSCompile;
 	private OID comOID;
 	private Output comOutput;
 	private TFTPServer comTFTPServer;
@@ -112,10 +106,8 @@ public class CommandRun {
 		options.addOption(JSONtoTLV.OptionParameters());
 		options.addOption(Key.OptionParameters());
 		options.addOption(MaxCPE.OptionParameters());
-		options.addOption(MIBSCompile.OptionParameters());
 		options.addOption(OID.OptionParameters());
 		options.addOption(Output.OptionParameters());
-		options.addOption(SNMP4JLicense.OptionParameters());
 		options.addOption(Specification.OptionParameters());
 		options.addOption(TFTPServer.OptionParameters());
 		options.addOption(TLV.OptionParameters());
@@ -168,36 +160,6 @@ public class CommandRun {
 	        {
 	        	System.out.println(Constants.APACHE_20_LICENCE_DISCLAIMER);
 	        	System.out.println(Constants.OSCAR_VERSION);
-	        }
- 
-	        if (line.hasOption("s4j")) 
-	        {
-	        	String[] optionValues = line.getOptionValues("s4j");
-	        	
-	        	if(optionValues.length >= 1) 
-	        	{
-	        		snmp4JLicenseCommand(new File(optionValues[0]));
-	        	} 
-	        	else 
-	        	{
-	    	        System.err.println(Constants.ERR_MIS_PAR);
-	                hf.printHelp(Constants.OSCAR_CLI_USAGE, options);
-	        	}
-            } 
-	        else 
-	        {
-            	this.fSnmp4JLicence = DirectoryStructure.fSnmp4jLicenseFile();
-            }
-	        
-	        if (this.fSnmp4JLicence.exists() && !(HexString.fileToByteArray(this.fSnmp4JLicence).length == 0)) 
-	        {
-	        	SMIManagerService.SmiManagerStart(this.fSnmp4JLicence);
-	        }
-	        
-	        if (line.hasOption("M")) 
-	        {
-	        	comMIBSCompile = new MIBSCompile(line.getOptionValues("M"));
-	        	comMIBSCompile.mibsCompile();
 	        }
 
 	        if (line.hasOption("s")) 
@@ -443,22 +405,6 @@ public class CommandRun {
 			this.iBulkBuild = BulkBuild.BINARY_OUTPUT;
 		}
 		
-	}
-
-	/**
-	 * Set fSnmp4JLicence file
-	 * @param file
-	 */
-	public void snmp4JLicenseCommand(File file) 
-	{
-		if(file.exists()) 
-		{
-			this.fSnmp4JLicence = file;
-		} 
-		else 
-		{
-			System.err.println("SNMP4J Licence file " + file + " " + Constants.ERR_DNE);
-        }
 	}
 	
 	/**

@@ -1,0 +1,176 @@
+-- extracted from draft-ietf-syslog-tc-mib-02.txt
+-- at Tue Jul 10 06:08:47 2007
+
+   SYSLOG-TC-MIB DEFINITIONS ::= BEGIN
+
+   IMPORTS
+       MODULE-IDENTITY, mib-2
+                 FROM SNMPv2-SMI        -- [RFC2578]
+       TEXTUAL-CONVENTION
+                 FROM SNMPv2-TC;        -- [RFC2579]
+
+   syslogTCMIB  MODULE-IDENTITY
+       LAST-UPDATED "200706100000Z"     --  10th June, 2007
+       ORGANIZATION "IETF Syslog Working Group"
+       CONTACT-INFO
+       "                      Glenn Mansfield Keeni
+                      Postal: Cyber Solutions Inc.
+                              6-6-3, Minami Yoshinari
+                              Aoba-ku, Sendai, Japan 989-3204.
+                         Tel: +81-22-303-4012
+                         Fax: +81-22-303-4015
+                      E-mail: glenn@cysols.com
+
+        Support Group E-mail: syslog@ietf.org
+        "
+
+       DESCRIPTION
+           "The MIB module containing textual conventions for syslog
+            messages.
+
+            Copyright (C) The IETF Trust (2007). This version of
+            this MIB module is part of RFC XXXX; see the RFC itself for
+            full legal notices.
+           "
+      -- RFC Ed.: replace XXXX with the actual RFC number & remove this
+      -- note
+       REVISION "200706100000Z"  --   10th June, 2007
+       DESCRIPTION
+           "The initial version, published as RFC XXXX."
+
+      -- RFC Ed.: replace XXXX with the actual RFC number & remove this
+      -- note
+
+
+       ::= { mib-2 999998 }     -- Will be assigned by IANA
+
+      -- IANA Reg.: Please assign a value for "YYYY" under the
+      -- 'mib-2' subtree and record the assignment in the SMI
+      -- Numbers registry.
+
+      -- RFC Ed.: When the above assignment has been made, please
+      --     remove the above note
+      --     replace "YYYY" here with the assigned value and
+      --     remove this note.
+
+
+
+   -- -------------------------------------------------------------
+   -- Textual Conventions
+   -- -------------------------------------------------------------
+   -- The Facilities and Severities of syslog messages are
+   -- numerically coded with decimal values.
+   -- Some of the operating system daemons and processes are
+   -- traditionally designated by the Facility values given below.
+   -- Daemons and processes that do not have an explicitly
+   -- assigned Facility may use any of the "local use" Facilities
+   -- or they may use the "user-level" Facility.
+   SyslogFacility  ::=  TEXTUAL-CONVENTION
+       STATUS  current
+       DESCRIPTION
+           "This textual convention enumerates the facilities
+            that originate syslog messages.
+           "
+       SYNTAX  INTEGER
+            {
+              kernel          (0), -- kernel messages
+              user            (1), -- user-level messages
+              mail            (2), -- mail system messages
+              daemon          (3), -- system daemons' messages
+              auth1           (4), -- security/authorization messages
+              syslog          (5), -- messages generated internally by
+                                   -- syslogd
+              lpr             (6), -- line printer subsystem messages
+              news            (7), -- network news subsystem messages
+              uucp            (8), -- UUCP subsystem messages
+              cron1           (9), -- clock daemon messages
+              auth2           (10),-- security/authorization messages
+              ftp             (11),-- ftp daemon messages
+              ntp             (12),-- NTP subsystem messages
+              logAudit        (13),-- log audit messages
+              logAlert        (14),-- log alert messages
+              cron2           (15),-- clock daemon messages
+              local0          (16),
+              local1          (17),
+              local2          (18),
+              local3          (19),
+              local4          (20),
+              local5          (21),
+              local6          (22),
+              local7          (23)
+            }
+
+   SyslogSeverity  ::=  TEXTUAL-CONVENTION
+       STATUS  current
+       DESCRIPTION
+           "This textual convention enumerates the severity levels
+            of syslog messages.
+           "
+       SYNTAX  INTEGER
+            {
+              emergency       (0),  -- system is unusable
+              alert           (1),  -- action must be taken immediately
+              critical        (2),  -- critical condition
+              error           (3),  -- error condition
+              warning         (4),  -- warning condition
+              notice          (5),  -- normal but significant condition
+              info            (6),  -- informational message
+              debug           (7)   -- debug-level messages
+            }
+
+
+   END
+
+-- 
+--    Copyright (C) The IETF Trust (2007).
+-- 
+--    This document is subject to the rights, licenses and restrictions
+--    contained in BCP 78, and except as set forth therein, the authors
+--    retain all their rights.
+-- 
+--    This document and the information contained herein are provided on
+--    an "AS IS" basis and THE CONTRIBUTOR, THE ORGANIZATION HE/SHE
+--    REPRESENTS OR IS SPONSORED BY (IF ANY), THE INTERNET SOCIETY, THE
+--    IETF TRUST AND THE INTERNET ENGINEERING TASK FORCE DISCLAIM ALL
+--    WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO ANY
+--    WARRANTY THAT THE USE OF THE INFORMATION HEREIN WILL NOT INFRINGE ANY
+--    RIGHTS OR ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A
+--    PARTICULAR PURPOSE.
+-- Intellectual Property
+-- 
+--    The IETF takes no position regarding the validity or scope of any
+--    Intellectual Property Rights or other rights that might be claimed
+--    to pertain to the implementation or use of the technology
+--    described in this document or the extent to which any license
+--    under such rights might or might not be available; nor does it
+--    represent that it has made any independent effort to identify any
+--    such rights.  Information on the procedures with respect to
+--    rights in RFC documents can be found in BCP 78 and BCP 79.
+-- 
+--    Copies of IPR disclosures made to the IETF Secretariat and any
+--    assurances of licenses to be made available, or the result of an
+--    attempt made to obtain a general license or permission for the use
+--    of such proprietary rights by implementers or users of this
+--    specification can be obtained from the IETF on-line IPR repository
+--    at http://www.ietf.org/ipr.
+-- 
+--    The IETF invites any interested party to bring to its attention
+--    any copyrights, patents or patent applications, or other
+--    proprietary rights that may cover technology that may be required
+--    to implement this standard.  Please address the information to the
+--    IETF at ietf-ipr@ietf.org.
+-- 
+-- Acknowledgment
+-- 
+--    Funding for the RFC Editor function is provided by the IETF
+--    Administrative Support Activity (IASA).
+--                                 APPENDIX
+-- 
+-- 
+-- This section documents the development of the draft. It will be
+-- deleted when the draft becomes an RFC.
+-- 
+-- Revision History:
+-- Changes from draft-ietf-syslog-tc-mib-01.txt
+--           to draft-ietf-syslog-tc-mib-02.txt
+
