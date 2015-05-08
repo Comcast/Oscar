@@ -323,7 +323,9 @@ public class NetSNMP  {
 	 */
 	private static void FixNullNetSNMPJSON() {
 		
-		if (HexString.fileToByteArray(DirectoryStructureNetSNMP.fNetSNMPJSON()).length == 0) {
+		if (!DirectoryStructureNetSNMP.fNetSNMPJSON().exists()) {
+			Disk.writeToDisk("{\"1.3.6\":\"dod\"}", DirectoryStructureNetSNMP.fNetSNMPJSON());
+		} else if (HexString.fileToByteArray(DirectoryStructureNetSNMP.fNetSNMPJSON()).length == 0) {
 			Disk.writeToDisk("{\"1.3.6\":\"dod\"}", DirectoryStructureNetSNMP.fNetSNMPJSON());
 		}
 		
