@@ -9,21 +9,24 @@ public class NetSNMPBinToTextToText {
 
 	public static void main(String[] args) {
 
-		ConfigurationFileExport cfe = 
-				new ConfigurationFileExport (TestDirectoryStructure.fInputDirFileName("DOCSIS-GOLDEN.txt.bin"),
-											 ConfigurationFileExport.DOCSIS_VER_31);
-		
-		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
+		for (int iCounter = 0; iCounter<100; iCounter++) {
 
-		
-		ConfigurationFileImport cfi = 
-				new ConfigurationFileImport(new StringBuilder(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV)));
-		
-		ConfigurationFile cf = new ConfigurationFile(cfi.getConfigurationFileType(),cfi.getTlvBuilder());
-		
-		
-		cfe = new ConfigurationFileExport(cf);
-		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
+			ConfigurationFileExport cfe = 
+					new ConfigurationFileExport (TestDirectoryStructure.fInputDirFileName("DOCSIS-GOLDEN.txt.bin"),
+							ConfigurationFileExport.DOCSIS_VER_31);
+
+			System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
+
+
+			ConfigurationFileImport cfi = 
+					new ConfigurationFileImport(new StringBuilder(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV)));
+
+			ConfigurationFile cf = new ConfigurationFile(cfi.getConfigurationFileType(),cfi.getTlvBuilder());
+
+
+			cfe = new ConfigurationFileExport(cf);
+			System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
+		}
 	}
 
 }
