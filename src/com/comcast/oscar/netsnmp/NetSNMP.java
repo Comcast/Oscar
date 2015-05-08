@@ -54,11 +54,17 @@ public class NetSNMP  {
 												new TypeReference<HashMap<String, String>>() {});
 		} catch (JsonParseException e) {
 			e.printStackTrace();
+			System.err.println("\n\nPossible Corrupted File: " + DirectoryStructureNetSNMP.fNetSNMPJSON().getAbsolutePath());
+			System.err.println("If Problem Continues, remove file content");
 		} catch (JsonMappingException e) {
 			e.printStackTrace();
+			System.err.println("\n\nPossible Corrupted File: " + DirectoryStructureNetSNMP.fNetSNMPJSON().getAbsolutePath());
+			System.err.println("If Problem Continues, remove file content");
 		} catch (IOException e) {
 			e.printStackTrace();
-		}	
+			System.err.println("\n\nPossible Corrupted File: " + DirectoryStructureNetSNMP.fNetSNMPJSON().getAbsolutePath());
+			System.err.println("If Problem Continues, remove file content");
+		}
 	}
 	
 	/**
@@ -321,12 +327,10 @@ public class NetSNMP  {
 	/**
 	 * Checks to see if the DB file is empty, if so put a single entry to prevent error
 	 */
-	private static void FixNullNetSNMPJSON() {
-		
+	private static void FixNullNetSNMPJSON() {	
 		if (HexString.fileToByteArray(DirectoryStructureNetSNMP.fNetSNMPJSON()).length == 0) {
 			Disk.writeToDisk("{\"1.3.6\":\"dod\"}", DirectoryStructureNetSNMP.fNetSNMPJSON());
 		}
-		
 	}
 	
 }
