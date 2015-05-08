@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.comcast.oscar.utilities.DirectoryStructure;
+import com.comcast.oscar.utilities.Disk;
+import com.comcast.oscar.utilities.HexString;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -40,6 +42,8 @@ public class NetSNMP  {
 	private static Map<String,String> hmDotTextMap = null;
 	
 	static {
+		
+		FixNullNetSNMPJSON();
 		
 		omNetSNMP = new ObjectMapper();
 		
@@ -311,6 +315,17 @@ public class NetSNMP  {
 		}
 		
 		return sReturn;
+		
+	}
+	
+	/**
+	 * Checks to see if the DB file is empty, if so put a single entry to prevent error
+	 */
+	private static void FixNullNetSNMPJSON() {
+		
+		if (HexString.fileToByteArray(DirectoryStructureNetSNMP.fNetSNMPJSON()).length == 0) {
+			Disk.writeToDisk("{\"1.3.6\":\"dod\"}", DirectoryStructureNetSNMP.fNetSNMPJSON());
+		}
 		
 	}
 	
