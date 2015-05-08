@@ -5,7 +5,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-cli-1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/json-2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/snmp4j-smi.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/sqlite-jdbc-3.7.15-M1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/zip4j_1.3.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/antlr-4.1-complete.jar"/>
