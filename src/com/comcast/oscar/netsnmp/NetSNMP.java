@@ -36,7 +36,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class NetSNMP  {
 
-	private static Boolean debug = Boolean.FALSE;		
+	private static Boolean debug = Boolean.FALSE;	
+		
 	private static ObjectMapper omNetSNMP = null;	
 	private static Map<String,String> hmDotTextMap = null;
 	
@@ -53,17 +54,11 @@ public class NetSNMP  {
 												new TypeReference<HashMap<String, String>>() {});
 		} catch (JsonParseException e) {
 			e.printStackTrace();
-			System.err.println("\n\nPossible Corrupted File: " + DirectoryStructureNetSNMP.fNetSNMPJSON().getAbsolutePath());
-			System.err.println("If Problem Continues, delete file");
 		} catch (JsonMappingException e) {
 			e.printStackTrace();
-			System.err.println("\n\nPossible Corrupted File: " + DirectoryStructureNetSNMP.fNetSNMPJSON().getAbsolutePath());
-			System.err.println("If Problem Continues, delete file");
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.err.println("\n\nPossible Corrupted File: " + DirectoryStructureNetSNMP.fNetSNMPJSON().getAbsolutePath());
-			System.err.println("If Problem Continues, delete file");
-		}
+		}	
 	}
 	
 	/**
@@ -100,7 +95,7 @@ public class NetSNMP  {
 		if (debug|localDebug)
 			System.out.println("NetSNMP.toDottedOID(): " + sSnmpTranslate);
 
-		sDottedOID = RunSnmpTranslate(sSnmpTranslate).get(0);
+		sDottedOID = runSnmpTranslate(sSnmpTranslate).get(0);
 		
 		/* Add Converted OIDS to Map for later Storage */
 		UpdateJsonDB(sOID,sDottedOID);
@@ -108,7 +103,7 @@ public class NetSNMP  {
 		if (debug|localDebug)
 			System.out.println("NetSNMP.toDottedOID(): " + sDottedOID);
 		
-		return RunSnmpTranslate(sSnmpTranslate).get(0);
+		return runSnmpTranslate(sSnmpTranslate).get(0);
 	}
 
 	/**
@@ -147,7 +142,7 @@ public class NetSNMP  {
 		if (debug|localDebug)
 			System.out.println("NetSNMP.toTextualOID(): " + sSnmpTranslate);
 
-		sTextualOID = RunSnmpTranslate(sSnmpTranslate).get(0);
+		sTextualOID = runSnmpTranslate(sSnmpTranslate).get(0);
 		
 		/* Add Converted OIDS to Map for later Storage */
 		UpdateJsonDB(sOID,sTextualOID);
@@ -167,7 +162,7 @@ public class NetSNMP  {
 		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD +  	
 								Constants.SNMP_TRANSLATE_VERSION;
 
-		if (RunSnmpTranslate(sSnmpTranslate) == null) {
+		if (runSnmpTranslate(sSnmpTranslate) == null) {
 			return false;
 		} else {
 			return true;
@@ -194,9 +189,9 @@ public class NetSNMP  {
 	 * 
 	 * @param sSnmpTranslateCMD
 	 * @return OID Translation - Null is snmptranslate is not installed*/
-	private static ArrayList<String> RunSnmpTranslate(String sSnmpTranslateCMD) {
+	private static ArrayList<String> runSnmpTranslate(String sSnmpTranslateCMD) {
 
-		boolean localDebug = Boolean.TRUE;
+		boolean localDebug = Boolean.FALSE;
 
 		if (debug|localDebug)
 			System.out.println(sSnmpTranslateCMD);
@@ -326,13 +321,12 @@ public class NetSNMP  {
 	/**
 	 * Checks to see if the DB file is empty, if so put a single entry to prevent error
 	 */
-	private static void FixNullNetSNMPJSON() {	
+	private static void FixNullNetSNMPJSON() {
 		
-		if (!DirectoryStructureNetSNMP.fNetSNMPJSON().isFile()) {
-			Disk.writeToDisk("{\"1.3.6\":\"dod\"}", DirectoryStructureNetSNMP.fNetSNMPJSON());
-		} else if (HexString.fileToByteArray(DirectoryStructureNetSNMP.fNetSNMPJSON()).length == 0) {
+		if (HexString.fileToByteArray(DirectoryStructureNetSNMP.fNetSNMPJSON()).length == 0) {
 			Disk.writeToDisk("{\"1.3.6\":\"dod\"}", DirectoryStructureNetSNMP.fNetSNMPJSON());
 		}
+		
 	}
 	
 }
