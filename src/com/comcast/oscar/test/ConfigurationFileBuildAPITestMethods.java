@@ -985,7 +985,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		ConfigurationFileExport cfr = new ConfigurationFileExport(ConfigurationFileExport.DOCSIS_VER_31);
 				
-		Disk.writeToDisk(cfr.toPrettyPrint(0), TestDirectoryStructure.fOutputDirFileName(sFileName));
+		Disk.writeToDisk(cfr.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV), TestDirectoryStructure.fOutputDirFileName(sFileName));
 		
 		//Get ByteArray for MD5 HashCheck
 		byte[] bMD5_HASH_INSERT = CheckSum.getMD5(HexString.fileToByteArray(TestDirectoryStructure.fOutputDirFileName(sFileName)));
@@ -1015,7 +1015,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
 		
 		ConfigurationFileExport cfr = new ConfigurationFileExport(ConfigurationFileExport.PKT_CBL_VER_20);
 				
-		Disk.writeToDisk(cfr.toPrettyPrint(1), TestDirectoryStructure.fOutputDirFileName(sFileName));
+		Disk.writeToDisk(cfr.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV), TestDirectoryStructure.fOutputDirFileName(sFileName));
 	
 		//Get ByteArray for MD5 HashCheck
 		byte[] bMD5_HASH_INSERT = CheckSum.getMD5(HexString.fileToByteArray(TestDirectoryStructure.fOutputDirFileName(sFileName)));
