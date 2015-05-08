@@ -73,7 +73,15 @@ public class NetSNMP  {
 		
 		if (debug|localDebug)
 			System.out.println("NetSNMP.toDottedOID(): " + sOID);
-				
+		
+		if (isDottedOID(sOID)) {
+			
+			if (debug|localDebug)
+				System.out.println("NetSNMP.toDottedOID() Is a DootedOID -> " + sOID);
+			
+			return sOID;
+		}
+		
 		if (!CheckOIDDBLookup(sOID).isEmpty()) {
 			return CheckOIDDBLookup(sOID);
 		}
