@@ -17,7 +17,6 @@ import org.snmp4j.smi.OctetString;
 import org.snmp4j.smi.TimeTicks;
 import org.snmp4j.smi.VariableBinding;
 
-import com.comcast.oscar.netsnmp.NetSNMP;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.BinaryConversion;
@@ -74,8 +73,6 @@ public class BERService {
 	public static String setOIDEncoding (String sObjectID , byte bBerDataType , long lNumber) throws Exception {
 		
 		boolean localDebug = Boolean.FALSE;
-		
-		sObjectID = NetSNMP.toDottedOID(sObjectID);
 		
 		if (localDebug|debug) {
 			System.out.println("BERService.setOIDEncoding(s,b,l) - OID: " + sObjectID + " -> Value: " + lNumber);
@@ -209,8 +206,6 @@ public class BERService {
 
 		boolean localDebug = Boolean.FALSE;
 		
-		sObjectID = NetSNMP.toDottedOID(sObjectID);
-		
 		if (localDebug|debug) {
 			System.out.println("BERService.setOIDEncoding(s,b,s) - OID: " + sObjectID + " -> Value: " + sValue);
 		}
@@ -280,8 +275,6 @@ public class BERService {
 	
 		boolean localDebug = Boolean.FALSE;
 		
-		sObjectID = NetSNMP.toDottedOID(sObjectID);
-		
 		if (localDebug|debug) {
 			System.out.println("BERService.setOIDEncoding(s,b,b) - OID: " + sObjectID + " -> Value: " + new HexString(bValue).toString(":"));
 		}
@@ -326,16 +319,14 @@ public class BERService {
 		
 		boolean localDebug = Boolean.FALSE;
 		
-		sObjectID = NetSNMP.toDottedOID(sObjectID);
-		
 		if (localDebug|debug) {
 			System.out.println("BERService.setOIDEncodingToByteArray(s,b,s) - OID: " + sObjectID + " -> Value: " + sValue);
 		}
 		
 		if (bBerDataType == HEX) {		
-			return HexString.toByteArray(setOIDEncoding ( NetSNMP.toDottedOID(sObjectID) ,  BER.OCTETSTRING ,  HexString.toByteArray(sValue)));
+			return HexString.toByteArray(setOIDEncoding ( sObjectID ,  BER.OCTETSTRING ,  HexString.toByteArray(sValue)));
 		} else {
-			return HexString.toByteArray(setOIDEncoding ( NetSNMP.toDottedOID(sObjectID) ,  bBerDataType ,  sValue));
+			return HexString.toByteArray(setOIDEncoding ( sObjectID ,  bBerDataType ,  sValue));
 		}
 	
 	}
@@ -344,11 +335,13 @@ public class BERService {
 	 * 
 	 * @param sObjectID
 	 * @param bBerDataType
-	 * @param lNumber	
+	 * @param lNumber
+	
+	
 	 * @return byte[]
 	 * @throws Exception */
-	public static byte[] setOIDEncodingToByteArray (String sObjectID , byte bBerDataType , long lNumber) throws Exception {
-		return HexString.toByteArray(setOIDEncoding (sObjectID,  bBerDataType ,  lNumber));
+	public static byte[] setOIDEncodingToByteArray (String sObjectID , byte bBerDataType , long lNumber) throws Exception {		
+		return HexString.toByteArray(setOIDEncoding ( sObjectID ,  bBerDataType ,  lNumber));
 	}
 	
 	/**
@@ -358,8 +351,6 @@ public class BERService {
 	 * @return OutputStream
 	 */
 	public static OutputStream encodeOID (String sOID) {
-		
-		sOID = NetSNMP.toDottedOID(sOID);
 		
 		OutputStream baosBER = new ByteArrayOutputStream();
 
