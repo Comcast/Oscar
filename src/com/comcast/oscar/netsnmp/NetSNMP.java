@@ -60,42 +60,11 @@ public class NetSNMP extends ArrayList<String> {
 		}	
 	}
 	
-	
 	/**
-	 * 
-	 */	
-	public NetSNMP() {		
-		super();	
-	}
-
-	/**
-	 * 
-	 * Convert: docsDevNmAccessIp.1 -> .1.3.6.1.2.1.69.1.2.1.2.1
-	 * 
-	 * @return - ArrayList<String> -> .1.3.6.1.2.1.69.1.2.1.2.1 ....
-	 */
-	public ArrayList<String> toDottedOID() {
-
-		/* Not a clean way to do it, but it works */
-		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD + 	
-				Constants.MIB_PARAMETER + 
-				Constants.SNMP_TRANSLATE_OID_NAME_2_OID_DEC +
-				super.toString().replace(',', ' ')
-				.replace('[', ' ')
-				.replace(']', ' ')
-				.replaceAll("\\s+1", " .iso")
-				.replaceAll("\\s+\\.1", " .iso");
-
-		return runSnmpTranslate(sSnmpTranslate);
-	}
-	
-	/**
-	 * 
-	 * 
 	 * Convert: docsDevNmAccessIp.1 -> .1.3.6.1.2.1.69.1.2.1.2.1
 	 * 
 	 * @param sOID
-	 * @return
+	 * @return .1.3.6.x.x.x.x.x
 	 */
 	public static String toDottedOID(String sOID) {
 	
@@ -132,27 +101,8 @@ public class NetSNMP extends ArrayList<String> {
 	 * 
 	 * Convert: .1.3.6.1.2.1.69.1.2.1.2.1 -> docsDevNmAccessIp.1
 	 * 
-	 * @return ArrayList<String> -> docsDevNmAccessIp.1 ....
-	 */
-	public ArrayList<String> toTextualOID() {
-
-		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD +  	
-				Constants.MIB_PARAMETER + 
-				Constants.SNMP_TRANSLATE_OID_DEC_2_OID_NAME +
-				super.toString().replace(',', ' ').replace('[', ' ').replace(']', ' ');
-
-		if (debug)
-			System.out.println("NetSNMP.toTextualOID(): " + sSnmpTranslate);
-
-		return runSnmpTranslate(sSnmpTranslate);
-
-	}
-
-	/**
-	 * 
 	 * @param sOID
-	 * @return
-	 */
+	 * @return docsDevNmAccessIp.1 */
 	public static String toTextualOID(String sOID) {
 
 		boolean localDebug = Boolean.FALSE;
@@ -207,8 +157,7 @@ public class NetSNMP extends ArrayList<String> {
 	 * If OID starts with .1.3.6 it is considered a DottedOID
 	 * 
 	 * @param sOID
-	 * @return
-	 */
+	 * @return */
 	public static boolean isDottedOID(String sOID) {
 
 		if (Constants.ISO_ORG_DOD_DOTTED.matcher(sOID).find()) {
@@ -221,8 +170,7 @@ public class NetSNMP extends ArrayList<String> {
 	/**
 	 * 
 	 * @param sSnmpTranslateCMD
-	 * @return
-	 */
+	 * @return */
 	private static ArrayList<String> runSnmpTranslate(String sSnmpTranslateCMD) {
 
 		boolean localDebug = Boolean.FALSE;
