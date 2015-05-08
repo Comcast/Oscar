@@ -10,7 +10,7 @@ public class NetSNMPBinToTextToText {
 	public static void main(String[] args) {
 
 		ConfigurationFileExport cfe = 
-				new ConfigurationFileExport (TestDirectoryStructure.fInputDirFileName("bsod.cm"),
+				new ConfigurationFileExport (TestDirectoryStructure.fInputDirFileName("DOCSIS-GOLDEN.txt.bin"),
 											 ConfigurationFileExport.DOCSIS_VER_31);
 		
 		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_FOUND_TLV));
