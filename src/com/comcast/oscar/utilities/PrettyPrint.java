@@ -29,6 +29,8 @@ public class PrettyPrint extends StringTokenizer {
 	private final String OPEN_COMMENT_SLASH 	= "/*";
 	private final String CLOSE_COMMENT_SLASH 	= "*/";
 	
+	public static Integer PARAGRAPH_OFFSET		= 30;
+	
 	private String sOutputCode = "";
 	private int iIndentCurrentDepth = 0;
 	
@@ -56,6 +58,23 @@ public class PrettyPrint extends StringTokenizer {
 	 */
 	public String toString() {
 		return sOutputCode;
+	}
+	
+	public static String ToParagraphForm (String sText) {
+		
+		sText.replaceAll("\\s+", " ");
+		
+		StringBuilder sbText = new StringBuilder(sText);
+		
+		int iOffSet = PARAGRAPH_OFFSET,
+			iIndex = iOffSet;
+		
+		while(iIndex < sbText.length()) {
+			sbText.insert(iIndex, '\n');
+			iIndex += iOffSet;
+		}
+		
+		return sbText.toString();
 	}
 	
 	/**
