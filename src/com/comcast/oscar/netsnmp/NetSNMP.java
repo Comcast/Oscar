@@ -126,7 +126,11 @@ public class NetSNMP  {
 	
 		if (debug|localDebug)
 			System.out.println("NetSNMP.toTextualOID(): " + sOID);
-				
+		
+		if (!isDottedOID(sOID)) {
+			return sOID;
+		}
+		
 		if (!CheckOIDDBLookup(sOID).isEmpty()) {
 			
 			if (debug|localDebug)
