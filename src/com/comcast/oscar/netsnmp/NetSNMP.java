@@ -5,8 +5,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
 import com.comcast.oscar.utilities.DirectoryStructure;
 import com.comcast.oscar.utilities.Disk;
@@ -39,7 +40,7 @@ public class NetSNMP  {
 	private static Boolean debug = Boolean.FALSE;	
 		
 	private static ObjectMapper omNetSNMP = null;	
-	private static Map<String,String> hmDotTextMap = null;
+	private static BidiMap<String, String> bmDotTextMap = null;
 	
 	static {
 		
@@ -47,11 +48,11 @@ public class NetSNMP  {
 		
 		omNetSNMP = new ObjectMapper();
 		
-		hmDotTextMap = new HashMap<String,String>();
+		bmDotTextMap = new DualHashBidiMap<String,String>();
 		
 		try {
-			hmDotTextMap = omNetSNMP.readValue(DirectoryStructureNetSNMP.fNetSNMPJSON(), 
-												new TypeReference<HashMap<String, String>>() {});
+			bmDotTextMap = omNetSNMP.readValue(DirectoryStructureNetSNMP.fNetSNMPJSON(), 
+												new TypeReference<DualHashBidiMap<String, String>>() {});
 		} catch (JsonParseException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -291,13 +292,11 @@ public class NetSNMP  {
 	 * @param sOIDConvert
 	 */
 	private static void UpdateJsonDB(String sOIDKey, String sOIDConvert) {
-		
-		/*TODO to go back and use a bidirectional collector */
-		hmDotTextMap.put(sOIDKey, sOIDConvert);
-		hmDotTextMap.put(sOIDConvert, sOIDKey);
+
+		bmDotTextMap.put(sOIDKey, sOIDConvert);
 		
 		try {
-			omNetSNMP.writeValue(DirectoryStructureNetSNMP.fNetSNMPJSON(), hmDotTextMap);
+			omNetSNMP.writeValue(DirectoryStructureNetSNMP.fNetSNMPJSON(), bmDotTextMap);
 		} catch (JsonGenerationException e) {
 			e.printStackTrace();
 		} catch (JsonMappingException e) {
@@ -317,13 +316,19 @@ public class NetSNMP  {
 		
 		String sReturn = "";
 				
-		if (hmDotTextMap.containsKey(sOID)) {
+		if (bmDotTextMap.containsKey(sOID)) {
 			
 			if (debug)
-				System.out.println("CheckOIDDBLookup().containsKey " + sOID + " -> " + hmDotTextMap.get(sOID));
+				System.out.println("CheckOIDDBLookup().containsKey " + sOID + " -> " + bmDotTextMap.get(sOID));
 			
-			return hmDotTextMap.get(sOID);
+			return bmDotTextMap.get(sOID);
 		
+		} else if (bmDotTextMap.containsValue(sOID)) {
+			
+			if (debug)
+				System.out.println("CheckOIDDBLookup().containsValue " + sOID + " -> " + bmDotTextMap.getKey(sOID));
+			
+			return bmDotTextMap.getKey(sOID);			
 		}
 		
 		return sReturn;
