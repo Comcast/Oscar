@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.cablelabsdefinitions.Constants;
-import com.comcast.oscar.netsnmp.NetSNMP;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.BinaryConversion;
