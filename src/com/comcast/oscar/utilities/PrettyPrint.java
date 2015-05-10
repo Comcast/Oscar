@@ -29,7 +29,7 @@ public class PrettyPrint extends StringTokenizer {
 	private final String OPEN_COMMENT_SLASH 	= "/*";
 	private final String CLOSE_COMMENT_SLASH 	= "*/";
 	
-	public static Integer PARAGRAPH_OFFSET		= 30;
+	public static Integer PARAGRAPH_OFFSET		= 80;
 	
 	private String sOutputCode = "";
 	private int iIndentCurrentDepth = 0;
@@ -62,7 +62,7 @@ public class PrettyPrint extends StringTokenizer {
 	
 	public static String ToParagraphForm (String sText) {
 		
-		sText.replaceAll("\\s+", " ");
+		sText = sText.replaceAll("\\s+", " ");
 		
 		StringBuilder sbText = new StringBuilder(sText);
 		
@@ -70,7 +70,13 @@ public class PrettyPrint extends StringTokenizer {
 			iIndex = iOffSet;
 		
 		while(iIndex < sbText.length()) {
-			sbText.insert(iIndex, '\n');
+			
+			if (!sbText.toString().substring(iIndex, iIndex+1).contains(" ")) {
+				iIndex++;
+				continue;
+			}
+		
+			sbText.insert(iIndex+1, '\n');
 			iIndex += iOffSet;
 		}
 		
