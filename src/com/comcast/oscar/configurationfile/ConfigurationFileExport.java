@@ -35,6 +35,7 @@ import com.comcast.oscar.tlv.dictionary.Dictionary;
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 import com.comcast.oscar.utilities.JSONTools;
+import com.comcast.oscar.utilities.PrettyPrint;
 
 /**
  * @bannerLicense
@@ -568,6 +569,8 @@ public class ConfigurationFileExport {
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+			
+			sDisplayHint = getDisplayHint(joTlvDictionary);
 		
 		} else if (lsTlvDotNotation.size() >= 1) {
 			
@@ -610,71 +613,7 @@ public class ConfigurationFileExport {
 							
 							sTlvDescription = joTlvDictionary.getString(Dictionary.TLV_DESCRIPTION);
 							
-							if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_DOUBLE_BYTE_ARRAY)) {
-								
-								sDisplayHint = DataTypeFormatConversion.DOUBLE_BYTE_ARRAY_FORMAT;
-							
-							} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR)) {
-								
-								sDisplayHint = DataTypeFormatConversion.IPV4_TRANSPORT_FORMAT;
-							
-							} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR)) {
-								
-								sDisplayHint = DataTypeFormatConversion.IPV6_TRANSPORT_FORMAT;
-							
-							} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_STRING_BITS)) {
-								
-								sDisplayHint = DataTypeFormatConversion.STRING_BITS_FORMAT;
-							
-							} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)) {
-								
-								sDisplayHint = DataTypeFormatConversion.IPV4_ADDRESS_FORMAT;
-							
-							} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV6_ADDR)) {
-								
-								sDisplayHint = DataTypeFormatConversion.IPV6_ADDRESS_FORMAT;
-							
-							
-							} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_OID)) {
-								
-								sDisplayHint = "docsDevFilterLLCUnmatchedAction.0 Integer32 \"1\" \n " +
-												"vacmAccessStorageType.'readwritegroup'.''.2.noAuthNoPriv Integer \"2\"" +
-												"1.3.6.1.2.1.69.1.3.5 Integer32 \"1\"" ;
-							
-							} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
-							
-								sDisplayHint = "Range: -2,147,483,648 to 2,147,483,647";
-							
-							} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_STRING)) {
-								
-								sDisplayHint = "Any ASCII String";
-							
-							}  else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED)) {
-							
-								sDisplayHint = "Any ASCII String with a Terminating NULL at the end /0 or 0x00";
-							
-							}  else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY)) {
-							
-								sDisplayHint = "xx:xx:xx......xx:xx:xx - Example: 01:23:34:56:78:9a:bc:cd:ef";
-							
-							} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
-								
-								sDisplayHint = 	"docsDevFilterLLCUnmatchedAction.0 \n " +
-												"vacmAccessStorageType.'readwritegroup'.''.2.noAuthNoPriv \n" +
-												"1.3.6.1.2.1.69.1.3.5 " ;
-								
-							} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_BYTE)) {
-								
-								sDisplayHint = 	"Byte: xx Example ff" ;
-								
-							} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_MAC_ADDRESS)) {
-								
-								sDisplayHint = 	DataTypeFormatConversion.MAC_ADDRESS_FORMAT ;
-								
-							} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_INET_ADDR)) {
-								
-								sDisplayHint = 	DataTypeFormatConversion.IPV4_TRANSPORT_FORMAT + " \n\nOR\n\n" + DataTypeFormatConversion.IPV6_TRANSPORT_FORMAT;
-							}
+							sDisplayHint = getDisplayHint(joTlvDictionary);
 							
 							iRecursiveSearch++;
 						}
@@ -686,7 +625,7 @@ public class ConfigurationFileExport {
 			}			
 		}
 			
-		return "\n\n" + sTlvName + ":\n\n" + sTlvDescription + "\n\n" + "String Format:\n\n" + sDisplayHint;		
+		return "\n\n" + sTlvName + ":\n\n" + PrettyPrint.ToParagraphForm(sTlvDescription)  + "\n\n" + "String Format:\n" + sDisplayHint;		
 	}
 	
 	/**
@@ -1338,4 +1277,82 @@ public class ConfigurationFileExport {
 		return sbBanner;
 	}
 	
+	private String getDisplayHint(JSONObject joTlvDictionary) {
+		
+		String sDisplayHint = "";
+		
+		try {
+			if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_DOUBLE_BYTE_ARRAY)) {
+				
+				sDisplayHint = DataTypeFormatConversion.DOUBLE_BYTE_ARRAY_FORMAT;
+			
+			} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR)) {
+				
+				sDisplayHint = DataTypeFormatConversion.IPV4_TRANSPORT_FORMAT;
+			
+			} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR)) {
+				
+				sDisplayHint = DataTypeFormatConversion.IPV6_TRANSPORT_FORMAT;
+			
+			} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_STRING_BITS)) {
+				
+				sDisplayHint = DataTypeFormatConversion.STRING_BITS_FORMAT;
+			
+			} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)) {
+				
+				sDisplayHint = DataTypeFormatConversion.IPV4_ADDRESS_FORMAT;
+			
+			} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV6_ADDR)) {
+				
+				sDisplayHint = DataTypeFormatConversion.IPV6_ADDRESS_FORMAT;
+			
+			
+			} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_OID)) {
+				
+				sDisplayHint = "docsDevFilterLLCUnmatchedAction.0 Integer32 \"1\" \n " +
+								"vacmAccessStorageType.'readwritegroup'.''.2.noAuthNoPriv Integer \"2\"" +
+								"1.3.6.1.2.1.69.1.3.5 Integer32 \"1\"" ;
+			
+			} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
+				
+				sDisplayHint = "Range: -2,147,483,648 to 2,147,483,647";
+			
+			} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_STRING)) {
+				
+				sDisplayHint = "Any ASCII String";
+			
+			}  else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED)) {
+			
+				sDisplayHint = "Any ASCII String with a Terminating NULL at the end /0 or 0x00";
+			
+			}  else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY)) {
+			
+				sDisplayHint = "xx:xx:xx......xx:xx:xx - Example: 01:23:34:56:78:9a:bc:cd:ef";
+			
+			} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
+				
+				sDisplayHint = 	"docsDevFilterLLCUnmatchedAction.0 \n " +
+								"vacmAccessStorageType.'readwritegroup'.''.2.noAuthNoPriv \n" +
+								"1.3.6.1.2.1.69.1.3.5 " ;
+				
+			} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_BYTE)) {
+				
+				sDisplayHint = 	"Byte: xx Example ff" ;
+				
+			} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_MAC_ADDRESS)) {
+				
+				sDisplayHint = 	DataTypeFormatConversion.MAC_ADDRESS_FORMAT ;
+				
+			} else if (joTlvDictionary.getString(Dictionary.DATA_TYPE).equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_INET_ADDR)) {
+				
+				sDisplayHint = 	DataTypeFormatConversion.IPV4_TRANSPORT_FORMAT + " \n\nOR\n\n" + DataTypeFormatConversion.IPV6_TRANSPORT_FORMAT;
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return sDisplayHint;
+	}
+
 }
