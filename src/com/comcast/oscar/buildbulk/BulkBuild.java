@@ -88,8 +88,7 @@ public class BulkBuild {
 	}
 	
 	/**
-	 * 
-	
+	 * 	
 	 * @return boolean
 	 */
 	public boolean start() {
@@ -149,7 +148,6 @@ public class BulkBuild {
 
 	/**
 	 * 
-	
 	 * @return List<File>
 	 */
 	public List<File> getInputFiles() {
@@ -207,7 +205,6 @@ public class BulkBuild {
 	 * 
 	 * @param fTextInput
 	 * @param fBinOutput
-	
 	 * @param sSharedSecretKey String
 	 * @return boolean
 	 */
@@ -241,7 +238,6 @@ public class BulkBuild {
 	 * 
 	 * @param fBinInput
 	 * @param fTextOutput
-	
 	 * @param sSharedSecretKey String
 	 * @return boolean
 	 */
@@ -310,8 +306,7 @@ public class BulkBuild {
 	/**
 	 * 
 	 * @param fBinInput
-	 * @param fBinOutput
-	
+	 * @param fBinOutput	
 	 * @param sSharedSecretKey String
 	 * @return boolean
 	 */
@@ -347,8 +342,7 @@ public class BulkBuild {
 	/**
 	 * 
 	 * @param fPath
-	 * @param sFile
-	
+	 * @param sFile	
 	 * @return File
 	 */
 	private File buildNewFilePath(File fPath , String sFile) {
