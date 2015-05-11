@@ -310,7 +310,7 @@ public class NetSNMP  {
 	/**
 	 * 
 	 * @param sOID
-	 * @return
+	 * @return returns a lookup value, blank if nothing is found
 	 */
 	private static String CheckOIDDBLookup(String sOID) {
 		
