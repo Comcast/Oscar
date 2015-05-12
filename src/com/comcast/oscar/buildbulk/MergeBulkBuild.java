@@ -20,10 +20,14 @@ public class MergeBulkBuild {
 	private ArrayList<ConfigurationFile> alcf2;
 	private ArrayList<ConfigurationFile> alcfTemp;
 	
+	private int iConfigurationFileType;
+	
 	public String NOMENCLATURE_SEPERATOR = "_";
 	
 	/**/
-	public MergeBulkBuild() {}
+	public MergeBulkBuild(int iConfigurationFileType) {
+		this.iConfigurationFileType = iConfigurationFileType;
+	}
 	
 	/**
 	 * 
@@ -56,9 +60,10 @@ public class MergeBulkBuild {
 	
 	/**
 	 * 
-	 * @return List<File>
-	 */
-	public List<ConfigurationFile> getInputConfigurationFiles(File fInputDirectory) {
+	 * @param fInputDirectory
+	 * @return List<ConfigurationFile>
+	 * @throws MergeBulkBuildException*/
+	public List<ConfigurationFile> getInputConfigurationFiles(File fInputDirectory) throws MergeBulkBuildException {
 
 		List<ConfigurationFile> lfConfigurationFile = new ArrayList<ConfigurationFile>();
 
@@ -77,9 +82,14 @@ public class MergeBulkBuild {
 				} catch (ConfigurationFileException e) {
 					e.printStackTrace();
 				}
-				
-				ConfigurationFile cf = enw ConfigurationFile()
-				
+				  
+				/* All files that are being Merged Must be of the same Configuration file Type */
+				if (cfi.getConfigurationFileType() != iConfigurationFileType) {
+					throw new MergeBulkBuildException(fInputDirectory.getName() + "  Incompatable Configuation File Type - Skipping File");
+				} else {
+					lfConfigurationFile.add(new ConfigurationFile(cfi.getConfigurationFileType(),cfi.getTlvBuilder()));
+				}
+							
 			} else {
 				
 				TlvBuilder tb = new TlvBuilder();
@@ -90,7 +100,7 @@ public class MergeBulkBuild {
 					e.printStackTrace();
 				}
 				
-				ltlvConfigurationFileInsert.add(tb);
+				lfConfigurationFile.add(new ConfigurationFile(iConfigurationFileType,tb));
 				
 			}
 		}
