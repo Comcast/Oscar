@@ -131,7 +131,37 @@ public class ConfigurationFile {
 		
 		init();
 	}
- 	 	
+ 	 
+ 	/**
+ 	 * 
+ 	 * @param sConfigurationFileName
+ 	 * @param iConfigurationFileType
+ 	 * @param tbConfigurationFile
+ 	 * @param sCmtsSharedSecretKey
+ 	 */
+ 	public ConfigurationFile(String sConfigurationFileName, int iConfigurationFileType, TlvBuilder tbConfigurationFile, String sCmtsSharedSecretKey) {
+		
+ 		boolean localDebug = Boolean.FALSE;
+ 		
+		this.iConfigurationFileType = iConfigurationFileType;
+		
+		this.tbConfigurationFile = tbConfigurationFile;
+		
+		this.sCmtsSharedSecretKey = sCmtsSharedSecretKey;
+		
+		setConfigurationFileName(sConfigurationFileName);
+
+		if (localDebug|debug) {
+			System.out.println("ConfigurationFile(s,i,tb) " +
+					" ConfigType: " + iConfigurationFileType +
+					" CMTS-Shared-Secret: " + sCmtsSharedSecretKey +
+					" ConfigFile-Length: " + tbConfigurationFile.length() +
+					" ConfigFile-HEX: " + tbConfigurationFile.toStringSeperation(""));
+		}
+		
+		init();
+	}
+ 	
 	/**
 	 * 
 	 * @param iConfigurationFileType
