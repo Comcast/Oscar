@@ -35,6 +35,9 @@ public class MergeBulkBuild {
 		alfInputDirectory.add(fInputDirectory);
 	}
 	
+	/**
+	 * 
+	 */
 	public void start() {
 		
 		alalcf.clear();
@@ -49,15 +52,12 @@ public class MergeBulkBuild {
 	 * @param fDirectory1
 	 * @param fDirectory2
 	 */
-	private void mergerDirectories(File fDirectory1 , File fDirectory2) {
+	private void mergerDirectories(ArrayList<ConfigurationFile> alcf1, ArrayList<ConfigurationFile> alcf2) {
 		
-		for (File fConfigurationFile1 : fDirectory1.listFiles()) {
-			System.out.println(fConfigurationFile1.getAbsolutePath());
+		for (ConfigurationFile cf1 : alcf1) {
 			
-			for (File fConfigurationFile2 : fDirectory2.listFiles()) {
-				System.out.println(fConfigurationFile2.getAbsolutePath());
-				
-				
+			for (ConfigurationFile cf2 : alcf2) {
+
 				
 			}
 			
@@ -89,7 +89,13 @@ public class MergeBulkBuild {
 					e.printStackTrace();
 				}
 				
-				alfConfigurationFile.add(new ConfigurationFile(iConfigurationFileType,cfi.getTlvBuilder()));
+				ConfigurationFile cf = new ConfigurationFile(iConfigurationFileType,cfi.getTlvBuilder());				
+				
+				cf.removeAllSecurityHash();
+				
+				cf.setConfigurationFileName(fConfigurationFile.getName());
+				
+				alfConfigurationFile.add(cf);
 				
 			} else {
 				
@@ -101,7 +107,13 @@ public class MergeBulkBuild {
 					e.printStackTrace();
 				}
 				
-				alfConfigurationFile.add(new ConfigurationFile(iConfigurationFileType,tb));
+				ConfigurationFile cf = new ConfigurationFile(iConfigurationFileType,tb);
+				
+				cf.removeAllSecurityHash();
+				
+				cf.setConfigurationFileName(fConfigurationFile.getName());
+									
+				alfConfigurationFile.add(cf);
 				
 			}
 		}
