@@ -2,7 +2,6 @@ package com.comcast.oscar.buildbulk;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;

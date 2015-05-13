@@ -576,6 +576,22 @@ public class ConfigurationFile {
 	
 	/**
 	 * 
+	 * @return a new TlvBuilder Object
+	 */
+	public TlvBuilder toTlvBuilder() {
+		TlvBuilder tb = new TlvBuilder();
+		try {
+			tb.add(new HexString(toByteArray()));
+		} catch (TlvException e) {
+			e.printStackTrace();
+		}
+		
+		return tb;
+		
+	}
+	
+	/**
+	 * 
 	 * @param bTLV - ByteArray of TLV File
 	 * @return true = DOCSIS , false if PacketCable * @throws NullPointerException */
 	public static boolean configurationFileTypeCheck(byte[] bTLV) throws NullPointerException{
