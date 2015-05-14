@@ -13,9 +13,9 @@ import com.comcast.oscar.utilities.HexString;
 
 public class MergeBulkBuild {
 
-	public String NOMENCLATURE_SEPERATOR = "_";
-	public Boolean BINARY_FILE_OUTPUT = true;
-	public Boolean TEXTUAL_FILE_OUtPUT = false;
+	public String NOMENCLATURE_SEPERATOR = "";
+	public static Boolean BINARY_FILE_OUTPUT = true;
+	public static Boolean TEXTUAL_FILE_OUTPUT = false;
 	
 	private ArrayList<File> alfInputDirectory = new ArrayList<File>();
 	private ArrayList<ArrayList<ConfigurationFile>> alalcf = new ArrayList<ArrayList<ConfigurationFile>>();
@@ -24,7 +24,7 @@ public class MergeBulkBuild {
 	private File fOutputDir;
 	private boolean fOutputType;
 	
-	private boolean debug = Boolean.TRUE;
+	private boolean debug = Boolean.FALSE;
 	
 	/**
 	 * 
@@ -78,18 +78,23 @@ public class MergeBulkBuild {
 		/*Load the first part of the configuration*/
 		alcfTemp.addAll(alalcf.get(0));
 
-		if(localDebug)
+		if(localDebug|debug)
 			System.out.println("MergeBulkBuild.start() -> Files: " + alcfTemp);
 
 		
 		for (int iIndex = 1; iIndex < alalcf.size(); iIndex++) {
-			alcfTemp = mergerDirectories(alcfTemp,alalcf.get(iIndex));
+			try {
+				alcfTemp = mergerDirectories(alcfTemp,alalcf.get(iIndex));
+			} catch (MergeBulkBuildException e) {
+				System.err.println(e.getMessage());
+				System.err.println(e.getLocalizedMessage());
+			}
 		}
 		
-		if(localDebug)
+		if(localDebug|debug)
 			System.out.println("MergeBulkBuild.start() -> Number of Configurations: " + alcfTemp.size());
 
-		if(localDebug)
+		if(localDebug|debug)
 			System.out.println("MergeBulkBuild.start() -> Number of Configurations: " + alcfTemp.toString());
 
 		for(ConfigurationFile cf:alcfTemp) {
@@ -98,12 +103,12 @@ public class MergeBulkBuild {
 			
 			/*Binary*/
 			if (fOutputType) {
-				cf.setConfigurationFileName(fOutputDir);
+				cf.setConfigurationFileName(fOutputDir+File.separator+cf.getConfigurationFileName());
 				cf.writeToDisk();
 			/*Text*/
 			} else {
 				ConfigurationFileExport cfe = new ConfigurationFileExport(cf);
-				cfe.writeToDisk(fOutputDir);
+				cfe.writeToDisk(new File(fOutputDir+File.separator+cf.getConfigurationFileName()));
 			}
 				
 		}
@@ -114,8 +119,9 @@ public class MergeBulkBuild {
 	 * 
 	 * @param fDirectory1
 	 * @param fDirectory2
+	 * @throws MergeBulkBuildException 
 	 */
-	private ArrayList<ConfigurationFile> mergerDirectories(ArrayList<ConfigurationFile> alcf1, ArrayList<ConfigurationFile> alcf2) {
+	private ArrayList<ConfigurationFile> mergerDirectories(ArrayList<ConfigurationFile> alcf1, ArrayList<ConfigurationFile> alcf2) throws MergeBulkBuildException {
 		
 		boolean localDebug = Boolean.FALSE;
 		
@@ -124,7 +130,20 @@ public class MergeBulkBuild {
 		for (ConfigurationFile cf1 : alcf1) {
 			
 			for (ConfigurationFile cf2 : alcf2) {
+				
+				/*CHECK TO SEE IF THEY ARE OF THE SAME CONFIGURATION FILE TYPE */
+				if (cf1.getConfigurationFileType() != cf2.getConfigurationFileType()) {
+					throw new MergeBulkBuildException(	"/* " + 
+														cf1.getConfigurationFileName() + 
+														" is not the same configuration file type as " +
+														cf2.getConfigurationFileName() +
+														" */");
+				}
 
+				if (cf1.getConfigurationFileType() != cf2.getConfigurationFileType()) {
+					System.out.println("ERROR");
+				}
+				
 				TlvBuilder tb = new TlvBuilder();
 				
 				tb.add(cf1.toTlvBuilder());
@@ -136,7 +155,7 @@ public class MergeBulkBuild {
 						TrimFileExtention(cf2.getConfigurationFileName());
 				
 				if (localDebug|debug)
-					System.out.println("mergerDirectories()" + sMergeFileName);
+					System.out.println("mergerDirectories() -> " + sMergeFileName);
 				
 				ConfigurationFile cf = new ConfigurationFile(sMergeFileName, iConfigurationFileType, tb, sSharedSecret);
 				

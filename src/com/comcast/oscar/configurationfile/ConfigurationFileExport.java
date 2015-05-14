@@ -681,7 +681,7 @@ public class ConfigurationFileExport {
 		}
 		
 		if (debug|localDebug) {
-			System.out.println("BuildFile.writeToDisk() " +
+			System.out.println("ConfigurationFile.writeToDisk() " +
 									" - Total Byte Count: " + bConfiguration.length +
 									" - FileName: " + fOutput.getName());
 		}
