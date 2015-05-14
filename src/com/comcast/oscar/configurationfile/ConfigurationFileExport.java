@@ -475,7 +475,6 @@ public class ConfigurationFileExport {
 		return sbTlvPrettyPrint.toString();
 	}
 	
-
 	/**
 	 * 
 	 * @param boolIncludeDefaultTLV = True == will include default TLV if no value is found 
@@ -654,14 +653,23 @@ public class ConfigurationFileExport {
 	}
 	
 	/**
-	 * 
-	 * @param fOutput	
+	 * Method will default to no Verbose
+	 * @param fOutput
 	 * @return true is write, false is it did not write */
 	public boolean writeToDisk(File fOutput) {
+		return writeToDisk(fOutput,ConfigurationFileExport.EXPORT_FOUND_TLV);
+	}
+	
+	/**
+	 * 
+	 * @param fOutput
+	 * @param boolVerbose
+	 * @return true is write, false is it did not write */
+	public boolean writeToDisk(File fOutput,boolean boolVerbose) {
 
 		boolean localDebug = Boolean.FALSE;
 		
-		byte[] bConfiguration = HexString.toByteArray(HexString.asciiToHex(toPrettyPrint(0)));
+		byte[] bConfiguration = HexString.toByteArray(HexString.asciiToHex(toPrettyPrint(boolVerbose)));
 		
 		if (bConfiguration == null) {
 
