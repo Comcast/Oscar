@@ -13,6 +13,7 @@ import com.comcast.oscar.utilities.HexString;
 
 public class MergeBulkBuild {
 
+
 	public String NOMENCLATURE_SEPERATOR = "";
 	public static Boolean BINARY_FILE_OUTPUT = true;
 	public static Boolean TEXTUAL_FILE_OUTPUT = false;
