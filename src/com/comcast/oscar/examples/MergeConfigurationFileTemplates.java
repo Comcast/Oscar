@@ -14,6 +14,8 @@ public class MergeConfigurationFileTemplates {
 												new File(TestDirectoryStructure.fTestDirPath+File.separator+"output"),
 												MergeBulkBuild.TEXTUAL_FILE_OUTPUT,
 												"SHARED_SECRET_PASSWORD");
+		/* Set Separation token */
+		mbb.NOMENCLATURE_SEPERATOR = "_";
 		
 		/* MUST ADD IN THIS ORDER -> Model_Tier_CPE */
 		mbb.addInputDirectory(new File(TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "Model"));

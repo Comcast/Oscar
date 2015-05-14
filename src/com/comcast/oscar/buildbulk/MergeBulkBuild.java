@@ -15,8 +15,8 @@ public class MergeBulkBuild {
 
 
 	public String NOMENCLATURE_SEPERATOR = "";
-	public static Boolean BINARY_FILE_OUTPUT = true;
-	public static Boolean TEXTUAL_FILE_OUTPUT = false;
+	public static final Boolean BINARY_FILE_OUTPUT = true;
+	public static final Boolean TEXTUAL_FILE_OUTPUT = false;
 	
 	private ArrayList<File> alfInputDirectory = new ArrayList<File>();
 	private ArrayList<ArrayList<ConfigurationFile>> alalcf = new ArrayList<ArrayList<ConfigurationFile>>();
@@ -140,27 +140,24 @@ public class MergeBulkBuild {
 														cf2.getConfigurationFileName() +
 														" */");
 				}
-
-				if (cf1.getConfigurationFileType() != cf2.getConfigurationFileType()) {
-					System.out.println("ERROR");
-				}
-				
+			
 				TlvBuilder tb = new TlvBuilder();
 				
+				/* Merger both Configurations */
 				tb.add(cf1.toTlvBuilder());
 				tb.add(cf2.toTlvBuilder());
 
+				/* Merger both Configurations filenames */
 				String sMergeFileName = 
 						TrimFileExtention(cf1.getConfigurationFileName()) + 
 						NOMENCLATURE_SEPERATOR + 
 						TrimFileExtention(cf2.getConfigurationFileName());
 				
 				if (localDebug|debug)
-					System.out.println("mergerDirectories() -> " + sMergeFileName);
-				
-				ConfigurationFile cf = new ConfigurationFile(sMergeFileName, iConfigurationFileType, tb, sSharedSecret);
-				
-				alcf.add(cf);
+					System.out.println("MergeBulkBuild.mergerDirectories() -> " + sMergeFileName);
+
+				/* Add Configuration file to list */
+				alcf.add(new ConfigurationFile(sMergeFileName, iConfigurationFileType, tb, sSharedSecret));
 				
 			}
 			
@@ -183,7 +180,7 @@ public class MergeBulkBuild {
 		for (File fConfigurationFile : fInputDirectory.listFiles()) {
 			
 			if (localDebug|debug)
-				System.out.println("getInputConfigurationFiles() " + fConfigurationFile);
+				System.out.println("MergeBulkBuild.getInputConfigurationFiles() " + fConfigurationFile);
 			
 			byte[] bConfigurationFile = HexString.fileToByteArray(fConfigurationFile);
 			
