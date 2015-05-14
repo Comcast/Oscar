@@ -42,15 +42,7 @@ public class ConfigurationToBinaryToConfigurationTest {
 		boolean PACKET_CABLE_20 = true;
 		
 		File file = null;
-		File file2 = null;
-		File fSnmp4JLic = null;
-		
-		try {
-			fSnmp4JLic = new File(new java.io.File( "." ).getCanonicalPath() + File.separatorChar + "licence" + File.separatorChar +  "snmp4jLicence.txt");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+		File file2 = null;	
 
 		if (DOCSIS) {
 			System.out.println("+------------------------------------------------------------------------------------------------------------+");
