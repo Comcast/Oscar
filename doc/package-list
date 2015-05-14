@@ -6,6 +6,7 @@ com.comcast.oscar.cli.commands
 com.comcast.oscar.compiler
 com.comcast.oscar.configurationfile
 com.comcast.oscar.constants
+com.comcast.oscar.interpreter
 com.comcast.oscar.netsnmp
 com.comcast.oscar.parser
 com.comcast.oscar.parserbuilder
