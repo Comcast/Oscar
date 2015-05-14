@@ -36,6 +36,8 @@ public class MergeBulkBuild {
 	public String NOMENCLATURE_SEPERATOR = "";
 	public static final Boolean BINARY_FILE_OUTPUT = true;
 	public static final Boolean TEXTUAL_FILE_OUTPUT = false;
+	public static final Boolean VERBOSE_DEFAULT_OUTPUT_ON = ConfigurationFileExport.EXPORT_DEFAULT_TLV;
+	public static final Boolean VERBOSE_DEFAULT_OUTPUT_OFF = ConfigurationFileExport.EXPORT_FOUND_TLV;
 	
 	private ArrayList<File> alfInputDirectory = new ArrayList<File>();
 	private ArrayList<ArrayList<ConfigurationFile>> alalcf = new ArrayList<ArrayList<ConfigurationFile>>();
@@ -43,6 +45,7 @@ public class MergeBulkBuild {
 	private String sSharedSecret = "SHAREDSECRET";
 	private File fOutputDir;
 	private boolean fOutputType;
+	private boolean boolDefaultVerboseMode = VERBOSE_DEFAULT_OUTPUT_OFF;
 	
 	private boolean debug = Boolean.FALSE;
 	
@@ -78,6 +81,14 @@ public class MergeBulkBuild {
 	 */
 	public void addInputDirectory(File fInputDirectory) {
 		alfInputDirectory.add(fInputDirectory);
+	}
+	
+	/**
+	 * 
+	 * @param boolDefaultVerboseMode VERBOSE_DEFAULT_OUTPUT_ON include Default TLV when Textual Output is Selected
+	 */
+	public void setTextDefaultOutputVerboseMode(boolean boolDefaultVerboseMode) {
+		this.boolDefaultVerboseMode = boolDefaultVerboseMode;
 	}
 	
 	/**
@@ -128,7 +139,8 @@ public class MergeBulkBuild {
 			/*Text*/
 			} else {
 				ConfigurationFileExport cfe = new ConfigurationFileExport(cf);
-				cfe.writeToDisk(new File(fOutputDir+File.separator+cf.getConfigurationFileName()));
+				cfe.writeToDisk(new File(fOutputDir+File.separator+cf.getConfigurationFileName()),
+								boolDefaultVerboseMode);
 			}
 				
 		}
