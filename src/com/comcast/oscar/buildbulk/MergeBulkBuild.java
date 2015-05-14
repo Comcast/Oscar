@@ -11,6 +11,25 @@ import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;
 
+/**
+ * @bannerLicense
+	Copyright 2015 Comcast Cable Communications Management, LLC<br>
+	___________________________________________________________________<br>
+	Licensed under the Apache License, Version 2.0 (the "License")<br>
+	you may not use this file except in compliance with the License.<br>
+	You may obtain a copy of the License at<br>
+	http://www.apache.org/licenses/LICENSE-2.0<br>
+	Unless required by applicable law or agreed to in writing, software<br>
+	distributed under the License is distributed on an "AS IS" BASIS,<br>
+	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+	See the License for the specific language governing permissions and<br>
+	limitations under the License.<br>
+
+
+ * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
+ */
+
+
 public class MergeBulkBuild {
 
 
@@ -29,10 +48,10 @@ public class MergeBulkBuild {
 	
 	/**
 	 * 
-	 * @param iConfigurationFileType
-	 * @param fOutputDir
-	 * @param fOutputType
-	 * @param sSharedSecret
+	 * @param iConfigurationFileType - Configuration File Type (DOCSIS,PacketCable or DPoE)
+	 * @param fOutputDir - Director Path for the output files
+	 * @param fOutputType - Binary or Text Output
+	 * @param sSharedSecret - SharedSecret String for CMSTMIC hashing
 	 */
 	public MergeBulkBuild(int iConfigurationFileType,File fOutputDir, boolean fOutputType , String sSharedSecret) {
 		this.iConfigurationFileType = iConfigurationFileType;
@@ -43,9 +62,9 @@ public class MergeBulkBuild {
 	
 	/**
 	 * 
-	 * @param iConfigurationFileType
-	 * @param fOutputDir
-	 * @param fOutputType
+	 * @param iConfigurationFileType - Configuration File Type (DOCSIS,PacketCable or DPoE)
+	 * @param fOutputDir - Director Path for the output files
+	 * @param fOutputType - Binary or Text Output
 	 */
 	public MergeBulkBuild(int iConfigurationFileType,File fOutputDir, boolean fOutputType) {
 		this.iConfigurationFileType = iConfigurationFileType;
@@ -62,7 +81,7 @@ public class MergeBulkBuild {
 	}
 	
 	/**
-	 * 
+	 *  Start the compilation process
 	 */
 	public void start() {
 		
@@ -171,7 +190,7 @@ public class MergeBulkBuild {
 	 * 
 	 * @return List<File>
 	 */
-	public ArrayList<ConfigurationFile> getInputConfigurationFiles(File fInputDirectory) {
+	private ArrayList<ConfigurationFile> getInputConfigurationFiles(File fInputDirectory) {
 
 		boolean localDebug = Boolean.FALSE;
 		
