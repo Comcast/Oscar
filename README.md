@@ -12,7 +12,7 @@ View JavaDoc: http://comcast.github.io/Oscar/doc/index.html
 
 * DPoG Support - Later 2015
 * ADD Extended CMTS MIC
-* Provide GUI Support to ADD/EDIT TLV Types to Sqlite Database
+* Provide GUI Support to ADD/EDIT TLV Types to SQLite Database
 * Compile a JSON to Configuration File via CLI Later 2015
 * Complete CLI Interpreter functionality(API Started)
 
