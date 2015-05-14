@@ -7,41 +7,49 @@ import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
-import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;
 
-
 public class MergeBulkBuild {
+
+	public String NOMENCLATURE_SEPERATOR = "_";
+	public Boolean BINARY_FILE_OUTPUT = true;
+	public Boolean TEXTUAL_FILE_OUtPUT = false;
 	
 	private ArrayList<File> alfInputDirectory = new ArrayList<File>();
-	
 	private ArrayList<ArrayList<ConfigurationFile>> alalcf = new ArrayList<ArrayList<ConfigurationFile>>();
-	
-	public String NOMENCLATURE_SEPERATOR = "_";
-	
 	private int iConfigurationFileType = -1;
 	private String sSharedSecret = "SHAREDSECRET";
+	private File fOutputDir;
+	private boolean fOutputType;
 	
-	private boolean debug = Boolean.FALSE;
+	private boolean debug = Boolean.TRUE;
 	
 	/**
 	 * 
 	 * @param iConfigurationFileType
+	 * @param fOutputDir
+	 * @param fOutputType
 	 * @param sSharedSecret
 	 */
-	public MergeBulkBuild(int iConfigurationFileType,String sSharedSecret) {
+	public MergeBulkBuild(int iConfigurationFileType,File fOutputDir, boolean fOutputType , String sSharedSecret) {
 		this.iConfigurationFileType = iConfigurationFileType;
 		this.sSharedSecret = sSharedSecret;
+		this.fOutputDir = fOutputDir;
+		this.fOutputType = fOutputType;
 	}
 	
 	/**
 	 * 
 	 * @param iConfigurationFileType
+	 * @param fOutputDir
+	 * @param fOutputType
 	 */
-	public MergeBulkBuild(int iConfigurationFileType) {
+	public MergeBulkBuild(int iConfigurationFileType,File fOutputDir, boolean fOutputType) {
 		this.iConfigurationFileType = iConfigurationFileType;
+		this.fOutputDir = fOutputDir;
+		this.fOutputType = fOutputType;
 	}
 	
 	/**
@@ -57,7 +65,7 @@ public class MergeBulkBuild {
 	 */
 	public void start() {
 		
-		boolean localDebug = Boolean.TRUE;
+		boolean localDebug = Boolean.FALSE;
 		
 		alalcf.clear();
 		
@@ -87,11 +95,17 @@ public class MergeBulkBuild {
 		for(ConfigurationFile cf:alcfTemp) {
 			
 			cf.commit();
-						
-			ConfigurationFileExport cfe = new ConfigurationFileExport(cf);
-
-			cfe.writeToDisk(new File(TestDirectoryStructure.outputDir() + File.separator + cf.getConfigurationFileName()));
 			
+			/*Binary*/
+			if (fOutputType) {
+				cf.setConfigurationFileName(fOutputDir);
+				cf.writeToDisk();
+			/*Text*/
+			} else {
+				ConfigurationFileExport cfe = new ConfigurationFileExport(cf);
+				cfe.writeToDisk(fOutputDir);
+			}
+				
 		}
 		
 	}
@@ -103,7 +117,7 @@ public class MergeBulkBuild {
 	 */
 	private ArrayList<ConfigurationFile> mergerDirectories(ArrayList<ConfigurationFile> alcf1, ArrayList<ConfigurationFile> alcf2) {
 		
-		boolean localDebug = Boolean.TRUE;
+		boolean localDebug = Boolean.FALSE;
 		
 		ArrayList<ConfigurationFile> alcf = new ArrayList<ConfigurationFile>();
 		
@@ -142,13 +156,14 @@ public class MergeBulkBuild {
 	 */
 	public ArrayList<ConfigurationFile> getInputConfigurationFiles(File fInputDirectory) {
 
-		System.out.println("getInputConfigurationFiles() " + fInputDirectory);
+		boolean localDebug = Boolean.FALSE;
 		
 		ArrayList<ConfigurationFile> alfConfigurationFile = new ArrayList<ConfigurationFile>();
 
 		for (File fConfigurationFile : fInputDirectory.listFiles()) {
 			
-			System.out.println("getInputConfigurationFiles() " + fConfigurationFile);
+			if (localDebug|debug)
+				System.out.println("getInputConfigurationFiles() " + fConfigurationFile);
 			
 			byte[] bConfigurationFile = HexString.fileToByteArray(fConfigurationFile);
 			
@@ -196,6 +211,11 @@ public class MergeBulkBuild {
 		return alfConfigurationFile;
 	}
 	
+	/**
+	 * 
+	 * @param sFilename File.txt -> File
+	 * @return
+	 */
 	private static String TrimFileExtention(String sFilename) {
 		return sFilename.replaceAll("(\\..*)", "");
 	}
