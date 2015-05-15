@@ -90,6 +90,9 @@ public class ConfigurationFileExport {
 	public static final Boolean EXPORT_DEFAULT_TLV = true;
 	public static final Boolean EXPORT_FOUND_TLV = false;
 	
+	public static final Boolean TEXTUAL_OID_FORMAT = true;
+	public static final Boolean DOTTED_OID_FORMAT = false;
+	
 	/**
 	 * @deprecated - This is no longer supported but will work Only support DOCSIS and PacketCable 
 	 * @param fTLV - Configuration File - Only support DOCSIS and PacketCable
