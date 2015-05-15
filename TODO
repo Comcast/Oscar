@@ -3,11 +3,12 @@ Here is a List of TODO to make this Project More Complete
 If you like help complete or support the of this development of this project, please find and follow the CONTRIBUTING file instructions.
 
 2015 TODO's
-•	Add NetSNMPJ Support, Later 2015
 •	Compile a JSON to Configuration File via CLI Later 2015
-•	Provide GUI Support to ADD/EDIT TLV Types to Sqlite Database
+•	Provide GUI Support to ADD/EDIT TLV Types to SQLite Database
 
 NEWS
+v2.0
+  •	ADD NetSNMP Support
 v1.2.0
   •	ADD DPoE Support v1.2.0
   •	Improve Lexer robustness
