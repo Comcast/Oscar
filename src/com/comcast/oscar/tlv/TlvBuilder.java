@@ -1188,8 +1188,6 @@ public class TlvBuilder implements TlvBuild {
 					e.printStackTrace();
 				}
 				
-				if (iTypeFound == 197) Thread.dumpStack();
-				
 				//Determine Length of TLV Value
 				if (debug|localDebug)
 					System.out.println(	"TlvBuilder.fetchTlv(list,m,b) " +
