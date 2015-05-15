@@ -65,9 +65,8 @@ public class NetSNMP  {
 	/**
 	 * Convert: docsDevNmAccessIp.1 -> .1.3.6.1.2.1.69.1.2.1.2.1
 	 * 
-	 * @param sOID
-	 * @return .1.3.6.x.x.x.x.x
-	 */
+	 * @param sOID OID either Dotted or Textual OID
+	 * @return .1.3.6.x.x.x.x.x */
 	public static String toDottedOID(String sOID) {
 	
 		boolean localDebug = Boolean.FALSE;
@@ -119,8 +118,8 @@ public class NetSNMP  {
 	 * 
 	 * Convert: .1.3.6.1.2.1.69.1.2.1.2.1 -> docsDevNmAccessIp.1
 	 * 
-	 * @param sOID
-	 * @return docsDevNmAccessIp.1 */
+	 * @param sOID OID either Dotted or Textual OID
+	 * @return Example: docsDevNmAccessIp.1 */
 	public static String toTextualOID(String sOID) {
 
 		boolean localDebug = Boolean.FALSE;
@@ -165,6 +164,24 @@ public class NetSNMP  {
 		
 		return sTextualOID;
 
+	}
+	
+	/**
+	 * 
+	 * @param sOID OID either Dotted or Textual OID
+	 * @param boolDotTextFormat TRUE = Textual OID Output , FALSE = Dotted OID Output
+	 * @return Dotted or Textual OID */
+	public static String toOIDFormat(String sOID , boolean boolDotTextFormat) {
+		
+		/* Textual OID */
+		if (boolDotTextFormat) {
+			return toTextualOID(sOID);
+		} 
+		/* Dotted OID */
+		else {
+			return toDottedOID(sOID);
+		}
+		
 	}
 
 	/**

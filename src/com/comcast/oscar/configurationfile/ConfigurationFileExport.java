@@ -69,6 +69,7 @@ public class ConfigurationFileExport {
 	private String sConfigurationFileStart;	
 	private int iConfigurationFileType = -1;	
 	private boolean boolVerboseExport = true;
+	private boolean boolDottextOutputFormat = true;
 	
 	public final String END_OF_CODE_BLOCK = "\\*EOCB*\\";
 	
@@ -755,6 +756,13 @@ public class ConfigurationFileExport {
 	}
 	
 	/**
+	 * 
+	 * @param boolDottextOutputFormat TRUE = Textual OID Output , FALSE = Dotted OID Output */
+	public void setDotTextOIDOutputFormat(boolean boolDottextOutputFormat) {
+		this.boolDottextOutputFormat = boolDottextOutputFormat;
+	}
+	
+	/**
 	 * DEFAULT = true;
 	 * @deprecated
 	 * @param boolVerboseExport*/
@@ -996,7 +1004,7 @@ public class ConfigurationFileExport {
 				sbTopLevelTLVCodeBlock	.append('\t')
 										.append(joTopLevelTLV.get(Dictionary.TLV_NAME))
 										.append(' ')
-										.append(NetSNMP.toTextualOID(jaTopLevelTLVOID.getJSONObject(0).getString("OID")))
+										.append(NetSNMP.toOIDFormat(jaTopLevelTLVOID.getJSONObject(0).getString("OID"),boolDottextOutputFormat))
 										.append(' ')
 										.append(BER_DATA_TYPE.get(Integer.decode(jaTopLevelTLVOID.getJSONObject(0).getString("DATA_TYPE"))))
 										.append(" \"")
@@ -1010,7 +1018,7 @@ public class ConfigurationFileExport {
 				sbTopLevelTLVCodeBlock	.append('\t')
 										.append(joTopLevelTLV.get(Dictionary.TLV_NAME))
 										.append(' ')
-										.append(NetSNMP.toTextualOID(jaTopLevelTLVOID.getJSONObject(0).getString("OID")))
+										.append(NetSNMP.toOIDFormat(jaTopLevelTLVOID.getJSONObject(0).getString("OID"),boolDottextOutputFormat))
 										.append(' ')
 										.append(BER_DATA_TYPE.get(Integer.decode(jaTopLevelTLVOID.getJSONObject(0).getString("DATA_TYPE"))))
 										.append(" \"")
