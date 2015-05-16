@@ -1,4 +1,4 @@
-package com.comcast.oscar.sql.docsisqueries;
+package com.comcast.oscar.sql.queries;
 
 /*
 	Copyright 2015 Comcast Cable Communications Management, LLC

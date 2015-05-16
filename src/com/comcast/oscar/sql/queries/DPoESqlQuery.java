@@ -1,3 +1,6 @@
+package com.comcast.oscar.sql.queries;
+
+import java.sql.Connection;
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>
@@ -16,4 +19,23 @@
  * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
  */
 
-package com.comcast.oscar.sql.dpoequeries;
+public class DPoESqlQuery extends DocsisSqlQuery {
+
+	/**
+	 * Constructor for DPoESqlQuery.
+	 * @param sqlConnection Connection
+	 */
+	public DPoESqlQuery(Connection sqlConnection) {
+		super(sqlConnection);
+
+	}
+	
+	/**
+	 * */
+	public void commit() {
+		
+	}
+	
+	
+
+}

@@ -1,4 +1,4 @@
-package com.comcast.oscar.tlv.datatype;
+package com.comcast.oscar.sql.queries;
 
 /**
  * @bannerLicense
@@ -18,38 +18,36 @@ package com.comcast.oscar.tlv.datatype;
  * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
  */
 
-public class DataTypeFormatException extends Exception {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2378130621592836894L;
+public class PacketCableSqlQueryException extends Exception {
+
+	private static final long serialVersionUID = -2747516882743788218L;
+
 	private Throwable cause;
 
 	/**
-	 * 
-	 * @param message
+	 * Constructor for PacketCableSqlQueryException.
+	 * @param message String
 	 */
-	public DataTypeFormatException(String message) {
+	public PacketCableSqlQueryException(String message) {
         super(message);
     }
     
-	/**
-	 * 
-	 * @param cause
-	 */
-    public DataTypeFormatException (Throwable cause) {
+    /**
+     * Constructor for PacketCableSqlQueryException.
+     * @param cause Throwable
+     */
+    public PacketCableSqlQueryException (Throwable cause) {
         super(cause.getMessage());
         this.cause = cause;
     }
     
     /**
-     * 
+     * Method getCause.
      * @return Throwable
      */
     @Override
 	public Throwable getCause() {
         return this.cause;
     }
-
+	
 }

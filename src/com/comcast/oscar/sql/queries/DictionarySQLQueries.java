@@ -14,8 +14,8 @@ import org.json.JSONObject;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
+import com.comcast.oscar.dictionary.Dictionary;
 import com.comcast.oscar.sql.SqlConnection;
-import com.comcast.oscar.tlv.dictionary.Dictionary;
 
 /**
  * @bannerLicense
