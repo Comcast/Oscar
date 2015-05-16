@@ -20,8 +20,8 @@ import com.comcast.oscar.datatype.DataTypeDictionaryReference;
 import com.comcast.oscar.datatype.DataTypeFormatConversion;
 import com.comcast.oscar.datatype.DataTypeFormatException;
 import com.comcast.oscar.dictionary.Dictionary;
-import com.comcast.oscar.sql.queries.DictionarySQLConstants;
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.DictionarySQLConstants;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.utilities.HexString;
 
 /**

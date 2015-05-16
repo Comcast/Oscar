@@ -12,7 +12,7 @@ import com.comcast.oscar.ber.BEROIDConversion;
 import com.comcast.oscar.ber.OIDToJSONArray;
 import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.dictionary.Dictionary;
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvVariableBinding;

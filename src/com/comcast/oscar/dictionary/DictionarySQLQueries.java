@@ -1,4 +1,4 @@
-package com.comcast.oscar.sql.queries;
+package com.comcast.oscar.dictionary;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -14,7 +14,6 @@ import org.json.JSONObject;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
-import com.comcast.oscar.dictionary.Dictionary;
 import com.comcast.oscar.sql.SqlConnection;
 
 /**

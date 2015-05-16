@@ -11,8 +11,8 @@ import org.json.JSONObject;
 
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.dictionary.Dictionary;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.dictionary.DictionaryTLV;
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;

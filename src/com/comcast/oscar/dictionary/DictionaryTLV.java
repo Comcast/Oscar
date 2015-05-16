@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import com.comcast.oscar.ber.OIDToJSONArray;
 import com.comcast.oscar.datatype.DataTypeDictionaryReference;
 import com.comcast.oscar.parser.tlvParser;
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
 
 /**
  * @bannerLicense

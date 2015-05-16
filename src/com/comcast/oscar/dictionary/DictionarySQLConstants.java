@@ -1,4 +1,4 @@
-package com.comcast.oscar.sql.queries;
+package com.comcast.oscar.dictionary;
 
 /**
  * @bannerLicense

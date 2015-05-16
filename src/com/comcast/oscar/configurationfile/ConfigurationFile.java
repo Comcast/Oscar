@@ -22,7 +22,7 @@ import com.comcast.oscar.compiler.DPoECompiler;
 import com.comcast.oscar.compiler.DocsisCompiler;
 import com.comcast.oscar.compiler.PacketCableCompiler;
 import com.comcast.oscar.compiler.PacketCableConstants;
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.tlv.TlvVariableBinding;
