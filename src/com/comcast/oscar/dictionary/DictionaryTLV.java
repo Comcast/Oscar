@@ -1,4 +1,4 @@
-package com.comcast.oscar.tlv.dictionary;
+package com.comcast.oscar.dictionary;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -12,9 +12,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.comcast.oscar.ber.OIDToJSONArray;
+import com.comcast.oscar.datatype.DataTypeDictionaryReference;
 import com.comcast.oscar.parser.tlvParser;
 import com.comcast.oscar.sql.queries.DictionarySQLQueries;
-import com.comcast.oscar.tlv.datatype.DataTypeDictionaryReference;
 
 /**
  * @bannerLicense
@@ -50,7 +50,7 @@ public class DictionaryTLV implements Dictionary {
 	/**
 	 * 
 	 * @param iType Integer
-	 * @see com.comcast.oscar.tlv.dictionary.Dictionary#getMajorTlvDefinition(Integer)
+	 * @see com.comcast.oscar.dictionary.Dictionary#getMajorTlvDefinition(Integer)
 	 */
 
 	public void getMajorTlvDefinition(Integer iType) {
@@ -60,7 +60,7 @@ public class DictionaryTLV implements Dictionary {
 	 * 
 	 * @param iType Integer
 	 * @return JSONObject
-	 * @see com.comcast.oscar.tlv.dictionary.Dictionary#getTlvDefinition(Integer)
+	 * @see com.comcast.oscar.dictionary.Dictionary#getTlvDefinition(Integer)
 	 */
 
 	public JSONObject getTlvDefinition(Integer iType) {
@@ -71,7 +71,7 @@ public class DictionaryTLV implements Dictionary {
 	 * 
 	 * @param iCableLabsConfigType int
 	 * @return JSONArray
-	 * @see com.comcast.oscar.tlv.dictionary.Dictionary#getAllTlvDefinition(int)
+	 * @see com.comcast.oscar.dictionary.Dictionary#getAllTlvDefinition(int)
 	 */
 
 	public JSONArray getAllTlvDefinition(int iCableLabsConfigType) {

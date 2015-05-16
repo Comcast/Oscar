@@ -1,3 +1,5 @@
+package com.comcast.oscar.datatype;
+
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>
@@ -16,4 +18,38 @@
  * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
  */
 
-package com.comcast.oscar.sql.dpoequeries;
+public class DataTypeFormatException extends Exception {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2378130621592836894L;
+	private Throwable cause;
+
+	/**
+	 * 
+	 * @param message
+	 */
+	public DataTypeFormatException(String message) {
+        super(message);
+    }
+    
+	/**
+	 * 
+	 * @param cause
+	 */
+    public DataTypeFormatException (Throwable cause) {
+        super(cause.getMessage());
+        this.cause = cause;
+    }
+    
+    /**
+     * 
+     * @return Throwable
+     */
+    @Override
+	public Throwable getCause() {
+        return this.cause;
+    }
+
+}

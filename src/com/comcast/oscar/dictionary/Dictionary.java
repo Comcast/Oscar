@@ -1,4 +1,4 @@
-package com.comcast.oscar.tlv.dictionary;
+package com.comcast.oscar.dictionary;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

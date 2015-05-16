@@ -7,9 +7,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.comcast.oscar.dictionary.Dictionary;
 import com.comcast.oscar.netsnmp.NetSNMP;
 import com.comcast.oscar.parser.tlvParser;
-import com.comcast.oscar.tlv.dictionary.Dictionary;
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 

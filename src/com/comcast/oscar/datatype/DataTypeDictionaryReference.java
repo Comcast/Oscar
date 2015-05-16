@@ -1,4 +1,4 @@
-package com.comcast.oscar.tlv.datatype;
+package com.comcast.oscar.datatype;
 
 /**
  * @bannerLicense

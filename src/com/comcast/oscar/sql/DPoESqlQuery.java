@@ -1,8 +1,6 @@
-package com.comcast.oscar.sql.dpoequeries;
+package com.comcast.oscar.sql;
 
 import java.sql.Connection;
-
-import com.comcast.oscar.sql.docsisqueries.DocsisSqlQuery;
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>

@@ -1,4 +1,4 @@
-package com.comcast.oscar.sql.packetcablequeries;
+package com.comcast.oscar.sql;
 
 /**
  * @bannerLicense

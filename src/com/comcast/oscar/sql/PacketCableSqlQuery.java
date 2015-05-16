@@ -1,4 +1,4 @@
-package com.comcast.oscar.sql.packetcablequeries;
+package com.comcast.oscar.sql;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -12,50 +12,6 @@ import org.json.JSONObject;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
-import com.comcast.oscar.sql.SqlConnection;
-/*
- * 
- *
- 	DOCSIS_TLV_DEFINITION
-	+------------------------------+----------------------+------+-----+---------+----------------+
-	| Field                        | Type                 | Null | Key | Default | Extra          |
-	+------------------------------+----------------------+------+-----+---------+----------------+
-	| ID                           | int(10) unsigned     | NO   | PRI | NULL    | auto_increment | 
-	| TYPE                         | smallint(5) unsigned | NO   |     | NULL    |                | 
-	| PARENT_ID                    | int(10) unsigned     | YES  |     | NULL    |                | 
-	| TLV_NAME                     | varchar(50)          | NO   |     | NULL    |                | 
-	| TLV_DESCRIPTION              | text                 | NO   |     | NULL    |                | 
-	| LENGTH_MIN                   | smallint(5) unsigned | NO   |     | NULL    |                | 
-	| LENGTH_MAX                   | smallint(5) unsigned | NO   |     | NULL    |                | 
-	| DATA_TYPE                    | varchar(50)          | YES  |     | NULL    |                | 
-	| BYTE_LENGTH                  | tinyint(3) unsigned  | NO   |     | NULL    |                | 
-	| MIN_SUPPORTED_DOCSIS_VERSION | varchar(50)          | NO   |     | NULL    |                | 
-	+------------------------------+----------------------+------+-----+---------+----------------+
-	
- 	PACKET_CABLE_TLV_DEFINITION
-	+------------------------------+----------------------+------+-----+---------+----------------+
-	| Field                        | Type                 | Null | Key | Default | Extra          |
-	+------------------------------+----------------------+------+-----+---------+----------------+
-	| ID                           | int(10) unsigned     | NO   | PRI | NULL    | auto_increment | 
-	| TYPE                         | smallint(5) unsigned | NO   |     | NULL    |                | 
-	| PARENT_ID                    | int(10) unsigned     | YES  |     | NULL    |                | 
-	| TLV_NAME                     | varchar(50)          | NO   |     | NULL    |                | 
-	| TLV_DESCRIPTION              | text                 | NO   |     | NULL    |                | 
-	| LENGTH_MIN                   | smallint(5) unsigned | NO   |     | NULL    |                | 
-	| LENGTH_MAX                   | smallint(5) unsigned | NO   |     | NULL    |                | 
-	| DATA_TYPE                    | varchar(50)          | YES  |     | NULL    |                | 
-	| BYTE_LENGTH                  | tinyint(3) unsigned  | NO   |     | NULL    |                | 
-	| MIN_SUPPORTED_DOCSIS_VERSION | varchar(50)          | NO   |     | NULL    |                | 
-	+------------------------------+----------------------+------+-----+---------+----------------+
-	
-	
- *
- *
- JSON Formatter
-	http://jsonviewer.stack.hu/
-	http://jsonformatter.curiousconcept.com/
- *
- */
 
 /**
  * @bannerLicense

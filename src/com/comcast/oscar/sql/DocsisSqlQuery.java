@@ -1,4 +1,4 @@
-package com.comcast.oscar.sql.docsisqueries;
+package com.comcast.oscar.sql;
 
 
 import java.sql.Connection;
@@ -13,8 +13,7 @@ import org.json.JSONObject;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
-import com.comcast.oscar.sql.SqlConnection;
-import com.comcast.oscar.tlv.dictionary.Dictionary;
+import com.comcast.oscar.dictionary.Dictionary;
 
 /**
  * 
@@ -94,7 +93,7 @@ public class DocsisSqlQuery implements Dictionary {
 	/**
 	 * 
 	 * @param iType
-	 * @see com.comcast.oscar.tlv.dictionary.Dictionary#getMajorTlvDefinition(Integer)
+	 * @see com.comcast.oscar.dictionary.Dictionary#getMajorTlvDefinition(Integer)
 	 */
 	public void getMajorTlvDefinition (Integer iType) {
 
@@ -143,7 +142,7 @@ public class DocsisSqlQuery implements Dictionary {
 	 * @param iType
 	
 	 * @return JSONObject
-	 * @see com.comcast.oscar.tlv.dictionary.Dictionary#getTlvDefinition(Integer)
+	 * @see com.comcast.oscar.dictionary.Dictionary#getTlvDefinition(Integer)
 	 */
 	public JSONObject getTlvDefinition (Integer iType) {
 
@@ -167,7 +166,7 @@ public class DocsisSqlQuery implements Dictionary {
 	 * @param iCableLabsConfigType
 	
 	 * @return JSONArray
-	 * @see com.comcast.oscar.tlv.dictionary.Dictionary#getAllTlvDefinition(int)
+	 * @see com.comcast.oscar.dictionary.Dictionary#getAllTlvDefinition(int)
 	 */
 	public JSONArray getAllTlvDefinition(int iCableLabsConfigType) {
 

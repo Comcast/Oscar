@@ -1,4 +1,4 @@
-package com.comcast.oscar.tlv.datatype;
+package com.comcast.oscar.datatype;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
