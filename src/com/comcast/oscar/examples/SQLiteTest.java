@@ -20,7 +20,7 @@ package com.comcast.oscar.examples;
 
 import org.json.JSONObject;
 
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
 
 
 /**
@@ -31,7 +31,6 @@ public class SQLiteTest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 
 		DictionarySQLQueries dsqlSQLite = new DictionarySQLQueries();
 				

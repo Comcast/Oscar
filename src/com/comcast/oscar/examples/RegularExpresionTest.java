@@ -18,8 +18,8 @@ package com.comcast.oscar.examples;
 */
 
 
-import com.comcast.oscar.tlv.datatype.DataTypeDictionaryReference;
-import com.comcast.oscar.tlv.datatype.DataTypeFormatConversion;
+import com.comcast.oscar.datatype.DataTypeDictionaryReference;
+import com.comcast.oscar.datatype.DataTypeFormatConversion;
 import com.comcast.oscar.utilities.HexString;
 
 

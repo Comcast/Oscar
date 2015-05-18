@@ -18,7 +18,7 @@ package com.comcast.oscar.examples;
 */
 
 
-import com.comcast.oscar.sql.queries.DictionarySQLConstants;
+import com.comcast.oscar.dictionary.DictionarySQLConstants;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvDisassemble;
 import com.comcast.oscar.tlv.TlvException;

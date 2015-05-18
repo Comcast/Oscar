@@ -1,6 +1,6 @@
 package com.comcast.oscar.examples;
 
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
 
 public class DictionaryToJSON {
 

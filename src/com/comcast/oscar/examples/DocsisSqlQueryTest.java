@@ -3,7 +3,7 @@ import org.json.JSONArray;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.sql.SqlConnection;
-import com.comcast.oscar.sql.docsisqueries.DocsisSqlQuery;
+import com.comcast.oscar.sql.queries.DocsisSqlQuery;
 
 /*
 	Copyright 2015 Comcast Cable Communications Management, LLC
