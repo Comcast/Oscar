@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
@@ -12,6 +14,7 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import com.comcast.oscar.utilities.DirectoryStructure;
 import com.comcast.oscar.utilities.Disk;
 import com.comcast.oscar.utilities.HexString;
+import com.comcast.oscar.utilities.PrettyPrint;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -41,6 +44,9 @@ public class NetSNMP  {
 		
 	private static ObjectMapper omNetSNMP = null;	
 	private static BidiMap<String, String> bmDotTextMap = null;
+    
+	private static final Pattern NETSNMP_DESCRIPTION = Pattern.compile(""
+            + ".*DESCRIPTION\\s+\"(.*)\"", Pattern.CASE_INSENSITIVE);
 	
 	static {
 		
@@ -213,6 +219,47 @@ public class NetSNMP  {
 		}
 
 		return false;	
+	}
+	
+	/**
+	 * 
+	 * @param sOID
+	 * @return
+	 */
+	public static String getDescription(String sOID) {
+		
+		boolean localDebug = Boolean.TRUE;
+		String sDescription = "";
+		String sSnmpTranslate = "";	
+		
+		if (debug|localDebug)
+			System.out.println("NetSNMP.toTextualOID(): " + sOID);
+		
+		/* If not installed, bypass and return input */
+		if (!isSnmptranslateInstalled()) {
+			return sOID;
+		}
+		
+		if (isDottedOID(sOID)) {
+			
+			sSnmpTranslate = 	Constants.SNMP_TRANSLATE_CMD +  	
+								Constants.MIB_PARAMETER + 
+								Constants.SNMP_TRANSLATE_DESCRIPTION_DOTTED_OID +
+								sOID;
+		} else {
+			sSnmpTranslate = 	Constants.SNMP_TRANSLATE_CMD +  	
+					Constants.MIB_PARAMETER + 
+					Constants.SNMP_TRANSLATE_DESCRIPTION_TEXTUAL_OID +
+					sOID;			
+		}
+				
+		Matcher mDescription = NETSNMP_DESCRIPTION.matcher(runSnmpTranslate(sSnmpTranslate).toString());
+		
+		if (mDescription.find()) {			
+			sDescription = PrettyPrint.ToParagraphForm(mDescription.group(1).replaceAll("\\s+", " "));		
+		}
+				
+		return sDescription;	
 	}
 
 	/**
