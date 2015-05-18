@@ -158,7 +158,7 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	 * @param tbObject
+	 * @param tbObject TlvBuilder Object
 	 */
 	public void add (TlvBuilder tbObject) {
 
@@ -186,9 +186,9 @@ public class TlvBuilder implements TlvBuild {
 	
 	/**
 	 * 
-	 * @param booDirection
-	 * @param tb
-	 * @return TlvBuilder
+	 * @param booDirection true = ascending | false = descending 
+	 * @param tb TlvBuilder Object containing TLVs
+	 * @return TlvBuilder TlvBuilder Object containing  reordered TLVs
 	 * @throws TlvException  */
 	public static TlvBuilder reorderTLV (boolean booDirection , TlvBuilder tb) throws TlvException {
 		
@@ -217,7 +217,7 @@ public class TlvBuilder implements TlvBuild {
 	/**
 	 * 
 	 * @param iTlvType - Must be 0 - 255
-	 * @param bValue
+	 * @param bValue byte array containing a value of 1 byte or greater
 	 * @throws TlvException 
 	 * @see com.comcast.oscar.tlv.TlvBuild#add(int, byte[]) */
 	public void add (int iTlvType , byte[] bValue) throws TlvException {
@@ -282,8 +282,8 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	 * @param iTlvType
-	 * @param bValue
+	 * @param iTlvType Must be 0 - 255
+	 * @param bValue byte array containing a value of 1 byte or greater
 	 * @param booleanStripExistingTlv = True = Strip Existing TLV ; False = Do Not Strip TLV
 	
 	 * @throws TlvException */
@@ -317,10 +317,10 @@ public class TlvBuilder implements TlvBuild {
 	
 	/**
 	 * 
-	 * @param iSnmpTlvType
-	 * @param oObjectID
-	 * @param bBerDataType
-	 * @param lNumber
+	 * @param iSnmpTlvType Must be 0 - 255
+	 * @param oObjectID	   OID object from SNMP4J	
+	 * @param bBerDataType BER Datatype
+	 * @param lNumber	   Number of Long Type
 	 */
 	public void add (int iSnmpTlvType, OID oObjectID , byte bBerDataType , long lNumber) {	
 		
@@ -343,10 +343,10 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	 * @param iSnmpTlvType
-	 * @param oObjectID
-	 * @param bBerDataType
-	 * @param sValue
+	 * @param iSnmpTlvType Must be 0 - 255
+	 * @param oObjectID	   OID object from SNMP4J	
+	 * @param bBerDataType BER Datatype
+	 * @param sValue String value 
 	 */
 	public void add (int iSnmpTlvType, OID oObjectID , byte bBerDataType , String sValue) {	
 
@@ -376,10 +376,10 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	 * @param iSnmpTlvType
-	 * @param oObjectID
-	 * @param bBerDataType
-	 * @param bValue
+	 * @param iSnmpTlvType Must be 0 - 255
+	 * @param oObjectID	   OID object from SNMP4J	
+	 * @param bBerDataType BER Datatype
+	 * @param bValue byteArray Value
 	 */
 	public void add (int iSnmpTlvType, OID oObjectID , byte bBerDataType , byte[] bValue) {	
 
@@ -411,7 +411,7 @@ public class TlvBuilder implements TlvBuild {
 	 * 
 	 * This option is used when TLVs are greater than 1 byte Length or a length of 254 bytes
 	 * 
-	 * @param tvbObject
+	 * @param tvbObject TlvVariableBinding Object
 	 */
 	public void add (TlvVariableBinding tvbObject) {
 
@@ -476,6 +476,14 @@ public class TlvBuilder implements TlvBuild {
 	/**
 	 * 
 	 * @param iTlvType	Must be 0 thru 255
+	 * 
+	 * Encapsulate a TLV with the current TLV in the Buffer
+	 * 
+	 * Example:
+	 * iTlvType = 1
+	 * 
+	 * TLV 030101 -> 0103030101
+	 * 
 	 * @throws TlvException */
 	public void encapsulateTlv (int iTlvType) throws TlvException {		
 
@@ -493,8 +501,16 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	 * @param iTlvType - Must be 0 thru 255
-	 * @param iLength	
+	 * @param iTlvType	Must be 0 thru 255
+	 * @param iLength
+	 * 
+	 * Encapsulate a TLV with the current TLV in the Buffer
+	 * 
+	 * Example:
+	 * iTlvType = 1
+	 * iLength = 3
+	 * TLV 030101 -> 0103030101
+	 * 
 	 * @throws TlvException */
 	public void encapsulateTlv (int iTlvType , int iLength) throws TlvException {		
 
