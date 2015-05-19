@@ -40,7 +40,7 @@ import com.comcast.oscar.utilities.HexString;
 
 public class DigitMapOperation {
 
-	public static String DEFAULT_DIGIT_MAP_OID = PacketCableConstants.PKT_CABLE_DIGIT_MAP_OID;
+	public final static String DEFAULT_DIGIT_MAP_OID = PacketCableConstants.PKT_CABLE_DIGIT_MAP_OID;
 	
 	private static boolean debug = Boolean.FALSE;
 	
@@ -86,7 +86,6 @@ public class DigitMapOperation {
 			domain = "@ims.comcast.net"
 			dialString = ";user=dialstring"
 			dialPhone = ";user=phone" */
-
 	public String getDigitMap() {
 		
 		boolean localDebug = Boolean.FALSE;
