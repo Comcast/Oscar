@@ -15,6 +15,6 @@ public class Constants {
 	public final static String SNMP_TRANSLATE_DESCRIPTION_DOTTED_OID 	= " -Td ";
 	public final static String MIB_PARAMETER = " -m ALL -M " + DirectoryStructure.fMibsTextDir();
 	public final static String DOTTED_TEXTUAL_NetSNMP_MAP_FILE = "DottedTextualNetSNMPMap.json";
-	public static final Pattern ISO_ORG_DOD_DOTTED = Pattern.compile("^(\\.1|1)\\.3\\.6");
+	public final static Pattern ISO_ORG_DOD_DOTTED = Pattern.compile("^(\\.1|1)\\.3\\.6");
 	
 }
