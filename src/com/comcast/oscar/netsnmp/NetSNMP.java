@@ -321,7 +321,6 @@ public class NetSNMP  {
 		return als;
 	}
 	
-
 	/**
 	 * @bannerLicense
 		Copyright 2015 Comcast Cable Communications Management, LLC<br>
