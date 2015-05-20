@@ -85,7 +85,7 @@
     </target>
     <target name="test">
         <java classname="com.comcast.oscar.cli.Main" failonerror="true" fork="yes">
-            <classpath refid="Oscar.classpath"/>
+            <classpath refid=".classpath"/>
         </java>
     </target>
     <target name="MergeConfigurationFileTemplates">
