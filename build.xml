@@ -55,67 +55,9 @@
         </javac>
     </target>
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
-        <copy todir="${ant.library.dir}">
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </copy>
-        <unzip dest="${ant.library.dir}">
-            <patternset includes="jdtCompilerAdapter.jar"/>
-            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
-        </unzip>
-    </target>
-    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
-        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
-        <antcall target="build"/>
-    </target>
-    <target name="ConvertOldToOSCAR">
-        <java classname="com.comcast.oscar.examples.ConvertOldToOSCAR" failonerror="true" fork="yes">
-            <classpath refid="Oscar.classpath"/>
-        </java>
-    </target>
-    <target name="DictionaryToJSON">
-        <java classname="com.comcast.oscar.examples.DictionaryToJSON" failonerror="true" fork="yes">
-            <classpath refid="Oscar.classpath"/>
-        </java>
-    </target>
-    <target name="DottedTextualOutputFormatOption">
-        <java classname="com.comcast.oscar.examples.DottedTextualOutputFormatOption" failonerror="true" fork="yes">
-            <classpath refid="Oscar.classpath"/>
-        </java>
-    </target>
     <target name="test">
         <java classname="com.comcast.oscar.cli.Main" failonerror="true" fork="yes">
             <classpath refid=".classpath"/>
-        </java>
-    </target>
-    <target name="MergeConfigurationFileTemplates">
-        <java classname="com.comcast.oscar.examples.MergeConfigurationFileTemplates" failonerror="true" fork="yes">
-            <classpath refid="Oscar.classpath"/>
-        </java>
-    </target>
-    <target name="NetSNMPBinToTextToText">
-        <java classname="com.comcast.oscar.examples.NetSNMPBinToTextToText" failonerror="true" fork="yes">
-            <classpath refid="Oscar.classpath"/>
-        </java>
-    </target>
-    <target name="NetSNMPGetDescription">
-        <java classname="com.comcast.oscar.examples.NetSNMPGetDescription" failonerror="true" fork="yes">
-            <classpath refid="Oscar.classpath"/>
-        </java>
-    </target>
-    <target name="NetSNMPTlvInsertionTest">
-        <java classname="com.comcast.oscar.examples.NetSNMPTlvInsertionTest" failonerror="true" fork="yes">
-            <classpath refid="Oscar.classpath"/>
-        </java>
-    </target>
-    <target name="TlvNotationDefinitionLookUpTest">
-        <java classname="com.comcast.oscar.examples.TlvNotationDefinitionLookUpTest" failonerror="true" fork="yes">
-            <classpath refid="Oscar.classpath"/>
-        </java>
-    </target>
-    <target name="PrettyPrintSuppressTLVComment">
-        <java classname="com.comcast.oscar.examples.PrettyPrintSuppressTLVComment" failonerror="true" fork="yes">
-            <classpath refid="Oscar.classpath"/>
         </java>
     </target>
 </project>
