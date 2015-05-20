@@ -1,24 +1,121 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="Create Runnable Jar for Project Oscar">
-    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
-    <target name="create_run_jar">
-        <jar destfile="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/bin/oscar.jar" filesetmanifest="mergewithoutmain">
-            <manifest>
-                <attribute name="Main-Class" value="com.comcast.oscar.cli.Main"/>
-                <attribute name="Class-Path" value="."/>
-            </manifest>
-            <fileset dir="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/lib/commons-cli-1.2.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/lib/json-2.1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/lib/sqlite-jdbc-3.7.15-M1.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/lib/zip4j_1.3.2.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/lib/antlr-4.1-complete.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/lib/snmp4j-2.3.0.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/lib/jackson-core-2.5.0.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/lib/jackson-annotations-2.5.0.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/lib/jackson-databind-2.5.3.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/lib/commons-collections4-4.0.jar"/>
-        </jar>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. --><project basedir="." default="build" name="Oscar">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.5"/>
+    <property name="source" value="1.5"/>
+    <path id="Oscar.classpath">
+        <pathelement location="bin"/>
+        <pathelement location="lib/commons-cli-1.2.jar"/>
+        <pathelement location="lib/json-2.1.jar"/>
+        <pathelement location="lib/sqlite-jdbc-3.7.15-M1.jar"/>
+        <pathelement location="lib/zip4j_1.3.2.jar"/>
+        <pathelement location="lib/antlr-4.1-complete.jar"/>
+        <pathelement location="lib/snmp4j-2.3.0.jar"/>
+        <pathelement location="lib/jackson-core-2.5.0.jar"/>
+        <pathelement location="lib/jackson-annotations-2.5.0.jar"/>
+        <pathelement location="lib/jackson-databind-2.5.3.jar"/>
+        <pathelement location="lib/commons-collections4-4.0.jar"/>
+    </path>
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+                <exclude name="com/comcast/oscar/test/"/>
+                <exclude name="com/comcast/oscar/examples/"/>
+            </fileset>
+        </copy>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="res">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+    <target depends="clean" name="cleanall"/>
+    <target depends="build-subprojects,build-project" name="build"/>
+    <target name="build-subprojects"/>
+    <target depends="init" name="build-project">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <src path="res"/>
+            <exclude name="com/comcast/oscar/test/"/>
+            <exclude name="com/comcast/oscar/examples/"/>
+            <classpath refid="Oscar.classpath"/>
+        </javac>
+    </target>
+    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
+    <target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+        <copy todir="${ant.library.dir}">
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </copy>
+        <unzip dest="${ant.library.dir}">
+            <patternset includes="jdtCompilerAdapter.jar"/>
+            <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar"/>
+        </unzip>
+    </target>
+    <target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+        <property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter"/>
+        <antcall target="build"/>
+    </target>
+    <target name="ConvertOldToOSCAR">
+        <java classname="com.comcast.oscar.examples.ConvertOldToOSCAR" failonerror="true" fork="yes">
+            <classpath refid="Oscar.classpath"/>
+        </java>
+    </target>
+    <target name="DictionaryToJSON">
+        <java classname="com.comcast.oscar.examples.DictionaryToJSON" failonerror="true" fork="yes">
+            <classpath refid="Oscar.classpath"/>
+        </java>
+    </target>
+    <target name="DottedTextualOutputFormatOption">
+        <java classname="com.comcast.oscar.examples.DottedTextualOutputFormatOption" failonerror="true" fork="yes">
+            <classpath refid="Oscar.classpath"/>
+        </java>
+    </target>
+    <target name="Main">
+        <java classname="com.comcast.oscar.cli.Main" failonerror="true" fork="yes">
+            <classpath refid="Oscar.classpath"/>
+        </java>
+    </target>
+    <target name="MergeConfigurationFileTemplates">
+        <java classname="com.comcast.oscar.examples.MergeConfigurationFileTemplates" failonerror="true" fork="yes">
+            <classpath refid="Oscar.classpath"/>
+        </java>
+    </target>
+    <target name="NetSNMPBinToTextToText">
+        <java classname="com.comcast.oscar.examples.NetSNMPBinToTextToText" failonerror="true" fork="yes">
+            <classpath refid="Oscar.classpath"/>
+        </java>
+    </target>
+    <target name="NetSNMPGetDescription">
+        <java classname="com.comcast.oscar.examples.NetSNMPGetDescription" failonerror="true" fork="yes">
+            <classpath refid="Oscar.classpath"/>
+        </java>
+    </target>
+    <target name="NetSNMPTlvInsertionTest">
+        <java classname="com.comcast.oscar.examples.NetSNMPTlvInsertionTest" failonerror="true" fork="yes">
+            <classpath refid="Oscar.classpath"/>
+        </java>
+    </target>
+    <target name="TlvNotationDefinitionLookUpTest">
+        <java classname="com.comcast.oscar.examples.TlvNotationDefinitionLookUpTest" failonerror="true" fork="yes">
+            <classpath refid="Oscar.classpath"/>
+        </java>
+    </target>
+    <target name="PrettyPrintSuppressTLVComment">
+        <java classname="com.comcast.oscar.examples.PrettyPrintSuppressTLVComment" failonerror="true" fork="yes">
+            <classpath refid="Oscar.classpath"/>
+        </java>
     </target>
 </project>
