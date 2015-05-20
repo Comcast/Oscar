@@ -18,7 +18,6 @@ package com.comcast.oscar.buildbulk;
  * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
  */
 
-
 public class MergeBulkBuildException  extends Exception {
 	
 	/**
