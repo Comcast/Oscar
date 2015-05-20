@@ -70,6 +70,7 @@ public class ConfigurationFileExport {
 	private int iConfigurationFileType = -1;	
 	private boolean boolVerboseExport = true;
 	private boolean boolDottextOutputFormat = true;
+	private boolean boolTlvCommentSuppress = false;
 	
 	public final String END_OF_CODE_BLOCK = "\\*EOCB*\\";
 	
@@ -92,6 +93,8 @@ public class ConfigurationFileExport {
 	
 	public static final Boolean TEXTUAL_OID_FORMAT = true;
 	public static final Boolean DOTTED_OID_FORMAT = false;
+	
+	public static final Boolean SUPPRESS_TLV_COMMENT = true;
 	
 	/**
 	 * @deprecated - This is no longer supported but will work Only support DOCSIS and PacketCable 
@@ -516,7 +519,26 @@ public class ConfigurationFileExport {
 		com.comcast.oscar.utilities.PrettyPrint ppConfigurationFile = 
 				new com.comcast.oscar.utilities.PrettyPrint((sConfigurationFileStart + " {\n") + (sConfigurationFile) + ("}\n"));
 		
-		return (banner().toString()) + ppConfigurationFile.toString();
+		String sConfigurationOuput = "";
+		
+		if (boolTlvCommentSuppress) {
+			sConfigurationOuput = ppConfigurationFile.toString().replaceAll("/\\*.*?\\*/","");
+		} else {
+			sConfigurationOuput = ppConfigurationFile.toString();
+		}
+		
+		return (banner().toString()) + sConfigurationOuput;
+	}
+	
+	/**
+	 * 
+	 * @param boolIncludeDefaultTLV True == will include default TLV if no value is found 
+	 * @param boolTlvCommentSuppress True == will NOT include TLV Comment 
+	 * @return
+	 */
+	public String toPrettyPrint(boolean boolIncludeDefaultTLV,boolean boolTlvCommentSuppress) {
+		this.boolTlvCommentSuppress = boolTlvCommentSuppress;
+		return toPrettyPrint(boolIncludeDefaultTLV);
 	}
 	
 	/**
