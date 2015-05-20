@@ -14,5 +14,6 @@ com.comcast.oscar.parser
 com.comcast.oscar.parserbuilder
 com.comcast.oscar.sql
 com.comcast.oscar.sql.queries
+com.comcast.oscar.test
 com.comcast.oscar.tlv
 com.comcast.oscar.utilities
