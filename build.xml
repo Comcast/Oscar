@@ -83,7 +83,7 @@
             <classpath refid="Oscar.classpath"/>
         </java>
     </target>
-    <target name="Main">
+    <target name="test">
         <java classname="com.comcast.oscar.cli.Main" failonerror="true" fork="yes">
             <classpath refid="Oscar.classpath"/>
         </java>
