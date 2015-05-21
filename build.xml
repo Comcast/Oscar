@@ -1,63 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- WARNING: Eclipse auto-generated file.
-              Any modifications will be overwritten.
-              To include a user specific buildfile here, simply create one in the same
-              directory with the processing instruction <?eclipse.ant.import?>
-              as the first entry and export the buildfile again. --><project basedir="." default="build" name="Oscar">
-    <property environment="env"/>
-    <property name="debuglevel" value="source,lines,vars"/>
-    <property name="target" value="1.5"/>
-    <property name="source" value="1.5"/>
-    <path id="Oscar.classpath">
-        <pathelement location="bin"/>
-        <pathelement location="lib/commons-cli-1.2.jar"/>
-        <pathelement location="lib/json-2.1.jar"/>
-        <pathelement location="lib/sqlite-jdbc-3.7.15-M1.jar"/>
-        <pathelement location="lib/zip4j_1.3.2.jar"/>
-        <pathelement location="lib/antlr-4.1-complete.jar"/>
-        <pathelement location="lib/snmp4j-2.3.0.jar"/>
-        <pathelement location="lib/jackson-core-2.5.0.jar"/>
-        <pathelement location="lib/jackson-annotations-2.5.0.jar"/>
-        <pathelement location="lib/jackson-databind-2.5.3.jar"/>
-        <pathelement location="lib/commons-collections4-4.0.jar"/>
-    </path>
-    <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="src">
-                <exclude name="**/*.launch"/>
-                <exclude name="**/*.java"/>
-                <exclude name="com/comcast/oscar/test/"/>
-                <exclude name="com/comcast/oscar/examples/"/>
-            </fileset>
-        </copy>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="res">
-                <exclude name="**/*.launch"/>
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="clean">
-        <delete dir="bin"/>
-    </target>
-    <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <src path="res"/>
-            <exclude name="com/comcast/oscar/test/"/>
-            <exclude name="com/comcast/oscar/examples/"/>
-            <classpath refid="Oscar.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target name="test">
-        <java classname="com.comcast.oscar.cli.Main" failonerror="true" fork="yes">
-            <classpath refid="Oscar.classpath"/>
-        </java>
+<project default="create_run_jar" name="Create Runnable Jar for Project Oscar with Jar-in-Jar Loader">
+    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
+    <!--ANT 1.7 is required                                        -->
+    <target name="create_run_jar">
+        <jar destfile="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/bin/oscar.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="com.comcast.oscar.cli.Main"/>
+                <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ commons-cli-1.2.jar json-2.1.jar sqlite-jdbc-3.7.15-M1.jar zip4j_1.3.2.jar antlr-4.1-complete.jar snmp4j-2.3.0.jar jackson-core-2.5.0.jar jackson-annotations-2.5.0.jar jackson-databind-2.5.3.jar commons-collections4-4.0.jar"/>
+            </manifest>
+            <zipfileset src="jar-in-jar-loader.zip"/>
+            <fileset dir="C:/Users/mgarci00/Documents/EclipseWorkSpace/Oscar/bin"/>
+            <zipfileset dir="C:\Users\mgarci00\Documents\EclipseWorkSpace\Oscar\lib" includes="commons-cli-1.2.jar"/>
+            <zipfileset dir="C:\Users\mgarci00\Documents\EclipseWorkSpace\Oscar\lib" includes="json-2.1.jar"/>
+            <zipfileset dir="C:\Users\mgarci00\Documents\EclipseWorkSpace\Oscar\lib" includes="sqlite-jdbc-3.7.15-M1.jar"/>
+            <zipfileset dir="C:\Users\mgarci00\Documents\EclipseWorkSpace\Oscar\lib" includes="zip4j_1.3.2.jar"/>
+            <zipfileset dir="C:\Users\mgarci00\Documents\EclipseWorkSpace\Oscar\lib" includes="antlr-4.1-complete.jar"/>
+            <zipfileset dir="C:\Users\mgarci00\Documents\EclipseWorkSpace\Oscar\lib" includes="snmp4j-2.3.0.jar"/>
+            <zipfileset dir="C:\Users\mgarci00\Documents\EclipseWorkSpace\Oscar\lib" includes="jackson-core-2.5.0.jar"/>
+            <zipfileset dir="C:\Users\mgarci00\Documents\EclipseWorkSpace\Oscar\lib" includes="jackson-annotations-2.5.0.jar"/>
+            <zipfileset dir="C:\Users\mgarci00\Documents\EclipseWorkSpace\Oscar\lib" includes="jackson-databind-2.5.3.jar"/>
+            <zipfileset dir="C:\Users\mgarci00\Documents\EclipseWorkSpace\Oscar\lib" includes="commons-collections4-4.0.jar"/>
+        </jar>
     </target>
 </project>
