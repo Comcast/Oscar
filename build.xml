@@ -70,7 +70,7 @@
     </target>
     <target name="Main">
         <java classname="com.comcast.oscar.cli.Main" failonerror="true" fork="yes">
-            <classpath refid=".classpath"/>
+            <classpath refid="Oscar.classpath"/>
         </java>
     </target>
 </project>
