@@ -80,9 +80,10 @@ public class ConfigurationFileBuildCLIUnitTest {
 		//cfbctm.MIBSCompileFalseSet();
 		//cfbctm.MIBSCompileTrueSetVerbose();
 		//cfbctm.PrintBinaryToTextDOCSISHexDumpToplevelTLV();
-		cfbctm.BinaryToBinaryDPoE();
-		cfbctm.BinaryToTextDPoE();
-		cfbctm.TextToBinaryDPoE();
+		//cfbctm.BinaryToBinaryDPoE();
+		//cfbctm.BinaryToTextDPoE();
+		//cfbctm.TextToBinaryDPoE();
+		cfbctm.MergeBulk();
 	}
 
 }

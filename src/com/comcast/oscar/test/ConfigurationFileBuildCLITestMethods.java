@@ -1660,4 +1660,29 @@ public class ConfigurationFileBuildCLITestMethods implements TestMethod {
 		/* End Banner */
 		System.out.println("+---------------TextToBinaryDPoE End-----------------+");
 	}
+	
+	/**
+	 * Method MergeBulk.
+	 * @see com.comcast.oscar.test.TestMethod#MergeBulk()
+	 */
+	public void MergeBulk() {
+		/* Start Banner */
+		System.out.println("+---------------MergeBulk Start---------------+");
+
+		/* Define arguments */
+		String arguments[] = new String[5];
+		arguments[0] = "-mbb";
+		arguments[1] = "b";
+		arguments[2] = TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "Model";
+		arguments[3] = TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "Tier";
+		arguments[4] = TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "CPE";
+		//arguments[5] = "o=" + TestDirectoryStructure.outputDir().toString();
+
+		/* Run commands */
+		CommandRun cmds = new CommandRun();
+		cmds.run(arguments);
+
+		/* End Banner */
+		System.out.println("+---------------MergeBulk End-----------------+");
+	}
 }
