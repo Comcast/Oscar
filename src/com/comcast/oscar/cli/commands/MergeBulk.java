@@ -67,7 +67,6 @@ public class MergeBulk {
 		boolean boolInputDir = false;
 
 		for (String string : this.args) {
-			System.out.println(string);
 			if (string.contains("=")) {
 				String[] array = string.split("=");
 				
