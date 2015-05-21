@@ -34,8 +34,7 @@ public class TFTPServer {
 	 * Get TFTP Server arguments
 	 * @param args
 	 */
-	public TFTPServer(String[] args) 
-	{
+	public TFTPServer(String[] args) {
 		this.args = args;
 	}
 	
@@ -43,8 +42,7 @@ public class TFTPServer {
 	 * Set option parameters for command TFTP Server Address
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("v4/v6=<tftp address>");
 		OptionBuilder.hasArgs();
 		OptionBuilder.hasOptionalArgs();
@@ -62,15 +60,12 @@ public class TFTPServer {
 	
 	 * @return boolean
 	 */
-	public boolean hasIpv4Address() 
-	{
-		for (String string : this.args) 
-		{
-			if (string.contains("=")) 
-			{
+	public boolean hasIpv4Address() {
+		for (String string : this.args) {
+			if (string.contains("=")) {
 				String[] array = string.split("=");
-				if (array[0].equalsIgnoreCase("v4") || array[0].equalsIgnoreCase("ipv4")) 
-				{
+				
+				if (array[0].equalsIgnoreCase("v4") || array[0].equalsIgnoreCase("ipv4")) {
 					this.sIpv4Address = array[1];
 					return true;
 				}
@@ -84,8 +79,7 @@ public class TFTPServer {
 	
 	 * @return String
 	 */
-	public String getIpv4Address() 
-	{
+	public String getIpv4Address() {
 		return this.sIpv4Address;
 	}
 	
@@ -94,15 +88,12 @@ public class TFTPServer {
 	
 	 * @return boolean
 	 */
-	public boolean hasIpv6Address() 
-	{
-		for (String string : this.args) 
-		{
-			if (string.contains("=")) 
-			{
+	public boolean hasIpv6Address() {
+		for (String string : this.args) {
+			if (string.contains("=")) {
 				String[] array = string.split("=");
-				if (array[0].equalsIgnoreCase("v6") || array[0].equalsIgnoreCase("ipv6")) 
-				{
+				
+				if (array[0].equalsIgnoreCase("v6") || array[0].equalsIgnoreCase("ipv6")) {
 					this.sIpv6Address = array[1];
 					return true;
 				}
@@ -116,8 +107,7 @@ public class TFTPServer {
 	
 	 * @return String
 	 */
-	public String getIpv6Address() 
-	{
+	public String getIpv6Address() {
 		return this.sIpv6Address;
 	}
 	
@@ -126,8 +116,7 @@ public class TFTPServer {
 	
 	 * @return boolean
 	 */
-	public boolean hasAddress() 
-	{
+	public boolean hasAddress() {
 		if (hasIpv4Address() || hasIpv6Address()) return true;
 		return false;
 	}

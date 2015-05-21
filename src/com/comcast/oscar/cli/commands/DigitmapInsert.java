@@ -42,8 +42,7 @@ public class DigitmapInsert {
 	 * Get Digitmap Insert arguments
 	 * @param args
 	 */
-	public DigitmapInsert(String[] args) 
-	{
+	public DigitmapInsert(String[] args) {
 		this.args = args;
 	}
 	
@@ -51,8 +50,7 @@ public class DigitmapInsert {
 	 * Set option parameters for command Digitmap Insert
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("[<filename>][<OID>]");
 		OptionBuilder.hasArgs();
 		OptionBuilder.hasOptionalArgs();
@@ -69,28 +67,23 @@ public class DigitmapInsert {
 	
 	 * @return boolean
 	 */
-	public boolean hasDigitmap() 
-	{
+	public boolean hasDigitmap() {
 		String sOID;
 		File fDigitmap;
 		boolean boolDigitmap = false;
 		
-		for (String string : this.args) 
-		{
-			if (string.contains("|")) 
-			{
+		for (String string : this.args) {
+			if (string.contains("|")) {
 				String[] array = string.split("\\|");
 				sOID = array[1];
 				fDigitmap = new File(array[0]);
 			} 
-			else 
-			{
+			else {
 				sOID = this.sDefaultOID;
 				fDigitmap = new File(string);
 			}
 			
-			if (fDigitmap.exists()) 
-			{
+			if (fDigitmap.exists()) {
 				this.map.put(sOID, HexString.fileToByteArray(fDigitmap));
 				boolDigitmap = true;
 			}
@@ -104,8 +97,7 @@ public class DigitmapInsert {
 	
 	 * @return Map<String,byte[]>
 	 */
-	public Map<String, byte[]> getDigitmap() 
-	{
+	public Map<String, byte[]> getDigitmap() {
 		return this.map;
 	}
 }

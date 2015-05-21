@@ -39,8 +39,7 @@ public class OID {
 	 * Get OID arguments
 	 * @param args
 	 */
-	public OID(String[] args) 
-	{
+	public OID(String[] args) {
 		this.args = args;
 	}
 	
@@ -48,8 +47,7 @@ public class OID {
 	 * Set option parameters for command OID
 	 * @return Option
 	 */
-	public static Option OptionParameters() 
-	{
+	public static Option OptionParameters() {
 		OptionBuilder.withArgName("[<OID>][<value>][<data type>]");
 		OptionBuilder.hasArgs();
 		OptionBuilder.hasOptionalArgs();
@@ -65,17 +63,14 @@ public class OID {
 	 * Check for any OID arguments
 	 * @return boolean
 	 */
-	public boolean hasOID() 
-	{
+	public boolean hasOID() {
 		boolean boolOID = false;
 
-		for (String string : this.args) 
-		{
-			if (string.contains("|")) 
-			{
+		for (String string : this.args) {
+			if (string.contains("|")) {
 				String[] array = string.split("\\|");
-				if(array.length > 2) 
-				{
+				
+				if(array.length > 2) {
 					String[] parameters = new String[10];
 					parameters[0] = array[1];
 					parameters[1] = array[2];
@@ -92,8 +87,7 @@ public class OID {
 	 * Return all OIDs
 	 * @return Map<String,String[]>
 	 */
-	public Map<String, String[]> getMap() 
-	{
+	public Map<String, String[]> getMap() {
 		return this.map;
 	}
 }

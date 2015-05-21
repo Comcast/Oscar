@@ -38,8 +38,7 @@ public class CVC {
 	 * Get CVC arguments
 	 * @param args
 	 */
-	public CVC(String[] args) 
-	{
+	public CVC(String[] args) {
 		this.args = args;
 	}
 	
@@ -47,8 +46,7 @@ public class CVC {
 	 * Set option parameters for command CVC
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("c/m=<filename>");
 		OptionBuilder.hasArgs();
 		OptionBuilder.hasOptionalArgs();
@@ -65,17 +63,12 @@ public class CVC {
 	 * Check for a CoSigner CVC. Insert into fCoSigner if found.
 	 * @return boolean
 	 */
-	public boolean hasCoSigner() 
-	{
-		for (String string : this.args) 
-		{
-			if (string.contains("=")) 
-			{
+	public boolean hasCoSigner() {
+		for (String string : this.args) {
+			if (string.contains("=")) {
 				String[] array = string.split("=");
-				if (array[0].equalsIgnoreCase("c") || array[0].equalsIgnoreCase("co")) 
-				{
-					if (new File(DirectoryStructure.fCertificatesDir(), array[1]).exists()) 
-					{
+				if (array[0].equalsIgnoreCase("c") || array[0].equalsIgnoreCase("co")) {
+					if (new File(DirectoryStructure.fCertificatesDir(), array[1]).exists()) {
 						this.fCoSigner = new File(DirectoryStructure.fCertificatesDir(), array[1]);
 						return true;
 					}
@@ -90,8 +83,7 @@ public class CVC {
 	
 	 * @return File
 	 */
-	public File getCoSigner() 
-	{
+	public File getCoSigner() {
 		return this.fCoSigner;
 	}
 	
@@ -100,17 +92,12 @@ public class CVC {
 	
 	 * @return boolean
 	 */
-	public boolean hasManufacturer() 
-	{
-		for (String string : this.args) 
-		{
-			if (string.contains("=")) 
-			{
+	public boolean hasManufacturer() {
+		for (String string : this.args) {
+			if (string.contains("=")) {
 				String[] array = string.split("=");
-				if (array[0].equalsIgnoreCase("m") || array[0].equalsIgnoreCase("man")) 
-				{
-					if (new File(DirectoryStructure.fCertificatesDir(), array[1]).exists()) 
-					{
+				if (array[0].equalsIgnoreCase("m") || array[0].equalsIgnoreCase("man")) {
+					if (new File(DirectoryStructure.fCertificatesDir(), array[1]).exists()) {
 						System.out.println(new File(DirectoryStructure.fCertificatesDir(), array[1]));
 						this.fManufacturer = new File(DirectoryStructure.fCertificatesDir(), array[1]);
 						return true;
@@ -126,8 +113,7 @@ public class CVC {
 	
 	 * @return File
 	 */
-	public File getManufacturer() 
-	{
+	public File getManufacturer() {
 		return this.fManufacturer;
 	}
 	
@@ -136,8 +122,7 @@ public class CVC {
 	
 	 * @return boolean
 	 */
-	public boolean hasCVC() 
-	{
+	public boolean hasCVC() {
 		if(hasCoSigner() || hasManufacturer()) return true;
 		return false;
 	}

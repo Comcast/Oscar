@@ -36,8 +36,7 @@ public class DigitmapDisplay {
 	 * Set option parameters for command Digitmap display
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withValueSeparator(' ');
 		OptionBuilder.withLongOpt("displaydigitmap");
     	OptionBuilder.withDescription("Display the DigitMap of the input file - PacketCable ONLY.");
@@ -48,8 +47,7 @@ public class DigitmapDisplay {
 	 * Prints digitmap if file is binary
 	 * @param file
 	 */
-	public void printDigitmapDisplayFromBinary(File file) 
-	{
+	public void printDigitmapDisplayFromBinary(File file) {
 		ConfigurationFileExport cfePacketCable = new ConfigurationFileExport(file, ConfigurationFileExport.DOCSIS_PKTCBL);	
 		DigitMapOperation dmo = new DigitMapOperation(cfePacketCable);
 		System.out.println(dmo.getDigitMap());
@@ -59,19 +57,15 @@ public class DigitmapDisplay {
 	 * Prints digitmap if file is text
 	 * @param file
 	 */
-	public void printDigitmapDisplayFromText(File file) 
-	{
+	public void printDigitmapDisplayFromText(File file) {
 		ConfigurationFileImport cfi = null;
-		try 
-		{
+		try {
 			cfi = new ConfigurationFileImport(file);
 		} 
-		catch (FileNotFoundException e) 
-		{
+		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} 
-		catch (ConfigurationFileException e) 
-		{
+		catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		

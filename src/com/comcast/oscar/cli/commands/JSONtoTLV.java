@@ -39,8 +39,7 @@ public class JSONtoTLV {
 	 * Get JSON to TLV arguments
 	 * @param args
 	 */
-	public JSONtoTLV(String[] args) 
-	{
+	public JSONtoTLV(String[] args) {
 		this.args = args;
 	}
 
@@ -48,8 +47,7 @@ public class JSONtoTLV {
 	 * Set option parameters for command JSON to TLV display
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("filename");
 		OptionBuilder.hasArgs();
 		OptionBuilder.hasOptionalArgs();
@@ -63,12 +61,10 @@ public class JSONtoTLV {
 	 * Check if file exists
 	 * @return boolean
 	 */
-	public boolean fileExists() 
-	{
+	public boolean fileExists() {
 		File file = new File(this.args[0]);
 		
-		if(file.exists())
-		{
+		if(file.exists()) {
 			return true;
 		}
 		
@@ -78,19 +74,16 @@ public class JSONtoTLV {
 	/**
 	 * Print TLV information from JSON input file
 	 */
-	public void printTLV() 
-	{
+	public void printTLV() {
 		File file = new File(this.args[0]);
 		byte[] ba = HexString.fileToByteArray(file);
 		HexString hs = new HexString(ba);	
 		TlvAssembler ta = null;	
 		
-		try 
-		{
+		try {
 			ta = new TlvAssembler(new JSONArray(hs.toASCII()));
 		} 
-		catch (JSONException e) 
-		{
+		catch (JSONException e) {
 			e.printStackTrace();
 		}
 		

@@ -30,8 +30,7 @@ public class DownstreamFrequency {
 	 * Get Downstream Frequency arguments
 	 * @param args
 	 */
-	public DownstreamFrequency(String[] args) 
-	{
+	public DownstreamFrequency(String[] args) {
 		this.args = args;
 	}
 	
@@ -39,8 +38,7 @@ public class DownstreamFrequency {
 	 * Set option parameters for command Downstream Frequency
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("downstream frequency");
 		OptionBuilder.hasArgs(1);
 		OptionBuilder.hasOptionalArgs();
@@ -55,14 +53,11 @@ public class DownstreamFrequency {
 	
 	 * @return int
 	 */
-	public int getDownstreamFrequency() 
-	{
-		if(this.args[0] != null) 
-		{
+	public int getDownstreamFrequency() {
+		if(this.args[0] != null) {
 			return Integer.valueOf(this.args[0]);
 		} 
-		else 
-		{
+		else {
 			return -1;
 		}
 	}

@@ -28,8 +28,7 @@ public class Main {
 	 * Main Class. Checks and creates necessary directories then run commands.
 	 * @param args
 	 */
-	public static void main (String args[]) 
-	{
+	public static void main (String args[]) {
 		/* Determine path. For testing purposes. */
 		DirectoryStructure.setFromJar(); 
 		
@@ -43,8 +42,7 @@ public class Main {
 		/* Run commands */
 		System.out.println(Constants.OSCAR_CLI_HEADER);
 		
-		if (args.length <= 0) 
-		{
+		if (args.length <= 0) {
 			System.out.println(Constants.OSCAR_CLI_NO_ARGS);
 		}
 		
@@ -58,13 +56,10 @@ public class Main {
 	
 	 * @return String[]
 	 */
-	private static String[] cleanUpARGS(String[] args) 
-	{ 
+	private static String[] cleanUpARGS(String[] args) { 
 		//Changes user input format (e.g. [<value>][<value>]) to an easier format for CLI (e.g. <value>|<value>).
-        for (int index = 0 ; index < args.length; index++) 
-        { 
-        	if (args[index].contains("[")) 
-        	{
+        for (int index = 0 ; index < args.length; index++) { 
+        	if (args[index].contains("[")) {
         		args[index] = args[index].replaceAll("]\\[", "|").replaceAll("]|\\[", ""); 
         	}
         } 

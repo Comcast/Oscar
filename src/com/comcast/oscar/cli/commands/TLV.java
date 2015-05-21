@@ -30,8 +30,7 @@ public class TLV {
 	 * Get TLV arguments
 	 * @param args
 	 */
-	public TLV(String[] args) 
-	{
+	public TLV(String[] args) {
 		this.args = args;
 	}
 	
@@ -39,8 +38,7 @@ public class TLV {
 	 * Set option parameters for command TLV
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("TLV");
 		OptionBuilder.hasArgs(1);
 		OptionBuilder.hasOptionalArgs();
@@ -55,8 +53,7 @@ public class TLV {
 	
 	 * @return String
 	 */
-	public String getTLV() 
-	{
+	public String getTLV() {
 		return this.args[0];
 	}
 }

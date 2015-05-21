@@ -43,8 +43,7 @@ public class HexDisplay {
 	 * Get HexDisplay arguments
 	 * @param args
 	 */
-	public HexDisplay(String[] args) 
-	{
+	public HexDisplay(String[] args) {
 		this.args = args;
 		setDisplay();
 	}
@@ -53,8 +52,7 @@ public class HexDisplay {
 	 * Set option parameters for command Hexidecimal display
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("t{oplevel}");
 		OptionBuilder.hasArgs(1);
 		OptionBuilder.hasOptionalArgs();
@@ -67,8 +65,7 @@ public class HexDisplay {
 	 * Determine display preference (dump or toplevel)
 	 * @return
 	 */
-	public void setDisplay()
-	{
+	public void setDisplay() {
 		if(this.args != null)
 		{
 			for (String string : this.args) 
@@ -85,10 +82,8 @@ public class HexDisplay {
 	 * Print Hexidecimal display from binary file
 	 * @param file
 	 */
-	public void printHexDisplayFromBinary(File file) 
-	{
-		if (boolTopLevel)
-		{
+	public void printHexDisplayFromBinary(File file) {
+		if (boolTopLevel) {
 			HexString hs = new HexString(HexString.fileToByteArray(file));
 	
 			TlvBuilder tb = new TlvBuilder();
@@ -106,8 +101,7 @@ public class HexDisplay {
 				System.out.println(hsTlv.toString(":"));		
 			}
 		}
-		else 
-		{
+		else {
 			System.out.println(HexDump.dumpHexString(HexString.fileToByteArray(file)));
 		}
 	}
@@ -117,29 +111,23 @@ public class HexDisplay {
 	 * @param file
 	 * @param configurationFileType
 	 */
-	public void printHexDisplayFromText(File file, int configurationFileType) 
-	{
+	public void printHexDisplayFromText(File file, int configurationFileType) {
 		ConfigurationFileImport cfi = null;
-		try 
-		{
+		try {
 			cfi = new ConfigurationFileImport(file);
 		} 
-		catch (FileNotFoundException e1) 
-		{
+		catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		} 
-		catch (ConfigurationFileException e1) 
-		{
+		catch (ConfigurationFileException e1) {
 			e1.printStackTrace();
 		}
 		
 		TlvBuilder tb = new TlvBuilder();
-		try 
-		{
+		try {
 			tb.add(new HexString(cfi.toByteArray()));
 		} 
-		catch (TlvException e) 
-		{
+		catch (TlvException e) {
 			e.printStackTrace();
 		}
 		

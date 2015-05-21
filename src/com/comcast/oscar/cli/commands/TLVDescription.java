@@ -34,8 +34,7 @@ public class TLVDescription {
 	 * Get TLV Description arguments
 	 * @param args
 	 */
-	public TLVDescription(String[] args) 
-	{
+	public TLVDescription(String[] args) {
 		this.args = args;
 	}
 	
@@ -43,8 +42,7 @@ public class TLVDescription {
 	 * Set option parameters for command TLV description
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("TLV dot notation");
 		OptionBuilder.hasArgs(1);
 		OptionBuilder.hasOptionalArgs();
@@ -58,8 +56,7 @@ public class TLVDescription {
 	 * Print TLV description
 	 * @param configurationFileType
 	 */
-	public void printTLVDescription(int configurationFileType) 
-	{
+	public void printTLVDescription(int configurationFileType) {
 		ConfigurationFileExport cfe = new ConfigurationFileExport(configurationFileType);
 		System.out.println(cfe.getTlvDefintion(this.args[0]));
 	}
