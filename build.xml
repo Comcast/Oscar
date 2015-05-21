@@ -57,7 +57,7 @@
     <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
     <target name="test">
         <java classname="com.comcast.oscar.cli.Main" failonerror="true" fork="yes">
-            <classpath refid=".classpath"/>
+            <classpath refid="Oscar.classpath"/>
         </java>
     </target>
 </project>
