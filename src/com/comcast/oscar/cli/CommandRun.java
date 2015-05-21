@@ -7,13 +7,13 @@ import java.util.Map;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
 import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.buildbulk.BulkBuild;
 import com.comcast.oscar.cli.commands.CVC;
+import com.comcast.oscar.cli.commands.Decompile;
 import com.comcast.oscar.cli.commands.DigitmapDisplay;
 import com.comcast.oscar.cli.commands.DigitmapInsert;
 import com.comcast.oscar.cli.commands.DownstreamFrequency;
@@ -64,7 +64,6 @@ import com.comcast.oscar.utilities.DirectoryStructure;
 public class CommandRun {
 		
 	private int iBulkBuild = BulkBuild.TEXT_OUTPUT;
-	private boolean boolDecompileDisplay = ConfigurationFileExport.EXPORT_FOUND_TLV;
 			
 	private DigitmapDisplay comDigitmapDisplay = new DigitmapDisplay();
 	private FullTLVDisplay comFullTLVDisplay = new FullTLVDisplay();
@@ -73,6 +72,7 @@ public class CommandRun {
 	private Specification comSpecification = new Specification();
 	
 	private CVC comCVC;
+	private Decompile comDecompile;
 	private DigitmapInsert comDigitmapInsert;
 	private DownstreamFrequency comDownstreamFrequency;
 	private Firmware comFirmware;
@@ -87,53 +87,6 @@ public class CommandRun {
 	private TLV comTLV;
 	private TLVDescription comTLVDescription;
 	private TLVtoJSON comTLVtoJSON;
-			    
-	/**
-	 * Build all usable options with LongOpt, Description and any viable arguments
-	 * @param options
-	 */
-	public static void buildOptions(Options options) { 
-		options.addOption("h","help", false, "View all commands with descriptions.");
-		options.addOption("version", false, "Display current version.");
-		options.addOption(CVC.OptionParameters());
-		options.addOption(DigitmapDisplay.OptionParameters());
-		options.addOption(DigitmapInsert.OptionParameters());
-		options.addOption(DownstreamFrequency.OptionParameters());
-		options.addOption(Firmware.OptionParameters());
-		options.addOption(FullTLVDisplay.OptionParameters());
-		options.addOption(HexDisplay.OptionParameters());
-		options.addOption(Input.OptionParameters());
-		options.addOption(JSONDisplay.OptionParameters());
-		options.addOption(JSONtoTLV.OptionParameters());
-		options.addOption(Key.OptionParameters());
-		options.addOption(MaxCPE.OptionParameters());
-		options.addOption(MergeBulk.OptionParameters());
-		options.addOption(OID.OptionParameters());
-		options.addOption(Output.OptionParameters());
-		options.addOption(Specification.OptionParameters());
-		options.addOption(TFTPServer.OptionParameters());
-		options.addOption(TLV.OptionParameters());
-		options.addOption(TLVDescription.OptionParameters());
-		options.addOption(TLVtoJSON.OptionParameters());
-		
-		options.addOption("c","compile", false, "Compile text to binary.");
-		
-		OptionBuilder.withArgName("v{erbose}");
-		OptionBuilder.hasArgs();
-		OptionBuilder.hasOptionalArgs();
-        OptionBuilder.withValueSeparator(' ');
-        OptionBuilder.withLongOpt("decompile");
-        OptionBuilder.withDescription("Decompile binary to text. Option v for full TLV display.");
-		options.addOption(OptionBuilder.create("d"));
-		
-		OptionBuilder.withArgName("bin/txt> <input dir> <*output dir");
-		OptionBuilder.hasArgs();
-		OptionBuilder.hasOptionalArgs();
-        OptionBuilder.withValueSeparator(' ');
-        OptionBuilder.withLongOpt("bulk");
-        OptionBuilder.withDescription("Compile all files to binary from the input directory. Output directory optional.");
-		options.addOption(OptionBuilder.create("b"));
-	}
 	
 	/**
 	 * Checks all the commands from the user. Order is IMPORTANT. Do not rearrange without full understanding.
@@ -142,7 +95,7 @@ public class CommandRun {
 	public void run(String[] args) {
 		BasicParser parser = new BasicParser();
 		Options options = new Options();
-		buildOptions(options);
+		BuildOptions.run(options);
 		
 	    try {
 	        CommandLine line = parser.parse(options, args);
@@ -256,14 +209,7 @@ public class CommandRun {
             } 
 	        
 	        if (line.hasOption("d")) {
-	        	if (line.getOptionValues("d") != null) {
-		        	for (String string : line.getOptionValues("d")) {
-			        	if (string.equalsIgnoreCase("v") || string.equalsIgnoreCase("verbose")) {
-			        		boolDecompileDisplay = ConfigurationFileExport.EXPORT_DEFAULT_TLV;
-			        	}
-		        	}
-	        	}
-	        	
+	        	comDecompile = new Decompile(line.getOptionValues("d"));	        	
 	        	decompile();
 	        }
 	        
@@ -374,7 +320,8 @@ public class CommandRun {
 		if (comInput != null && comInput.hasInput()) {
 			if (comInput.isBinary()) {
 				ConfigurationFileExport cfe = new ConfigurationFileExport(comInput.getInput(), comSpecification.getConfigurationFileType());	
-
+				cfe.setDotTextOIDOutputFormat(comDecompile.checkDotted());
+				
 				ConfigurationFile cf = null;
 							
 				try {	
@@ -390,7 +337,7 @@ public class CommandRun {
 				cf.commit();
 								
 				ConfigurationFileExport cfeSnmp64Insert = new ConfigurationFileExport(cf);	
-				System.out.println(cfeSnmp64Insert.toPrettyPrint(boolDecompileDisplay));
+				System.out.println(cfeSnmp64Insert.toPrettyPrint(comDecompile.checkVerbose()));
 			} 
 			else {
 				System.err.println("Input file " + Constants.ERR_NOT_BIN);
