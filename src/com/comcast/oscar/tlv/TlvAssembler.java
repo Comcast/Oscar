@@ -7,9 +7,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.comcast.oscar.ber.OIDBERConversion;
-import com.comcast.oscar.tlv.datatype.DataTypeDictionaryReference;
-import com.comcast.oscar.tlv.datatype.DataTypeFormatConversion;
-import com.comcast.oscar.tlv.dictionary.Dictionary;
+import com.comcast.oscar.datatype.DataTypeDictionaryReference;
+import com.comcast.oscar.datatype.DataTypeFormatConversion;
+import com.comcast.oscar.dictionary.Dictionary;
 import com.comcast.oscar.utilities.HexString;
 import com.comcast.oscar.utilities.JSONTools;
 

@@ -60,6 +60,11 @@ public class PrettyPrint extends StringTokenizer {
 		return sOutputCode;
 	}
 	
+	/**
+	 * 
+	 * @param sText
+	 * @return String return in a paragraph form
+	 */
 	public static String ToParagraphForm (String sText) {
 		
 		sText = sText.replaceAll("\\s+", " ");

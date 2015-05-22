@@ -14,13 +14,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.comcast.oscar.dictionary.Dictionary;
 import com.comcast.oscar.parser.TlvConfigurationFileParser;
 import com.comcast.oscar.parser.tlvLexer;
 import com.comcast.oscar.parser.tlvParser;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.tlv.TlvVariableBinding;
-import com.comcast.oscar.tlv.dictionary.Dictionary;
 import com.comcast.oscar.utilities.HexString;
 
 /**

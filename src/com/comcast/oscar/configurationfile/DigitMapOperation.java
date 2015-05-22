@@ -11,11 +11,11 @@ import org.json.JSONObject;
 import com.comcast.oscar.ber.BEROIDConversion;
 import com.comcast.oscar.ber.OIDToJSONArray;
 import com.comcast.oscar.compiler.PacketCableConstants;
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.Dictionary;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvVariableBinding;
-import com.comcast.oscar.tlv.dictionary.Dictionary;
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 
@@ -40,7 +40,7 @@ import com.comcast.oscar.utilities.HexString;
 
 public class DigitMapOperation {
 
-	public static String DEFAULT_DIGIT_MAP_OID = PacketCableConstants.PKT_CABLE_DIGIT_MAP_OID;
+	public final static String DEFAULT_DIGIT_MAP_OID = PacketCableConstants.PKT_CABLE_DIGIT_MAP_OID;
 	
 	private static boolean debug = Boolean.FALSE;
 	
@@ -86,7 +86,6 @@ public class DigitMapOperation {
 			domain = "@ims.comcast.net"
 			dialString = ";user=dialstring"
 			dialPhone = ";user=phone" */
-
 	public String getDigitMap() {
 		
 		boolean localDebug = Boolean.FALSE;

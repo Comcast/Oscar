@@ -38,8 +38,7 @@ public class Input {
 	 * Get Input arguments
 	 * @param args
 	 */
-	public Input(String[] args) 
-	{
+	public Input(String[] args) {
 		this.args = args;
 	}
 	
@@ -47,8 +46,7 @@ public class Input {
 	 * Set option parameters for command Input
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("filename");
 		OptionBuilder.hasArgs(1);
 		OptionBuilder.hasOptionalArgs();
@@ -62,18 +60,16 @@ public class Input {
 	 * Check if argument is valid, if any
 	 * @return boolean
 	 */
-	public boolean hasInput() 
-	{
-		if (new File(this.args[0]).exists()) 
-		{
+	public boolean hasInput() {
+		if (new File(this.args[0]).exists()) {
 			this.fInput = new File(this.args[0]);
 			return true;
 		} 
-		else if (new File(DirectoryStructure.sActivePath() + File.separator + this.args[0]).exists()) 
-		{
+		else if (new File(DirectoryStructure.sActivePath() + File.separator + this.args[0]).exists()) {
 			this.fInput = new File(DirectoryStructure.sActivePath() + File.separator + this.args[0]);
 			return true;
 		}
+		
 		return false;
 	}
 	
@@ -81,8 +77,7 @@ public class Input {
 	 * Return Input file
 	 * @return File
 	 */
-	public File getInput() 
-	{
+	public File getInput() {
 		return this.fInput;
 	}
 	
@@ -90,8 +85,7 @@ public class Input {
 	 * Check if file is binary
 	 * @return boolean
 	 */
-	public boolean isBinary() 
-	{
+	public boolean isBinary() {
 		return !(HexString.verifyAsciiPlainText(HexString.fileToByteArray(this.fInput)));
 	}
 

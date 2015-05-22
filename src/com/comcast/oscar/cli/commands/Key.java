@@ -34,8 +34,7 @@ public class Key {
 	 * Set option parameters for command Key
 	 * @return Option
 	 */
-	public static Option OptionParameters() 
-	{
+	public static Option OptionParameters() {
 		OptionBuilder.withArgName("key filename");
 		OptionBuilder.hasArgs(1);
 		OptionBuilder.hasOptionalArgs();
@@ -49,10 +48,8 @@ public class Key {
 	 * Set Key string from file
 	 * @param args
 	 */
-	public void setKey(String[] args) 
-	{
-		if (new File(args[0]).exists()) 
-		{
+	public void setKey(String[] args) {
+		if (new File(args[0]).exists()) {
 			this.sKey = new HexString(HexString.fileToByteArray(new File(args[0]))).toASCII();
 		}
 	}
@@ -61,8 +58,7 @@ public class Key {
 	 * Return Key
 	 * @return String
 	 */
-	public String getKey() 
-	{
+	public String getKey() {
 		return this.sKey;
 	}
 }

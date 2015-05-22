@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
@@ -12,6 +14,7 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import com.comcast.oscar.utilities.DirectoryStructure;
 import com.comcast.oscar.utilities.Disk;
 import com.comcast.oscar.utilities.HexString;
+import com.comcast.oscar.utilities.PrettyPrint;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -41,6 +44,9 @@ public class NetSNMP  {
 		
 	private static ObjectMapper omNetSNMP = null;	
 	private static BidiMap<String, String> bmDotTextMap = null;
+    
+	private static final Pattern NETSNMP_DESCRIPTION = Pattern.compile(""
+            + ".*DESCRIPTION\\s+\"(.*)\"", Pattern.CASE_INSENSITIVE);
 	
 	static {
 		
@@ -65,9 +71,8 @@ public class NetSNMP  {
 	/**
 	 * Convert: docsDevNmAccessIp.1 -> .1.3.6.1.2.1.69.1.2.1.2.1
 	 * 
-	 * @param sOID
-	 * @return .1.3.6.x.x.x.x.x
-	 */
+	 * @param sOID OID either Dotted or Textual OID
+	 * @return .1.3.6.x.x.x.x.x */
 	public static String toDottedOID(String sOID) {
 	
 		boolean localDebug = Boolean.FALSE;
@@ -119,8 +124,8 @@ public class NetSNMP  {
 	 * 
 	 * Convert: .1.3.6.1.2.1.69.1.2.1.2.1 -> docsDevNmAccessIp.1
 	 * 
-	 * @param sOID
-	 * @return docsDevNmAccessIp.1 */
+	 * @param sOID OID either Dotted or Textual OID
+	 * @return Example: docsDevNmAccessIp.1 */
 	public static String toTextualOID(String sOID) {
 
 		boolean localDebug = Boolean.FALSE;
@@ -166,6 +171,24 @@ public class NetSNMP  {
 		return sTextualOID;
 
 	}
+	
+	/**
+	 * 
+	 * @param sOID OID either Dotted or Textual OID
+	 * @param boolDotTextFormat TRUE = Textual OID Output , FALSE = Dotted OID Output
+	 * @return Dotted or Textual OID */
+	public static String toOIDFormat(String sOID , boolean boolDotTextFormat) {
+		
+		/* Textual OID */
+		if (boolDotTextFormat) {
+			return toTextualOID(sOID);
+		} 
+		/* Dotted OID */
+		else {
+			return toDottedOID(sOID);
+		}
+		
+	}
 
 	/**
 	 * 
@@ -196,6 +219,57 @@ public class NetSNMP  {
 		}
 
 		return false;	
+	}
+	
+	/**
+	 * 
+	 * @param sOID .1.3.6.1.2.1.69.1.2.1.2.1 OR docsDevNmAccessIp.1
+	 * @return Description of OID
+	 */
+	public static String getDescription(String sOID) {
+		
+		boolean localDebug = Boolean.FALSE;
+		String sDescription = "";
+		String sSnmpTranslate = "";	
+		
+		if (debug|localDebug)
+			System.out.println("NetSNMP.getDescription(): " + sOID);
+		
+		/* If not installed, bypass and return input */
+		if (!isSnmptranslateInstalled()) {
+			return sOID;
+		}
+		
+		if (isDottedOID(sOID)) {
+			
+			sSnmpTranslate = 	Constants.SNMP_TRANSLATE_CMD +  	
+								Constants.MIB_PARAMETER + 
+								Constants.SNMP_TRANSLATE_DESCRIPTION_DOTTED_OID +
+								sOID;
+		} else {
+			sSnmpTranslate = 	Constants.SNMP_TRANSLATE_CMD +  	
+					Constants.MIB_PARAMETER + 
+					Constants.SNMP_TRANSLATE_DESCRIPTION_TEXTUAL_OID +
+					sOID;			
+		}
+		
+		if (debug|localDebug)
+			System.out.println("NetSNMP.getDescription() TRANSLATE-CLI: " + sSnmpTranslate);
+		
+		Matcher mDescription = NETSNMP_DESCRIPTION.matcher(runSnmpTranslate(sSnmpTranslate).toString());
+		
+		if (mDescription.find()) {			
+			sDescription = "\n" + PrettyPrint.ToParagraphForm(mDescription.group(1).replaceAll("\\s+", " "));		
+		}
+		
+		if (debug|localDebug)
+			System.out.println("NetSNMP.getDescription() TRANSLATE-DESCRIPTION: " + sDescription);
+		
+		if (sDescription.isEmpty()) {
+			sDescription = "\nVerify that MIBS are loaded for OID: " + sOID;
+		}
+		
+		return sDescription;	
 	}
 
 	/**
@@ -257,7 +331,6 @@ public class NetSNMP  {
 		return als;
 	}
 	
-
 	/**
 	 * @bannerLicense
 		Copyright 2015 Comcast Cable Communications Management, LLC<br>
@@ -284,7 +357,7 @@ public class NetSNMP  {
 			return new File(fDbDir().getName() + File.separator + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE) ;
 		}
 		
-	}
+	} 
 	
 	/**
 	 * 
@@ -310,7 +383,7 @@ public class NetSNMP  {
 	/**
 	 * 
 	 * @param sOID
-	 * @return
+	 * @return returns a lookup value, blank if nothing is found
 	 */
 	private static String CheckOIDDBLookup(String sOID) {
 		

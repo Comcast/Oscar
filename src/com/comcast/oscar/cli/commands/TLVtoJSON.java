@@ -37,8 +37,7 @@ public class TLVtoJSON {
 	 * Get TLV to JSON arguments
 	 * @param args
 	 */
-	public TLVtoJSON(String[] args) 
-	{
+	public TLVtoJSON(String[] args) {
 		this.args = args;
 	}
 
@@ -46,8 +45,7 @@ public class TLVtoJSON {
 	 * Set option parameters for command TLV to JSON display
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("TLV");
 		OptionBuilder.hasArgs();
 		OptionBuilder.hasOptionalArgs();
@@ -61,16 +59,13 @@ public class TLVtoJSON {
 	 * Print JSON information from TLV
 	 * @param tlvDisassemble
 	 */
-	public void printJSON(String tlvDisassemble) 
-	{
+	public void printJSON(String tlvDisassemble) {
 		TlvBuilder tb = new TlvBuilder();	
 		
-		try 
-		{
+		try {
 			tb.add(new HexString(HexString.toByteArray(this.args[0])));
 		} 
-		catch (TlvException e) 
-		{
+		catch (TlvException e) {
 			e.printStackTrace();
 		}
 		

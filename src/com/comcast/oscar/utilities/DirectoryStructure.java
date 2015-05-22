@@ -43,8 +43,8 @@ public class DirectoryStructure {
 	
 	/**
 	 * Decide the correct path to start from
-	
-	 * @return base directory */
+	 * @return base directory 
+	 * */
 	public static String sBasePath() 
 	{
 		if(fromJar) 
@@ -70,8 +70,8 @@ public class DirectoryStructure {
 	
 	/**
 	 * Find active path. Used for Input
-	
-	 * @return active directory */
+	 * @return active directory 
+	 * */
 	public static String sActivePath() 
 	{
 		String activePath = null;
@@ -90,7 +90,6 @@ public class DirectoryStructure {
 	
 	/**
 	 * Directory for certificates
-	
 	 * @return certificates subdirectory */
 	public static File fCertificatesDir() 
 	{
@@ -99,8 +98,8 @@ public class DirectoryStructure {
 	
 	/**
 	 * Directory for bulk builds
-	
-	 * @return build subdirectory */
+	 * @return build subdirectory 
+	 * */
 	public static File fBuildDir() 
 	{
 		return new File(sBasePath() + File.separator + "build");

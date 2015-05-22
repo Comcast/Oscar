@@ -4,11 +4,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.comcast.oscar.dictionary.Dictionary;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvDisassemble;
 import com.comcast.oscar.tlv.TlvException;
-import com.comcast.oscar.tlv.dictionary.Dictionary;
 
 /**
  * @bannerLicense

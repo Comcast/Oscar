@@ -31,7 +31,7 @@ import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;

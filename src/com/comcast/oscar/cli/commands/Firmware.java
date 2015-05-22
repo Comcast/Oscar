@@ -30,8 +30,7 @@ public class Firmware {
 	 * Get Firmware arguments
 	 * @param args
 	 */
-	public Firmware(String[] args) 
-	{
+	public Firmware(String[] args) {
 		this.args = args;
 	}
 	
@@ -39,8 +38,7 @@ public class Firmware {
 	 * Set option parameters for command Firmware
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("filename");
 		OptionBuilder.hasArgs(1);
 		OptionBuilder.hasOptionalArgs();
@@ -52,11 +50,9 @@ public class Firmware {
 	
 	/**
 	 * Return Firmware file
-	
 	 * @return String
 	 */
-	public String getFirmware() 
-	{
+	public String getFirmware() {
 		return this.args[0];
 	}
 }

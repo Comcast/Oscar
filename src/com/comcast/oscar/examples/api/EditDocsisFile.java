@@ -6,12 +6,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.DictionaryTLV;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvDisassemble;
 import com.comcast.oscar.tlv.TlvException;
-import com.comcast.oscar.tlv.dictionary.DictionaryTLV;
 import com.comcast.oscar.utilities.HexString;
 
 /**

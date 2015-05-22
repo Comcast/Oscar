@@ -22,7 +22,7 @@ import com.comcast.oscar.compiler.DPoECompiler;
 import com.comcast.oscar.compiler.DocsisCompiler;
 import com.comcast.oscar.compiler.PacketCableCompiler;
 import com.comcast.oscar.compiler.PacketCableConstants;
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.tlv.TlvVariableBinding;
@@ -131,7 +131,37 @@ public class ConfigurationFile {
 		
 		init();
 	}
- 	 	
+ 	 
+ 	/**
+ 	 * 
+ 	 * @param sConfigurationFileName
+ 	 * @param iConfigurationFileType
+ 	 * @param tbConfigurationFile
+ 	 * @param sCmtsSharedSecretKey
+ 	 */
+ 	public ConfigurationFile(String sConfigurationFileName, int iConfigurationFileType, TlvBuilder tbConfigurationFile, String sCmtsSharedSecretKey) {
+		
+ 		boolean localDebug = Boolean.FALSE;
+ 		
+		this.iConfigurationFileType = iConfigurationFileType;
+		
+		this.tbConfigurationFile = tbConfigurationFile;
+		
+		this.sCmtsSharedSecretKey = sCmtsSharedSecretKey;
+		
+		setConfigurationFileName(sConfigurationFileName);
+
+		if (localDebug|debug) {
+			System.out.println("ConfigurationFile(s,i,tb) " +
+					" ConfigType: " + iConfigurationFileType +
+					" CMTS-Shared-Secret: " + sCmtsSharedSecretKey +
+					" ConfigFile-Length: " + tbConfigurationFile.length() +
+					" ConfigFile-HEX: " + tbConfigurationFile.toStringSeperation(""));
+		}
+		
+		init();
+	}
+ 	
 	/**
 	 * 
 	 * @param iConfigurationFileType
@@ -571,6 +601,22 @@ public class ConfigurationFile {
 	 * Removal of CM/CMTS MIC MD5 and BASIC.1 SHA-1 HASHS
 	 */
 	public void removeAllSecurityHash() {
+		
+	}
+	
+	/**
+	 * 
+	 * @return a new TlvBuilder Object
+	 */
+	public TlvBuilder toTlvBuilder() {
+		TlvBuilder tb = new TlvBuilder();
+		try {
+			tb.add(new HexString(toByteArray()));
+		} catch (TlvException e) {
+			e.printStackTrace();
+		}
+		
+		return tb;
 		
 	}
 	

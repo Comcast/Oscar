@@ -37,8 +37,7 @@ public class JSONDisplay {
 	 * Set option parameters for command JSON display
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withValueSeparator(' ');
 		OptionBuilder.withLongOpt("json");
     	OptionBuilder.withDescription("Display the JSON of the input file.");
@@ -50,8 +49,7 @@ public class JSONDisplay {
 	 * @param file
 	 * @param tlvDisassemble
 	 */
-	public void printJSONDisplayFromBinary(File file, String tlvDisassemble, int configurationFileType) 
-	{
+	public void printJSONDisplayFromBinary(File file, String tlvDisassemble, int configurationFileType) {
 		TlvDisassemble td = null;
 		ConfigurationFileExport cfe = new ConfigurationFileExport(file, configurationFileType);
 
@@ -72,21 +70,17 @@ public class JSONDisplay {
 	 * @param file
 	 * @param tlvDisassemble
 	 */
-	public void printJSONDisplayFromText(File file, String tlvDisassemble) 
-	{
+	public void printJSONDisplayFromText(File file, String tlvDisassemble) {
 		TlvDisassemble td = null;
 		ConfigurationFileImport cfi = null;
 		
-		try 
-		{
+		try {
 			cfi = new ConfigurationFileImport(file);
 		} 
-		catch (FileNotFoundException e) 
-		{
+		catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} 
-		catch (ConfigurationFileException e) 
-		{
+		catch (ConfigurationFileException e) {
 			e.printStackTrace();
 		}
 		

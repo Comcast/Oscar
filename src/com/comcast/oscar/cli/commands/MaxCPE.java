@@ -30,8 +30,7 @@ public class MaxCPE {
 	 * Get Maximum CPE arguments
 	 * @param args
 	 */
-	public MaxCPE(String[] args) 
-	{
+	public MaxCPE(String[] args) {
 		this.args = args;
 	}
 	
@@ -39,8 +38,7 @@ public class MaxCPE {
 	 * Set option parameters for command Maximum CPE
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("maximum CPEs");
 		OptionBuilder.hasArgs(1);
 		OptionBuilder.hasOptionalArgs();
@@ -54,14 +52,11 @@ public class MaxCPE {
 	 * Return MaxCPE
 	 * @return int
 	 */
-	public int getMaxCPE() 
-	{
-		if(this.args[0] != null) 
-		{
+	public int getMaxCPE() {
+		if(this.args[0] != null) {
 			return Integer.valueOf(this.args[0]);
 		} 
-		else 
-		{
+		else {
 			return -1;
 		}
 	}

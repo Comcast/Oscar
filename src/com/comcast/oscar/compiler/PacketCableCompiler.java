@@ -11,7 +11,7 @@ import org.snmp4j.asn1.BER;
 import org.snmp4j.smi.OID;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.tlv.TlvVariableBinding;

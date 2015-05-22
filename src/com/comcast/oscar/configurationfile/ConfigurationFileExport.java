@@ -22,16 +22,16 @@ import com.comcast.oscar.compiler.DocsisConstants;
 import com.comcast.oscar.compiler.PacketCableCompiler;
 import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.constants.Constants;
+import com.comcast.oscar.datatype.DataTypeDictionaryReference;
+import com.comcast.oscar.datatype.DataTypeFormatConversion;
+import com.comcast.oscar.dictionary.Dictionary;
+import com.comcast.oscar.dictionary.DictionarySQLConstants;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.netsnmp.NetSNMP;
-import com.comcast.oscar.sql.queries.DictionarySQLConstants;
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvDisassemble;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.tlv.TlvVariableBinding;
-import com.comcast.oscar.tlv.datatype.DataTypeDictionaryReference;
-import com.comcast.oscar.tlv.datatype.DataTypeFormatConversion;
-import com.comcast.oscar.tlv.dictionary.Dictionary;
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 import com.comcast.oscar.utilities.JSONTools;
@@ -69,6 +69,8 @@ public class ConfigurationFileExport {
 	private String sConfigurationFileStart;	
 	private int iConfigurationFileType = -1;	
 	private boolean boolVerboseExport = true;
+	private boolean boolDottextOutputFormat = true;
+	private boolean boolTlvCommentSuppress = false;
 	
 	public final String END_OF_CODE_BLOCK = "\\*EOCB*\\";
 	
@@ -88,6 +90,11 @@ public class ConfigurationFileExport {
 	
 	public static final Boolean EXPORT_DEFAULT_TLV = true;
 	public static final Boolean EXPORT_FOUND_TLV = false;
+	
+	public static final Boolean TEXTUAL_OID_FORMAT = true;
+	public static final Boolean DOTTED_OID_FORMAT = false;
+	
+	public static final Boolean SUPPRESS_TLV_COMMENT = true;
 	
 	/**
 	 * @deprecated - This is no longer supported but will work Only support DOCSIS and PacketCable 
@@ -475,7 +482,6 @@ public class ConfigurationFileExport {
 		return sbTlvPrettyPrint.toString();
 	}
 	
-
 	/**
 	 * 
 	 * @param boolIncludeDefaultTLV = True == will include default TLV if no value is found 
@@ -513,7 +519,26 @@ public class ConfigurationFileExport {
 		com.comcast.oscar.utilities.PrettyPrint ppConfigurationFile = 
 				new com.comcast.oscar.utilities.PrettyPrint((sConfigurationFileStart + " {\n") + (sConfigurationFile) + ("}\n"));
 		
-		return (banner().toString()) + ppConfigurationFile.toString();
+		String sConfigurationOuput = "";
+		
+		if (boolTlvCommentSuppress) {
+			sConfigurationOuput = ppConfigurationFile.toString().replaceAll("/\\*.*?\\*/","");
+		} else {
+			sConfigurationOuput = ppConfigurationFile.toString();
+		}
+		
+		return (banner().toString()) + sConfigurationOuput;
+	}
+	
+	/**
+	 * 
+	 * @param boolIncludeDefaultTLV True == will include default TLV if no value is found 
+	 * @param boolTlvCommentSuppress True == will NOT include TLV Comment 
+	 * @return
+	 */
+	public String toPrettyPrint(boolean boolIncludeDefaultTLV,boolean boolTlvCommentSuppress) {
+		this.boolTlvCommentSuppress = boolTlvCommentSuppress;
+		return toPrettyPrint(boolIncludeDefaultTLV);
 	}
 	
 	/**
@@ -654,14 +679,23 @@ public class ConfigurationFileExport {
 	}
 	
 	/**
-	 * 
-	 * @param fOutput	
+	 * Method will default to no Verbose
+	 * @param fOutput
 	 * @return true is write, false is it did not write */
 	public boolean writeToDisk(File fOutput) {
+		return writeToDisk(fOutput,ConfigurationFileExport.EXPORT_FOUND_TLV);
+	}
+	
+	/**
+	 * 
+	 * @param fOutput
+	 * @param boolVerbose
+	 * @return true is write, false is it did not write */
+	public boolean writeToDisk(File fOutput,boolean boolVerbose) {
 
 		boolean localDebug = Boolean.FALSE;
 		
-		byte[] bConfiguration = HexString.toByteArray(HexString.asciiToHex(toPrettyPrint(0)));
+		byte[] bConfiguration = HexString.toByteArray(HexString.asciiToHex(toPrettyPrint(boolVerbose)));
 		
 		if (bConfiguration == null) {
 
@@ -673,7 +707,7 @@ public class ConfigurationFileExport {
 		}
 		
 		if (debug|localDebug) {
-			System.out.println("BuildFile.writeToDisk() " +
+			System.out.println("ConfigurationFile.writeToDisk() " +
 									" - Total Byte Count: " + bConfiguration.length +
 									" - FileName: " + fOutput.getName());
 		}
@@ -744,6 +778,13 @@ public class ConfigurationFileExport {
 			return ConfigurationFile.DOCSIS_VER_31;
 		}
 		
+	}
+	
+	/**
+	 * 
+	 * @param boolDottextOutputFormat TRUE = Textual OID Output , FALSE = Dotted OID Output */
+	public void setDotTextOIDOutputFormat(boolean boolDottextOutputFormat) {
+		this.boolDottextOutputFormat = boolDottextOutputFormat;
 	}
 	
 	/**
@@ -988,7 +1029,7 @@ public class ConfigurationFileExport {
 				sbTopLevelTLVCodeBlock	.append('\t')
 										.append(joTopLevelTLV.get(Dictionary.TLV_NAME))
 										.append(' ')
-										.append(NetSNMP.toTextualOID(jaTopLevelTLVOID.getJSONObject(0).getString("OID")))
+										.append(NetSNMP.toOIDFormat(jaTopLevelTLVOID.getJSONObject(0).getString("OID"),boolDottextOutputFormat))
 										.append(' ')
 										.append(BER_DATA_TYPE.get(Integer.decode(jaTopLevelTLVOID.getJSONObject(0).getString("DATA_TYPE"))))
 										.append(" \"")
@@ -1002,7 +1043,7 @@ public class ConfigurationFileExport {
 				sbTopLevelTLVCodeBlock	.append('\t')
 										.append(joTopLevelTLV.get(Dictionary.TLV_NAME))
 										.append(' ')
-										.append(NetSNMP.toTextualOID(jaTopLevelTLVOID.getJSONObject(0).getString("OID")))
+										.append(NetSNMP.toOIDFormat(jaTopLevelTLVOID.getJSONObject(0).getString("OID"),boolDottextOutputFormat))
 										.append(' ')
 										.append(BER_DATA_TYPE.get(Integer.decode(jaTopLevelTLVOID.getJSONObject(0).getString("DATA_TYPE"))))
 										.append(" \"")

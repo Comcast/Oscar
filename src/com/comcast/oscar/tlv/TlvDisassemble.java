@@ -16,12 +16,12 @@ import org.json.JSONObject;
 
 import com.comcast.oscar.ber.BEROIDConversion;
 import com.comcast.oscar.compiler.PacketCableConstants;
-import com.comcast.oscar.sql.queries.DictionarySQLConstants;
-import com.comcast.oscar.sql.queries.DictionarySQLQueries;
-import com.comcast.oscar.tlv.datatype.DataTypeDictionaryReference;
-import com.comcast.oscar.tlv.datatype.DataTypeFormatConversion;
-import com.comcast.oscar.tlv.datatype.DataTypeFormatException;
-import com.comcast.oscar.tlv.dictionary.Dictionary;
+import com.comcast.oscar.datatype.DataTypeDictionaryReference;
+import com.comcast.oscar.datatype.DataTypeFormatConversion;
+import com.comcast.oscar.datatype.DataTypeFormatException;
+import com.comcast.oscar.dictionary.Dictionary;
+import com.comcast.oscar.dictionary.DictionarySQLConstants;
+import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.utilities.HexString;
 
 /**

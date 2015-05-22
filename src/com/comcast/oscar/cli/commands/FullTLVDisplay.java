@@ -30,8 +30,7 @@ public class FullTLVDisplay {
 	 * Set option parameters for command Full TLV display
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withValueSeparator(' ');
 		OptionBuilder.withLongOpt("fulltlvdisplay");
     	OptionBuilder.withDescription("Display all TLVs available in the dictionary for the defined specification.");
@@ -42,8 +41,7 @@ public class FullTLVDisplay {
 	 * Print Full TLV Display
 	 * @param configurationFileType
 	 */
-	public void printFullTLVDisplay(int configurationFileType) 
-	{
+	public void printFullTLVDisplay(int configurationFileType) {
 		ConfigurationFileExport cfe = new ConfigurationFileExport(configurationFileType);
 		System.out.println(cfe.toPrettyPrint(ConfigurationFileExport.EXPORT_DEFAULT_TLV));
 	}

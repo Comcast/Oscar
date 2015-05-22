@@ -53,7 +53,7 @@ public class DOCSISCompileTest {
 		/* Import files if they do not exist */
 		DirectoryStructure ds = new DirectoryStructure();
 		if(!DirectoryStructure.fDictionaryFile().exists()) ds.exportDictionary();
-		if(!DirectoryStructure.fSnmp4jLicenseFile().exists()) ds.exportSnmp4jLicense();
+		
 				
 		/* Run commands */
 		CommandRun cmds = new CommandRun();

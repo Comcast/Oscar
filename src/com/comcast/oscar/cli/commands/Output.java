@@ -29,15 +29,13 @@ public class Output {
 	public static final String ERROR = "Output file not found. Please use -o <filename> to specify an output file.";
 	
 	private final String[] args;
-	
 	private File fOutput;
 	
 	/**
 	 * Get Output arguments
 	 * @param args
 	 */
-	public Output(String[] args) 
-	{
+	public Output(String[] args) {
 		this.args = args;
 	}
 	
@@ -45,8 +43,7 @@ public class Output {
 	 * Set option parameters for command Output
 	 * @return Option
 	 */
-	public static final Option OptionParameters() 
-	{
+	public static final Option OptionParameters() {
 		OptionBuilder.withArgName("filename");
 		OptionBuilder.hasArgs(1);
         OptionBuilder.withValueSeparator(' ');
@@ -57,18 +54,16 @@ public class Output {
 	
 	/**
 	 * Return Output file
-	
 	 * @return File
 	 */
 	public File getOutput() {
 		this.fOutput = new File(this.args[0]);
 		
-		if (fOutput.getParentFile() != null) 
-		{
-			fOutput.getParentFile().mkdirs();
+		if (this.fOutput.getParentFile() != null) {
+			this.fOutput.getParentFile().mkdirs();
 		}
 		
-		return fOutput;
+		return this.fOutput;
 	}
 	
 }
