@@ -228,7 +228,7 @@ public class NetSNMP  {
 	 */
 	public static String getDescription(String sOID) {
 		
-		boolean localDebug = Boolean.TRUE;
+		boolean localDebug = Boolean.FALSE;
 		String sDescription = "";
 		String sSnmpTranslate = "";	
 		
