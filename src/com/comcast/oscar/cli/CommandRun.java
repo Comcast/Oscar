@@ -68,7 +68,6 @@ public class CommandRun {
 	private DigitmapDisplay comDigitmapDisplay = new DigitmapDisplay();
 	private FullTLVDisplay comFullTLVDisplay = new FullTLVDisplay();
 	private JSONDisplay comJSONDisplay = new JSONDisplay();
-	private Key comKey = new Key();
 	private Specification comSpecification = new Specification();
 	
 	private CVC comCVC;
@@ -79,6 +78,7 @@ public class CommandRun {
 	private HexDisplay comHexDisplay;
 	private Input comInput;
 	private JSONtoTLV comJSONtoTLV;
+	private Key comKey;
 	private MaxCPE comMaxCPE;
 	private MergeBulk comMergeBulk;
 	private OID comOID;
@@ -141,7 +141,7 @@ public class CommandRun {
 	        }	       
 	        
 	        if (line.hasOption("k")) {
-	        	comKey.setKey(line.getOptionValues("k"));
+	        	comKey = new Key(line.getOptionValues("k"));
 	        }
 	        
 	        if (line.hasOption("mbb")) {

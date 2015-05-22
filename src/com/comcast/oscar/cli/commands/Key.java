@@ -29,6 +29,16 @@ import com.comcast.oscar.utilities.HexString;
 public class Key {
 
 	private String sKey = " ";
+	private final String[] args;
+	
+	/**
+	 * Get Key arguments
+	 * @param args
+	 */
+	public Key(String[] args) {
+		this.args = args;
+		setKey();
+	}
 	
 	/**
 	 * Set option parameters for command Key
@@ -48,10 +58,9 @@ public class Key {
 	 * Set Key string from file
 	 * @param args
 	 */
-	public void setKey(String[] args) {
-		if (new File(args[0]).exists()) 
-		{
-			this.sKey = new HexString(HexString.fileToByteArray(new File(args[0]))).toASCII();
+	public void setKey() {
+		if (new File(this.args[0]).exists()) {
+			this.sKey = new HexString(HexString.fileToByteArray(new File(this.args[0]))).toASCII();
 		}
 	}
 	

@@ -29,7 +29,6 @@ public class Output {
 	public static final String ERROR = "Output file not found. Please use -o <filename> to specify an output file.";
 	
 	private final String[] args;
-	
 	private File fOutput;
 	
 	/**
