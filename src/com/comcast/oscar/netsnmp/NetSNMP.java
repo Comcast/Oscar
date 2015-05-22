@@ -228,12 +228,12 @@ public class NetSNMP  {
 	 */
 	public static String getDescription(String sOID) {
 		
-		boolean localDebug = Boolean.FALSE;
+		boolean localDebug = Boolean.TRUE;
 		String sDescription = "";
 		String sSnmpTranslate = "";	
 		
 		if (debug|localDebug)
-			System.out.println("NetSNMP.toTextualOID(): " + sOID);
+			System.out.println("NetSNMP.getDescription(): " + sOID);
 		
 		/* If not installed, bypass and return input */
 		if (!isSnmptranslateInstalled()) {
@@ -252,13 +252,19 @@ public class NetSNMP  {
 					Constants.SNMP_TRANSLATE_DESCRIPTION_TEXTUAL_OID +
 					sOID;			
 		}
-				
+		
+		if (debug|localDebug)
+			System.out.println("NetSNMP.getDescription() TRANSLATE-CLI: " + sSnmpTranslate);
+		
 		Matcher mDescription = NETSNMP_DESCRIPTION.matcher(runSnmpTranslate(sSnmpTranslate).toString());
 		
 		if (mDescription.find()) {			
 			sDescription = PrettyPrint.ToParagraphForm(mDescription.group(1).replaceAll("\\s+", " "));		
 		}
-				
+		
+		if (debug|localDebug)
+			System.out.println("NetSNMP.getDescription() TRANSLATE-DESCRIPTION: " + sDescription);
+		
 		return sDescription;	
 	}
 
