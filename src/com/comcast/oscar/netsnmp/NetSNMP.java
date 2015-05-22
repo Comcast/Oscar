@@ -223,8 +223,8 @@ public class NetSNMP  {
 	
 	/**
 	 * 
-	 * @param sOID
-	 * @return
+	 * @param sOID .1.3.6.1.2.1.69.1.2.1.2.1 OR docsDevNmAccessIp.1
+	 * @return Description of OID
 	 */
 	public static String getDescription(String sOID) {
 		
@@ -259,7 +259,7 @@ public class NetSNMP  {
 		Matcher mDescription = NETSNMP_DESCRIPTION.matcher(runSnmpTranslate(sSnmpTranslate).toString());
 		
 		if (mDescription.find()) {			
-			sDescription = PrettyPrint.ToParagraphForm(mDescription.group(1).replaceAll("\\s+", " "));		
+			sDescription = "\n" + PrettyPrint.ToParagraphForm(mDescription.group(1).replaceAll("\\s+", " "));		
 		}
 		
 		if (debug|localDebug)
