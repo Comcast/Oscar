@@ -34,6 +34,7 @@ public class MergeBulkBuild {
 
 
 	public String NOMENCLATURE_SEPERATOR = "";
+	public String FILENAME_EXTENTION = "";
 	public static final Boolean BINARY_FILE_OUTPUT = true;
 	public static final Boolean TEXTUAL_FILE_OUTPUT = false;
 	public static final Boolean VERBOSE_DEFAULT_OUTPUT_ON = ConfigurationFileExport.EXPORT_DEFAULT_TLV;
@@ -134,12 +135,12 @@ public class MergeBulkBuild {
 			
 			/*Binary*/
 			if (fOutputType) {
-				cf.setConfigurationFileName(fOutputDir+File.separator+cf.getConfigurationFileName());
+				cf.setConfigurationFileName(fOutputDir+File.separator+cf.getConfigurationFileName()+FILENAME_EXTENTION);
 				cf.writeToDisk();
 			/*Text*/
 			} else {
 				ConfigurationFileExport cfe = new ConfigurationFileExport(cf);
-				cfe.writeToDisk(new File(fOutputDir+File.separator+cf.getConfigurationFileName()),
+				cfe.writeToDisk(new File(fOutputDir+File.separator+cf.getConfigurationFileName()+FILENAME_EXTENTION),
 								boolDefaultVerboseMode);
 			}
 				
