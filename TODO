@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Here is a List of TODO to make this Project More Complete
 
 If you like help complete or support the of this development of this project, please find and follow the CONTRIBUTING file instructions.
@@ -17,3 +18,25 @@ FIXES
 •	ADD Extended CMTS MIC
 •	Add Multiple CommonTlvInserts at one time
 •	Edit Service Flow via Service Flow ID Directly
+=======
+Here is a List of TODO to make this Project More Complete
+
+If you like help complete or support the of this development of this project, please find and follow the CONTRIBUTING file instructions.
+
+2015 TODO's
+•	Compile a JSON to Configuration File via CLI Later 2015
+•	Provide GUI Support to ADD/EDIT TLV Types to SQLite Database
+
+NEWS
+v2.0
+  •	ADD NetSNMP Support
+v1.2.0
+  •	ADD DPoE Support v1.2.0
+  •	Improve Lexer robustness
+
+FIXES
+•	Complete CLI Interpreter functionality(API Started)
+•	ADD Extended CMTS MIC
+•	Add Multiple CommonTlvInserts at one time
+•	Edit Service Flow via Service Flow ID Directly
+>>>>>>> master
