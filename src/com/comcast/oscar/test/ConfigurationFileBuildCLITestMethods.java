@@ -1676,7 +1676,7 @@ public class ConfigurationFileBuildCLITestMethods implements TestMethod {
 		arguments[2] = TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "Model";
 		arguments[3] = TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "Tier";
 		arguments[4] = TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "CPE";
-		arguments[5] = "o=" + TestDirectoryStructure.outputDir().toString();
+		arguments[5] = "o=outputTest";
 
 		/* Run commands */
 		CommandRun cmds = new CommandRun();

@@ -50,7 +50,6 @@ public class TLV {
 	
 	/**
 	 * Return TLV
-	
 	 * @return String
 	 */
 	public String getTLV() {

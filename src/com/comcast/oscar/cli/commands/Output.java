@@ -55,7 +55,6 @@ public class Output {
 	
 	/**
 	 * Return Output file
-	
 	 * @return File
 	 */
 	public File getOutput() {

@@ -50,7 +50,6 @@ public class DownstreamFrequency {
 	
 	/**
 	 * Return Downstream Frequency file
-	
 	 * @return int
 	 */
 	public int getDownstreamFrequency() {

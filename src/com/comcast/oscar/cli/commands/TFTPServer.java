@@ -57,7 +57,6 @@ public class TFTPServer {
 	
 	/**
 	 * Checks for an IPv4 address
-	
 	 * @return boolean
 	 */
 	public boolean hasIpv4Address() {
@@ -76,7 +75,6 @@ public class TFTPServer {
 	
 	/**
 	 * Return IPv4 address
-	
 	 * @return String
 	 */
 	public String getIpv4Address() {
@@ -85,7 +83,6 @@ public class TFTPServer {
 	
 	/**
 	 * Checks for IPv6 address
-	
 	 * @return boolean
 	 */
 	public boolean hasIpv6Address() {
@@ -104,7 +101,6 @@ public class TFTPServer {
 	
 	/**
 	 * Return IPv6 address
-	
 	 * @return String
 	 */
 	public String getIpv6Address() {
@@ -113,7 +109,6 @@ public class TFTPServer {
 	
 	/**
 	 * Check if any address was given
-	
 	 * @return boolean
 	 */
 	public boolean hasAddress() {
