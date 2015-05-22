@@ -35,6 +35,7 @@ public class MergeBulk {
 	
 	private final String[] args;
 	private File fOutputDir = new File(DirectoryStructure.sBasePath());
+	private String sExtension;
 	private boolean boolIsBinary = true;
 	private List<File> list = new ArrayList<File>();
 	private MergeBulkBuild mbb;
@@ -48,14 +49,14 @@ public class MergeBulk {
 	 * @return Option
 	 */
 	public static final Option OptionParameters() {
-		OptionBuilder.withArgName("input dirs> <o=<output dir>> <b{inary}/t{ext}");
+		OptionBuilder.withArgName("input dirs> <o=<output dir>> <e=<extension>> <b{inary}/t{ext}");
 		OptionBuilder.hasArgs();
 		OptionBuilder.hasOptionalArgs();
         OptionBuilder.withValueSeparator(' ');
         OptionBuilder.withLongOpt("mergebulkbuild");
         OptionBuilder.withDescription("Merge multiple text files from directories into one binary. " +
-        		"EX: -mbb inputDirectoryModel inputDirectoryTier inputDirectoryCPE o=outputDirectory text. " +
-        		"Output directory and b{inary}/t{ext} are optional.");
+        		"EX: -mbb inputDirectoryModel inputDirectoryTier inputDirectoryCPE o=outputDirectory e=bin text. " +
+        		"Output directory, extension and b{inary}/t{ext} are optional.");
 		return OptionBuilder.create("mbb");
 	}
 	
@@ -70,8 +71,21 @@ public class MergeBulk {
 			if (string.contains("=")) {
 				String[] array = string.split("=");
 				
-				if (array[0].equalsIgnoreCase("o") || array[0].equalsIgnoreCase("O")) {
-					this.fOutputDir = new File(array[1] + File.separator);
+				if (array[0].equalsIgnoreCase("o")) {
+					if (new File(array[1]).getParentFile() != null) {
+						this.fOutputDir = new File(array[1] + File.separator);
+					} 
+					else {
+						this.fOutputDir = new File(DirectoryStructure.sBasePath() + File.separator + array[1] + File.separator);
+					}
+					
+					if (this.fOutputDir != null) {
+						this.fOutputDir.mkdirs();
+					}
+				}
+				
+				if (array[0].equalsIgnoreCase("e")) {
+					this.sExtension = array[1];
 				}
 			} 
 			else if (string.equalsIgnoreCase("b")) {
@@ -100,8 +114,8 @@ public class MergeBulk {
 			this.boolIsBinary,
 			key);
 		
-		this.mbb.NOMENCLATURE_SEPERATOR = "_";
-		
+		this.mbb.FILENAME_EXTENSION = this.sExtension;
+				
 		for (File file : this.list) {
 			this.mbb.addInputDirectory(file);
 		}

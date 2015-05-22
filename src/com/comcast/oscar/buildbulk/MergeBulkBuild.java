@@ -34,7 +34,7 @@ public class MergeBulkBuild {
 
 
 	public String NOMENCLATURE_SEPERATOR = "";
-	public String FILENAME_EXTENTION = "";
+	public String FILENAME_EXTENSION = "";
 	public static final Boolean BINARY_FILE_OUTPUT = true;
 	public static final Boolean TEXTUAL_FILE_OUTPUT = false;
 	public static final Boolean VERBOSE_DEFAULT_OUTPUT_ON = ConfigurationFileExport.EXPORT_DEFAULT_TLV;
@@ -45,7 +45,7 @@ public class MergeBulkBuild {
 	private int iConfigurationFileType = -1;
 	private String sSharedSecret = "SHAREDSECRET";
 	private File fOutputDir;
-	private boolean fOutputType;
+	private boolean boolOutputType;
 	private boolean boolDefaultVerboseMode = VERBOSE_DEFAULT_OUTPUT_OFF;
 	
 	private boolean debug = Boolean.FALSE;
@@ -61,7 +61,7 @@ public class MergeBulkBuild {
 		this.iConfigurationFileType = iConfigurationFileType;
 		this.sSharedSecret = sSharedSecret;
 		this.fOutputDir = fOutputDir;
-		this.fOutputType = fOutputType;
+		this.boolOutputType = fOutputType;
 	}
 	
 	/**
@@ -73,7 +73,7 @@ public class MergeBulkBuild {
 	public MergeBulkBuild(int iConfigurationFileType,File fOutputDir, boolean fOutputType) {
 		this.iConfigurationFileType = iConfigurationFileType;
 		this.fOutputDir = fOutputDir;
-		this.fOutputType = fOutputType;
+		this.boolOutputType = fOutputType;
 	}
 	
 	/**
@@ -134,13 +134,13 @@ public class MergeBulkBuild {
 			cf.commit();
 			
 			/*Binary*/
-			if (fOutputType) {
-				cf.setConfigurationFileName(fOutputDir+File.separator+cf.getConfigurationFileName()+FILENAME_EXTENTION);
+			if (boolOutputType) {
+				cf.setConfigurationFileName(fOutputDir+File.separator+cf.getConfigurationFileName()+FILENAME_EXTENSION);
 				cf.writeToDisk();
 			/*Text*/
 			} else {
 				ConfigurationFileExport cfe = new ConfigurationFileExport(cf);
-				cfe.writeToDisk(new File(fOutputDir+File.separator+cf.getConfigurationFileName()+FILENAME_EXTENTION),
+				cfe.writeToDisk(new File(fOutputDir+File.separator+cf.getConfigurationFileName()+FILENAME_EXTENSION),
 								boolDefaultVerboseMode);
 			}
 				
