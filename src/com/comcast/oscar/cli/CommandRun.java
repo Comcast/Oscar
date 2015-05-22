@@ -100,7 +100,7 @@ public class CommandRun {
 	    try {
 	        CommandLine line = parser.parse(options, args);
             HelpFormatter hf = new HelpFormatter();
-            hf.setWidth(115);
+            hf.setWidth(180);
             hf.setLeftPadding(5);
             hf.setDescPadding(5);  
             
@@ -337,7 +337,7 @@ public class CommandRun {
 				cf.commit();
 								
 				ConfigurationFileExport cfeSnmp64Insert = new ConfigurationFileExport(cf);	
-				System.out.println(cfeSnmp64Insert.toPrettyPrint(comDecompile.checkVerbose()));
+				System.out.println(cfeSnmp64Insert.toPrettyPrint(comDecompile.checkVerbose(), comDecompile.checkSuppressed()));
 			} 
 			else {
 				System.err.println("Input file " + Constants.ERR_NOT_BIN);
