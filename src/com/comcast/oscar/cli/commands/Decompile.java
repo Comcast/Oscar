@@ -47,7 +47,7 @@ public class Decompile {
 		if (this.args != null) {
 	    	for (String string : this.args) {
 	        	if (string.equalsIgnoreCase("d") || string.equalsIgnoreCase("dotted")) {
-	        		return false;
+	        		return true;
 	        	}
 	    	}
 		}
