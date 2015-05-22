@@ -265,6 +265,10 @@ public class NetSNMP  {
 		if (debug|localDebug)
 			System.out.println("NetSNMP.getDescription() TRANSLATE-DESCRIPTION: " + sDescription);
 		
+		if (sDescription.isEmpty()) {
+			sDescription = "\nVerify that MIBS are loaded for OID: " + sOID;
+		}
+		
 		return sDescription;	
 	}
 
