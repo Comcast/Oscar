@@ -33,6 +33,7 @@ import com.comcast.oscar.cli.commands.TFTPServer;
 import com.comcast.oscar.cli.commands.TLV;
 import com.comcast.oscar.cli.commands.TLVDescription;
 import com.comcast.oscar.cli.commands.TLVtoJSON;
+import com.comcast.oscar.cli.commands.Translate;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
@@ -68,6 +69,7 @@ public class CommandRun {
 	private DigitmapDisplay comDigitmapDisplay = new DigitmapDisplay();
 	private FullTLVDisplay comFullTLVDisplay = new FullTLVDisplay();
 	private JSONDisplay comJSONDisplay = new JSONDisplay();
+	private Key comKey = new Key();
 	private Specification comSpecification = new Specification();
 	
 	private CVC comCVC;
@@ -78,11 +80,11 @@ public class CommandRun {
 	private HexDisplay comHexDisplay;
 	private Input comInput;
 	private JSONtoTLV comJSONtoTLV;
-	private Key comKey;
 	private MaxCPE comMaxCPE;
 	private MergeBulk comMergeBulk;
 	private OID comOID;
 	private Output comOutput;
+	private Translate comTranslate;
 	private TFTPServer comTFTPServer;
 	private TLV comTLV;
 	private TLVDescription comTLVDescription;
@@ -141,7 +143,7 @@ public class CommandRun {
 	        }	       
 	        
 	        if (line.hasOption("k")) {
-	        	comKey = new Key(line.getOptionValues("k"));
+	        	comKey.setKey(line.getOptionValues("k"));
 	        }
 	        
 	        if (line.hasOption("mbb")) {
@@ -292,10 +294,15 @@ public class CommandRun {
 	        if (line.hasOption("td")) {
 	        	comTLVDescription = new TLVDescription(line.getOptionValues("td"));
 	        	comTLVDescription.printTLVDescription(comSpecification.getConfigurationFileType());
-            }    
+            }
+	        
+	        if (line.hasOption("tr")) {
+	        	comTranslate = new Translate(line.getOptionValues("tr"));
+	        	comTranslate.translate();
+	        }
 	    }
 	    catch( ParseException exp ) {
-	        System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
+	        System.err.println( "Parsing failed. Reason: " + exp.getMessage() );
 	    }
 	}
 

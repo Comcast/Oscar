@@ -83,7 +83,10 @@ public class ConfigurationFileBuildCLIUnitTest {
 		//cfbctm.BinaryToBinaryDPoE();
 		//cfbctm.BinaryToTextDPoE();
 		//cfbctm.TextToBinaryDPoE();
-		cfbctm.MergeBulk();
+		//cfbctm.MergeBulk();
+		cfbctm.MergeBulkExt();
+		cfbctm.TranslateWord();
+		cfbctm.TranslateDotted();
 	}
 
 }

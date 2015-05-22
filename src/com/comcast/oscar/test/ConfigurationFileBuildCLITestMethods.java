@@ -1676,7 +1676,7 @@ public class ConfigurationFileBuildCLITestMethods implements TestMethod {
 		arguments[2] = TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "Model";
 		arguments[3] = TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "Tier";
 		arguments[4] = TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "CPE";
-		arguments[5] = "o=outputTest";
+		arguments[5] = "o=" + TestDirectoryStructure.outputDir().toString();
 
 		/* Run commands */
 		CommandRun cmds = new CommandRun();
@@ -1684,5 +1684,73 @@ public class ConfigurationFileBuildCLITestMethods implements TestMethod {
 
 		/* End Banner */
 		System.out.println("+---------------MergeBulk End-----------------+");
+	}
+	
+	/**
+	 * Method MergeBulk.
+	 * @see com.comcast.oscar.test.TestMethod#MergeBulkExt()
+	 */
+	public void MergeBulkExt() {
+		/* Start Banner */
+		System.out.println("+---------------MergeBulkExt Start---------------+");
+
+		/* Define arguments */
+		String arguments[] = new String[7];
+		arguments[0] = "-mbb";
+		arguments[1] = "b";
+		arguments[2] = TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "Model";
+		arguments[3] = TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "Tier";
+		arguments[4] = TestDirectoryStructure.fTestDirPath + File.separator + "inputmerge" + File.separator + "CPE";
+		arguments[5] = "o=" + TestDirectoryStructure.outputDir().toString();
+		arguments[6] = "e=.bin";
+
+		/* Run commands */
+		CommandRun cmds = new CommandRun();
+		cmds.run(arguments);
+
+		/* End Banner */
+		System.out.println("+---------------MergeBulkExt End-----------------+");
+	}
+	
+	/**
+	 * Method MergeBulk.
+	 * @see com.comcast.oscar.test.TestMethod#TranslateWord()
+	 */
+	public void TranslateWord() {
+		/* Start Banner */
+		System.out.println("+---------------TranslateWord Start---------------+");
+
+		/* Define arguments */
+		String arguments[] = new String[2];
+		arguments[0] = "-tr";
+		arguments[1] = "docsDev";
+
+		/* Run commands */
+		CommandRun cmds = new CommandRun();
+		cmds.run(arguments);
+
+		/* End Banner */
+		System.out.println("+---------------TranslateWord End-----------------+");
+	}
+	
+	/**
+	 * Method MergeBulk.
+	 * @see com.comcast.oscar.test.TestMethod#TranslateDotted()
+	 */
+	public void TranslateDotted() {
+		/* Start Banner */
+		System.out.println("+---------------TranslateDotted Start---------------+");
+
+		/* Define arguments */
+		String arguments[] = new String[2];
+		arguments[0] = "-tr";
+		arguments[1] = "1.3.6.1.2.1.69";
+
+		/* Run commands */
+		CommandRun cmds = new CommandRun();
+		cmds.run(arguments);
+
+		/* End Banner */
+		System.out.println("+---------------TranslateDotted End-----------------+");
 	}
 }

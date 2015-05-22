@@ -24,6 +24,7 @@ import com.comcast.oscar.cli.commands.TFTPServer;
 import com.comcast.oscar.cli.commands.TLV;
 import com.comcast.oscar.cli.commands.TLVDescription;
 import com.comcast.oscar.cli.commands.TLVtoJSON;
+import com.comcast.oscar.cli.commands.Translate;
 
 public class BuildOptions {
 	
@@ -51,6 +52,7 @@ public class BuildOptions {
 		options.addOption(OID.OptionParameters());
 		options.addOption(Output.OptionParameters());
 		options.addOption(Specification.OptionParameters());
+		options.addOption(Translate.OptionParameters());
 		options.addOption(TFTPServer.OptionParameters());
 		options.addOption(TLV.OptionParameters());
 		options.addOption(TLVDescription.OptionParameters());
