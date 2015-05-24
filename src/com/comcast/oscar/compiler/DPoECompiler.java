@@ -1,6 +1,9 @@
 package com.comcast.oscar.compiler;
 
+import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
+import com.comcast.oscar.tlv.TlvBuilder;
+import com.comcast.oscar.tlv.TlvException;
 
 /**
  * @bannerLicense
@@ -55,7 +58,14 @@ public class DPoECompiler extends DocsisCompiler {
 	/**
 	 * This method removes TopLevel TLVs that are not defined the Dictionary
 	 */
-	public void removeNonConformingTopLevelTLV() {
+	public void removeNonDictionaryTopLevelTLV() {
+		
+		try {
+			baTlvBuffer = TlvBuilder.stripTlv(17,
+					TlvBuilder.stripTlv(Constants.CM_MIC, baTlvBuffer));
+		} catch (TlvException e) {
+			e.printStackTrace();
+		}
 		
 	}
 

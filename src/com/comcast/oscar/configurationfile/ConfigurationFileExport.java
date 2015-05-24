@@ -58,6 +58,7 @@ import com.comcast.oscar.utilities.PrettyPrint;
 
 public class ConfigurationFileExport {
 	
+	/*House the Configuration Byte Array */
 	private byte[] bTLV;
 
 	private final boolean debug = Boolean.FALSE;	
@@ -1185,9 +1186,12 @@ public class ConfigurationFileExport {
 	private void init(int iConfigurationFileType) {
 		
 		initBER();
-		
+			
 		if ((iConfigurationFileType >= DPOE_VER_10) || 
 				(iConfigurationFileType <= DPOE_VER_20)) {
+			
+			removeNonDictionaryTopLevelTLV();
+			
 			sConfigurationFileStart = "DPoE";
 		}
 	}
@@ -1318,6 +1322,11 @@ public class ConfigurationFileExport {
 		return sbBanner;
 	}
 	
+	/**
+	 * 
+	 * @param joTlvDictionary - JSON OBject of the Dictionary
+	 * @return the Hint for the datatype that is used
+	 */
 	private String getDisplayHint(JSONObject joTlvDictionary) {
 		
 		String sDisplayHint = "";
@@ -1394,6 +1403,22 @@ public class ConfigurationFileExport {
 		}
 		
 		return sDisplayHint;
+	}
+	
+	/**
+	 * This method will remove all TopLevel TLV that are not defined in the Dictionary
+	 */
+	private void removeNonDictionaryTopLevelTLV() {
+		/* Get TopLevel List*/
+		 
+		List<Integer> liTopLevel = dsqDictionarySQLQueries.getTopLevelTLV();
+		
+		if(debug)
+			System.out.println("removeNonDictionaryTopLevelTLV(): " + liTopLevel);
+		
+		/*Create new ByteArray*/
+		bTLV = TlvBuilder.fetchTlv(liTopLevel, bTLV);
+		
 	}
 
 }
