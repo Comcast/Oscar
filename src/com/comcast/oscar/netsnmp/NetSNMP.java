@@ -50,6 +50,7 @@ public class NetSNMP  {
 	
 	static {
 		
+		/*If no Mapping Exist, Create a new Mapping file */
 		FixNullNetSNMPJSON();
 		
 		omNetSNMP = new ObjectMapper();
@@ -57,14 +58,17 @@ public class NetSNMP  {
 		bmDotTextMap = new DualHashBidiMap<String,String>();
 		
 		try {
-			bmDotTextMap = omNetSNMP.readValue(DirectoryStructureNetSNMP.fNetSNMPJSON(), 
+			bmDotTextMap = omNetSNMP.readValue(	DirectoryStructureNetSNMP.fNetSNMPJSON(), 
 												new TypeReference<DualHashBidiMap<String, String>>() {});
 		} catch (JsonParseException e) {
-			e.printStackTrace();
+			System.out.println(	"Error in reading " + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE +
+								", Delete File");
 		} catch (JsonMappingException e) {
-			e.printStackTrace();
+			System.out.println(	"Error in reading " + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE +
+								", Delete File");
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(	"Error in reading " + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE +
+								", Delete File");
 		}	
 	}
 	
@@ -101,14 +105,15 @@ public class NetSNMP  {
 		
 		/* Not a clean way to do it, but it works */
 		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD + 	
-				Constants.MIB_PARAMETER + 
-				Constants.SNMP_TRANSLATE_OID_NAME_2_OID_DEC +
-				sOID.replaceAll("\\s+1", " .iso")
-					.replaceAll("\\s+\\.1", " .iso");
+								Constants.MIB_PARAMETER + 
+								Constants.SNMP_TRANSLATE_OID_NAME_2_OID_DEC +
+								sOID.replaceAll("\\s+1", " .iso")
+									.replaceAll("\\s+\\.1", " .iso");
 
 		if (debug|localDebug)
 			System.out.println("NetSNMP.toDottedOID(): " + sSnmpTranslate);
 
+		/* Get the String Return */
 		sDottedOID = runSnmpTranslate(sSnmpTranslate).get(0);
 		
 		/* Add Converted OIDS to Map for later Storage */
