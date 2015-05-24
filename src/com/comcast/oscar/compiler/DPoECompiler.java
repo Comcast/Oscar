@@ -52,5 +52,11 @@ public class DPoECompiler extends DocsisCompiler {
 		return this.iDPoEVersion;
 	}
 	
+	/**
+	 * This method removes TopLevel TLVs that are not defined the Dictionary
+	 */
+	public void removeNonConformingTopLevelTLV() {
+		
+	}
 
 }
