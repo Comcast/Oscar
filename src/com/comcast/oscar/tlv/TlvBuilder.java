@@ -43,12 +43,9 @@ public class TlvBuilder implements TlvBuild {
 		
 	private static boolean debug = Boolean.FALSE;
 	
-	protected List<String> lsTlvBuffer = new ArrayList<String>();
-	
+	protected List<String> lsTlvBuffer = new ArrayList<String>();	
 	protected byte[] baTlvBuffer = null;
-	
 	protected List<byte[]> lbTlvBuilder = new ArrayList<byte[]>();
-	
 	protected Map<Integer,Integer> miiTlvTypeTpByteLength = new HashMap<Integer,Integer>();
 	
 	public final static byte 	TLV_LENGTH_POS_OFFSET 		= 0x01;	
