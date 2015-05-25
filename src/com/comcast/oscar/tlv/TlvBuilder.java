@@ -546,7 +546,6 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	
 	 * @return a list of TopLevel TLV * @see com.comcast.oscar.tlv.TlvBuild#getTopLevelTlvList()
 	 */
 	public List<Integer> getTopLevelTlvList() {

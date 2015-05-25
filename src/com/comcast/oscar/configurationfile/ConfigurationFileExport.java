@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -1409,15 +1410,33 @@ public class ConfigurationFileExport {
 	 * This method will remove all TopLevel TLV that are not defined in the Dictionary
 	 */
 	private void removeNonDictionaryTopLevelTLV() {
-		/* Get TopLevel List*/
-		 
-		List<Integer> liTopLevel = dsqDictionarySQLQueries.getTopLevelTLV();
 		
-		if(debug)
-			System.out.println("removeNonDictionaryTopLevelTLV(): " + liTopLevel);
+		Boolean localDebug = Boolean.TRUE;
+		
+		/* Get TopLevel List*/ 
+		List<Integer> liTopLevelDict = dsqDictionarySQLQueries.getTopLevelTLV();
+		
+		List<Integer> liTopLevelCFE = null;
+		
+		try {
+			liTopLevelCFE = getTlvBuilder().getTopLevelTlvList();
+		} catch (TlvException e) {
+			e.printStackTrace();
+		}
+		
+		/*This will create a single instance of each Type */
+		liTopLevelCFE = new ArrayList<Integer>(new LinkedHashSet<Integer>(liTopLevelCFE));
+		
+		/*Remove Types that are not suppose to be here */
+		liTopLevelCFE.retainAll(liTopLevelDict);
+				
+		if(debug|localDebug) {
+			System.out.println("removeNonDictionaryTopLevelTLV() -> DICT: " + liTopLevelDict);
+			System.out.println("removeNonDictionaryTopLevelTLV() -> CFE remove DICT: " + liTopLevelCFE);
+		}
 		
 		/*Create new ByteArray*/
-		bTLV = TlvBuilder.fetchTlv(liTopLevel, bTLV);
+		bTLV = TlvBuilder.fetchTlv(liTopLevelCFE, bTLV);
 		
 	}
 
