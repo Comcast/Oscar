@@ -1408,10 +1408,11 @@ public class ConfigurationFileExport {
 	
 	/**
 	 * This method will remove all TopLevel TLV that are not defined in the Dictionary
+	 * Currently support 1 byte Length TLVs
 	 */
 	private void removeNonDictionaryTopLevelTLV() {
 		
-		Boolean localDebug = Boolean.TRUE;
+		Boolean localDebug = Boolean.FALSE;
 		
 		/* Get TopLevel List*/ 
 		List<Integer> liTopLevelDict = dsqDictionarySQLQueries.getTopLevelTLV();
@@ -1427,7 +1428,7 @@ public class ConfigurationFileExport {
 		/*This will create a single instance of each Type */
 		liTopLevelCFE = new ArrayList<Integer>(new LinkedHashSet<Integer>(liTopLevelCFE));
 		
-		/*Remove Types that are not suppose to be here */
+		/*Remove Types that are not suppose to be There */
 		liTopLevelCFE.retainAll(liTopLevelDict);
 				
 		if(debug|localDebug) {
