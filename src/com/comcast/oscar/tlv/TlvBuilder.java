@@ -55,14 +55,19 @@ public class TlvBuilder implements TlvBuild {
 	public final static int 	END_OF_BYTE_ARRAY_INDEX 	= -1;
 	public final static byte	TLV_ONE_BYTE_LENGTH			= 0x01;
 	
- 	public TlvBuilder() {
+ 	/**
+ 	 * Main Constructor  TlvBuilder creates Type Length Value based on the Basic Encoding Rules for 1 Byte length or 255 Byte Value
+ 	 * 
+ 	 * 		Type: 3 , Length: 1 , Value: 1 -> 03:01:01
+	 *		Type: 4 , Length: 3 , Value: 01:01:01 or 0x15 or DEC:21 -> 41:03:01:01:01
+ 	 */
+	public TlvBuilder() {
 		super();
 	}
 
 	/**
 	 * 
-	 * @param cfi - ConfigurationFileImport 
-	 */
+	 * @param cfi - ConfigurationFileImport */
 	public void add (ConfigurationFileImport cfi) {
 				
 		try {
@@ -76,8 +81,7 @@ public class TlvBuilder implements TlvBuild {
 	 * 
 	 * This method assumes that each Type is of 1 byte Length
 	 * 
-	 * @param hsObject HexString
-	
+	 * @param hsObject Add HexString object, will throw exception if Bytes are not of a TLV Construct
 	 * @throws TlvException */
 	public void add (HexString hsObject) throws TlvException {
 		
@@ -102,8 +106,8 @@ public class TlvBuilder implements TlvBuild {
 		
 	/**
 	 * 
-	 * @param iTlvType Type integer < 256
-	 * @param iValue
+	 * @param iTlvType Type integer 0>Type<256
+	 * @param iValue 
 	 * @throws TlvException */
 	public void add (int iTlvType, Integer iValue) throws TlvException {
 
@@ -130,7 +134,7 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	 * @param iTlvType Type integer < 256
+	 * @param iTlvType Type integer 0>Type<256
 	 * @param hsValue = HexString of the Value, length is automatically calculated
 	 * @throws TlvException */
 	public void add (int iTlvType, HexString hsValue) throws TlvException {
@@ -279,10 +283,9 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	 * @param iTlvType Must be 0 - 255
+	 * @param iTlvType Must be 0>Type<256
 	 * @param bValue byte array containing a value of 1 byte or greater
 	 * @param booleanStripExistingTlv = True = Strip Existing TLV ; False = Do Not Strip TLV
-	
 	 * @throws TlvException */
 	public void add (int iTlvType , byte[] bValue , boolean booleanStripExistingTlv) throws TlvException {
 
@@ -314,11 +317,10 @@ public class TlvBuilder implements TlvBuild {
 	
 	/**
 	 * 
-	 * @param iSnmpTlvType Must be 0 - 255
+	 * @param iSnmpTlvType Must be 0>Type<256
 	 * @param oObjectID	   OID object from SNMP4J	
 	 * @param bBerDataType BER Datatype
-	 * @param lNumber	   Number of Long Type
-	 */
+	 * @param lNumber	   Number of Long Type*/
 	public void add (int iSnmpTlvType, OID oObjectID , byte bBerDataType , long lNumber) {	
 		
 		String sTlvObjectID = "";
@@ -340,11 +342,10 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	 * @param iSnmpTlvType Must be 0 - 255
+	 * @param iSnmpTlvType Must be 0>Type<256
 	 * @param oObjectID	   OID object from SNMP4J	
 	 * @param bBerDataType BER Datatype
-	 * @param sValue String value 
-	 */
+	 * @param sValue String value */
 	public void add (int iSnmpTlvType, OID oObjectID , byte bBerDataType , String sValue) {	
 
 		String sTlvObjectID = "";
@@ -373,11 +374,10 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	 * @param iSnmpTlvType Must be 0 - 255
+	 * @param iSnmpTlvType Must be 0>Type<256
 	 * @param oObjectID	   OID object from SNMP4J	
 	 * @param bBerDataType BER Datatype
-	 * @param bValue byteArray Value
-	 */
+	 * @param bValue byteArray Value*/
 	public void add (int iSnmpTlvType, OID oObjectID , byte bBerDataType , byte[] bValue) {	
 
 		String sTlvObjectID = "";
@@ -408,8 +408,7 @@ public class TlvBuilder implements TlvBuild {
 	 * 
 	 * This option is used when TLVs are greater than 1 byte Length or a length of 254 bytes
 	 * 
-	 * @param tvbObject TlvVariableBinding Object
-	 */
+	 * @param tvbObject TlvVariableBinding Object*/
 	public void add (TlvVariableBinding tvbObject) {
 
 		boolean localDebug = Boolean.FALSE;
@@ -435,9 +434,8 @@ public class TlvBuilder implements TlvBuild {
 	}
 	
 	/**
-	 * 
-	
-	 * @return String
+	 *
+	 * @return String if a List Array String Style of the buffer in Hex
 	 */
 	public String toStringArray () {
 		return lsTlvBuffer.toString();
@@ -445,8 +443,7 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	 * @return String
-	 */
+	 * @return String Style of the buffer in Hex*/
 	@Override
 	public String toString () {
 		return lsTlvBuffer.toString().replaceAll("\\[|\\]|\\,|\\s", "");		
@@ -455,17 +452,14 @@ public class TlvBuilder implements TlvBuild {
 	/**
 	 * 
 	 * @param sSeperation
-	
-	 * @return String
-	 */
+	 * @return String Style of the buffer in Hex with a defined separation character*/
 	public String toStringSeperation (String sSeperation) {
 		return new HexString(toByteArray()).toString(sSeperation);
 	}
 
 	/**
 	 * 	
-	 * @return int
-	 */
+	 * @return int length of buffer in bytes*/
  	public int length () {
 		return toByteArray().length;
 	}
@@ -529,6 +523,8 @@ public class TlvBuilder implements TlvBuild {
 	/**
 	 * 
 	 * @see com.comcast.oscar.tlv.TlvBuild#clear()
+	 * 
+	 * Clear buffer
 	 */
 	public void clear() {
 		lsTlvBuffer.clear();	
@@ -536,9 +532,7 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	
-	 * @return TLV in a byte array * @see com.comcast.oscar.tlv.TlvBuild#toByteArray()
-	 */
+	 * @return TLV in a new byte array, not a pointer to buffer */
 	public byte[] toByteArray() {
 		HexBinaryAdapter adapter = new HexBinaryAdapter();
 		return adapter.unmarshal(this.toString());
@@ -599,8 +593,7 @@ public class TlvBuilder implements TlvBuild {
 	 * @param miiTypeByteLength	- 
 	 * 
 	 * @return List<Integer>
-	 * @see com.comcast.oscar.tlv.TlvBuild#getTopLevelTlvList(Map<Integer,Integer>)
-	 */
+	 * @see com.comcast.oscar.tlv.TlvBuild#getTopLevelTlvList(Map<Integer,Integer>)*/
 	public List<Integer> getTopLevelTlvList (Map<Integer,Integer> miiTypeByteLength) {
 		
 		boolean localDebug = Boolean.FALSE;
@@ -663,7 +656,6 @@ public class TlvBuilder implements TlvBuild {
 	}
 	
 	/**
-	
 	 * @return This method returns a TlvBuild of the bytes contained */
 	@Override
 	public TlvBuilder clone() {
@@ -681,8 +673,7 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 *	
-	 * @return List<byte[]>
-	 */
+	 * @return List<byte[]>*/
 	public List<byte[]> sortByTopLevelTlv () {
 		
 		boolean localDebug = Boolean.FALSE;
@@ -860,8 +851,7 @@ public class TlvBuilder implements TlvBuild {
 	/**
 	 * 
 	 * @return Map<Integer,Integer>
-	 * @see com.comcast.oscar.tlv.TlvBuild#getMapTypeToByteLength()
-	 */
+	 * @see com.comcast.oscar.tlv.TlvBuild#getMapTypeToByteLength()*/
 	public Map<Integer,Integer> getMapTypeToByteLength () {
 		
 		boolean localDebug = Boolean.FALSE;
@@ -875,16 +865,14 @@ public class TlvBuilder implements TlvBuild {
 	/**
 	 *	
 	 * @return Boolean
-	 * @see com.comcast.oscar.tlv.TlvBuild#isEmpty()
-	 */
+	 * @see com.comcast.oscar.tlv.TlvBuild#isEmpty()*/
 	public Boolean isEmpty() {
 		return lsTlvBuffer.isEmpty();
 	}
 	
 	/**
 	 *
-	 * @return HexString
-	 */
+	 * @return HexString*/
 	public HexString getHexString() {
 		return new HexString(toByteArray());
 	}
@@ -986,17 +974,17 @@ public class TlvBuilder implements TlvBuild {
 
 	/**
 	 * 
-	 * @param iType
-	 * @param bTlvByteArray
-	 * @param miiTypeToByteLength	
-	 * @return byte[]
+	 * @param iType - Integer 0>Type<255
+	 * @param bTlvByteArray ByteArray containing TLV Buffer
+	 * @param miiTypeToByteLength Map Containing a Type to Bytelength association	
+	 * @return byte[] ByteArray that do not contain the specified Type
 	 * @throws TlvException */
 	public static byte[] stripTlv (int iType , byte[] bTlvByteArray , Map<Integer,Integer> miiTypeToByteLength) throws TlvException {
 
 		boolean localDebug = Boolean.FALSE;
 		
-		if (iType < 0)
-			throw new TlvException("TlvBuilder.stripTlv() Type Less than 0");
+		if ((iType < 0) && (iType > 255))
+			throw new TlvException("TlvBuilder.stripTlv() Type Less than 0 or Greater than 255");
 		
 		if (bTlvByteArray ==  null)
 			throw new TlvException("TlvBuilder.stripTlv() Byte Array is NULL");
@@ -1067,8 +1055,8 @@ public class TlvBuilder implements TlvBuild {
 	
 	/**
 	 * 
-	 * @param liType
-	 * @param bTlvByteArray	
+	 * @param liType - List of integers that contain the Types that are to be fetched from TLV ByteArray
+	 * @param bTlvByteArray	Byte Array that contains TLV, MUST be in TLV Construct
 	 * @return byte[]
 	 */
 	public static byte[] fetchTlv (List<Integer> liType , byte[] bTlvByteArray) {
@@ -1122,11 +1110,7 @@ public class TlvBuilder implements TlvBuild {
 											" ---- BAOS: " + baosStripedTlvByteArray.size() + " ----+");
 					
 					baosStripedTlvByteArray.write(bTlvByteArray, iIndex, iTypeLength);
-					
-					/*
-					if (debug|localDebug)
-						System.out.println(	"FOUND - TlvBuilder.fetchTlv(LIST) Hex: " + new HexString(bTlvByteArray).toString(""));
-					*/					
+										
 				}
 
 				//Goto Next TLV Index
@@ -1142,8 +1126,8 @@ public class TlvBuilder implements TlvBuild {
 	 * 
 	 * If a Type to Byte Length is not defined, this method assumes that the type is of 1 byte Length
 	 * 
-	 * @param liType	
-	 * @param bTlvByteArray	
+	 * @param liType - List of integers that contain the Types that are to be fetched from TLV ByteArray
+	 * @param bTlvByteArray	Byte Array that contains TLV, MUST be in TLV Construct
 	 * @param _miiTypeByteLength Map<Integer,Integer>
 	 * @return byte[]
 	 */

@@ -55,16 +55,13 @@ public class TlvAssembler extends TlvBuilder {
 
 	/**
 	 * 
-	
-	 * @return String
-	 */
+	 * @return String JSONArray of Dictionary*/
 	public String toJSONArray() {
 		return jaTlvDictionary.toString();	
 	}
 	
 	/**
-	 * 
-	 */
+	 *  Convert a JSONArray to TLV to buffer*/
 	private void convertJSONToTLV () {
 		
 		boolean localDebug = Boolean.FALSE;
@@ -126,10 +123,8 @@ public class TlvAssembler extends TlvBuilder {
 	
 	/**
 	 * 
-	 * @param jaTlvDictionary
-	
-	 * @return TlvBuilder
-	 */
+	 * @param jaTlvDictionary JSONArray of Dictionary	
+	 * @return TlvBuilder*/
 	private TlvBuilder buildTlvFromTlvDictionary (JSONArray jaTlvDictionary) {
 		
 		boolean localDebug = Boolean.FALSE;
@@ -221,9 +216,7 @@ public class TlvAssembler extends TlvBuilder {
 	
 	/**
 	 * 
-	 * @param joTlvDictionary
-	
-	
+	 * @param joTlvDictionary	
 	 * @return TlvBuilder
 	 * @throws JSONException */
 	private TlvBuilder buildTlvFromTlvDictionary (JSONObject joTlvDictionary) throws JSONException {

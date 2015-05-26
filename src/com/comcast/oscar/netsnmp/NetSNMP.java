@@ -92,6 +92,7 @@ public class NetSNMP  {
 			return sOID;
 		}
 		
+		/* If there is an entry, get OID Lookup*/
 		if (!CheckOIDDBLookup(sOID).isEmpty()) {
 			return CheckOIDDBLookup(sOID);
 		}
@@ -215,7 +216,7 @@ public class NetSNMP  {
 	 * 
 	 * If OID starts with .1.3.6 it is considered a DottedOID
 	 * 
-	 * @param sOID
+	 * @param sOID .1.3.6.1.2.1.69.1.2.1.2.1 OR docsDevNmAccessIp.1
 	 * @return True if Dotted, False is not Dotted*/
 	public static boolean isDottedOID(String sOID) {
 
@@ -244,13 +245,16 @@ public class NetSNMP  {
 			return sOID;
 		}
 		
+		/* If Dotted, Get Textual OID*/
 		if (isDottedOID(sOID)) {
 			
 			sSnmpTranslate = 	Constants.SNMP_TRANSLATE_CMD +  	
 								Constants.MIB_PARAMETER + 
 								Constants.SNMP_TRANSLATE_DESCRIPTION_DOTTED_OID +
 								sOID;
-		} else {
+		} 
+		/* If Textual, Get Dotted OID */
+		else {
 			sSnmpTranslate = 	Constants.SNMP_TRANSLATE_CMD +  	
 					Constants.MIB_PARAMETER + 
 					Constants.SNMP_TRANSLATE_DESCRIPTION_TEXTUAL_OID +
@@ -411,8 +415,7 @@ public class NetSNMP  {
 	}
 	
 	/**
-	 * Checks to see if the DB file is empty, if so put a single entry to prevent error
-	 */
+	 * Checks to see if the DB file is empty, if so put a single entry to prevent error*/
 	private static void FixNullNetSNMPJSON() {
 		
 		if (!DirectoryStructureNetSNMP.fNetSNMPJSON().exists()) {
