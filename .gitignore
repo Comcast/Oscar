@@ -1,6 +1,7 @@
 # Files #
 *.class
 .classpath
+build.xml
 DottedTextualNetSNMPMap.*
 
 # Mobile Tools for Java (J2ME)
