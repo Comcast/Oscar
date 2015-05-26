@@ -251,6 +251,10 @@ public class CommandRun {
 	        			comHexDisplay.printHexDisplayFromText(comInput.getInput(), comSpecification.getConfigurationFileType());
 	        		}
 	        	}
+	        	else {
+	        		System.err.println(Input.ERROR);
+	        		System.exit(1);
+	        	}
         	}
 	        
 	        if (line.hasOption("j")) {
@@ -261,6 +265,10 @@ public class CommandRun {
 	        		else {
 	        			comJSONDisplay.printJSONDisplayFromText(comInput.getInput(), comSpecification.getTlvDisassemble());
 	        		}
+	        	}
+	        	else {
+	        		System.err.println(Input.ERROR);
+	        		System.exit(1);
 	        	}
         	}
 	        
