@@ -8,6 +8,10 @@ Download from our website: http://comcast.github.io/Oscar/
 
 View JavaDoc: http://comcast.github.io/Oscar/doc/index.html
 
+### Travis CL Build Status
+
+[![Build Status](https://travis-ci.org/Comcast/Oscar.svg?branch=master)](https://travis-ci.org/Comcast/Oscar)
+
 ### New
 * Configuration Merge Bulk Build
 * NetSNMP OID Description
