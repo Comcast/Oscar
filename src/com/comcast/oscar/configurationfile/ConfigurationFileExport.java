@@ -434,7 +434,7 @@ public class ConfigurationFileExport {
 			
 			init();
 			
-		} else if ((this.iConfigurationFileType >= DPOE_VER_20) && (this.iConfigurationFileType <= DPOE_VER_20)) {
+		} else if ((this.iConfigurationFileType >= DPOE_VER_10) && (this.iConfigurationFileType <= DPOE_VER_20)) {
 
 			if (localDebug)
 				System.out.println("ConfigurationFileExport(i): DPoE -> CONFIGURATION-TYPE");
