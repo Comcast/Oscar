@@ -1,5 +1,4 @@
 language: java
 
 install: 
-  ant init
-  ant build
+  ant init build
