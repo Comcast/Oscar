@@ -399,7 +399,7 @@ public class ConfigurationFileExport {
 	 */
 	public ConfigurationFileExport (int iConfigurationFileType) {
 		
-		Boolean localDebug = Boolean.TRUE;
+		Boolean localDebug = Boolean.FALSE;
 		
 		JSONArray jaTlvDictionary = null;
 		
