@@ -61,10 +61,8 @@ public class OIDBERConversion {
 	}
 
 	/**
-	 * 
-	
-	 * @return byte[]
-	 */
+	 *	
+	 * @return byte[]*/
 	public byte[] getOIDBER () {
 
 		ByteArrayOutputStream boasOID;
@@ -76,9 +74,7 @@ public class OIDBERConversion {
 	}
 
 	/**
-	 * 
-	
-	
+	 * 	
 	 * @return byte[]
 	 * @throws Exception */
 	public byte[] getBER() throws Exception {
