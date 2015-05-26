@@ -2307,6 +2307,4 @@ public class TlvBuilder implements TlvBuild {
 		
 		return returnStatus;	
 	}
-
-	
 }
