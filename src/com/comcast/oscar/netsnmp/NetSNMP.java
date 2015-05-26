@@ -50,6 +50,7 @@ public class NetSNMP  {
 	
 	static {
 		
+		/*If no Mapping Exist, Create a new Mapping file */
 		FixNullNetSNMPJSON();
 		
 		omNetSNMP = new ObjectMapper();
@@ -57,14 +58,17 @@ public class NetSNMP  {
 		bmDotTextMap = new DualHashBidiMap<String,String>();
 		
 		try {
-			bmDotTextMap = omNetSNMP.readValue(DirectoryStructureNetSNMP.fNetSNMPJSON(), 
+			bmDotTextMap = omNetSNMP.readValue(	DirectoryStructureNetSNMP.fNetSNMPJSON(), 
 												new TypeReference<DualHashBidiMap<String, String>>() {});
 		} catch (JsonParseException e) {
-			e.printStackTrace();
+			System.out.println(	"Error in reading " + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE +
+								", Delete File");
 		} catch (JsonMappingException e) {
-			e.printStackTrace();
+			System.out.println(	"Error in reading " + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE +
+								", Delete File");
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(	"Error in reading " + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE +
+								", Delete File");
 		}	
 	}
 	
@@ -88,6 +92,7 @@ public class NetSNMP  {
 			return sOID;
 		}
 		
+		/* If there is an entry, get OID Lookup*/
 		if (!CheckOIDDBLookup(sOID).isEmpty()) {
 			return CheckOIDDBLookup(sOID);
 		}
@@ -101,14 +106,15 @@ public class NetSNMP  {
 		
 		/* Not a clean way to do it, but it works */
 		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD + 	
-				Constants.MIB_PARAMETER + 
-				Constants.SNMP_TRANSLATE_OID_NAME_2_OID_DEC +
-				sOID.replaceAll("\\s+1", " .iso")
-					.replaceAll("\\s+\\.1", " .iso");
+								Constants.MIB_PARAMETER + 
+								Constants.SNMP_TRANSLATE_OID_NAME_2_OID_DEC +
+								sOID.replaceAll("\\s+1", " .iso")
+									.replaceAll("\\s+\\.1", " .iso");
 
 		if (debug|localDebug)
 			System.out.println("NetSNMP.toDottedOID(): " + sSnmpTranslate);
 
+		/* Get the String Return */
 		sDottedOID = runSnmpTranslate(sSnmpTranslate).get(0);
 		
 		/* Add Converted OIDS to Map for later Storage */
@@ -210,8 +216,8 @@ public class NetSNMP  {
 	 * 
 	 * If OID starts with .1.3.6 it is considered a DottedOID
 	 * 
-	 * @param sOID
-	 * @return */
+	 * @param sOID .1.3.6.1.2.1.69.1.2.1.2.1 OR docsDevNmAccessIp.1
+	 * @return True if Dotted, False is not Dotted*/
 	public static boolean isDottedOID(String sOID) {
 
 		if (Constants.ISO_ORG_DOD_DOTTED.matcher(sOID).find()) {
@@ -224,8 +230,7 @@ public class NetSNMP  {
 	/**
 	 * 
 	 * @param sOID .1.3.6.1.2.1.69.1.2.1.2.1 OR docsDevNmAccessIp.1
-	 * @return Description of OID
-	 */
+	 * @return Description of OID*/
 	public static String getDescription(String sOID) {
 		
 		boolean localDebug = Boolean.FALSE;
@@ -240,13 +245,16 @@ public class NetSNMP  {
 			return sOID;
 		}
 		
+		/* If Dotted, Get Textual OID*/
 		if (isDottedOID(sOID)) {
 			
 			sSnmpTranslate = 	Constants.SNMP_TRANSLATE_CMD +  	
 								Constants.MIB_PARAMETER + 
 								Constants.SNMP_TRANSLATE_DESCRIPTION_DOTTED_OID +
 								sOID;
-		} else {
+		} 
+		/* If Textual, Get Dotted OID */
+		else {
 			sSnmpTranslate = 	Constants.SNMP_TRANSLATE_CMD +  	
 					Constants.MIB_PARAMETER + 
 					Constants.SNMP_TRANSLATE_DESCRIPTION_TEXTUAL_OID +
@@ -362,8 +370,7 @@ public class NetSNMP  {
 	/**
 	 * 
 	 * @param sOIDKey
-	 * @param sOIDConvert
-	 */
+	 * @param sOIDConvert*/
 	private static void UpdateJsonDB(String sOIDKey, String sOIDConvert) {
 
 		bmDotTextMap.put(sOIDKey, sOIDConvert);
@@ -383,8 +390,7 @@ public class NetSNMP  {
 	/**
 	 * 
 	 * @param sOID
-	 * @return returns a lookup value, blank if nothing is found
-	 */
+	 * @return returns a lookup value, blank if nothing is found*/
 	private static String CheckOIDDBLookup(String sOID) {
 		
 		String sReturn = "";
@@ -409,8 +415,7 @@ public class NetSNMP  {
 	}
 	
 	/**
-	 * Checks to see if the DB file is empty, if so put a single entry to prevent error
-	 */
+	 * Checks to see if the DB file is empty, if so put a single entry to prevent error*/
 	private static void FixNullNetSNMPJSON() {
 		
 		if (!DirectoryStructureNetSNMP.fNetSNMPJSON().exists()) {

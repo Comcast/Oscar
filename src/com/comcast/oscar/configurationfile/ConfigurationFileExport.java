@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +59,7 @@ import com.comcast.oscar.utilities.PrettyPrint;
 
 public class ConfigurationFileExport {
 	
+	/*House the Configuration Byte Array */
 	private byte[] bTLV;
 
 	private final boolean debug = Boolean.FALSE;	
@@ -397,11 +399,19 @@ public class ConfigurationFileExport {
 	 */
 	public ConfigurationFileExport (int iConfigurationFileType) {
 		
+		Boolean localDebug = Boolean.FALSE;
+		
 		JSONArray jaTlvDictionary = null;
 		
 		this.iConfigurationFileType = iConfigurationFileType;
 		
-		if ((this.iConfigurationFileType >= DOCSIS_VER_10) || (this.iConfigurationFileType <= DOCSIS_VER_31)) {
+		if (localDebug)
+			System.out.println("ConfigurationFileExport(i): ConfigurationFileType: " + iConfigurationFileType);
+		
+		if ((this.iConfigurationFileType >= DOCSIS_VER_10) && (this.iConfigurationFileType <= DOCSIS_VER_31)) {
+			
+			if (localDebug)
+				System.out.println("ConfigurationFileExport(i): DOCSIS -> CONFIGURATION-TYPE");
 			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
@@ -411,7 +421,10 @@ public class ConfigurationFileExport {
 			
 			init();
 			
-		} else if ((this.iConfigurationFileType >= PKT_CBL_VER_10) || (this.iConfigurationFileType <= PKT_CBL_VER_20)) {
+		} else if ((this.iConfigurationFileType >= PKT_CBL_VER_10) && (this.iConfigurationFileType <= PKT_CBL_VER_20)) {
+
+			if (localDebug)
+				System.out.println("ConfigurationFileExport(i): PACKET-CABLE -> CONFIGURATION-TYPE");
 			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			
@@ -421,8 +434,11 @@ public class ConfigurationFileExport {
 			
 			init();
 			
-		} else if ((this.iConfigurationFileType >= DPOE_VER_20) || (this.iConfigurationFileType <= DPOE_VER_20)) {
+		} else if ((this.iConfigurationFileType >= DPOE_VER_20) && (this.iConfigurationFileType <= DPOE_VER_20)) {
 
+			if (localDebug)
+				System.out.println("ConfigurationFileExport(i): DPoE -> CONFIGURATION-TYPE");
+			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
 
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DPOE);
@@ -1185,9 +1201,12 @@ public class ConfigurationFileExport {
 	private void init(int iConfigurationFileType) {
 		
 		initBER();
-		
-		if ((iConfigurationFileType >= DPOE_VER_10) || 
+			
+		if ((iConfigurationFileType >= DPOE_VER_10) && 
 				(iConfigurationFileType <= DPOE_VER_20)) {
+			
+			removeNonDictionaryTopLevelTLV();
+			
 			sConfigurationFileStart = "DPoE";
 		}
 	}
@@ -1318,6 +1337,11 @@ public class ConfigurationFileExport {
 		return sbBanner;
 	}
 	
+	/**
+	 * 
+	 * @param joTlvDictionary - JSON OBject of the Dictionary
+	 * @return the Hint for the datatype that is used
+	 */
 	private String getDisplayHint(JSONObject joTlvDictionary) {
 		
 		String sDisplayHint = "";
@@ -1394,6 +1418,41 @@ public class ConfigurationFileExport {
 		}
 		
 		return sDisplayHint;
+	}
+	
+	/**
+	 * This method will remove all TopLevel TLV that are not defined in the Dictionary
+	 * Currently support 1 byte Length TLVs
+	 */
+	private void removeNonDictionaryTopLevelTLV() {
+		
+		Boolean localDebug = Boolean.FALSE;
+		
+		/* Get TopLevel List*/ 
+		List<Integer> liTopLevelDict = dsqDictionarySQLQueries.getTopLevelTLV();
+		
+		List<Integer> liTopLevelCFE = null;
+		
+		try {
+			liTopLevelCFE = getTlvBuilder().getTopLevelTlvList();
+		} catch (TlvException e) {
+			e.printStackTrace();
+		}
+		
+		/*This will create a single instance of each Type */
+		liTopLevelCFE = new ArrayList<Integer>(new LinkedHashSet<Integer>(liTopLevelCFE));
+		
+		/*Remove Types that are not suppose to be There */
+		liTopLevelCFE.retainAll(liTopLevelDict);
+				
+		if(debug|localDebug) {
+			System.out.println("removeNonDictionaryTopLevelTLV() -> DICT: " + liTopLevelDict);
+			System.out.println("removeNonDictionaryTopLevelTLV() -> CFE remove DICT: " + liTopLevelCFE);
+		}
+		
+		/*Create new ByteArray*/
+		bTLV = TlvBuilder.fetchTlv(liTopLevelCFE, bTLV);
+		
 	}
 
 }

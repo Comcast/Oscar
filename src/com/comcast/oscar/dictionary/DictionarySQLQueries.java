@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -268,6 +269,53 @@ public class DictionarySQLQueries extends SqlConnection {
 		}
 
 		return jsonArrTlvDictionary;
+	}
+	
+	/**
+	 * 
+	 * @return List of TopLevel TLV in Integers
+	 */
+	public List<Integer> getTopLevelTLV() {
+		Statement statement = null;
+		ResultSet resultSet = null;
+		
+		List<Integer> liTopLevelTLV = new ArrayList<Integer>();
+
+		String sqlQuery = 
+				"SELECT * " +
+						"FROM " +
+						this.sDictionaryTableName +  " " +
+						"WHERE " +
+						Dictionary.DB_TBL_COL_PARENT_ID + " = '0'";
+
+		if (debug) 
+			System.out.println("DictionarySQLQueries.getTopLevelTLV() SQL_QUERY: " + sqlQuery);
+
+		try {
+			statement = commSqlConnection.createStatement();
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+
+		try {
+			resultSet = statement.executeQuery(sqlQuery);
+
+			while (resultSet.next()) {
+				
+				if (debug)
+					System.out.println("DictionarySQLQueries.getTopLevelTLV()-> TLV-NAME: " + resultSet.getString("TLV_NAME"));
+				
+				liTopLevelTLV.add(resultSet.getInt(Dictionary.DB_TBL_COL_TYPE));
+			}
+
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+		
+		return liTopLevelTLV;
 	}
 	
 	/**

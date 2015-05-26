@@ -37,8 +37,7 @@ public class OIDCollectionDuplicationValidation extends TreeMap<String,String> {
 	/**
 	 * 
 	
-	 * @param sObjectID
-	
+	 * @param sObjectID	
 	 * @param bocBEROIDConversion BEROIDConversion
 	 * @return if true, no collision or duplication of OID, False indicates Collision or duplication of OID */
 	public boolean add(BEROIDConversion bocBEROIDConversion ,String sObjectID) {
@@ -56,7 +55,6 @@ public class OIDCollectionDuplicationValidation extends TreeMap<String,String> {
 	
 	/**
 	 * This method does nothing
-	
 	 * @param bocBEROIDConversion BEROIDConversion
 	 * @param sObjectID String
 	 * @return sObjectID */

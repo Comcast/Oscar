@@ -67,8 +67,6 @@ public class BERService {
 	 * @param sObjectID
 	 * @param bBerDataType
 	 * @param lNumber
-	
-	
 	 * @return String
 	 * @throws Exception */
 	public static String setOIDEncoding (String sObjectID , byte bBerDataType , long lNumber) throws Exception {
@@ -121,8 +119,6 @@ public class BERService {
 				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
-			} finally {
-				//System.exit(2);
 			}
 			
 			ByteArrayOutputStream baosCounter64 = new ByteArrayOutputStream();
@@ -143,8 +139,6 @@ public class BERService {
 				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
-			} finally {
-				//System.exit(2);
 			}
 			
 			ByteArrayOutputStream baosGauge32 = new ByteArrayOutputStream();
@@ -165,8 +159,6 @@ public class BERService {
 				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
-			} finally {
-				//System.exit(2);
 			}
 			
 			ByteArrayOutputStream baosInteger32BER = new ByteArrayOutputStream();
@@ -187,8 +179,6 @@ public class BERService {
 				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
-			} finally {
-				//System.exit(2);
 			}	
 			
 			ByteArrayOutputStream baosTimeTicksBER = new ByteArrayOutputStream();
@@ -236,8 +226,6 @@ public class BERService {
 				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
-			} finally {
-				//System.exit(2);
 			}
 			
 			ByteArrayOutputStream baosIpAddress = new ByteArrayOutputStream();
@@ -258,8 +246,6 @@ public class BERService {
 				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
-			} finally {
-				//System.exit(2);
 			}		
 			
 			ByteArrayOutputStream baosOctetString = new ByteArrayOutputStream();
@@ -304,8 +290,6 @@ public class BERService {
 				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
 				System.out.println("ERROR -> (" + e.getMessage() + ")");
 				
-			} finally {
-				//System.exit(2);
 			}
 			
 			ByteArrayOutputStream baosOctetString = new ByteArrayOutputStream();
@@ -348,9 +332,7 @@ public class BERService {
 	 * 
 	 * @param sObjectID
 	 * @param bBerDataType
-	 * @param lNumber
-	
-	
+	 * @param lNumber	
 	 * @return byte[]
 	 * @throws Exception */
 	public static byte[] setOIDEncodingToByteArray (String sObjectID , byte bBerDataType , long lNumber) throws Exception {		
@@ -359,8 +341,7 @@ public class BERService {
 	
 	/**
 	 * 
-	 * @param oidString
-	
+	 * @param oidString	
 	 * @return OutputStream
 	 */
 	public static OutputStream encodeOID (String sOID) {
@@ -476,8 +457,7 @@ public class BERService {
 	
 	/**
 	 * 
-	 * @param bBERSetValueTLV
-	
+	 * @param bBERSetValueTLV	
 	 * @return int
 	 */
 	public static int getBERType (byte[] bBERSetValueTLV) {	
@@ -508,8 +488,7 @@ public class BERService {
 
 	/**
 	 * 
-	 * @param iBerDataType
-	
+	 * @param iBerDataType	
 	 * @return boolean
 	 */
 	public static boolean isNumberDataType (int iBerDataType) {
@@ -532,10 +511,8 @@ public class BERService {
 
 	/**
 	 * 
-	 * @param iBerDataType
-	
-	 * @return boolean
-	 */
+	 * @param iBerDataType	
+	 * @return boolean*/
 	public static boolean isStringDataType (int iBerDataType) {
 		
 		boolean boolStatus = false;
@@ -576,7 +553,6 @@ public class BERService {
 	
 	/**
 	 * 
-	
 	 * @return List of String SNMP DataType */
 	public static List<String> getDataTypeStringList() {
 		
@@ -597,9 +573,7 @@ public class BERService {
 		
 	/**
 	 * 
-	 * @param baos
-	
-	
+	 * @param baos	
 	 * @return String
 	 * @throws Exception */
 	@SuppressWarnings("unused")

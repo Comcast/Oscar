@@ -2,8 +2,6 @@ package com.comcast.oscar.compiler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +14,7 @@ import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.tlv.TlvVariableBinding;
 import com.comcast.oscar.utilities.BinaryConversion;
+import com.comcast.oscar.utilities.CheckSum;
 import com.comcast.oscar.utilities.HexString;
 
 /**
@@ -55,7 +54,7 @@ public class PacketCableCompiler extends TlvBuilder {
 	}
 		
 	/**
-	 * 
+	 * this methods creates the SHA-1 Hash required for BASIC.1 file integrity check based on the PacketCable Version
 	 */
 	public void commit () {
 		
@@ -91,7 +90,7 @@ public class PacketCableCompiler extends TlvBuilder {
 			System.out.println("PacketCableCompiler.finalize() = SET-FILE-MRK:          " + new HexString(bTlvFileMarker).toString());
 
 		//Calculate SHA-1 HASH with File Markers
-		bSHA1 = toSHA1(bTlvFileMarker);
+		bSHA1 = CheckSum.getSHA1(bTlvFileMarker);
 
 		if (localDebug|debug)
 			System.out.println("PacketCableCompiler.finalize() = SHA1-HASH-HEX:         " + new HexString(bSHA1).toString());
@@ -334,9 +333,7 @@ public class PacketCableCompiler extends TlvBuilder {
 
 	/**
 	 * 
-	 * @param baTLV
-	
-	
+	 * @param baTLV	
 	 * @return TlvBuilder
 	 * @throws NullPointerException */
 	public static TlvBuilder stripFileMarkers (byte[] baTLV) throws NullPointerException {
@@ -454,29 +451,7 @@ public class PacketCableCompiler extends TlvBuilder {
 	/**
 	 * 
 	 * @param bTlvArray
-	
-	 * @return byte[]
-	 */
-	private byte[] toSHA1(byte[] bTlvArray) {
-		
-		MessageDigest mdSHA1 = null;
-		
-	    try {
-	    	mdSHA1 = MessageDigest.getInstance("SHA-1");
-	    }
-	    catch(NoSuchAlgorithmException e) {
-	        e.printStackTrace();
-	    }
-	    
-	    return mdSHA1.digest(bTlvArray);		
-	}
-
-	/**
-	 * 
-	 * @param bTlvArray
-	 * @param bSHA1
-	
-	
+	 * @param bSHA1	
 	 * @return byte[]
 	 * @throws IOException */
 	private byte[] insertSHA1Hash(byte[] bTlvArray, byte[] bSHA1) throws IOException {
