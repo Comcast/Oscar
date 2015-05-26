@@ -49,16 +49,16 @@ public class CheckSum {
 	 */
 	public static byte[] getSHA1(byte[] bTlvArray) {
 		
-		MessageDigest mdSHA1 = null;
+		MessageDigest md = null;
 		
 	    try {
-	    	mdSHA1 = MessageDigest.getInstance("SHA-1");
+	    	md = MessageDigest.getInstance("SHA-1");
 	    }
 	    catch(NoSuchAlgorithmException e) {
 	        e.printStackTrace();
 	    }
 	    
-	    return mdSHA1.digest(bTlvArray);		
+	    return md.digest(bTlvArray);		
 	}
 	
 }
