@@ -45,8 +45,7 @@ public class OIDToJSONArray {
 	 * 
 	 * @param sOID
 	 * @param sDataType
-	 * @param sValue
-	 */
+	 * @param sValue*/
 	public OIDToJSONArray (String sOID, String sDataType , String sValue) {
 		this.sOID = NetSNMP.toDottedOID(sOID);
 		this.sDataType = sDataType;
@@ -56,8 +55,7 @@ public class OIDToJSONArray {
 	/**
 	 * 
 	 * @param sOID
-	 * @param bValue
-	 */
+	 * @param bValue*/
 	public OIDToJSONArray (String sOID , byte[] bValue) {
 		this.sOID = NetSNMP.toDottedOID(sOID);
 		this.sDataType = Integer.toString(BinaryConversion.byteToUnsignedInteger(BERService.HEX));
@@ -66,8 +64,7 @@ public class OIDToJSONArray {
 	
 	/**
 	 * Takes tlvParser that contains SNMP OID Values and Builds a JSONArray
-	 * @param ctx
-	 */
+	 * @param ctx*/
 	public OIDToJSONArray (tlvParser.SnmpContext ctx) {
 		this.sOID = NetSNMP.toDottedOID(ctx.oid().getText());
 		this.sDataType = Integer.toString(BinaryConversion.byteToUnsignedInteger(BERService.berStringDataTypeToByte(ctx.dataType().getText())));
@@ -76,7 +73,6 @@ public class OIDToJSONArray {
 	
 	/**
 	 * 
-	
 	 * @return Map of the OID, DataType and Value */
 	public Map<String,String> toMap () {
 		
@@ -93,8 +89,7 @@ public class OIDToJSONArray {
 	}
 	
 	/**
-	 * 
-	
+	 *
 	 * @return JSON Array of the OID, DataType and Value */
 	public JSONArray toJSONArray () {
 		
