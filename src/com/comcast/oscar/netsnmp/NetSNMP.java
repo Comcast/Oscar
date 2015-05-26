@@ -216,7 +216,7 @@ public class NetSNMP  {
 	 * If OID starts with .1.3.6 it is considered a DottedOID
 	 * 
 	 * @param sOID
-	 * @return */
+	 * @return True if Dotted, False is not Dotted*/
 	public static boolean isDottedOID(String sOID) {
 
 		if (Constants.ISO_ORG_DOD_DOTTED.matcher(sOID).find()) {
@@ -229,8 +229,7 @@ public class NetSNMP  {
 	/**
 	 * 
 	 * @param sOID .1.3.6.1.2.1.69.1.2.1.2.1 OR docsDevNmAccessIp.1
-	 * @return Description of OID
-	 */
+	 * @return Description of OID*/
 	public static String getDescription(String sOID) {
 		
 		boolean localDebug = Boolean.FALSE;
@@ -367,8 +366,7 @@ public class NetSNMP  {
 	/**
 	 * 
 	 * @param sOIDKey
-	 * @param sOIDConvert
-	 */
+	 * @param sOIDConvert*/
 	private static void UpdateJsonDB(String sOIDKey, String sOIDConvert) {
 
 		bmDotTextMap.put(sOIDKey, sOIDConvert);
@@ -388,8 +386,7 @@ public class NetSNMP  {
 	/**
 	 * 
 	 * @param sOID
-	 * @return returns a lookup value, blank if nothing is found
-	 */
+	 * @return returns a lookup value, blank if nothing is found*/
 	private static String CheckOIDDBLookup(String sOID) {
 		
 		String sReturn = "";
