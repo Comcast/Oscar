@@ -1218,10 +1218,9 @@ public class TlvBuilder implements TlvBuild {
 											" -> TLV Hex : " + new HexString(baosStripedTlvByteArray.toByteArray()).toString(":"));
 					}
 					
-				} else {
-					
 				}
-					if (debug|localDebug) {
+				
+				if (debug|localDebug) {
 						System.out.println(	"TlvBuilder.fetchTlv(list,m,b) " +
 											" -> No Type Match - Found: " + iTypeFound + " - Searching For: " + iType);				
 				}
@@ -2214,8 +2213,8 @@ public class TlvBuilder implements TlvBuild {
 		ArrayList<byte[]> albTlvBuffer = new ArrayList<byte[]>();
 		albTlvBuffer.addAll(bTlvBuilder);		
 
-		HashMap<Integer,Integer> hmiiTlvTypeTpByteLength = new HashMap<Integer,Integer>();
-		hmiiTlvTypeTpByteLength.putAll(miiTlvTypeTpByteLength);
+		HashMap<Integer,Integer> hmiiTlvTypeToByteLength = new HashMap<Integer,Integer>();
+		hmiiTlvTypeToByteLength.putAll(miiTlvTypeTpByteLength);
 		
 	}
 
