@@ -26,8 +26,8 @@ public class CheckSum {
 
 	/**
 	 * Method getMD5.
-	 * @param bMessage byte[]
-	 * @return byte[]
+	 * @param bMessage ByteArray of the Message
+	 * @return byte[] MD5 Hash of the Message
 	 */
 	public static byte[] getMD5(byte[] bMessage) {
 		
@@ -40,6 +40,25 @@ public class CheckSum {
 		}
 		
 		return md.digest(bMessage);
+	}
+	
+	/**
+	 * 
+	 * @param bTlvArray ByteArray of the Message
+	 * @return SHA-1 Hash of the Message
+	 */
+	public static byte[] getSHA1(byte[] bTlvArray) {
+		
+		MessageDigest mdSHA1 = null;
+		
+	    try {
+	    	mdSHA1 = MessageDigest.getInstance("SHA-1");
+	    }
+	    catch(NoSuchAlgorithmException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return mdSHA1.digest(bTlvArray);		
 	}
 	
 }
