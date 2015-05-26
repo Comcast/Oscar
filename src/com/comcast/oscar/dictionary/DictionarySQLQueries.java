@@ -266,6 +266,17 @@ public class DictionarySQLQueries extends SqlConnection {
 				
 				jsonArrTlvDictionary.put(getTlvDefinition(tlvCounter));
 			}
+		} else if (ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE == iCableLabsConfigType) {
+			
+			for (int tlvCounter = Constants.DOCSIS_TLV_MIN ; tlvCounter <= Constants.DOCSIS_TLV_MAX ; tlvCounter++) {
+				
+				if (debug) {
+					System.out.println("+------------------------------------------------------------------------+");
+					System.out.println("DictionarySQLQueries.getAllTlvDefinition() TLV: " + tlvCounter + " -> JSON-TLV-DICT: " + getTlvDefinition(tlvCounter));
+				}
+				
+				jsonArrTlvDictionary.put(getTlvDefinition(tlvCounter));
+			}
 		}
 
 		return jsonArrTlvDictionary;
