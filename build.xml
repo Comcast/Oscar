@@ -73,4 +73,7 @@
             <classpath refid="Oscar.classpath"/>
         </java>
     </target>
+    <target name="test">
+
+    </target>
 </project>
