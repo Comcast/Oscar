@@ -223,9 +223,6 @@ public class BEROIDConversion {
 
 			if (localDebug|debug)
 				System.out.println("BEROIDConversion.toMap() - Found a ASCII Plain Text Characters: \"" + getOidValue() + "\"");
-			
-			//mgarcia - 140214 - Remarked this out, if no errors are found since this date, remove line
-			//mssReturn.put(DATA_TYPE, Integer.toString(BinaryConversion.byteToUnsignedInteger(BERService.HEX)));
 
 			mssReturn.put(DATA_TYPE, getDataType().toString());
 			
