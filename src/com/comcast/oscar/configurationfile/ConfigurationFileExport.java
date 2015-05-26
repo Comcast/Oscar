@@ -399,11 +399,19 @@ public class ConfigurationFileExport {
 	 */
 	public ConfigurationFileExport (int iConfigurationFileType) {
 		
+		Boolean localDebug = Boolean.TRUE;
+		
 		JSONArray jaTlvDictionary = null;
 		
 		this.iConfigurationFileType = iConfigurationFileType;
 		
-		if ((this.iConfigurationFileType >= DOCSIS_VER_10) || (this.iConfigurationFileType <= DOCSIS_VER_31)) {
+		if (localDebug)
+			System.out.println("ConfigurationFileExport(i): ConfigurationFileType: " + iConfigurationFileType);
+		
+		if ((this.iConfigurationFileType >= DOCSIS_VER_10) && (this.iConfigurationFileType <= DOCSIS_VER_31)) {
+			
+			if (localDebug)
+				System.out.println("ConfigurationFileExport(i): DOCSIS -> CONFIGURATION-TYPE");
 			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
 			
@@ -413,7 +421,10 @@ public class ConfigurationFileExport {
 			
 			init();
 			
-		} else if ((this.iConfigurationFileType >= PKT_CBL_VER_10) || (this.iConfigurationFileType <= PKT_CBL_VER_20)) {
+		} else if ((this.iConfigurationFileType >= PKT_CBL_VER_10) && (this.iConfigurationFileType <= PKT_CBL_VER_20)) {
+
+			if (localDebug)
+				System.out.println("ConfigurationFileExport(i): PACKET-CABLE -> CONFIGURATION-TYPE");
 			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 			
@@ -423,8 +434,11 @@ public class ConfigurationFileExport {
 			
 			init();
 			
-		} else if ((this.iConfigurationFileType >= DPOE_VER_20) || (this.iConfigurationFileType <= DPOE_VER_20)) {
+		} else if ((this.iConfigurationFileType >= DPOE_VER_20) && (this.iConfigurationFileType <= DPOE_VER_20)) {
 
+			if (localDebug)
+				System.out.println("ConfigurationFileExport(i): DPoE -> CONFIGURATION-TYPE");
+			
 			dsqDictionarySQLQueries = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
 
 			jaTlvDictionary = dsqDictionarySQLQueries.getAllTlvDefinition(DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DPOE);
@@ -1188,7 +1202,7 @@ public class ConfigurationFileExport {
 		
 		initBER();
 			
-		if ((iConfigurationFileType >= DPOE_VER_10) || 
+		if ((iConfigurationFileType >= DPOE_VER_10) && 
 				(iConfigurationFileType <= DPOE_VER_20)) {
 			
 			removeNonDictionaryTopLevelTLV();
