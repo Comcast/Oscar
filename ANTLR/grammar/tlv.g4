@@ -67,7 +67,7 @@ HEX_BYTE_LOWER_CASE   : HEX_NIBBLE_LOWERCASE HEX_NIBBLE_LOWERCASE;
 ALPHA_NUMERIC           : ([a-zA-Z0-9]);
 
 //mgarcia - 150416 - Added $
-IDENTIFIER              : ([a-zA-Z0-9]|'-'|'_'|'\''|'$')+;
+IDENTIFIER              : ([a-zA-Z0-9]|'-'|'_'|'\''|'$'|'\.')+;
 
 SINGLE_QUOTE_STRING     : SINGLE_QUOTE IDENTIFIER SINGLE_QUOTE;
 
