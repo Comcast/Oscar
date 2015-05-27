@@ -145,27 +145,27 @@ public class Constants {
 		configuration setting by performing an MD5 digest over the following configuration setting fields when present in
 		the REG-REQ or REG-REQ-MP messages, in the order shown:
 		
-		• Downstream Frequency Configuration Setting
-		• Upstream Channel ID Configuration Setting
-		• Network Access Configuration Setting
-		• DOCSIS 1.0 Class of Service Configuration Setting
-		• Baseline Privacy Configuration Setting
-		• DOCSIS Extension Field Configuration Settings (including Extended CMTS MIC Params)
-		• CM MIC Configuration Setting
-		• Maximum Number of CPEs
-		• TFTP Server Timestamp
-		• TFTP Server Provisioned Modem Address
-		• Upstream Packet Classification Setting
-		• Downstream Packet Classification Setting
-		• Upstream Service Flow Configuration Setting
-		• Downstream Service Flow Configuration Setting
-		• Maximum Number of Classifiers
-		• Privacy Enable Configuration Setting
-		• Payload Header Suppression
-		• Subscriber Management Control
-		• Subscriber Management CPE IP Table
-		• Subscriber Management Filter Groups
-		• Enable Test Modes
+		* Downstream Frequency Configuration Setting
+		* Upstream Channel ID Configuration Setting
+		* Network Access Configuration Setting
+		* DOCSIS 1.0 Class of Service Configuration Setting
+		* Baseline Privacy Configuration Setting
+		* DOCSIS Extension Field Configuration Settings (including Extended CMTS MIC Params)
+		* CM MIC Configuration Setting
+		* Maximum Number of CPEs
+		* TFTP Server Timestamp
+		* TFTP Server Provisioned Modem Address
+		* Upstream Packet Classification Setting
+		* Downstream Packet Classification Setting
+		* Upstream Service Flow Configuration Setting
+		* Downstream Service Flow Configuration Setting
+		* Maximum Number of Classifiers
+		* Privacy Enable Configuration Setting
+		* Payload Header Suppression
+		* Subscriber Management Control
+		* Subscriber Management CPE IP Table
+		* Subscriber Management Filter Groups
+		* Enable Test Modes
      */
 	public static final List<Integer> DOCSIS_CMTS_MIC_TLV_LIST = new ArrayList<Integer>(Arrays.asList(	DS_FREQUENCY,
 																											US_CHANN_ID ,
