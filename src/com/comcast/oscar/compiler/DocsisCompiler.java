@@ -237,7 +237,7 @@ public class DocsisCompiler extends TlvBuilder {
 			Type Length Value
 			43.6.1 1 Enumeration
 				1 - MD5 HMAC [RFC 2104]
-				2 - MMH16-£m-n HMAC [DOCSIS SECv3.0]
+				2 - MMH16-m-n HMAC [DOCSIS SECv3.0]
 				43 - vendor specific
 
 		
@@ -374,9 +374,9 @@ public class DocsisCompiler extends TlvBuilder {
 		bytes of the configuration setting fields. It is calculated over the bytes of these settings as they appear in the TFTPed
 		image, without regard to TLV ordering or contents.
 		There are two TLVs which are not included in the CM MIC calculation:
-		• The bytes of the CM MIC TLV itself are omitted from the calculation. This includes the type, length, and value
+		* The bytes of the CM MIC TLV itself are omitted from the calculation. This includes the type, length, and value
 		fields;
-		• The bytes of the CMTS MIC TLV are omitted from the calculation. This includes the type, length, and value
+		* The bytes of the CMTS MIC TLV are omitted from the calculation. This includes the type, length, and value
 		fields.
 		These TLVs are the last TLVs in the CM configuration file. */
 	public  byte[] getCmMIC(byte[] bTlvArray) {
