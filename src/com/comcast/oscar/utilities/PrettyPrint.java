@@ -48,6 +48,7 @@ public class PrettyPrint extends StringTokenizer {
 							.replaceAll("(\\w|-)+\\s+\\{\\}\\s+.\\*EOCB\\*.\\s+", "").replaceAll("\\{\\s+\\}", "{}")
 							.replaceAll("(\\w|-)+\\s+\\{\\}\\s+.\\*EOCB\\*.\\s+", "").replaceAll("\\{\\s+\\}", "{}")
 							.replaceAll("(\\w|-)+\\s+\\{\\}\\s+.\\*EOCB\\*.\\s+", "").replaceAll("\\{\\s+\\}", "{}")
+							.replaceAll("(\\w|-)+\\s+\\{\\}\\s+.\\*EOCB\\*.\\s+", "").replaceAll("\\{\\s+\\}", "{}")
 							.replaceAll(".\\*EOCB\\*.", "")
 				));	
 		start();
