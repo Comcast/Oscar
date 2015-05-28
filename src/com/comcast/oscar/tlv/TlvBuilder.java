@@ -2159,8 +2159,13 @@ public class TlvBuilder implements TlvBuild {
 		ArrayList<byte[]> alb = (ArrayList<byte[]>) tb.sortByTopLevelTlv();
 		
 		for (byte[] ba1 : alb) {
+			
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			baos.write(ba1[0]);
+			int iType = HexString.toInteger(baos.toByteArray());
+			
 			HexString hsTlv = new HexString(ba1);
-			sTlvDump += (hsTlv.toString(":") + "\n");
+			sTlvDump += ("[Type:"+iType+"] " + hsTlv.toString(":") + "\n");
 		}
 		
 		return sTlvDump;
