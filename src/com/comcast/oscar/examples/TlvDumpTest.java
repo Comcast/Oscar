@@ -1,7 +1,5 @@
 package com.comcast.oscar.examples;
 
-import java.util.ArrayList;
-
 import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
@@ -22,12 +20,7 @@ public class TlvDumpTest {
 			e.printStackTrace();
 		}
 		
-		ArrayList<byte[]> alb = (ArrayList<byte[]>) tb.sortByTopLevelTlv();
-		
-		for (byte[] ba : alb) {
-			HexString hsTlv = new HexString(ba);
-			System.out.println(hsTlv.toString(":"));		
-		}
+		System.out.println(TlvBuilder.tlvDump(tb.toByteArray()));
 
 	}
 

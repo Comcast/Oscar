@@ -276,9 +276,7 @@ public class HexString {
 	
 	/**
 	 * 
-	
-	 * @return int
-	 */
+	 * @return Integer of the first 4 bytes of the ByteArray*/
 	public int toInteger () {
 		
 		ByteArrayOutputStream  baosByteToInt = new ByteArrayOutputStream();
@@ -620,9 +618,7 @@ public class HexString {
 	/**
 	 * 
 	 * @param bytes
-	
-	 * @return String
-	 */
+	 * @return String Binary representation of the Byte Array*/
 	public static String toAsciiBinary (byte[] bytes) {
 	    
 		StringBuilder sb = new StringBuilder(bytes.length * Byte.SIZE);
@@ -728,6 +724,32 @@ public class HexString {
 			if ((bByte == 0x0d) || (bByte == 0x0a) || (bByte == 0x09) || (bByte == 0x20)) {return true;}
 			
 		return false;
+	}
+	
+	/**
+	 * 
+	 * @param ba ByteArray
+	 * @return Integer of the first 4 bytes of the ByteArray*/
+	public static int toInteger (byte[] ba) {
+		
+		ByteArrayOutputStream  baosByteToInt = new ByteArrayOutputStream();
+				
+		while ((baosByteToInt.size()+ba.length) < 4) {
+			baosByteToInt.write(0x00);
+		}
+
+		try {
+			baosByteToInt.write(ba);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+				
+		byte[] bByteToInt = baosByteToInt.toByteArray();
+		
+		return 	bByteToInt[0] << 24 | 
+				(bByteToInt[1] & 0xFF) << 16 | 
+				(bByteToInt[2] & 0xFF) << 8 | 
+				(bByteToInt[3] & 0xFF);	
 	}
 	
 	/* ********************************************************************
