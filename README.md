@@ -13,9 +13,11 @@ View JavaDoc: http://comcast.github.io/Oscar/doc/index.html
 [![Build Status](https://travis-ci.org/Comcast/Oscar.svg?branch=master)](https://travis-ci.org/Comcast/Oscar)
 
 ### New
+
 * Configuration Merge Bulk Build
 * NetSNMP OID Description
 * Dotted or Textual OID Text Configuration File Output
+* Toplevel TLV HEX Dump
 
 ### 2015 TODO's Features
 
