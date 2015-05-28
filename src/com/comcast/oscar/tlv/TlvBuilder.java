@@ -2147,7 +2147,7 @@ public class TlvBuilder implements TlvBuild {
 		String sTlvDump = "";
 		
 		HexString hs = new HexString(ba);
-
+		
 		TlvBuilder tb = new TlvBuilder();
 		
 		try {
