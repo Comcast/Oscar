@@ -23,7 +23,7 @@ public class Constants {
 
 	private static final String TAB = "\t";
 	
-	public static final String OSCAR_VERSION = "2.1.2"; 
+	public static final String OSCAR_VERSION = "2.1.3-beta"; 
 	public static final String OSCAR_CLI_USAGE = "java -jar oscar.jar -k <key> -i <.txt> -o <.bin> -c";
 	public static final String OSCAR_CLI_HEADER = "/* OSCAR -> OpenSource Cable modem file AssembleR v" + OSCAR_VERSION + " */";
 	public static final String OSCAR_CLI_NO_ARGS = "Type --help for information";

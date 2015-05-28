@@ -84,6 +84,9 @@ public class HexDisplay {
 	 */
 	public void printHexDisplayFromBinary(File file) {
 		if (boolTopLevel) {
+			
+			System.out.println(TlvBuilder.tlvDump(HexString.fileToByteArray(file)));
+			/*
 			HexString hs = new HexString(HexString.fileToByteArray(file));
 	
 			TlvBuilder tb = new TlvBuilder();
@@ -100,6 +103,8 @@ public class HexDisplay {
 				HexString hsTlv = new HexString(ba);
 				System.out.println(hsTlv.toString(":"));		
 			}
+			*/
+			
 		}
 		else {
 			System.out.println(HexDump.dumpHexString(HexString.fileToByteArray(file)));
