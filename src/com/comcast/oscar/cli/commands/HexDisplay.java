@@ -2,14 +2,13 @@ package com.comcast.oscar.cli.commands;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
+import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
-import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexDump;
@@ -79,31 +78,13 @@ public class HexDisplay {
 	}
 	
 	/**
-	 * Print Hexidecimal display from binary file
+	 * Print Hexadecimal display from binary file
 	 * @param file
 	 */
 	public void printHexDisplayFromBinary(File file) {
 		if (boolTopLevel) {
 			
 			System.out.println(TlvBuilder.tlvDump(HexString.fileToByteArray(file)));
-			/*
-			HexString hs = new HexString(HexString.fileToByteArray(file));
-	
-			TlvBuilder tb = new TlvBuilder();
-			
-			try {
-				tb.add(hs);
-			} catch (TlvException e) {
-				e.printStackTrace();
-			}
-			
-			ArrayList<byte[]> alb = (ArrayList<byte[]>) tb.sortByTopLevelTlv();
-			
-			for (byte[] ba : alb) {
-				HexString hsTlv = new HexString(ba);
-				System.out.println(hsTlv.toString(":"));		
-			}
-			*/
 			
 		}
 		else {
