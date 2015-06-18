@@ -2,8 +2,10 @@ package com.comcast.oscar.netsnmp;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -280,6 +282,27 @@ public class NetSNMP  {
 		return sDescription;	
 	}
 
+	/**
+	 * Clear DottedTextualNetSNMPMap.json and start new
+	 */
+	public static void clearJsonDB() {
+		
+		if (DirectoryStructureNetSNMP.fNetSNMPJSON().exists()) {
+					
+			PrintWriter pw = null;
+			try {
+				pw = new PrintWriter(DirectoryStructureNetSNMP.fNetSNMPJSON());
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			pw.print("");
+			pw.close();
+			
+		}
+		
+		FixNullNetSNMPJSON();
+	}
+	
 	/**
 	 * 
 	 * @param sSnmpTranslateCMD
