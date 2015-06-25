@@ -47,6 +47,7 @@ import org.json.JSONObject;
 
 public interface Dictionary {
 
+	public final static String 	DB_TBL_COL_ID 					= "ID";
 	public final static String 	DB_TBL_COL_TYPE 				= "TYPE";
 	public final static String 	DB_TBL_COL_PARENT_ID 			= "PARENT_ID";
 	public final static String 	DB_TBL_COL_TLV_NAME 			= "TLV_NAME";
