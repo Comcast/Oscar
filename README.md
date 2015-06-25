@@ -21,7 +21,7 @@ OSCAR is a Java-based CableLabs&reg; Configuration File Builder API for DOCSIS&r
 * ADD REST Support - 2015
 * DPoG Support - Later 2015
 * ADD Extended CMTS MIC
-* Provide GUI Support to ADD/EDIT TLV Types to SQLite Database
+* Provide GUI Support to ADD/EDIT TLV Types to SQLite Database (soon)
 * Compile a JSON to Configuration File via CLI Later 2015
 * Complete CLI Interpreter functionality(API Started)
 * Edit Service Flow via Service Flow ID Directly
