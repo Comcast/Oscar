@@ -36,8 +36,7 @@ public class DirectoryStructure {
 	/**
 	 * Determine if launched from Jar file. For testing purposes. Set in Main
 	 */
-	public static void setFromJar() 
-	{
+	public static void setFromJar() {
 		fromJar = true;
 	}
 	
@@ -45,23 +44,19 @@ public class DirectoryStructure {
 	 * Decide the correct path to start from
 	 * @return base directory 
 	 * */
-	public static String sBasePath() 
-	{
-		if(fromJar) 
-		{
+	public static String sBasePath() {
+		if(fromJar) {
 			File file = new File(System.getProperty("java.class.path"));
-			if (file.getParent() != null)
-			{
+			
+			if (file.getParent() != null) {
 				return file.getParent().toString();
 			}
 		}
 		
-		try 
-		{
+		try {
 			return new java.io.File("").getCanonicalPath();
 		} 
-		catch (IOException e) 
-		{
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 		
@@ -72,16 +67,13 @@ public class DirectoryStructure {
 	 * Find active path. Used for Input
 	 * @return active directory 
 	 * */
-	public static String sActivePath() 
-	{
+	public static String sActivePath() {
 		String activePath = null;
 		
-		try 
-		{
+		try {
 			activePath = new java.io.File("").getCanonicalPath();
 		} 
-		catch (IOException e) 
-		{
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 		
@@ -91,8 +83,7 @@ public class DirectoryStructure {
 	/**
 	 * Directory for certificates
 	 * @return certificates subdirectory */
-	public static File fCertificatesDir() 
-	{
+	public static File fCertificatesDir() {
 		return new File(sBasePath() + File.separator + "certificates");
 	}
 	
@@ -100,8 +91,7 @@ public class DirectoryStructure {
 	 * Directory for bulk builds
 	 * @return build subdirectory 
 	 * */
-	public static File fBuildDir() 
-	{
+	public static File fBuildDir() {
 		return new File(sBasePath() + File.separator + "build");
 	}
 	
@@ -109,8 +99,7 @@ public class DirectoryStructure {
 	 * Directory for databases
 	
 	 * @return database subdirectory */
-	public static File fDbDir() 
-	{
+	public static File fDbDir() {
 		return new File(sBasePath() + File.separator + "db");
 	}
 	
@@ -118,8 +107,7 @@ public class DirectoryStructure {
 	 * Directory for licenses
 	
 	 * @return licenses subdirectory */
-	public static File fLicensesDir() 
-	{
+	public static File fLicensesDir() {
 		return new File(sBasePath() + File.separator + "licenses");
 	}
 	
@@ -127,8 +115,7 @@ public class DirectoryStructure {
 	 * Directory for mibs
 	
 	 * @return mibs subdirectory */
-	public static File fMibsDir() 
-	{
+	public static File fMibsDir() {
 		return new File(sBasePath() + File.separator + "mibs");	
 	}
 	
@@ -136,8 +123,7 @@ public class DirectoryStructure {
 	 * Directory for mib binaries
 	
 	 * @return bin subdirectory in mibs subdirectory */
-	public static File fMibsBinaryDir() 
-	{
+	public static File fMibsBinaryDir() {
 		return new File(fMibsDir() + File.separator + "bin");	
 	}
 	
@@ -145,8 +131,7 @@ public class DirectoryStructure {
 	 * Directory for mib text
 	
 	 * @return txt subdirectory in mibs subdirectory */
-	public static File fMibsTextDir() 
-	{
+	public static File fMibsTextDir() {
 		return new File(fMibsDir() + File.separator + "txt");	
 	}
 	
@@ -154,8 +139,7 @@ public class DirectoryStructure {
 	 * SQLite database file 
 	
 	 * @return dictionary file */
-	public static File fDictionaryFile() 
-	{
+	public static File fDictionaryFile() {
 		return new File(fDbDir() + File.separator + "dictionary.sqlite");	
 	}
 	
@@ -163,28 +147,24 @@ public class DirectoryStructure {
 	 * 
 	
 	 * @return timestamped directory */
-	public static File fTimestampedDir() 
-	{
+	public static File fTimestampedDir() {
 		return new File(File.separator + getDate());
 	}
 	
 	/**
 	 * Export the dictionary.sqlite file from the jar
 	 */
-	public void exportDictionary() 
-	{	
+	public void exportDictionary() {	
 		InputStream is = this.getClass().getResourceAsStream("/dictionary.sqlite");		
 		OutputStream os = null;
 
-		try
-		{
+		try {
 			os = new FileOutputStream(fDictionaryFile());
 			byte[] buffer = new byte[1024];
 			int length;
 			
 			//copy the file content in bytes 
-			while ((length = is.read(buffer)) > 0) 
-			{
+			while ((length = is.read(buffer)) > 0) {
 				os.write(buffer, 0, length);
 			}
 
@@ -193,8 +173,7 @@ public class DirectoryStructure {
 
 			System.out.println("/* Dictionary export successful! */");
 		} 
-		catch(IOException e) 
-		{
+		catch(IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -203,8 +182,7 @@ public class DirectoryStructure {
 	 * 
 	
 	 * @return Date in yyyMMdd_HHmmss format */
-	public static String getDate() 
-	{
+	public static String getDate() {
 		long time = System.currentTimeMillis();
 		Date date = new Date(time);
 		DateFormat format = new SimpleDateFormat("yyyyMMdd_HHmmss");
@@ -215,30 +193,24 @@ public class DirectoryStructure {
 	/**
 	 * Create subdirectories if they do not exist
 	 */
-	public static void createDirectories() 
-	{
-		if(!fCertificatesDir().exists()) 
-		{
+	public static void createDirectories() {
+		if(!fCertificatesDir().exists()) {
 			fCertificatesDir().mkdir();
 		}
 		
-		if(!fDbDir().exists()) 
-		{
+		if(!fDbDir().exists()) {
 			fDbDir().mkdir();
 		}
 		
-		if(!fMibsDir().exists())
-		{
+		if(!fMibsDir().exists()){
 			fMibsDir().mkdir();
 		}
 		
-		if(!fMibsBinaryDir().exists()) 
-		{
+		if(!fMibsBinaryDir().exists()) {
 			fMibsBinaryDir().mkdir();
 		}
 		
-		if(!fMibsTextDir().exists()) 
-		{
+		if(!fMibsTextDir().exists()) {
 			fMibsTextDir().mkdir();
 		}
 	}
@@ -246,10 +218,8 @@ public class DirectoryStructure {
 	/**
 	 * Export files if they do not exist
 	 */
-	public void exportFiles() 
-	{
-		if(!fDictionaryFile().exists())
-		{
+	public void exportFiles() {
+		if(!fDictionaryFile().exists()) {
 			exportDictionary();
 		}
 	}

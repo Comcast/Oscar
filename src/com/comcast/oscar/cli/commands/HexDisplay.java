@@ -34,9 +34,13 @@ import com.comcast.oscar.utilities.HexString;
  */
 
 public class HexDisplay {
-		
+	
+	public enum Type {
+	    VERBOSE, STRING, TOPLEVEL
+	}
+	
 	private final String[] args;
-	private boolean boolTopLevel = false;
+	private Type type = Type.VERBOSE;
 	
 	/**
 	 * Get HexDisplay arguments
@@ -52,12 +56,12 @@ public class HexDisplay {
 	 * @return Option
 	 */
 	public static final Option OptionParameters() {
-		OptionBuilder.withArgName("t{oplevel}");
+		OptionBuilder.withArgName("s{tring}> <t{oplevel}");
 		OptionBuilder.hasArgs(1);
 		OptionBuilder.hasOptionalArgs();
         OptionBuilder.withValueSeparator(' ');
         OptionBuilder.withLongOpt("hex");
-        OptionBuilder.withDescription("Display the hex of the input file. Option t creates a newline at the start of every top level TLV (binary files only).");
+        OptionBuilder.withDescription("Display the hex of the input file. Option s creates a single string (EX: xx:xx:xx:...). Option t creates a newline at the start of every top level TLV (binary files only).");
 		return OptionBuilder.create("x");
 	}
 	/**
@@ -66,9 +70,13 @@ public class HexDisplay {
 	 */
 	public void setDisplay() {
 		if(this.args != null) {
-			for (String string : this.args) {
+			for (String string : this.args) {				
+				if (string.equalsIgnoreCase("s") || string.equalsIgnoreCase("string")) {
+					this.type = Type.STRING;
+				}
+				
 				if (string.equalsIgnoreCase("t") || string.equalsIgnoreCase("toplevel")) {
-					boolTopLevel = true;
+					this.type = Type.TOPLEVEL;
 				}
 			}
 		}
@@ -79,16 +87,23 @@ public class HexDisplay {
 	 * @param file
 	 */
 	public void printHexDisplayFromBinary(File file) {
-		if (boolTopLevel) {
-			System.out.println(TlvBuilder.tlvDump(HexString.fileToByteArray(file)));
-		}
-		else {
-			System.out.println(HexDump.dumpHexString(HexString.fileToByteArray(file)));
-		}
+		switch (type) {
+	        case VERBOSE:
+	        	System.out.println(HexDump.dumpHexString(HexString.fileToByteArray(file)));
+	            break;
+	                
+	        case STRING:
+	        	System.out.println(HexDump.dumpHexString(HexString.fileToByteArray(file), 0));
+	            break;
+	                     
+	        case TOPLEVEL:
+	        	System.out.println(TlvBuilder.tlvDump(HexString.fileToByteArray(file)));
+	            break;
+	    }
 	}
 
 	/**
-	 * Print Hexidecimal display from text file
+	 * Print Hexadecimal display from text file
 	 * @param file
 	 * @param configurationFileType
 	 */

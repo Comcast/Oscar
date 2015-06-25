@@ -42,7 +42,7 @@ public class ConfigurationFileBuildCLIUnitTest {
 		//cfbctm.BinaryToTextPacketCableInsertDigitMap();
 		//cfbctm.PrintDefaultDOCSISConfigurationTemplate();
 		//cfbctm.PrintDefaultPacketCableConfigurationTemplate();
-		//cfbctm.PrintBinaryToTextDOCSISHexDump();
+		cfbctm.PrintBinaryToTextDOCSISHexDump();
 		//cfbctm.PrintBinaryToTextDOCSISJSONDump();
 		//cfbctm.PrintBinaryToTextPacketCableDigitMap();
 		//cfbctm.PrintBinaryToTextPacketCableHexDump();
@@ -79,14 +79,15 @@ public class ConfigurationFileBuildCLIUnitTest {
 		//cfbctm.MIBSCompileTrueSet();
 		//cfbctm.MIBSCompileFalseSet();
 		//cfbctm.MIBSCompileTrueSetVerbose();
-		//cfbctm.PrintBinaryToTextDOCSISHexDumpToplevelTLV();
+		cfbctm.PrintBinaryToTextDOCSISHexDumpToplevelTLV();
 		//cfbctm.BinaryToBinaryDPoE();
 		//cfbctm.BinaryToTextDPoE();
 		//cfbctm.TextToBinaryDPoE();
 		//cfbctm.MergeBulk();
-		cfbctm.MergeBulkExt();
-		cfbctm.TranslateWord();
-		cfbctm.TranslateDotted();
+		//cfbctm.MergeBulkExt();
+		//cfbctm.TranslateWord();
+		//cfbctm.TranslateDotted();
+		cfbctm.PrintBinaryToTextDOCSISHexDumpString();
 	}
 
 }

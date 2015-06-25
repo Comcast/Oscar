@@ -25,9 +25,32 @@ public class HexDump
      * @param array byte[]
      * @return String
      */
-    public static String dumpHexString(byte[] array)
-    {
+    public static String dumpHexString(byte[] array) {
         return dumpHexString(array, 0, array.length);
+    }
+    
+    /**
+     * Method dumpHexString.
+     * @param array byte[]
+     * @param offset int
+     * @param length int
+     * @return String
+     */
+    public static String dumpHexString(byte[] array, int offset) {
+        StringBuilder result = new StringBuilder();
+                
+        for (int i = offset ; i < offset + array.length ; i++) {
+            byte b = array[i];
+            
+            if (i != 0) {
+            	result.append(':');
+            }
+            
+            result.append(HEX_DIGITS[(b >>> 4) & 0x0F]);
+            result.append(HEX_DIGITS[b & 0x0F]);
+        }
+        
+        return result.toString();
     }
     
     /**

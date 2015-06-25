@@ -1551,8 +1551,8 @@ public class ConfigurationFileBuildCLITestMethods implements TestMethod {
 	}
 	
 	/**
-	 * Method PrintBinaryToTextDOCSISHexDump.
-	 * @see com.comcast.oscar.test.TestMethod#PrintBinaryToTextDOCSISHexDump()
+	 * Method PrintBinaryToTextDOCSISHexDumpToplevelTLV.
+	 * @see com.comcast.oscar.test.TestMethod#PrintBinaryToTextDOCSISHexDumpToplevelTLV()
 	 */
 	public void PrintBinaryToTextDOCSISHexDumpToplevelTLV() {
 		/* Start Banner */
@@ -1752,5 +1752,28 @@ public class ConfigurationFileBuildCLITestMethods implements TestMethod {
 
 		/* End Banner */
 		System.out.println("+---------------TranslateDotted End-----------------+");
+	}
+
+	/**
+	 * Method PrintBinaryToTextDOCSISHexDumpString.
+	 * @see com.comcast.oscar.test.TestMethod#PrintBinaryToTextDOCSISHexDumpString()
+	 */
+	public void PrintBinaryToTextDOCSISHexDumpString() {
+		/* Start Banner */
+		System.out.println("+---------------PrintBinaryToTextDOCSISHexDumpString Start---------------+");
+		
+		/* Define arguments */
+		String arguments[] = new String[4];
+		arguments[0] = "-x";
+		arguments[1] = "s";
+		arguments[2] = "-i";
+		arguments[3] = TestDirectoryStructure.fInputDirFileName("DOCSIS-GOLDEN.bin").toString();
+				
+		/* Run commands */
+		CommandRun cmds = new CommandRun();
+		cmds.run(arguments);
+		
+		/* End Banner */
+		System.out.println("+---------------PrintBinaryToTextDOCSISHexDumpString End-----------------+");
 	}
 }
