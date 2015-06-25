@@ -65,12 +65,9 @@ public class HexDisplay {
 	 * @return
 	 */
 	public void setDisplay() {
-		if(this.args != null)
-		{
-			for (String string : this.args) 
-			{
-				if (string.equalsIgnoreCase("t") || string.equalsIgnoreCase("toplevel")) 
-				{
+		if(this.args != null) {
+			for (String string : this.args) {
+				if (string.equalsIgnoreCase("t") || string.equalsIgnoreCase("toplevel")) {
 					boolTopLevel = true;
 				}
 			}
@@ -83,9 +80,7 @@ public class HexDisplay {
 	 */
 	public void printHexDisplayFromBinary(File file) {
 		if (boolTopLevel) {
-			
 			System.out.println(TlvBuilder.tlvDump(HexString.fileToByteArray(file)));
-			
 		}
 		else {
 			System.out.println(HexDump.dumpHexString(HexString.fileToByteArray(file)));
