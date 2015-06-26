@@ -894,8 +894,14 @@ public class ConfigurationFileExport {
 			
 		}
 		
-		//Sort by TopLevel TLVs via List<byte[]>
+		/***************************************************************************
+		 * 					Sort by TopLevel TLVs via List<byte[]>
+		 ***************************************************************************/
 		for (byte[] bTopLevelTLV : tbTLV.sortByTopLevelTlv(miiTopLevelTLV)) {
+			
+			//Search TLV List
+			if (debug|localDebug)
+				System.out.println("ConfigrationFileExport.tlvToDictionary() -> Sort by TopLevel" + miiTopLevelTLV);
 			
 			//Get TLV Type 
 			iTlvType = BinaryConversion.byteToUnsignedInteger(bTopLevelTLV[0]);
@@ -1021,6 +1027,8 @@ public class ConfigurationFileExport {
 	 * @throws JSONException */
 	private StringBuilder topLevelTLVCodeBlock (JSONObject joTopLevelTLV, int iIndentation) throws JSONException {
 		
+		Boolean localDebug = Boolean.FALSE;
+		
 		StringBuilder sbTopLevelTLVCodeBlock = new StringBuilder();
 
 		StringBuilder sbIndentation = new StringBuilder();
@@ -1070,6 +1078,9 @@ public class ConfigurationFileExport {
 										.append("*/\n");				
 			}
 			
+			if (debug|localDebug)
+				System.out.println("topLevelTLVCodeBlock(jo,i): " + sbTopLevelTLVCodeBlock);
+			
 		//Top Level TLV Only
 		} else {
 			
@@ -1100,6 +1111,9 @@ public class ConfigurationFileExport {
 										.append(joTopLevelTLV.get(Dictionary.PARENT_TYPE_LIST).toString().replace("-1,", "").replaceAll("," , "."))
 										.append("*/\n");				
 			}
+			
+			if (debug|localDebug)
+				System.out.println("topLevelTLVCodeBlock(jo,i): " + sbTopLevelTLVCodeBlock);
 			
 		}
 				

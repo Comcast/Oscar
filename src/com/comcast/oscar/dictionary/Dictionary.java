@@ -75,6 +75,9 @@ public interface Dictionary {
 	public final static Integer PACKET_CABLE 			   		= 1;
 	public final static Integer DPOE							= 2;
 	
+	/* Needed to Fix an Issue where More than 1 SubTLV is found */
+	public final static String MULTI_SUB_TLV_INSTANCE			= "MULTI_SUB_TLV_INSTANCE";
+	
 	/* *****************************************************************************
 	 *  								Methods
 	 ******************************************************************************/
