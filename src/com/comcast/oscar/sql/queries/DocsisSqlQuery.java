@@ -378,17 +378,16 @@ public class DocsisSqlQuery implements Dictionary {
 
 				tlvJsonObj = new JSONObject();
 
-				tlvJsonObj.put(Dictionary.TYPE, resultSetGetRowDefinition.getString("TYPE"));
-				tlvJsonObj.put(Dictionary.TLV_NAME, resultSetGetRowDefinition.getString("TLV_NAME"));
-				//			tlvJsonObj.put(DocsisSqlQueryConstants.TLV_DESCRIPTION, resultSetGetRowDefinition.getString("TLV_DESCRIPTION"));
-				tlvJsonObj.put(Dictionary.LENGTH_MIN, resultSetGetRowDefinition.getInt("LENGTH_MIN"));
-				tlvJsonObj.put(Dictionary.LENGTH_MAX, resultSetGetRowDefinition.getInt("LENGTH_MAX"));
-				tlvJsonObj.put(Dictionary.SUPPORTED_VERSIONS, resultSetGetRowDefinition.getString("MIN_SUPPORTED_VERSION"));
-				tlvJsonObj.put(Dictionary.DATA_TYPE, resultSetGetRowDefinition.getString("DATA_TYPE"));
+				tlvJsonObj.put(Dictionary.TYPE, resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_TYPE));
+				tlvJsonObj.put(Dictionary.TLV_NAME, resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_TLV_NAME));
+				tlvJsonObj.put(Dictionary.LENGTH_MIN, resultSetGetRowDefinition.getInt(Dictionary.DB_TBL_COL_LENGTH_MIN));
+				tlvJsonObj.put(Dictionary.LENGTH_MAX, resultSetGetRowDefinition.getInt(Dictionary.DB_TBL_COL_LENGTH_MAX));
+				tlvJsonObj.put(Dictionary.SUPPORTED_VERSIONS, resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_SUPPORTED_VERSIONS));
+				tlvJsonObj.put(Dictionary.DATA_TYPE, resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_DATA_TYPE));
 				tlvJsonObj.put(Dictionary.ARE_SUBTYPES, false);
-				tlvJsonObj.put(Dictionary.BYTE_LENGTH, resultSetGetRowDefinition.getString("BYTE_LENGTH"));
+				tlvJsonObj.put(Dictionary.BYTE_LENGTH, resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_BYTE_LENGTH));
 
-				aliTlvEncodeHistory.add(resultSetGetRowDefinition.getInt("TYPE"));				
+				aliTlvEncodeHistory.add(resultSetGetRowDefinition.getInt(Dictionary.DB_TBL_COL_TYPE));				
 				tlvJsonObj.put(Dictionary.PARENT_TYPE_LIST, aliTlvEncodeHistory);
 
 				if (debug)
@@ -415,15 +414,14 @@ public class DocsisSqlQuery implements Dictionary {
 
 				tlvJsonObj = new JSONObject();
 
-				tlvJsonObj.put(Dictionary.TYPE, resultSetGetRowDefinition.getString("TYPE"));
-				tlvJsonObj.put(Dictionary.TLV_NAME, resultSetGetRowDefinition.getString("TLV_NAME"));
-				//			tlvJsonObj.put(DocsisSqlQueryConstants.TLV_DESCRIPTION, resultSetGetRowDefinition.getString("TLV_DESCRIPTION"));
-				tlvJsonObj.put(Dictionary.LENGTH_MIN, resultSetGetRowDefinition.getInt("LENGTH_MIN"));
-				tlvJsonObj.put(Dictionary.LENGTH_MAX, resultSetGetRowDefinition.getInt("LENGTH_MAX"));
-				tlvJsonObj.put(Dictionary.SUPPORTED_VERSIONS, resultSetGetRowDefinition.getString("MIN_SUPPORTED_VERSION"));
-				tlvJsonObj.put(Dictionary.DATA_TYPE, resultSetGetRowDefinition.getString("DATA_TYPE"));
+				tlvJsonObj.put(Dictionary.TYPE, resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_TYPE));
+				tlvJsonObj.put(Dictionary.TLV_NAME, resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_TLV_NAME));
+				tlvJsonObj.put(Dictionary.LENGTH_MIN, resultSetGetRowDefinition.getInt(Dictionary.DB_TBL_COL_LENGTH_MIN));
+				tlvJsonObj.put(Dictionary.LENGTH_MAX, resultSetGetRowDefinition.getInt(Dictionary.DB_TBL_COL_LENGTH_MAX));
+				tlvJsonObj.put(Dictionary.SUPPORTED_VERSIONS, resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_SUPPORTED_VERSIONS));
+				tlvJsonObj.put(Dictionary.DATA_TYPE, resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_DATA_TYPE));
 				tlvJsonObj.put(Dictionary.ARE_SUBTYPES, false);
-				tlvJsonObj.put(Dictionary.BYTE_LENGTH, resultSetGetRowDefinition.getString("BYTE_LENGTH"));
+				tlvJsonObj.put(Dictionary.BYTE_LENGTH, resultSetGetRowDefinition.getString(Dictionary.DB_TBL_COL_BYTE_LENGTH));
 
 				aliTlvEncodeHistory.add(resultSetGetRowDefinition.getInt("TYPE"));
 				tlvJsonObj.put(Dictionary.PARENT_TYPE_LIST, aliTlvEncodeHistory);
@@ -452,7 +450,7 @@ public class DocsisSqlQuery implements Dictionary {
 
 					while (resultSetParentCheck.next()) {
 
-						iParentIdTemp = resultSetParentCheck.getInt("PARENT_ID");
+						iParentIdTemp = resultSetParentCheck.getInt(Dictionary.DB_TBL_COL_PARENT_ID);
 
 						ArrayList<Integer> aliTlvEncodeHistoryNext = new ArrayList<Integer>();
 
@@ -464,7 +462,7 @@ public class DocsisSqlQuery implements Dictionary {
 						aliTlvEncodeHistoryNext.remove(aliTlvEncodeHistoryNext.size()-1);
 
 						//Keep processing each row using recursion until you get to to the bottom of the tree
-						tlvJsonArray.put(recursiveTlvDefinitionBuilder(	resultSetParentCheck.getInt("ID"), 
+						tlvJsonArray.put(recursiveTlvDefinitionBuilder(resultSetParentCheck.getInt(Dictionary.DB_TBL_COL_ID), 
 								iParentIdTemp ,
 								aliTlvEncodeHistoryNext));
 					}
@@ -571,16 +569,15 @@ public class DocsisSqlQuery implements Dictionary {
 
 			tlvJsonObj = new JSONObject();
 
-			tlvJsonObj.put(Dictionary.TYPE, resultSetParentCheck.getString("TYPE"));
-			tlvJsonObj.put(Dictionary.TLV_NAME, resultSetParentCheck.getString("TLV_NAME"));
-			//	tlvJsonObj.put(DocsisSqlQueryConstants.TLV_DESCRIPTION, resultSetParentCheck.getString("TLV_DESCRIPTION"));
-			tlvJsonObj.put(Dictionary.LENGTH_MIN, resultSetParentCheck.getInt("LENGTH_MIN"));
-			tlvJsonObj.put(Dictionary.LENGTH_MAX, resultSetParentCheck.getInt("LENGTH_MAX"));
-			tlvJsonObj.put(Dictionary.SUPPORTED_VERSIONS, resultSetParentCheck.getString("MIN_SUPPORTED_VERSION"));
-			tlvJsonObj.put(Dictionary.DATA_TYPE, resultSetParentCheck.getString("DATA_TYPE"));
+			tlvJsonObj.put(Dictionary.TYPE, resultSetParentCheck.getString(Dictionary.TYPE));
+			tlvJsonObj.put(Dictionary.TLV_NAME, resultSetParentCheck.getString(Dictionary.DB_TBL_COL_TLV_NAME));
+			tlvJsonObj.put(Dictionary.LENGTH_MIN, resultSetParentCheck.getInt(Dictionary.DB_TBL_COL_LENGTH_MIN));
+			tlvJsonObj.put(Dictionary.LENGTH_MAX, resultSetParentCheck.getInt(Dictionary.DB_TBL_COL_LENGTH_MAX));
+			tlvJsonObj.put(Dictionary.SUPPORTED_VERSIONS, resultSetParentCheck.getString(Dictionary.DB_TBL_COL_SUPPORTED_VERSIONS));
+			tlvJsonObj.put(Dictionary.DATA_TYPE, resultSetParentCheck.getString(Dictionary.DB_TBL_COL_DATA_TYPE));
 			tlvJsonObj.put(Dictionary.ARE_SUBTYPES, true);
-			tlvJsonObj.put(Dictionary.BYTE_LENGTH, resultSetParentCheck.getString("BYTE_LENGTH"));
-
+			tlvJsonObj.put(Dictionary.BYTE_LENGTH, resultSetParentCheck.getString(Dictionary.DB_TBL_COL_BYTE_LENGTH));
+			
 			if (debug)
 				System.out.println(tlvJsonObj.toString());			
 

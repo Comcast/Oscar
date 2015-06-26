@@ -280,7 +280,6 @@ public class TlvDisassemble extends DictionarySQLQueries {
 
 		return jaTlvDictionary;
 	}
-
 	/**
 	 * 
 	
@@ -361,7 +360,12 @@ public class TlvDisassemble extends DictionarySQLQueries {
 		boolean localDebug = Boolean.FALSE;
 		
 		//Cycle thru JSON Array and inspect each JSON Object
-		for (int iJsonArrayIndex = 0 ; iJsonArrayIndex < jaTlvDictionary.length() ; iJsonArrayIndex++ ) {
+		
+		/*!!!!!!!DO NOT REFACTOR THIS!!!!!!!*/
+		int iLength = jaTlvDictionary.length();
+		/*!!!!!!!DO NOT REFACTOR THIS!!!!!!!*/
+		
+		for (int iJsonArrayIndex = 0 ; iJsonArrayIndex < iLength ; iJsonArrayIndex++ ) {
 
 			if (debug|localDebug) 
 				System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,ja) +-----INDEX: " + iJsonArrayIndex + "-----+");
@@ -380,7 +384,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 				if (joTlvDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
 					
 					if (debug|localDebug) 
-						System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,ja) SUB-TYPE-ARRAY-TRUE: " + joTlvDictionary);
+						System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,ja) SUB-TYPE-ARRAY-FALSE: " + joTlvDictionary);
 
 					//If this is the start of the array, I need only advance 2 bytes to the next Type
 					loadTlvValuesIntoTlvDictionary (bTlvBuffer , joTlvDictionary.getJSONArray(Dictionary.SUBTYPE_ARRAY)); 
@@ -392,8 +396,28 @@ public class TlvDisassemble extends DictionarySQLQueries {
 
 					//If this is the start of the array, I need only advance 2 bytes to the next Type
 					try {
-						loadTlvValuesIntoTlvDictionary (bTlvBuffer , joTlvDictionary);
+						
+						JSONObject joCheckForMultiSubTLVInstance = loadTlvValuesIntoTlvDictionary (bTlvBuffer , joTlvDictionary);
+					
+						if (joCheckForMultiSubTLVInstance.has(Dictionary.MULTI_SUB_TLV_INSTANCE)) {
+							
+							if (debug|localDebug)System.out.println(joCheckForMultiSubTLVInstance);
+							if (debug|localDebug)System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(ba,ja) - MULTI-SUB");
+							
+							JSONArray ja_ = joCheckForMultiSubTLVInstance.getJSONArray(Dictionary.MULTI_SUB_TLV_INSTANCE);
+							if (debug|localDebug)System.out.println(ja_);
+							
+							for (int iIndex = 0 ; iIndex < ja_.length() ; iIndex++ ) {
+								if (debug|localDebug)System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(ba,ja) - JSONObject ");
+								jaTlvDictionary.put(new JSONObject(ja_.get(iIndex).toString()));
+							}
+							
+							if (debug|localDebug)System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(ba,ja) - ADDED-MULTI-SUB ");
+							if (debug|localDebug)System.out.println(jaTlvDictionary);						
+						}
+						
 					} catch (TlvException e) {
+						System.out.println(jaTlvDictionary);
 						e.printStackTrace();
 					}						
 				}
@@ -418,8 +442,11 @@ public class TlvDisassemble extends DictionarySQLQueries {
 		
 		boolean localDebug = Boolean.FALSE;
 		
+		JSONArray jaMultiSubTlvInstance = null;
+		
 		if (debug|localDebug) {
 			System.out.println("+=================================loadTlvValuesIntoTlvDictionary============================================+");
+			System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - joTlvDictionary: " + joTlvDictionary);
 			System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - TlvBufferLength: " + bTlvBuffer.length);
 			System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - ByteArray: " + new HexString(bTlvBuffer).toString(":"));
 		}
@@ -450,255 +477,294 @@ public class TlvDisassemble extends DictionarySQLQueries {
 				
 				HexString hsPCTEPointer = new HexString(bPCTEPointer);
 				
+				
 				if (debug|localDebug) 
 					System.out.println(	"TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) " +
 										" -> TlvBufferLength: " + bTlvBuffer.length +
 										" -> bParentChildTlvEncodeList: " + hsPCTEL +
 										" -> HexPointerIndex: " + hsPCTEPointer + 
 										" -> HexPointerIndexLength: " + bPCTEPointer.length);
+
 				
 				if (bPCTEPointer.length != 0) {
-					
-					//Get Value
-					byte [] bValue = TlvBuilder.getTlvValue(bTlvBuffer, bPCTEPointer[0], joTlvDictionary.getInt(Dictionary.BYTE_LENGTH));
 
-					if (debug|localDebug) {
-						System.out.println("+-------------------------------------------------------------------------------------------------+");
-						System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) BYTE-ARRAY-VALUE-LENGTH: " + bValue.length);
-						System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV_NAME: " + joTlvDictionary.getString(Dictionary.TLV_NAME));
-						System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) BYTE_LENGTH: " + joTlvDictionary.getString(Dictionary.BYTE_LENGTH));					
-					}
-					
-					//Determine the Data Type of Value
-					String sDataType = joTlvDictionary.getString(Dictionary.DATA_TYPE);
+					if (debug|localDebug|Boolean.FALSE) 
+						System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) -> NextTLV -> " + hsPCTEPointer.toString(":"));
 
-					//Convert Value to Proper Data Type
-					if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-INT: " + new HexString(bValue).toHexStringList());
+					/* Need to create a special case when there are 2 of the same TLV - Example TLV 43 Vendor Specific */
+					for (int iIndex = 0; iIndex < bPCTEPointer.length; iIndex++) {
 						
 						//Get Value
-						int iTlvValue = new HexString(bValue).toInteger();
+						byte [] bValue = TlvBuilder.getTlvValue(bTlvBuffer, bPCTEPointer[iIndex], joTlvDictionary.getInt(Dictionary.BYTE_LENGTH));
 
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, iTlvValue);
+						if (debug|localDebug) {
+							System.out.println("+-------------------------------------------------------------------------------------------------+");
+							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) BYTE-ARRAY-VALUE-LENGTH: " + bValue.length);
+							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TlvDictionaryObject: " + joTlvDictionary);
+							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV_NAME: " + joTlvDictionary.getString(Dictionary.TLV_NAME));
+							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) BYTE_LENGTH: " + joTlvDictionary.getString(Dictionary.BYTE_LENGTH));
+						}
 
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-VALUE: " + iTlvValue);
+						//Determine the Data Type of Value
+						String sDataType = joTlvDictionary.getString(Dictionary.DATA_TYPE);
 
-					} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID)) {
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-OID-PRE: " + new HexString(bValue).toHexStringList());
-						
-						//Need to see if this is a BER byte array
-						//bValue = BERService.cleanBEROIDPrefix(bValue);
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-OID-PST: " + new HexString(bValue).toHexStringList());
-						
-						//Get Value
-						BEROIDConversion bocOID = new BEROIDConversion(bValue); 
+						//Convert Value to Proper Data Type
+						if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
 
-						JSONArray jaOID = new JSONArray();
-						
-						jaOID.put(bocOID.toMap());
-						
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, jaOID);
-					
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - DATA_TYPE_OID - joTlvDictionary: " + joTlvDictionary);
-					
-					} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY)) {
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-BYTE-ARRAY: " + new HexString(bValue).toHexStringList());
-						
-						//Get Value
-						String sTlvValue = new HexString(bValue).toString(":");
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-INT: " + new HexString(bValue).toHexStringList());
 
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
-						
-					} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED)) {
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-STRING-NULL-TERMINATED: " + new HexString(bValue).toHexStringList());
-						
-						//Get Value
-						String sTlvValueASCII = new HexString(HexString.stripNullTerminatedString(bValue)).toASCII();
+							//Get Value
+							int iTlvValue = new HexString(bValue).toInteger();
 
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValueASCII);
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, iTlvValue);
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-VALUE: " + iTlvValue);
+
+						} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID)) {
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-OID-PRE: " + new HexString(bValue).toHexStringList());
+
+							//Need to see if this is a BER byte array
+							//bValue = BERService.cleanBEROIDPrefix(bValue);
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-OID-PST: " + new HexString(bValue).toHexStringList());
+
+							//Get Value
+							BEROIDConversion bocOID = new BEROIDConversion(bValue); 
+
+							JSONArray jaOID = new JSONArray();
+
+							jaOID.put(bocOID.toMap());
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, jaOID);
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - DATA_TYPE_OID - joTlvDictionary: " + joTlvDictionary);
+
+						} 
+						
+						/*Will need to come back and apply to all DataTypes - Fix Issue38*/
+						else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY)) {
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-BYTE-ARRAY: " + new HexString(bValue).toHexStringList());
+
+							//Get Value
+							String sTlvValue = new HexString(bValue).toString(":");
+
+							if (iIndex > 0) {
 								
-					} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING)) {
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-STRING: " + new HexString(bValue).toHexStringList());
-						
-						//Get Value
-						String sTlvValueASCII = new HexString(bValue).toASCII();
+								/*Create Array At the first Instance */
+								if (iIndex == 1) {
+									jaMultiSubTlvInstance = new JSONArray();
+								} 
+								
+								/*Create a new Object for the new TLV Instance */
+								JSONObject joNextTLVInstance = new JSONObject(joTlvDictionary.toString());
+								
+								/*Add New Value */
+								joNextTLVInstance.put(Dictionary.VALUE, sTlvValue);
+								
+								/*Update Object and Array*/
+								
+								jaMultiSubTlvInstance.put(joNextTLVInstance);
+								
+								if (iIndex == bPCTEPointer.length -1) {
+									joTlvDictionary.put(Dictionary.MULTI_SUB_TLV_INSTANCE,jaMultiSubTlvInstance);
+								}
+								
+							} else {	
+								//Insert Value into JSON Object
+								joTlvDictionary.put(Dictionary.VALUE, sTlvValue);							
+							}
+							
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) " + joTlvDictionary);
+							
+						} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED)) {
 
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValueASCII);
-												
-					} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_MULTI_TLV_BYTE_ARRAY)) {
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-MULTI-TLV-BYTE-ARRAY: " + new HexString(bValue).toString(":"));
-						
-						//Get Value
-						String sTlvValue = new HexString(bValue).toString(":");
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-STRING-NULL-TERMINATED: " + new HexString(bValue).toHexStringList());
 
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
-												
-					} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR)) {
+							//Get Value
+							String sTlvValueASCII = new HexString(HexString.stripNullTerminatedString(bValue)).toASCII();
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, sTlvValueASCII);
+
+						} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING)) {
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-STRING: " + new HexString(bValue).toHexStringList());
+
+							//Get Value
+							String sTlvValueASCII = new HexString(bValue).toASCII();
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, sTlvValueASCII);
+
+						} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_MULTI_TLV_BYTE_ARRAY)) {
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-MULTI-TLV-BYTE-ARRAY: " + new HexString(bValue).toString(":"));
+
+							//Get Value
+							String sTlvValue = new HexString(bValue).toString(":");
 						
-						String sTlvValue = null;
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR: " + new HexString(bValue).toString(":"));
-						
-						try {
-							sTlvValue = DataTypeFormatConversion.byteArrayToIPv4TransportAddress(bValue);
-						} catch (DataTypeFormatException e) {
-							e.printStackTrace();
-						}
-						
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
-												
-					} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR)) {
-						
-						String sTlvValue = null;
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR: " + new HexString(bValue).toString(":"));
-						
-						try {
-							sTlvValue = DataTypeFormatConversion.byteArrayToIPv6TransportAddress(bValue);
-						} catch (DataTypeFormatException e) {
-							e.printStackTrace();
-						}
-						
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
-												
-					} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_INET_ADDR)) {
-						
-						String sTlvValue = null;
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_TRANSPORT_ADDR_INET_ADDR: " + new HexString(bValue).toString(":"));
-						
-						try {
-							sTlvValue = DataTypeFormatConversion.byteArrayToInetTransportAddress(bValue);
-						} catch (DataTypeFormatException e) {
-							e.printStackTrace();
-						}
-						
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
-												
-					} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_DOUBLE_BYTE_ARRAY)) {
-						
-						String sTlvValue = null;
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_DOUBLE_BYTE_ARRAY: " + new HexString(bValue).toString(":"));
-						
-						try {
-							sTlvValue = DataTypeFormatConversion.doubleByteArray(bValue);
-						} catch (IllegalArgumentException e) {
-							e.printStackTrace();
-						}
-						
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
-												
-					}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING_BITS)) {
-						
-						StringBuilder sbTlvValue = null;
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_STRING_BITS: " + new HexString(bValue).toString(":"));
-						
-						sbTlvValue = DataTypeFormatConversion.byteArrayBinaryBitMaskToString(bValue,8);
-						
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sbTlvValue.toString());
-												
-					}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_MAC_ADDRESS)) {
-						
-						String sTlvValue = null;
-						
-						if (debug|localDebug) { 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_MAC_ADDRESS: " + new HexString(bValue).toString(":"));
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-NAME: " + joTlvDictionary.getString(Dictionary.TLV_NAME));
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-NAME: " + joTlvDictionary.getString(Dictionary.PARENT_TYPE_LIST));
-						}
-						
-						sTlvValue = DataTypeFormatConversion.byteArrayToMacAddressFormat(bValue);
-						
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
-												
-					}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)) {
-						
-						String sTlvValue = null;
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE_ARRAY_IPV4_ADDR: " + new HexString(bValue).toString(":"));
-						
-						sTlvValue = DataTypeFormatConversion.inetAddressToString(bValue);
-						
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
-												
-					}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV6_ADDR)) {
-						
-						String sTlvValue = null;
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE_ARRAY_IPV6_ADDR: " + new HexString(bValue).toString(":"));
-						
-						sTlvValue = DataTypeFormatConversion.inetAddressToString(bValue);
-						
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
-												
-					}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE)) {
-						
-						String sTlvValue = null;
-						
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE: " + new HexString(bValue).toString(":"));
-						
-						sTlvValue = new HexString(bValue).toString();
-						
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
-												
-					}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
-												
-						if (debug|localDebug) 
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE: " + new HexString(bValue).toString(":"));
-						
-						String sObjectOnlyHex = "30" + HexString.toHexString(bValue.length) + new HexString(bValue).toString();
-						
-						HexString hsHexOID = new HexString(HexString.toByteArray(sObjectOnlyHex));
-						
-					    BEROIDConversion bocOidAsnObj5 = new BEROIDConversion(hsHexOID.toByteArray());
-					    
-					    if (debug|localDebug) 
-					    	System.out.println("Hex -> OID-DOT: " + bocOidAsnObj5.getOidDotNotaion());
-					    
-						//Insert Value into JSON Object
-						joTlvDictionary.put(Dictionary.VALUE,  bocOidAsnObj5.getOidDotNotaion());
-												
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
+							
+						} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR)) {
+
+							String sTlvValue = null;
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR: " + new HexString(bValue).toString(":"));
+
+							try {
+								sTlvValue = DataTypeFormatConversion.byteArrayToIPv4TransportAddress(bValue);
+							} catch (DataTypeFormatException e) {
+								e.printStackTrace();
+							}
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
+
+						} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR)) {
+
+							String sTlvValue = null;
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR: " + new HexString(bValue).toString(":"));
+
+							try {
+								sTlvValue = DataTypeFormatConversion.byteArrayToIPv6TransportAddress(bValue);
+							} catch (DataTypeFormatException e) {
+								e.printStackTrace();
+							}
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
+
+						} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_INET_ADDR)) {
+
+							String sTlvValue = null;
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_TRANSPORT_ADDR_INET_ADDR: " + new HexString(bValue).toString(":"));
+
+							try {
+								sTlvValue = DataTypeFormatConversion.byteArrayToInetTransportAddress(bValue);
+							} catch (DataTypeFormatException e) {
+								e.printStackTrace();
+							}
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
+
+						} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_DOUBLE_BYTE_ARRAY)) {
+
+							String sTlvValue = null;
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_DOUBLE_BYTE_ARRAY: " + new HexString(bValue).toString(":"));
+
+							try {
+								sTlvValue = DataTypeFormatConversion.doubleByteArray(bValue);
+							} catch (IllegalArgumentException e) {
+								e.printStackTrace();
+							}
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
+
+						}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING_BITS)) {
+
+							StringBuilder sbTlvValue = null;
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_STRING_BITS: " + new HexString(bValue).toString(":"));
+
+							sbTlvValue = DataTypeFormatConversion.byteArrayBinaryBitMaskToString(bValue,8);
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, sbTlvValue.toString());
+
+						}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_MAC_ADDRESS)) {
+
+							String sTlvValue = null;
+
+							if (debug|localDebug) { 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_MAC_ADDRESS: " + new HexString(bValue).toString(":"));
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-NAME: " + joTlvDictionary.getString(Dictionary.TLV_NAME));
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-NAME: " + joTlvDictionary.getString(Dictionary.PARENT_TYPE_LIST));
+							}
+
+							sTlvValue = DataTypeFormatConversion.byteArrayToMacAddressFormat(bValue);
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
+
+						}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)) {
+
+							String sTlvValue = null;
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE_ARRAY_IPV4_ADDR: " + new HexString(bValue).toString(":"));
+
+							sTlvValue = DataTypeFormatConversion.inetAddressToString(bValue);
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
+
+						}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV6_ADDR)) {
+
+							String sTlvValue = null;
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE_ARRAY_IPV6_ADDR: " + new HexString(bValue).toString(":"));
+
+							sTlvValue = DataTypeFormatConversion.inetAddressToString(bValue);
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
+
+						}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE)) {
+
+							String sTlvValue = null;
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE: " + new HexString(bValue).toString(":"));
+
+							sTlvValue = new HexString(bValue).toString();
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
+
+						}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
+
+							if (debug|localDebug) 
+								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE: " + new HexString(bValue).toString(":"));
+
+							String sObjectOnlyHex = "30" + HexString.toHexString(bValue.length) + new HexString(bValue).toString();
+
+							HexString hsHexOID = new HexString(HexString.toByteArray(sObjectOnlyHex));
+
+							BEROIDConversion bocOidAsnObj5 = new BEROIDConversion(hsHexOID.toByteArray());
+
+							if (debug|localDebug) 
+								System.out.println("Hex -> OID-DOT: " + bocOidAsnObj5.getOidDotNotaion());
+
+							//Insert Value into JSON Object
+							joTlvDictionary.put(Dictionary.VALUE,  bocOidAsnObj5.getOidDotNotaion());
+
+						}					
 					}
 
 				}
