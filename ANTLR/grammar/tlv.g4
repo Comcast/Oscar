@@ -25,6 +25,7 @@ DOUBLE_QUOTE  : '"';
 LBRACKET      : '\[';
 RBRACKET      : '\]';
 TICK          : '`';
+PLUS		  : '+';
 
 /* ************************************************************************************************
 *                                     Number Parsers
@@ -67,7 +68,8 @@ HEX_BYTE_LOWER_CASE   : HEX_NIBBLE_LOWERCASE HEX_NIBBLE_LOWERCASE;
 ALPHA_NUMERIC           : ([a-zA-Z0-9]);
 
 //mgarcia - 150416 - Added $
-IDENTIFIER              : ([a-zA-Z0-9]|'-'|'_'|'\''|'$'|'.')+;
+//mgarcia - 150724 - Added +
+IDENTIFIER              : ([a-zA-Z0-9]|'-'|'_'|'\''|'$'|'.'|'+')+;
 
 SINGLE_QUOTE_STRING     : SINGLE_QUOTE IDENTIFIER SINGLE_QUOTE;
 
