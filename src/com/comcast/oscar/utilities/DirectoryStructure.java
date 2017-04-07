@@ -104,6 +104,23 @@ public class DirectoryStructure {
 	}
 	
 	/**
+	 * 
+	 * @return return test directory (used only for testing code)
+	 */
+	public static File fTestDir() {
+		return new File(sBasePath() + File.separator + "test");
+	}
+	
+	/**
+	 * 
+	 * @param sFilename Filename in Test directory
+	 * @return
+	 */
+	public static File fTestFile(String sFilename) {
+		return new File(sBasePath() + File.separator + "test" + File.separator + sFilename);
+	}
+	
+	/**
 	 * Directory for licenses
 	
 	 * @return licenses subdirectory */
