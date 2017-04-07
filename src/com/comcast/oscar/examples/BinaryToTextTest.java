@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.test.TestDirectoryStructure;
+import com.comcast.oscar.utilities.DirectoryStructure;
 
 
 /*
@@ -34,30 +35,23 @@ public class BinaryToTextTest {
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
-		boolean DOCSIS = false;
-		boolean PC = true;
+		boolean DOCSIS = true;
+		boolean PC = false;
 
 		File fDocsisBin = null;
 		File fPacketCableBin = null;
 
 		if (DOCSIS) {
 
-			try {
-				fDocsisBin = new File(new java.io.File( "." ).getCanonicalPath() 		
-						+ File.separatorChar + "testfiles" 
-						+ File.separatorChar + "xxxxxx.cm");
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			fDocsisBin = DirectoryStructure.fTestFile("d10_prod_tg1682g_ssddownload.cm");
 
-			ConfigurationFileExport cfeDocsis = new ConfigurationFileExport (fDocsisBin);
+			ConfigurationFileExport cfeDocsis = new ConfigurationFileExport (fDocsisBin,ConfigurationFileExport.DOCSIS_VER_30);
 
-			System.out.println(cfeDocsis.toPrettyPrint(0));
+			System.out.println(cfeDocsis.toPrettyPrint(false));
 
 		} 
 
-		System.out.println("+============================================================================================================================+");
+		//System.out.println("+============================================================================================================================+");
 
 		if (PC) {
 
