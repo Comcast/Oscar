@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,6 +41,8 @@ import com.comcast.oscar.utilities.HexString;
 
 
 public class DigitMapOperation {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(DigitMapOperation.class);
 
 	public final static String DEFAULT_DIGIT_MAP_OID = PacketCableConstants.PKT_CABLE_DIGIT_MAP_OID;
 	
@@ -103,7 +107,7 @@ public class DigitMapOperation {
 			joTLV64 = jaTLV64.getJSONObject(0);
 						
 			if (debug|localDebug)
-				System.out.println("DigitMapOperation.getDigitMap()" + joTLV64);
+				logger.debug("DigitMapOperation.getDigitMap()" + joTLV64);
 			
 			JSONArray jaDigitMap = joTLV64.getJSONArray(Dictionary.VALUE);
 			
@@ -192,7 +196,7 @@ public class DigitMapOperation {
 		
 		// Validate: http://www.jsoneditoronline.org/
 		if (debug|localDebug)
-			System.out.println("DigitMapOperation.getDigitMapTlvBuilder() - Snmp64 - JSON-DICTIONARY: " + joDictSnmp64);
+			logger.debug("DigitMapOperation.getDigitMapTlvBuilder() - Snmp64 - JSON-DICTIONARY: " + joDictSnmp64);
 				
 										/* Convert to TLV */
 		
@@ -224,8 +228,8 @@ public class DigitMapOperation {
 		tb.add(tvb);
 		
 		if (debug|localDebug) {
-			System.out.println("DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder: " + tb.toStringSeperation(":"));
-			System.out.println("DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder-Map: " + tb.getMapTypeToByteLength());	
+			logger.debug("DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder: " + tb.toStringSeperation(":"));
+			logger.debug("DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder-Map: " + tb.getMapTypeToByteLength());	
 		}
 		
 		//Return TlvBuilder
@@ -261,7 +265,7 @@ public class DigitMapOperation {
 		
 		// Validate: http://www.jsoneditoronline.org/
 		if (debug|localDebug)
-			System.out.println("DigitMapOperation.getDigitMapTlvBuilder() - Snmp64 - JSON-DICTIONARY: " + joDictSnmp64);
+			logger.debug("DigitMapOperation.getDigitMapTlvBuilder() - Snmp64 - JSON-DICTIONARY: " + joDictSnmp64);
 				
 										/* Convert to TLV */
 		
@@ -293,8 +297,8 @@ public class DigitMapOperation {
 		tb.add(tvb);
 		
 		if (debug|localDebug) {
-			System.out.println("DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder: " + tb.toStringSeperation(":"));
-			System.out.println("DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder-Map: " + tb.getMapTypeToByteLength());	
+			logger.debug("DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder: " + tb.toStringSeperation(":"));
+			logger.debug("DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder-Map: " + tb.getMapTypeToByteLength());	
 		}
 		
 		//Return TlvBuilder

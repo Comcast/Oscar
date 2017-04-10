@@ -24,8 +24,7 @@ import com.comcast.oscar.tlv.TlvException;
  */
 
 
-public class DPoECompiler extends DocsisCompiler {
-	
+public class DPoECompiler extends DocsisCompiler {	
 	private int iDPoEVersion = ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
 	
 	/**

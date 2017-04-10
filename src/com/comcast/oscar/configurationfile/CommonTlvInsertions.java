@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.tlv.TlvBuilder;
@@ -33,6 +36,8 @@ import com.comcast.oscar.utilities.HexString;
 
 
 public class CommonTlvInsertions {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(CommonTlvInsertions.class);
 	
 	// TODO this is for later use
 	@SuppressWarnings("unused")
@@ -156,7 +161,7 @@ public class CommonTlvInsertions {
 			throw new ConfigurationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
 		
 		if (debug|localDebug)
-			System.out.println("CommonTlvInsertions.insertDownstreamFrequency() - DS: " + iDownstreamFrequency);
+			logger.debug("CommonTlvInsertions.insertDownstreamFrequency() - DS: " + iDownstreamFrequency);
 		
 		TlvBuilder tb = new TlvBuilder();
 		
@@ -167,14 +172,14 @@ public class CommonTlvInsertions {
 		}
 		
 		if (debug|localDebug) { 
-			System.out.println("CommonTlvInsertions.insertDownstreamFrequency() - Hex: " + new HexString(tb.toByteArray()).toString(":"));
-			System.out.println("CommonTlvInsertions.insertDownstreamFrequency() - ConfigFileSize: " + cf.size());
+			logger.debug("CommonTlvInsertions.insertDownstreamFrequency() - Hex: " + new HexString(tb.toByteArray()).toString(":"));
+			logger.debug("CommonTlvInsertions.insertDownstreamFrequency() - ConfigFileSize: " + cf.size());
 		}			
 		
 		cf.add(tb);
 
 		if (debug|localDebug) { 
-			System.out.println("CommonTlvInsertions.insertDownstreamFrequency() - ConfigFileSize: " + cf.size());
+			logger.debug("CommonTlvInsertions.insertDownstreamFrequency() - ConfigFileSize: " + cf.size());
 		}
 		
 		if (boolFinalize)
@@ -248,7 +253,7 @@ public class CommonTlvInsertions {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (localDebug|debug) {
-			System.out.println("CommonTlvInsertions.insertManufactureCVC(ba,cf,bool)");
+			logger.debug("CommonTlvInsertions.insertManufactureCVC(ba,cf,bool)");
 			//Thread.dumpStack();
 		}
 		
@@ -287,7 +292,7 @@ public class CommonTlvInsertions {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (localDebug|debug) {
-			System.out.println("CommonTlvInsertions.insertManufactureCVC(ba,cf,bool)");
+			logger.debug("CommonTlvInsertions.insertManufactureCVC(ba,cf,bool)");
 			//Thread.dumpStack();
 		}
 		
@@ -326,7 +331,7 @@ public class CommonTlvInsertions {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (localDebug|debug) {
-			System.out.println("CommonTlvInsertions.insertCoSignCVC(f,cf,bool)");
+			logger.debug("CommonTlvInsertions.insertCoSignCVC(f,cf,bool)");
 			//Thread.dumpStack();
 		}
 		

@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
@@ -30,6 +33,8 @@ import com.comcast.oscar.utilities.HexString;
  */
 
 public class TlvVariableBinding implements TlvBuild {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(TlvVariableBinding.class);
 	
 	protected List<byte[]> lbTlvBuffer = new ArrayList<byte[]>();
 	
@@ -51,8 +56,8 @@ public class TlvVariableBinding implements TlvBuild {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (debug|localDebug) {
-			System.out.println("+-------------------------------------------------------------------------------------------------+");
-			System.out.println("TlvVariableBinding()");
+			logger.debug("+-------------------------------------------------------------------------------------------------+");
+			logger.debug("TlvVariableBinding()");
 		}
 		
 		typeToMapInit();
@@ -70,8 +75,8 @@ public class TlvVariableBinding implements TlvBuild {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (debug|localDebug) {
-			System.out.println("+-------------------------------------------------------------------------------------------------+");
-			System.out.println("TlvVariableBinding(m,l,b)");
+			logger.debug("+-------------------------------------------------------------------------------------------------+");
+			logger.debug("TlvVariableBinding(m,l,b)");
 		}
 		
 		updateMapsAndListsForCloning(miiTypeBytelength,lbTlvBuffer,bTlvBuffer);
@@ -93,11 +98,11 @@ public class TlvVariableBinding implements TlvBuild {
 		updateTlvByteBuffers(bTLV);
 		
 		if (debug|localDebug) {
-			System.out.println("+-------------------------------------------------------------------------------------------------+");
-			System.out.println("TlvVariableBinding(b,m).miiTypeBytelength" + miiTypeBytelength);
-			System.out.println("TlvVariableBinding(b,m).bTLV.Size: " + bTLV.length);
-			System.out.println("TlvVariableBinding(b,m).lbTLV.Size: " + lbTlvBuffer.size());
-			System.out.println("TlvVariableBinding(b,m).toByteArray.Size: " + toByteArray().length);
+			logger.debug("+-------------------------------------------------------------------------------------------------+");
+			logger.debug("TlvVariableBinding(b,m).miiTypeBytelength" + miiTypeBytelength);
+			logger.debug("TlvVariableBinding(b,m).bTLV.Size: " + bTLV.length);
+			logger.debug("TlvVariableBinding(b,m).lbTLV.Size: " + lbTlvBuffer.size());
+			logger.debug("TlvVariableBinding(b,m).toByteArray.Size: " + toByteArray().length);
 		}
 	} 
 		
@@ -143,8 +148,8 @@ public class TlvVariableBinding implements TlvBuild {
 		updateTlvByteLength(iTlvType, hsBL.toByteArray().length);
 		
 		if (debug|localDebug) {
-			System.out.println("TlvVariableBinding.add() ByteLength: " + bValue.length);
-			System.out.println("TlvVariableBinding.add() miiTypeBytelength: " + miiTypeBytelength);
+			logger.debug("TlvVariableBinding.add() ByteLength: " + bValue.length);
+			logger.debug("TlvVariableBinding.add() miiTypeBytelength: " + miiTypeBytelength);
 		}
 				
 	}
@@ -195,8 +200,8 @@ public class TlvVariableBinding implements TlvBuild {
 		updateTlvByteLength(iTlvType, iNumByteLength);
 		
 		if (debug|localDebug) {
-			System.out.println("TlvVariableBinding.add(i,b,i) ByteLength: " + bValue.length);
-			System.out.println("TlvVariableBinding.add(i,b,i) miiTypeBytelength: " + miiTypeBytelength);
+			logger.debug("TlvVariableBinding.add(i,b,i) ByteLength: " + bValue.length);
+			logger.debug("TlvVariableBinding.add(i,b,i) miiTypeBytelength: " + miiTypeBytelength);
 		}
 		
 	}	
@@ -267,7 +272,7 @@ public class TlvVariableBinding implements TlvBuild {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (debug|localDebug) 
-			System.out.println(	"TlvVariableBinding.clear(): " + miiTypeBytelength);
+			logger.debug(	"TlvVariableBinding.clear(): " + miiTypeBytelength);
 
 		miiTypeBytelength.clear();
 		lbTlvBuffer.clear();
@@ -295,7 +300,7 @@ public class TlvVariableBinding implements TlvBuild {
 		}
 		
 		if (debug|localDebug)
-			System.out.println("TlvVariableBinding.getTopLevelTlvList() : " + miiTypeByteLength);
+			logger.debug("TlvVariableBinding.getTopLevelTlvList() : " + miiTypeByteLength);
 		
 		//Create a list of found TopLevel TLV's
 		List<Integer> liTopLevelTlvList = new ArrayList<Integer>();
@@ -310,7 +315,7 @@ public class TlvVariableBinding implements TlvBuild {
 		for  (int iIndex = 0; iIndex < toByteArray().length;) {
 	
 			if (debug|localDebug)
-				System.out.println(	"TlvVariableBinding.getTopLevelTlvList: -> Type: " + BinaryConversion.byteToUnsignedInteger(_bTlvBuffer[iIndex]) + 
+				logger.debug(	"TlvVariableBinding.getTopLevelTlvList: -> Type: " + BinaryConversion.byteToUnsignedInteger(_bTlvBuffer[iIndex]) + 
 									" Index: " + iIndex + " of " + toByteArray().length);
 			
 			//Record the TYPE that was found
@@ -349,7 +354,7 @@ public class TlvVariableBinding implements TlvBuild {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (debug|localDebug) {
-			System.out.println(	"TlvVariableBinding.getMapTypeToByteLength(): " + this.miiTypeBytelength);
+			logger.debug(	"TlvVariableBinding.getMapTypeToByteLength(): " + this.miiTypeBytelength);
 		
 			//Thread.dumpStack();
 		}
@@ -391,17 +396,17 @@ public class TlvVariableBinding implements TlvBuild {
 		ByteArrayOutputStream  baosTlvTypeIndexList = new ByteArrayOutputStream();
 		
 		if (debug|localDebug) {
-			System.out.println("TlvVariableBinding.findTLVIndex(b,b,i) TlvBufferLength: : " + _bTlvBuffer.length);
-			System.out.println("TlvVariableBinding.findTLVIndex(b,b,i) Hex: " + new HexString(_bTlvBuffer).toString());
-			System.out.println("TlvVariableBinding.findTLVIndex(b,b,i) bParentChildTlvEncodeList:" + new HexString(bParentChildTlvEncodeList).toString());
-			System.out.println("TlvVariableBinding.findTLVIndex(b,b,i) iTopLevelTlvNumByteLength: " + iTopLevelTlvNumByteLength);
+			logger.debug("TlvVariableBinding.findTLVIndex(b,b,i) TlvBufferLength: : " + _bTlvBuffer.length);
+			logger.debug("TlvVariableBinding.findTLVIndex(b,b,i) Hex: " + new HexString(_bTlvBuffer).toString());
+			logger.debug("TlvVariableBinding.findTLVIndex(b,b,i) bParentChildTlvEncodeList:" + new HexString(bParentChildTlvEncodeList).toString());
+			logger.debug("TlvVariableBinding.findTLVIndex(b,b,i) iTopLevelTlvNumByteLength: " + iTopLevelTlvNumByteLength);
 		}
 		
 		//Need to make sure that length is at least 1 + N bytes
 		if (_bTlvBuffer.length < (TLV_TYPE_OVERHEAD + iTopLevelTlvNumByteLength)) {
 			
 			if (debug|localDebug)
-				System.out.println("TlvVariableBinding.findTLVIndex(b,b,i) -> (TLV_TYPE_OVERHEAD + iTopLevelTlvNumByteLength): : " + 
+				logger.debug("TlvVariableBinding.findTLVIndex(b,b,i) -> (TLV_TYPE_OVERHEAD + iTopLevelTlvNumByteLength): : " + 
 									(TLV_TYPE_OVERHEAD + iTopLevelTlvNumByteLength));
 			
 			return baosTlvTypeIndexList.toByteArray();	
@@ -416,7 +421,7 @@ public class TlvVariableBinding implements TlvBuild {
 		while ((iStartIndex < _bTlvBuffer.length) && (iStartIndexEncodeList < bParentChildTlvEncodeList.length)) {
 		
 			if (debug|localDebug)
-				System.out.println(	"TlvVariableBinding.findTLVIndex(b,b,i) bParentChildTlvEncodeList: " + new HexString(bParentChildTlvEncodeList).toString() + 
+				logger.debug(	"TlvVariableBinding.findTLVIndex(b,b,i) bParentChildTlvEncodeList: " + new HexString(bParentChildTlvEncodeList).toString() + 
 									" - iStartIndex: " + iStartIndex +
 									" - bTlvBuffer.length: " + _bTlvBuffer.length +
 									" - Type: "+ BinaryConversion.byteToUnsignedInteger(_bTlvBuffer[iStartIndex]) +
@@ -489,7 +494,7 @@ public class TlvVariableBinding implements TlvBuild {
 		if (bTLV.length == 0) {
 			
 			if (debug|localDebug) 
-				System.out.println(	"TlvVariableBinding.isTLVConstruct() -> ByteArray is of 0 Length");
+				logger.debug(	"TlvVariableBinding.isTLVConstruct() -> ByteArray is of 0 Length");
 			
 			return Boolean.FALSE;
 		}
@@ -502,7 +507,7 @@ public class TlvVariableBinding implements TlvBuild {
 			iNumOfByteLength = miiTlvNumByteLength.get(iType);
 			
 			if (debug|localDebug) 
-				System.out.println(	"TlvVariableBinding.isTLVConstruct() -> " +
+				logger.debug(	"TlvVariableBinding.isTLVConstruct() -> " +
 									"Type: " + iType + " -> " +			
 									"Index: " +  iIndex + " -> " +
 									"NumOfByteLength: " + iNumOfByteLength + " -> " +	
@@ -519,7 +524,7 @@ public class TlvVariableBinding implements TlvBuild {
 			if ((iIndex < bTLV.length) && (BinaryConversion.byteToUnsignedInteger(bTLV[iIndex]) == 255)) {
 				
 				if (debug|localDebug) 
-					System.out.println(	"TlvBuilder.isTLVConstruct() -> FOUND-EOF");
+					logger.debug(	"TlvBuilder.isTLVConstruct() -> FOUND-EOF");
 				
 				return true;
 			
@@ -527,7 +532,7 @@ public class TlvVariableBinding implements TlvBuild {
 			} else if (iIndex > bTLV.length) {
 	
 				if (debug|localDebug) 
-					System.out.println(	"TlvVariableBinding.isTLVConstruct() -> " +
+					logger.debug(	"TlvVariableBinding.isTLVConstruct() -> " +
 										" Index Exceeds Length" + " -> " +
 										"iIndex: " +  iIndex + " -> " + 
 										"bTLV.length: " +  bTLV.length);
@@ -538,7 +543,7 @@ public class TlvVariableBinding implements TlvBuild {
 			} else {
 				
 				if (debug|localDebug) 
-					System.out.println(	"TlvVariableBinding.isTLVConstruct() -> iIndex: " +  iIndex + 
+					logger.debug(	"TlvVariableBinding.isTLVConstruct() -> iIndex: " +  iIndex + 
 										" -> bTLV.length: " +  bTLV.length);
 				
 			}
@@ -578,7 +583,7 @@ public class TlvVariableBinding implements TlvBuild {
 		int iTlvLength = new HexString(baosTlvByteLength.toByteArray()).toInteger();
 		
 		if (debug|localDebug)
-			System.out.println("TlvVariableBinding.nextTLVIndex(b,i,i) -> TLV-LENGTH: " + iTlvLength);
+			logger.debug("TlvVariableBinding.nextTLVIndex(b,i,i) -> TLV-LENGTH: " + iTlvLength);
 		
 		return (iInitalPosition + (iTlvLength + iByteLength) + TLV_TYPE_OVERHEAD); 
 	}

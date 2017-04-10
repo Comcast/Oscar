@@ -10,6 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
@@ -49,6 +52,8 @@ import com.comcast.oscar.utilities.HexString;
 
 
 public class ConfigurationFile {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(ConfigurationFile.class);
 	
 	private boolean debug = Boolean.FALSE;
 	
@@ -90,12 +95,12 @@ public class ConfigurationFile {
 	
 		//DumpTLV to STDOUT
 		if (localDebug) {		
-			System.out.println("ConfigurationFile(i,tb)");		
-			System.out.println(TlvBuilder.tlvDump(tbConfigurationFile.toByteArray()));			
+			logger.debug("ConfigurationFile(i,tb)");		
+			logger.debug(TlvBuilder.tlvDump(tbConfigurationFile.toByteArray()));			
 		}
 		
 		if (localDebug|debug) {
-			System.out.println("ConfigurationFile(i,tb) " +
+			logger.debug("ConfigurationFile(i,tb) " +
 					" ConfigType: " + iConfigurationFileType +
 					" CMTS-Shared-Secret: " + sCmtsSharedSecretKey +
 					" ConfigFile-Length: " + tbConfigurationFile.length() +
@@ -122,7 +127,7 @@ public class ConfigurationFile {
 		setConfigurationFileName(sConfigurationFileName);
 
 		if (localDebug|debug) {
-			System.out.println("ConfigurationFile(s,i,tb) " +
+			logger.debug("ConfigurationFile(s,i,tb) " +
 					" ConfigType: " + iConfigurationFileType +
 					" CMTS-Shared-Secret: " + sCmtsSharedSecretKey +
 					" ConfigFile-Length: " + tbConfigurationFile.length() +
@@ -152,7 +157,7 @@ public class ConfigurationFile {
 		setConfigurationFileName(sConfigurationFileName);
 
 		if (localDebug|debug) {
-			System.out.println("ConfigurationFile(s,i,tb) " +
+			logger.debug("ConfigurationFile(s,i,tb) " +
 					" ConfigType: " + iConfigurationFileType +
 					" CMTS-Shared-Secret: " + sCmtsSharedSecretKey +
 					" ConfigFile-Length: " + tbConfigurationFile.length() +
@@ -179,7 +184,7 @@ public class ConfigurationFile {
 		this.sCmtsSharedSecretKey = sCmtsSharedSecretKey;
 		
 		if (localDebug|debug) {
-			System.out.println("ConfigurationFile(i,tb,s) " +
+			logger.debug("ConfigurationFile(i,tb,s) " +
 					" -> ConfigType: " + iConfigurationFileType +
 					" -> CMTS-Shared-Secret: " + sCmtsSharedSecretKey +
 					" -> ConfigFile-Length: " + tbConfigurationFile.length() +
@@ -219,7 +224,7 @@ public class ConfigurationFile {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (debug|localDebug)
-			System.out.println("ConfigurationFile.add(tb): - Hex: " + tb.toStringSeperation(":"));
+			logger.debug("ConfigurationFile.add(tb): - Hex: " + tb.toStringSeperation(":"));
 				
 		addTlvBuilder(tb);
 	}
@@ -234,8 +239,8 @@ public class ConfigurationFile {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (debug|localDebug) {
-			System.out.println("ConfigurationFile.add(tb,li): - Hex: " + tb.toStringSeperation(":"));
-			System.out.println("ConfigurationFile.add(tb,li): - TlvToStripFromBufferCLassList: " + liTlvToStrip);
+			logger.debug("ConfigurationFile.add(tb,li): - Hex: " + tb.toStringSeperation(":"));
+			logger.debug("ConfigurationFile.add(tb,li): - TlvToStripFromBufferCLassList: " + liTlvToStrip);
 		}	
 		
 		addTlvBuilder(tb,liTlvToStrip);
@@ -315,7 +320,7 @@ public class ConfigurationFile {
 		if (dcConfigurationFile != null) {
 			
 			if (localDebug|debug) 
-				System.out.println("ConfigurationFile.commit() - DOCSIS - ByteLength: " + dcConfigurationFile.length());
+				logger.debug("ConfigurationFile.commit() - DOCSIS - ByteLength: " + dcConfigurationFile.length());
 			
 			removeZeroLengthTopLevelTLV ();
 			
@@ -324,14 +329,14 @@ public class ConfigurationFile {
 		} else if (pcConfigurationFile != null) {
 			
 			if (localDebug|debug) 
-				System.out.println("ConfigurationFile.commit() - PACKET-CABLE - ByteLength: " + pcConfigurationFile.length());
+				logger.debug("ConfigurationFile.commit() - PACKET-CABLE - ByteLength: " + pcConfigurationFile.length());
 			
 			pcConfigurationFile.commit();
 			
 		} else if (dpoeConfigurationFile != null) {
 			
 			if (localDebug|debug) 
-				System.out.println("ConfigurationFile.commit() - DPoE-CABLE - ByteLength: " + dpoeConfigurationFile.length());
+				logger.debug("ConfigurationFile.commit() - DPoE-CABLE - ByteLength: " + dpoeConfigurationFile.length());
 			
 			dpoeConfigurationFile.commit();
 		}
@@ -460,14 +465,14 @@ public class ConfigurationFile {
 		if (toByteArray() == null) {
 
 			if (debug|localDebug) {
-				System.out.println("ConfigurationFile.writeToDisk() - NULL ByteArray");
+				logger.debug("ConfigurationFile.writeToDisk() - NULL ByteArray");
 			}
 			
 			return false;
 		}
 		
 		if (debug|localDebug) {
-			System.out.println("ConfigurationFile.writeToDisk() " +
+			logger.debug("ConfigurationFile.writeToDisk() " +
 									" - Total Byte Count: " + toByteArray().length +
 									" - FileName: " + sConfigurationFileName );
 		}
@@ -483,7 +488,7 @@ public class ConfigurationFile {
 			}
 			
 			if (debug|localDebug) {
-				System.out.println("BuildFile.writeToDisk() " +
+				logger.debug("BuildFile.writeToDisk() " +
 										" - Total Byte Count: " + toByteArray().length +
 										" - FileName: " + fConfigurationFileName );
 			}
@@ -516,7 +521,7 @@ public class ConfigurationFile {
 			}
 			
 			if (debug|localDebug) {
-				System.out.println("BuildFile.writeToDisk() " +
+				logger.debug("BuildFile.writeToDisk() " +
 										" - Total Byte Count: " + toByteArray().length +
 										" - FileName: " + fCf );
 			}
@@ -570,7 +575,7 @@ public class ConfigurationFile {
 		byte[] baTLV = toByteArray();
 
 		if (debug|localDebug) {
-			System.out.println("ConfigurationFile.stripTlv(li,bool): - BufferSize: " + baTLV.length);
+			logger.debug("ConfigurationFile.stripTlv(li,bool): - BufferSize: " + baTLV.length);
 		}
 		
 		for (int iType : liStripTLV) {
@@ -582,7 +587,7 @@ public class ConfigurationFile {
 			}
 			
 			if (debug|localDebug) {
-				System.out.println("ConfigurationFile.stripTlv(li,bool): - BufferSize: " + baTLV.length);
+				logger.debug("ConfigurationFile.stripTlv(li,bool): - BufferSize: " + baTLV.length);
 			}
 		}
 		
@@ -719,7 +724,7 @@ public class ConfigurationFile {
 			updateCompiler(this.tbConfigurationFile);
 			
 			if (debug|localDebug)
-				System.out.println(
+				logger.debug(
 						"ConfigurationFile.init() - DOCSIS-TYPE " +
 						" -> TlvBuilder: " + this.tbConfigurationFile.toString() +
 						" -> DocsisCompiler: " + dcConfigurationFile.toString() +
@@ -736,7 +741,7 @@ public class ConfigurationFile {
 			updateCompiler(this.tbConfigurationFile);
 						
 			if (debug|localDebug)
-				System.out.println(
+				logger.debug(
 						"ConfigurationFile.init() - PACKET-CABLE-TYPE " +
 						" -> TlvBuilder: " + tbConfigurationFile.toString()
 				);
@@ -763,13 +768,13 @@ public class ConfigurationFile {
 			updateConfigurationFileTlvBuilder(tbNoFinalize);
 			
 			if (localDebug)
-				System.out.println("ConfigurationFile.init() -> " + TlvBuilder.tlvDump(tbConfigurationFile.toByteArray()));
+				logger.debug("ConfigurationFile.init() -> " + TlvBuilder.tlvDump(tbConfigurationFile.toByteArray()));
 			
 			//Update DOCSIS Compiler
 			updateCompiler(this.tbConfigurationFile);
 			
 			if (debug|localDebug)
-				System.out.println(
+				logger.debug(
 						"ConfigurationFile.init()" + "\n" + 
 						" -> DPOE-TYPE " + "\n" +
 						" -> ConfigurationFileTlvBuilder: " + tbConfigurationFile.toString() + "\n" +
@@ -792,10 +797,10 @@ public class ConfigurationFile {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (debug|localDebug)
-			System.out.println("ConfigurationFile.addFinalize() - ARG-Length: " + tbTLV.toString());
+			logger.debug("ConfigurationFile.addFinalize() - ARG-Length: " + tbTLV.toString());
 
 		if (debug|localDebug)
-			System.out.println("ConfigurationFile.addFinalize(): Length-BeforeAdd: " + tbConfigurationFile.length() + " - " + tbConfigurationFile.toString());
+			logger.debug("ConfigurationFile.addFinalize(): Length-BeforeAdd: " + tbConfigurationFile.length() + " - " + tbConfigurationFile.toString());
 				
 		//Strip Finalize
 		try {
@@ -808,7 +813,7 @@ public class ConfigurationFile {
 		updateConfigurationFileTlvBuilder(tbTLV);
 				
 		if (debug|localDebug)
-			System.out.println("ConfigurationFile.addFinalize(): Length-After-Add: " 	+ tbConfigurationFile.length() 
+			logger.debug("ConfigurationFile.addFinalize(): Length-After-Add: " 	+ tbConfigurationFile.length() 
 																						+ " - " + tbConfigurationFile.toString());
 				
 		updateCompiler(tbTLV);
@@ -825,10 +830,10 @@ public class ConfigurationFile {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (debug|localDebug)
-			System.out.println("ConfigurationFile.addFirstTlvBuilder() - ARG-Length: " + tbTLV.toString());
+			logger.debug("ConfigurationFile.addFirstTlvBuilder() - ARG-Length: " + tbTLV.toString());
 
 		if (debug|localDebug)
-			System.out.println("ConfigurationFile.addFirstTlvBuilder(): Length-BeforeAdd: " + tbConfigurationFile.length() + " - " + tbConfigurationFile.toString());
+			logger.debug("ConfigurationFile.addFirstTlvBuilder(): Length-BeforeAdd: " + tbConfigurationFile.length() + " - " + tbConfigurationFile.toString());
 				
 		//Strip Finalize
 		try {
@@ -841,7 +846,7 @@ public class ConfigurationFile {
 		updateConfigurationFileTlvBuilder(tbTLV);
 				
 		if (debug|localDebug)
-			System.out.println("ConfigurationFile.addFirstTlvBuilder(): Length-After-Add: " 	+ tbConfigurationFile.length() 
+			logger.debug("ConfigurationFile.addFirstTlvBuilder(): Length-After-Add: " 	+ tbConfigurationFile.length() 
 																								+ " - " + tbConfigurationFile.toString());
 				
 		updateCompiler(tbTLV);
@@ -856,8 +861,8 @@ public class ConfigurationFile {
 		boolean localDebug = Boolean.FALSE;
 
 		if (debug|localDebug) {
-			System.out.println("ConfigurationFile.addTlvBuilder(tb,li): - Hex: " + tbTLV.toStringSeperation(":"));
-			System.out.println("ConfigurationFile.addTlvBuilder(tb,li): - TlvToStripFromBufferCLassList: " + liStripTlvList);
+			logger.debug("ConfigurationFile.addTlvBuilder(tb,li): - Hex: " + tbTLV.toStringSeperation(":"));
+			logger.debug("ConfigurationFile.addTlvBuilder(tb,li): - TlvToStripFromBufferCLassList: " + liStripTlvList);
 		}
 			
 		stripTlv(liStripTlvList);

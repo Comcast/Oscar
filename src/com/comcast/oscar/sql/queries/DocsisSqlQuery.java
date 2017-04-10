@@ -11,6 +11,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.dictionary.Dictionary;
@@ -76,6 +79,8 @@ import com.comcast.oscar.sql.SqlConnection;
  */
 
 public class DocsisSqlQuery implements Dictionary {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(DocsisSqlQuery.class);
 
 	private Connection sqlConnection;
 	
@@ -111,7 +116,7 @@ public class DocsisSqlQuery implements Dictionary {
 						"PARENT_ID = '0'";
 
 		if (debug) 
-			System.out.println("getMajorTlvDefinition() SQL_QUERY: " + sqlQuery);
+			logger.debug("getMajorTlvDefinition() SQL_QUERY: " + sqlQuery);
 
 		try {
 			statement = sqlConnection.createStatement();
@@ -126,7 +131,7 @@ public class DocsisSqlQuery implements Dictionary {
 			if (debug) {
 
 				while (resultSet.next()) {
-					System.out.println("MySQL-Query->TLV-NAME: " + resultSet.getString("TLV_NAME"));	
+					logger.debug("MySQL-Query->TLV-NAME: " + resultSet.getString("TLV_NAME"));	
 				}
 
 			}
@@ -177,8 +182,8 @@ public class DocsisSqlQuery implements Dictionary {
 
 			for (int tlvCounter = Constants.DOCSIS_TLV_MIN ; tlvCounter <= Constants.DOCSIS_TLV_MAX ; tlvCounter++) {
 				if (debug) {
-					System.out.println("+------------------------------------------------------------------------+");
-					System.out.println("TLV: " + tlvCounter + " -> JSON-TLV-DICT: " + getTlvDefinition(tlvCounter));
+					logger.debug("+------------------------------------------------------------------------+");
+					logger.debug("TLV: " + tlvCounter + " -> JSON-TLV-DICT: " + getTlvDefinition(tlvCounter));
 				}
 			}
 
@@ -216,7 +221,7 @@ public class DocsisSqlQuery implements Dictionary {
 						"PARENT_ID = '0'";
 
 		if (debug) 
-			System.out.println("getMajorTlvDefinition() SQL_QUERY: " + sqlQuery);
+			logger.debug("getMajorTlvDefinition() SQL_QUERY: " + sqlQuery);
 
 		try {
 			statement = sqlConnection.createStatement();
@@ -260,7 +265,7 @@ public class DocsisSqlQuery implements Dictionary {
 						"ID = '" + iRowID + "'";
 
 		if (debug) 
-			System.out.println("getMajorTlvDefinition() SQL_QUERY: " + sqlQuery);
+			logger.debug("getMajorTlvDefinition() SQL_QUERY: " + sqlQuery);
 
 		try {
 			statement = sqlConnection.createStatement();
@@ -391,7 +396,7 @@ public class DocsisSqlQuery implements Dictionary {
 				tlvJsonObj.put(Dictionary.PARENT_TYPE_LIST, aliTlvEncodeHistory);
 
 				if (debug)
-					System.out.println(tlvJsonObj.toString());
+					logger.debug(tlvJsonObj.toString());
 
 			} else if (iParentID == MAJOR_TLV) {
 
@@ -427,7 +432,7 @@ public class DocsisSqlQuery implements Dictionary {
 				tlvJsonObj.put(Dictionary.PARENT_TYPE_LIST, aliTlvEncodeHistory);
 
 				if (debug)
-					System.out.println(tlvJsonObj.toString());				
+					logger.debug(tlvJsonObj.toString());				
 			}
 
 			if  (SqlConnection.getRowCount(resultSetParentCheck) > 0) {
@@ -457,7 +462,7 @@ public class DocsisSqlQuery implements Dictionary {
 						aliTlvEncodeHistoryNext.addAll(aliTlvEncodeHistory);
 
 						if (debug)
-							System.out.println("aliTlvEncodeHistoryNext: " + aliTlvEncodeHistoryNext);
+							logger.debug("aliTlvEncodeHistoryNext: " + aliTlvEncodeHistoryNext);
 
 						aliTlvEncodeHistoryNext.remove(aliTlvEncodeHistoryNext.size()-1);
 
@@ -579,7 +584,7 @@ public class DocsisSqlQuery implements Dictionary {
 			tlvJsonObj.put(Dictionary.BYTE_LENGTH, resultSetParentCheck.getString(Dictionary.DB_TBL_COL_BYTE_LENGTH));
 			
 			if (debug)
-				System.out.println(tlvJsonObj.toString());			
+				logger.debug(tlvJsonObj.toString());			
 
 
 		} catch (SQLException e) {

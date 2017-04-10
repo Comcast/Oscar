@@ -3,6 +3,9 @@ package com.comcast.oscar.buildbulk;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
@@ -31,7 +34,8 @@ import com.comcast.oscar.utilities.HexString;
 
 
 public class MergeBulkBuild {
-
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(MergeBulkBuild.class);
 
 	public String NOMENCLATURE_SEPERATOR = "";
 	public String FILENAME_EXTENSION = "";
@@ -111,7 +115,7 @@ public class MergeBulkBuild {
 		alcfTemp.addAll(alalcf.get(0));
 
 		if(localDebug|debug)
-			System.out.println("MergeBulkBuild.start() -> Files: " + alcfTemp);
+			logger.debug("MergeBulkBuild.start() -> Files: " + alcfTemp);
 
 		
 		for (int iIndex = 1; iIndex < alalcf.size(); iIndex++) {
@@ -124,10 +128,10 @@ public class MergeBulkBuild {
 		}
 		
 		if(localDebug|debug)
-			System.out.println("MergeBulkBuild.start() -> Number of Configurations: " + alcfTemp.size());
+			logger.debug("MergeBulkBuild.start() -> Number of Configurations: " + alcfTemp.size());
 
 		if(localDebug|debug)
-			System.out.println("MergeBulkBuild.start() -> Number of Configurations: " + alcfTemp.toString());
+			logger.debug("MergeBulkBuild.start() -> Number of Configurations: " + alcfTemp.toString());
 
 		for(ConfigurationFile cf:alcfTemp) {
 			
@@ -186,7 +190,7 @@ public class MergeBulkBuild {
 						TrimFileExtention(cf2.getConfigurationFileName());
 				
 				if (localDebug|debug)
-					System.out.println("MergeBulkBuild.mergerDirectories() -> " + sMergeFileName);
+					logger.debug("MergeBulkBuild.mergerDirectories() -> " + sMergeFileName);
 
 				/* Add Configuration file to list */
 				alcf.add(new ConfigurationFile(sMergeFileName, iConfigurationFileType, tb, sSharedSecret));
@@ -212,7 +216,7 @@ public class MergeBulkBuild {
 		for (File fConfigurationFile : fInputDirectory.listFiles()) {
 			
 			if (localDebug|debug)
-				System.out.println("MergeBulkBuild.getInputConfigurationFiles() " + fConfigurationFile);
+				logger.debug("MergeBulkBuild.getInputConfigurationFiles() " + fConfigurationFile);
 			
 			byte[] bConfigurationFile = HexString.fileToByteArray(fConfigurationFile);
 			

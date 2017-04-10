@@ -1,5 +1,7 @@
 package com.comcast.oscar.utilities;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,6 +33,8 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
  * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
  */
 public class HexString {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(HexString.class);
 
 	private StringBuilder sbHexBuffer = new StringBuilder();
 	
@@ -324,7 +328,7 @@ public class HexString {
 		ByteArrayOutputStream  baosByteArray = new ByteArrayOutputStream();
 		
 		if (debug) 
-			System.out.println("HexString.prefixNullPaddToLength().itotalLength: " + iTotalLength);
+			logger.debug("HexString.prefixNullPaddToLength().itotalLength: " + iTotalLength);
 		
 		//PADD Nulls in first for prefix
 		while ((toByteArray().length + baosByteArray.size()) < iTotalLength) {
@@ -650,7 +654,7 @@ public class HexString {
 		while (iIndex < bByteArray.length) {
 			
 			if (debug|localDebug) {
-				System.out.println(	"HexString.byteArrayGroup() -> " +
+				logger.debug(	"HexString.byteArrayGroup() -> " +
 									"iIndex: " + iIndex + " -> " +
 									"iNumBytesInGroupCount: " + iNumBytesInGroupCount);
 			}
@@ -669,7 +673,7 @@ public class HexString {
 		lbByteArrayGroup.add(baosByteArrayGroup.toByteArray());
 		
 		if (debug|localDebug) {
-			System.out.println(	"HexString.byteArrayGroup() -> " +
+			logger.debug(	"HexString.byteArrayGroup() -> " +
 								"lbByteArrayGroup.List.Size: " + lbByteArrayGroup.size());
 		}
 		

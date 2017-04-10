@@ -3,6 +3,9 @@ package com.comcast.oscar.ber;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 
@@ -25,6 +28,8 @@ import com.comcast.oscar.utilities.HexString;
  */
 
 public class OIDBERConversion {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(OIDBERConversion.class);
 	
 	private boolean debug = Boolean.FALSE;
 	
@@ -84,14 +89,14 @@ public class OIDBERConversion {
 		int iDataType = Integer.decode(mssOidDataTypeValue.get(DATA_TYPE));
 
 		if (localDebug|debug) {
-			System.out.println("OIDBERConversion.getBER() DT: " + iDataType);
-			System.out.println("OIDBERConversion.getBER() VA: " + mssOidDataTypeValue.get(VALUE));	
+			logger.debug("OIDBERConversion.getBER() DT: " + iDataType);
+			logger.debug("OIDBERConversion.getBER() VA: " + mssOidDataTypeValue.get(VALUE));	
 		}
 		
 		if (BERService.isNumberDataType(iDataType)) {
 			
 			if (localDebug|debug) 
-				System.out.println("OIDBERConversion.getBER() DT-INTEGER: " + iDataType);
+				logger.debug("OIDBERConversion.getBER() DT-INTEGER: " + iDataType);
 			
 			return BERService.setOIDEncodingToByteArray (	mssOidDataTypeValue.get(OID),
 															(byte)iDataType,
@@ -100,7 +105,7 @@ public class OIDBERConversion {
 		} else if (BERService.isStringDataType(iDataType)){
 			
 			if (localDebug|debug) 
-				System.out.println("OIDBERConversion.getBER() DT-STRING: " + iDataType);
+				logger.debug("OIDBERConversion.getBER() DT-STRING: " + iDataType);
 			
 			return BERService.setOIDEncodingToByteArray (	mssOidDataTypeValue.get(OID),
 															(byte)iDataType,
@@ -109,8 +114,8 @@ public class OIDBERConversion {
 		} else if (iDataType == BinaryConversion.byteToUnsignedInteger(BERService.HEX)) {
 			
 			if (localDebug|debug) {
-				System.out.println("OIDBERConversion.getBER() DT-HEX: " + iDataType);
-				System.out.println("OIDBERConversion.getBER() HEX:    " + mssOidDataTypeValue.get(VALUE));
+				logger.debug("OIDBERConversion.getBER() DT-HEX: " + iDataType);
+				logger.debug("OIDBERConversion.getBER() HEX:    " + mssOidDataTypeValue.get(VALUE));
 			}
 			
 			return BERService.setOIDEncodingToByteArray (	mssOidDataTypeValue.get(OID),

@@ -46,7 +46,6 @@ import com.comcast.oscar.utilities.HexString;
  * 
  */
 public class ConfigurationFileImport {
-	
 	private StringBuilder sbConfiguration = null;	
 	private TlvConfigurationFileParser tcfpConfig = null;	
 	private JSONArray jaTlvDefinition = new JSONArray();	

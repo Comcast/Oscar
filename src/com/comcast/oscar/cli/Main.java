@@ -1,8 +1,5 @@
 package com.comcast.oscar.cli;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.comcast.oscar.constants.Constants;
 import com.comcast.oscar.utilities.DirectoryStructure;
 
@@ -26,20 +23,14 @@ import com.comcast.oscar.utilities.DirectoryStructure;
  */
 
 public class Main {
-    private static final Logger logger = LogManager.getLogger(Main.class);
-
 
 	/**
 	 * Main Class. Checks and creates necessary directories then run commands.
 	 * @param args
 	 */
 	public static void main (String args[]) {
-		logger.info("Hello, World!");
-		logger.trace("Entering application.");
-		logger.error("Didn't do it."); 
-		 
 		/* Determine path. Remove for testing purposes. */
-		//DirectoryStructure.setFromJar(); 
+		DirectoryStructure.setFromJar(); 
 		
 		/* Create sub-directories if they do not exist */
 		DirectoryStructure.createDirectories();
@@ -49,8 +40,6 @@ public class Main {
 		ds.exportFiles();
 				
 		/* Run commands */
-		logger.info(Constants.OSCAR_CLI_HEADER);
-
 		System.out.println(Constants.OSCAR_CLI_HEADER);
 		
 		if (args.length <= 0) {
