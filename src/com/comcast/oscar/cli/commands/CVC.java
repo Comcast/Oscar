@@ -8,9 +8,9 @@ import org.apache.commons.cli.OptionBuilder;
 import com.comcast.oscar.utilities.DirectoryStructure;
 
 /**
- * 
+ *
  * @author Allen Flickinger (allen.flickinger@gmail.com)
- * 
+ *
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>
 	___________________________________________________________________<br>
@@ -27,13 +27,13 @@ import com.comcast.oscar.utilities.DirectoryStructure;
  */
 
 public class CVC {
-	
+
 	public static final String ERROR = "No cvc filename argument found. For CoSigner use this format for the argument: c=<filename>. For Manufacturer use this format for the argument: m=<filename>.";
-	
+
 	private final String[] args;
 	private File fCoSigner;
 	private File fManufacturer;
-	
+
 	/**
 	 * Get CVC arguments
 	 * @param args
@@ -41,7 +41,7 @@ public class CVC {
 	public CVC(String[] args) {
 		this.args = args;
 	}
-	
+
 	/**
 	 * Set option parameters for command CVC
 	 * @return Option
@@ -58,7 +58,7 @@ public class CVC {
     			+ "Both CVCs can be inserted simultaneously (space delimited).");
     	return OptionBuilder.create("cvc");
 	}
-	
+
 	/**
 	 * Check for a CoSigner CVC. Insert into fCoSigner if found.
 	 * @return boolean
@@ -77,19 +77,19 @@ public class CVC {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Return CoSigner file
-	
+
 	 * @return File
 	 */
 	public File getCoSigner() {
 		return this.fCoSigner;
 	}
-	
+
 	/**
 	 * Check for a Manufacturer CVC. Insert into fManufacturer if found.
-	
+
 	 * @return boolean
 	 */
 	public boolean hasManufacturer() {
@@ -107,19 +107,19 @@ public class CVC {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Return Manufacturer file
-	
+
 	 * @return File
 	 */
 	public File getManufacturer() {
 		return this.fManufacturer;
 	}
-	
+
 	/**
 	 * Check if a CVC was specified
-	
+
 	 * @return boolean
 	 */
 	public boolean hasCVC() {
