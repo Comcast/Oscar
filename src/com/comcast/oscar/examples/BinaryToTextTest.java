@@ -1,9 +1,7 @@
 package com.comcast.oscar.examples;
 import java.io.File;
-import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.utilities.DirectoryStructure;
 
 
@@ -43,7 +41,7 @@ public class BinaryToTextTest {
 
 		if (DOCSIS) {
 
-			fDocsisBin = DirectoryStructure.fTestFile("d10_prod_tg1682g_ssddownload.cm");
+			fDocsisBin = DirectoryStructure.fTestFile("d10_ssd_codetest_862_oscar.cm");
 
 			ConfigurationFileExport cfeDocsis = new ConfigurationFileExport (fDocsisBin,ConfigurationFileExport.DOCSIS_VER_30);
 
@@ -55,11 +53,11 @@ public class BinaryToTextTest {
 
 		if (PC) {
 
-			fPacketCableBin = TestDirectoryStructure.fInputDirFileName("xxxxxx.bin");
-
-			ConfigurationFileExport cfePCTLV = new ConfigurationFileExport (fPacketCableBin);
-
-			System.out.println(cfePCTLV.toPrettyPrint(0));
+		//	fPacketCableBin = TestDirectoryStructure.fInputDirFileName("xxxxxx.bin");
+//
+	//		ConfigurationFileExport cfePCTLV = new ConfigurationFileExport (fPacketCableBin);
+//
+	//		System.out.println(cfePCTLV.toPrettyPrint(0));
 			
 			
 		}
