@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="com/comcast/oscar/examples/doc/|com/comcast/oscar/examples/testfiles/|com/comcast/oscar/examples/|com/comcast/oscar/interpreter/|com/comcast/oscar/parserbuilder/|com/comcast/oscar/test/" kind="src" path="src"/>
@@ -17,3 +18,4 @@
 	<classpathentry kind="lib" path="lib/log4j-core-2.8.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
+
