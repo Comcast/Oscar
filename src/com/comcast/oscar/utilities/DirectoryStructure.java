@@ -182,8 +182,6 @@ public class DirectoryStructure {
 	public void exportDictionary() {	
 		InputStream is = this.getClass().getResourceAsStream("/dictionary.sqlite");		
 		OutputStream os = null;
-
-		logger.info("Dictionary File: " + fDictionaryFile().toString());
 		
 		try {
 			os = new FileOutputStream(fDictionaryFile());
