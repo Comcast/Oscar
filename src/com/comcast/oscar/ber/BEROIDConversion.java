@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.snmp4j.asn1.BER;
 import org.snmp4j.asn1.BERInputStream;
 import org.snmp4j.smi.OID;
@@ -34,6 +36,8 @@ import com.comcast.oscar.utilities.HexString;
  */
 
 public class BEROIDConversion {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(BEROIDConversion.class);
 	
 	//Save a copy of the constructor variable
 	private byte[] bBER;
@@ -68,7 +72,7 @@ public class BEROIDConversion {
 			
 			HexString hs = new HexString(bBER);
 			
-			System.out.println("BEROIDConversion() " + hs.toString());
+			logger.debug("BEROIDConversion() " + hs.toString());
 		}
 		
 		//Save copy of BER
@@ -98,9 +102,9 @@ public class BEROIDConversion {
 		oOID = vbBER.getOid();
 		
 		if (debug) {
-			System.out.println("BEROIDConversion() " + oOID.toString());
-			System.out.println("BEROIDConversion() " + vbBER.toString());
-			System.out.println("BEROIDConversion() " + vbBER.getSyntax());
+			logger.debug("BEROIDConversion() " + oOID.toString());
+			logger.debug("BEROIDConversion() " + vbBER.toString());
+			logger.debug("BEROIDConversion() " + vbBER.getSyntax());
 		}
 		
 	}
@@ -124,9 +128,9 @@ public class BEROIDConversion {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (debug|localDebug) {
-			System.out.println("BEROIDConversion.getOidName() - BER: " + new HexString(bBER).toString());			
-			System.out.println("BEROIDConversion.getOidName() - OID.toString(): " + oOID.toString());
-			System.out.println("BEROIDConversion.getOidName() - OID.format(): " + oOID.format());
+			logger.debug("BEROIDConversion.getOidName() - BER: " + new HexString(bBER).toString());			
+			logger.debug("BEROIDConversion.getOidName() - OID.toString(): " + oOID.toString());
+			logger.debug("BEROIDConversion.getOidName() - OID.format(): " + oOID.format());
 		}
 		
 		return oOID.format();
@@ -197,7 +201,7 @@ public class BEROIDConversion {
 			) {
 			
 			if (localDebug|debug)
-				System.out.println("BEROIDConversion.toMap() - Found a NON-ASCII Plain Text Characters");		
+				logger.debug("BEROIDConversion.toMap() - Found a NON-ASCII Plain Text Characters");		
 
 			mssReturn.put(DATA_TYPE, Integer.toString(BinaryConversion.byteToUnsignedInteger(BERService.HEX)));
 
@@ -210,7 +214,7 @@ public class BEROIDConversion {
 			) {
 
 			if (localDebug|debug)
-				System.out.println("BEROIDConversion.toMap() - Found a NON-ASCII Plain Text Characters");
+				logger.debug("BEROIDConversion.toMap() - Found a NON-ASCII Plain Text Characters");
 			
 			mssReturn.put(DATA_TYPE, Integer.toString(BinaryConversion.byteToUnsignedInteger(BERService.HEX)));
 
@@ -222,7 +226,7 @@ public class BEROIDConversion {
 				) {
 
 			if (localDebug|debug)
-				System.out.println("BEROIDConversion.toMap() - Found a ASCII Plain Text Characters: \"" + getOidValue() + "\"");
+				logger.debug("BEROIDConversion.toMap() - Found a ASCII Plain Text Characters: \"" + getOidValue() + "\"");
 
 			mssReturn.put(DATA_TYPE, getDataType().toString());
 			

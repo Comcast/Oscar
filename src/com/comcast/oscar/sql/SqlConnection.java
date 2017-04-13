@@ -6,6 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.comcast.oscar.utilities.DirectoryStructure;
 
 /**
@@ -28,6 +31,8 @@ import com.comcast.oscar.utilities.DirectoryStructure;
 
 
 public class SqlConnection {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(SqlConnection.class);
 	
     private String sqliteURL;
     private String user = "user";
@@ -41,27 +46,27 @@ public class SqlConnection {
 	public SqlConnection() {
 				
 		if (debug)
-			System.out.println("SqlConnection(): " + DirectoryStructure.fDictionaryFile());
+			logger.debug("SqlConnection(): " + DirectoryStructure.fDictionaryFile());
 		
 		//SQLite
 		String sCurrentPath = DirectoryStructure.fDictionaryFile().toString();
 
 		if (debug)
-			System.out.println("SQLite DB Path: " + sCurrentPath);
+			logger.debug("SQLite DB Path: " + sCurrentPath);
 		
 		this.sqliteURL = "jdbc:Sqlite:" + sCurrentPath;
 		
 		if (sqlConnection == null) {
 			
 			if (debug) 
-				System.out.println("SqlConnection() -> First Time Connected to DB");
+				logger.debug("SqlConnection() -> First Time Connected to DB");
 			
 			connect();	
 		
 		} else {
 			
 			if (debug) 
-				System.out.println("SqlConnection() -> Already Connected to DB");
+				logger.debug("SqlConnection() -> Already Connected to DB");
 		
 		}
 	}
@@ -127,12 +132,12 @@ public class SqlConnection {
 			Class.forName("org.sqlite.JDBC").newInstance();
 			
 			if (debug) 
-				System.out.println("SqlConnection.connect() -> URL: " + sqliteURL);
+				logger.debug("SqlConnection.connect() -> URL: " + sqliteURL);
 			
 			sqlConnection = DriverManager.getConnection(sqliteURL, user, password);
 			
 			if (debug) 
-				System.out.println("SqlConnection.connect() -> Is Connected");
+				logger.debug("SqlConnection.connect() -> Is Connected");
 			
 		} catch (InstantiationException e) {
 			e.printStackTrace();

@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
@@ -38,6 +41,8 @@ import com.comcast.oscar.utilities.HexString;
 
 
 public class BulkBuild {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(BulkBuild.class);
 
 	public static final Integer  BINARY_OUTPUT	= 0;
 	public static final Integer  TEXT_OUTPUT 	= 1;
@@ -101,7 +106,7 @@ public class BulkBuild {
 		for (File fInput : getInputFiles()) {
 			
 			if (debug|localDebug)
-				System.out.println("BulkBuild.start() - File: " + fInput.toString());
+				logger.debug("BulkBuild.start() - File: " + fInput.toString());
 			
 			byte[] bInput = HexString.fileToByteArray(fInput);
 						
@@ -116,7 +121,7 @@ public class BulkBuild {
 					if (HexString.verifyAsciiPlainText(bInput)) {
 						
 						if (debug|localDebug)
-							System.out.println("BulkBuild.start() - Building From Text File: (" + fInput.getName() + ") To Binary File: " + fInput.getName());
+							logger.debug("BulkBuild.start() - Building From Text File: (" + fInput.getName() + ") To Binary File: " + fInput.getName());
 						
 						textToBinary(fInput , buildNewFilePath(fOutputDirectory , fInput.getName()) , sSharedSecretKey);						
 					} 
@@ -129,14 +134,14 @@ public class BulkBuild {
 				if (iCompilingMethod == TEXT_OUTPUT) {
 					
 					if (debug|localDebug)
-						System.out.println("BulkBuild.start() - Building From Binary File: (" + fInput.getName() + ") To Text File: " + fInput.getName());
+						logger.debug("BulkBuild.start() - Building From Binary File: (" + fInput.getName() + ") To Text File: " + fInput.getName());
 					
 					binaryToText(fInput , buildNewFilePath(fOutputDirectory , fInput.getName()) , sSharedSecretKey);
 										
 				} else if (iCompilingMethod == BINARY_OUTPUT) {
 					
 					if (debug|localDebug)
-						System.out.println("BulkBuild.start() - Building From Binary File: (" + fInput.toString() + ") To Binary File: " + fInput.getName());
+						logger.debug("BulkBuild.start() - Building From Binary File: (" + fInput.toString() + ") To Binary File: " + fInput.getName());
 					
 					binaryToBinary(fInput , buildNewFilePath(fOutputDirectory , fInput.getName()) , sSharedSecretKey);				
 				}						
@@ -249,7 +254,7 @@ public class BulkBuild {
 		boolean boolStripFinalize = true;
 
 		if (debug|localDebug)
-			System.out.println("BulkBuild.binaryToText(f,f,s) +------------------------------------------------------+");
+			logger.debug("BulkBuild.binaryToText(f,f,s) +------------------------------------------------------+");
 
 		ConfigurationFileExport cfe = null;
 
@@ -315,7 +320,7 @@ public class BulkBuild {
 		boolean localDebug = Boolean.TRUE;
 		
 		if (debug|localDebug)
-			System.out.println("BulkBuild.binaryToBinary(f,f,s)");
+			logger.debug("BulkBuild.binaryToBinary(f,f,s)");
 		
 		@SuppressWarnings("deprecation")
 		ConfigurationFileExport cfe = new ConfigurationFileExport (fBinInput);

@@ -1,5 +1,7 @@
 package com.comcast.oscar.utilities;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,6 +26,8 @@ import java.io.OutputStream;
  * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
  */
 public class Disk {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(Disk.class);
 	
 	private static boolean debug = Boolean.FALSE;
 	
@@ -41,14 +45,14 @@ public class Disk {
 		if (bStream == null) {
 
 			if (debug|localDebug) {
-				System.out.println("Disk.writeToDisk() - NULL ByteArray");
+				logger.debug("Disk.writeToDisk() - NULL ByteArray");
 			}
 			
 			return false;
 		}
 		
 		if (debug|localDebug) {
-			System.out.println("Disk.writeToDisk() " +
+			logger.debug("Disk.writeToDisk() " +
 									" - Total Byte Count: " + bStream.length +
 									" - FileName: " + fOutput.getName());
 		}
@@ -126,7 +130,7 @@ public class Disk {
 		byte[] baInput = hsInput.toByteArray();
 		
 		if (debug|localDebug) {
-			System.out.println("Disk.writeToDisk() " +
+			logger.debug("Disk.writeToDisk() " +
 									" - Total Byte Count: " + baInput.length +
 									" - FileName: " + fOutput);
 		}

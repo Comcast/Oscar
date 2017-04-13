@@ -10,6 +10,9 @@ import java.util.List;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
@@ -36,6 +39,8 @@ import com.comcast.oscar.utilities.HexString;
 
 
 public class DocsisCompiler extends TlvBuilder {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(DocsisCompiler.class);
 	
 	boolean debug = Boolean.FALSE;
 	
@@ -158,7 +163,7 @@ public class DocsisCompiler extends TlvBuilder {
 		this.baosTlvFinalizeArray = new ByteArrayOutputStream();
 		
 		if (debug|localDebug) {
-			System.out.println("DocsisCompiler.commit() LengthOfConfig: " + toByteArray().length);
+			logger.debug("DocsisCompiler.commit() LengthOfConfig: " + toByteArray().length);
 		}
 		
 		/**
@@ -209,7 +214,7 @@ public class DocsisCompiler extends TlvBuilder {
  			if (liTopLevelTLV.contains(iTopLevel)) {
  				
  				if (boolReportStdOut)
- 					System.out.println("Missing Required TLV: " + iTopLevel);
+ 					logger.debug("Missing Required TLV: " + iTopLevel);
  				
  				return false;
  			}
@@ -278,7 +283,7 @@ public class DocsisCompiler extends TlvBuilder {
  		ByteArrayOutputStream baosExtMicTlv43_6 = new ByteArrayOutputStream();
  		
  		if (debug|localDebug)
- 			System.out.println("DocsisCompiler.setExtendedCMTSMic()");
+ 			logger.debug("DocsisCompiler.setExtendedCMTSMic()");
  		
  		return baosExtMicTlv43_6.toByteArray();
  	}
@@ -303,7 +308,7 @@ public class DocsisCompiler extends TlvBuilder {
 		byte[] bTlvArrayNoCmCmtsMIC = null;
 		
 		if (debug|localDebug) {
-			System.out.println("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-Before: " + bTlvArray.length);
+			logger.debug("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-Before: " + bTlvArray.length);
 		}
 				
 		// Strip TLV6 + TLV7 from TLV Buffer
@@ -315,14 +320,14 @@ public class DocsisCompiler extends TlvBuilder {
 		}
 		
 		if (debug|localDebug) {
-			System.out.println("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-AfterCmCmtsStrip: " + bTlvArrayNoCmCmtsMIC.length);
+			logger.debug("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-AfterCmCmtsStrip: " + bTlvArrayNoCmCmtsMIC.length);
 		}
 
 		// Strip EOF TLV Buffer		
 		bTlvArrayNoCmCmtsMIC = stripEOFPADD(bTlvArrayNoCmCmtsMIC);
 
 		if (debug|localDebug) {
-			System.out.println("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-AfterEOF-PADD: " + bTlvArrayNoCmCmtsMIC.length);
+			logger.debug("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-AfterEOF-PADD: " + bTlvArrayNoCmCmtsMIC.length);
 		}
 		
 		//Create TlvBuilder to add CM + CMTS MIC Hash
@@ -343,8 +348,8 @@ public class DocsisCompiler extends TlvBuilder {
 		}
 		
 		if (debug|localDebug) {
-			System.out.println("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-After-Adding-CM-MIC: " + tbTlvArrayCmCmtsMIC.length());
-			System.out.println("DocsisCompiler.setCmCmtsMIC() WITH-CM-MIC: " + tbTlvArrayCmCmtsMIC);
+			logger.debug("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-After-Adding-CM-MIC: " + tbTlvArrayCmCmtsMIC.length());
+			logger.debug("DocsisCompiler.setCmCmtsMIC() WITH-CM-MIC: " + tbTlvArrayCmCmtsMIC);
 		}
 		
 		// Calculate CMTS MIC + Append CMTS MIC to TLV Buffer
@@ -355,8 +360,8 @@ public class DocsisCompiler extends TlvBuilder {
 		}
 		
 		if (debug|localDebug) {
-			System.out.println("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-After-2: " + tbTlvArrayCmCmtsMIC.length());
-			System.out.println("DocsisCompiler.setCmCmtsMIC() CMTS-CM-MIC: " + tbTlvArrayCmCmtsMIC);
+			logger.debug("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-After-2: " + tbTlvArrayCmCmtsMIC.length());
+			logger.debug("DocsisCompiler.setCmCmtsMIC() CMTS-CM-MIC: " + tbTlvArrayCmCmtsMIC);
 		}		
 		
 		return tbTlvArrayCmCmtsMIC.toByteArray();
@@ -393,7 +398,7 @@ public class DocsisCompiler extends TlvBuilder {
 	    }
 	     
 		if (debug|localDebug) {
-			System.out.println("DocsisCompiler.setCmCmtsMIC() CM-MIC-HASH: " + new HexString(mdMD5.digest(bTlvArray)).toString());
+			logger.debug("DocsisCompiler.setCmCmtsMIC() CM-MIC-HASH: " + new HexString(mdMD5.digest(bTlvArray)).toString());
 		}
 	    
 	    return mdMD5.digest(bTlvArray);		
@@ -432,8 +437,8 @@ public class DocsisCompiler extends TlvBuilder {
         bHmacMD5 = mHmacMD5.doFinal(bCmtsMicTlv);
         
         if (localDebug|debug) {
-        	System.out.println("DocsisCompiler.getCmtsMIC() - SharedSecret: " + sCmtsSharedSecret);
-        	System.out.println("DocsisCompiler.getCmtsMIC() - CMTS-MIC-HASH: " + new HexString(bHmacMD5).toString());     	
+        	logger.debug("DocsisCompiler.getCmtsMIC() - SharedSecret: " + sCmtsSharedSecret);
+        	logger.debug("DocsisCompiler.getCmtsMIC() - CMTS-MIC-HASH: " + new HexString(bHmacMD5).toString());     	
         }
         
         return bHmacMD5;
@@ -477,7 +482,7 @@ public class DocsisCompiler extends TlvBuilder {
 		while ((baosbTlvArray.size()%4) != 0) {
 			
 			if (debug|localDebug)
-				System.out.println("DocsisCompiler.paddTlvBuffer() - Adding Padding");
+				logger.debug("DocsisCompiler.paddTlvBuffer() - Adding Padding");
 			
 			baosbTlvArray.write(NULL);
 		}
@@ -506,8 +511,8 @@ public class DocsisCompiler extends TlvBuilder {
 				
 		baosStripEOFWithPadd.write(bTlvArray, 0 , iIndex);
 
-		//System.out.println("B-HEX: " + new HexString(bTlvArray).toString(":"));		
-		//System.out.println("A-HEX: " + new HexString(baosStripEOFWithPadd.toByteArray()).toString(":"));
+		//logger.debug("B-HEX: " + new HexString(bTlvArray).toString(":"));		
+		//logger.debug("A-HEX: " + new HexString(baosStripEOFWithPadd.toByteArray()).toString(":"));
 		
 		return baosStripEOFWithPadd.toByteArray();
 	}

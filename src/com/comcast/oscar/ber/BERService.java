@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.snmp4j.asn1.BER;
 import org.snmp4j.smi.Counter32;
 import org.snmp4j.smi.Counter64;
@@ -44,6 +46,8 @@ import com.comcast.oscar.utilities.HexString;
 /**
  */
 public class BERService {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(BERService.class);
 
 	static BER ber;
 	
@@ -74,13 +78,13 @@ public class BERService {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (localDebug|debug) {
-			System.out.println("BERService.setOIDEncoding(s,b,l) - OID: " + sObjectID + " -> Value: " + lNumber);
+			logger.debug("BERService.setOIDEncoding(s,b,l) - OID: " + sObjectID + " -> Value: " + lNumber);
 		}
 		
 		sObjectID = NetSNMP.toDottedOID(sObjectID);
 	
 		if (localDebug|debug) {
-			System.out.println("BERService.setOIDEncoding(s,b,l) - OID: " + sObjectID + " -> Value: " + lNumber);
+			logger.debug("BERService.setOIDEncoding(s,b,l) - OID: " + sObjectID + " -> Value: " + lNumber);
 		}
 		
 		String berString = null;
@@ -93,9 +97,9 @@ public class BERService {
 				vbCounter32BER = new VariableBinding(new OID(sObjectID) , new Counter32(lNumber));
 			} catch (Exception e)  {
 								
-				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
-				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
-				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				logger.debug("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				logger.debug("Verify OID Syntax or You did not install SNMP4J License Key");
+				logger.debug("ERROR -> (" + e.getMessage() + ")");
 				
 			} finally {
 				//System.exit(2);
@@ -115,9 +119,9 @@ public class BERService {
 				vbCounter64BER = new VariableBinding(new OID(sObjectID) , new Counter64(lNumber));
 			} catch (Exception e)  {
 								
-				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
-				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
-				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				logger.debug("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				logger.debug("Verify OID Syntax or You did not install SNMP4J License Key");
+				logger.debug("ERROR -> (" + e.getMessage() + ")");
 				
 			}
 			
@@ -135,9 +139,9 @@ public class BERService {
 				vbGauge32BER  = new VariableBinding(new OID(sObjectID) , new Gauge32(lNumber));
 			} catch (Exception e)  {
 								
-				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
-				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
-				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				logger.debug("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				logger.debug("Verify OID Syntax or You did not install SNMP4J License Key");
+				logger.debug("ERROR -> (" + e.getMessage() + ")");
 				
 			}
 			
@@ -155,9 +159,9 @@ public class BERService {
 				vbInteger32BER  = new VariableBinding(new OID(sObjectID) , new Integer32((int)lNumber));
 			} catch (Exception e)  {
 				
-				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
-				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
-				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				logger.debug("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				logger.debug("Verify OID Syntax or You did not install SNMP4J License Key");
+				logger.debug("ERROR -> (" + e.getMessage() + ")");
 				
 			}
 			
@@ -175,9 +179,9 @@ public class BERService {
 				vbTimeTicksBER  = new VariableBinding(new OID(sObjectID) , new TimeTicks(lNumber));
 			} catch (Exception e)  {
 								
-				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
-				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
-				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				logger.debug("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				logger.debug("Verify OID Syntax or You did not install SNMP4J License Key");
+				logger.debug("ERROR -> (" + e.getMessage() + ")");
 				
 			}	
 			
@@ -204,7 +208,7 @@ public class BERService {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (localDebug|debug) {
-			System.out.println("BERService.setOIDEncoding(s,b,s) - OID: " + sObjectID + " -> Value: " + sValue);
+			logger.debug("BERService.setOIDEncoding(s,b,s) - OID: " + sObjectID + " -> Value: " + sValue);
 		}
 		
 		sObjectID = NetSNMP.toDottedOID(sObjectID);
@@ -214,7 +218,7 @@ public class BERService {
 		if (BER.IPADDRESS == bBerDataType) {
 			
 			if (localDebug|debug)
-				System.out.println("BERService.setOIDEncoding() -> StringOID: " + sObjectID);
+				logger.debug("BERService.setOIDEncoding() -> StringOID: " + sObjectID);
 			
 			VariableBinding vbIpBER = null;
 
@@ -222,9 +226,9 @@ public class BERService {
 				vbIpBER  = new VariableBinding(new OID(sObjectID) , new IpAddress(sValue));
 			} catch (Exception e)  {
 								
-				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
-				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
-				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				logger.debug("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				logger.debug("Verify OID Syntax or You did not install SNMP4J License Key");
+				logger.debug("ERROR -> (" + e.getMessage() + ")");
 				
 			}
 			
@@ -242,9 +246,9 @@ public class BERService {
 				vbOctBER  = new VariableBinding(new OID(sObjectID) , new OctetString(sValue));
 			} catch (Exception e)  {
 								
-				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
-				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
-				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				logger.debug("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				logger.debug("Verify OID Syntax or You did not install SNMP4J License Key");
+				logger.debug("ERROR -> (" + e.getMessage() + ")");
 				
 			}		
 			
@@ -271,7 +275,7 @@ public class BERService {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (localDebug|debug) {
-			System.out.println("BERService.setOIDEncoding(s,b,b) - OID: " + sObjectID + " -> Value: " + new HexString(bValue).toString(":"));
+			logger.debug("BERService.setOIDEncoding(s,b,b) - OID: " + sObjectID + " -> Value: " + new HexString(bValue).toString(":"));
 		}
 		
 		sObjectID = NetSNMP.toDottedOID(sObjectID);
@@ -286,9 +290,9 @@ public class BERService {
 				vbOctBER = new VariableBinding(new OID(sObjectID) , new OctetString(bValue));
 			} catch (Exception e)  {
 								
-				System.out.println("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
-				System.out.println("Verify OID Syntax or You did not install SNMP4J License Key");
-				System.out.println("ERROR -> (" + e.getMessage() + ")");
+				logger.debug("OID Conversion Error Found, Most likely unable to convert OID name to BER encoding");
+				logger.debug("Verify OID Syntax or You did not install SNMP4J License Key");
+				logger.debug("ERROR -> (" + e.getMessage() + ")");
 				
 			}
 			
@@ -315,7 +319,7 @@ public class BERService {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (localDebug|debug) {
-			System.out.println("BERService.setOIDEncodingToByteArray(s,b,s) - OID: " + sObjectID + " -> Value: " + sValue);
+			logger.debug("BERService.setOIDEncodingToByteArray(s,b,s) - OID: " + sObjectID + " -> Value: " + sValue);
 		}
 		
 		sObjectID = NetSNMP.toDottedOID(sObjectID);
@@ -442,7 +446,7 @@ public class BERService {
 			
 			if (debug|localDebug) {
 				HexString hsBerIpAddress = new HexString(bBerDataValue);
-				System.out.println("BER.IPADDRESS: " + hsBerIpAddress);
+				logger.debug("BER.IPADDRESS: " + hsBerIpAddress);
 			}
 			
 			sBERValue = HexString.toInetAddress(bBerDataValue);

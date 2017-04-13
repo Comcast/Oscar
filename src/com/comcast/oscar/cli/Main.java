@@ -29,10 +29,10 @@ public class Main {
 	 * @param args
 	 */
 	public static void main (String args[]) {
-		/* Determine path. For testing purposes. */
+		/* Determine path. Remove for testing purposes. */
 		DirectoryStructure.setFromJar(); 
 		
-		/* Create subdirectories if they do not exist */
+		/* Create sub-directories if they do not exist */
 		DirectoryStructure.createDirectories();
 		
 		/* Import files if they do not exist */

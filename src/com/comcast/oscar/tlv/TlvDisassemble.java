@@ -14,6 +14,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.comcast.oscar.ber.BEROIDConversion;
 import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.datatype.DataTypeDictionaryReference;
@@ -43,6 +46,8 @@ import com.comcast.oscar.utilities.HexString;
  */
 
 public class TlvDisassemble extends DictionarySQLQueries {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(TlvDisassemble.class);
 
 	private TlvBuilder tbTlvBuffer = null;
 	
@@ -64,13 +69,13 @@ public class TlvDisassemble extends DictionarySQLQueries {
 		super();
 
 		if (this.debug) 
-			System.out.println("TlvDisassemble(t,s) DICTIONARY-TABLE-NAME: " + sTlvType);
+			logger.debug("TlvDisassemble(t,s) DICTIONARY-TABLE-NAME: " + sTlvType);
 
 		//Update local pointer
 		this.tbTlvBuffer = tbTlvBuffer;
 
 		if (this.debug) 
-			System.out.println("TlvDisassemble(tb,s) TLV Buffer: " + tbTlvBuffer.toStringSeperation(":"));
+			logger.debug("TlvDisassemble(tb,s) TLV Buffer: " + tbTlvBuffer.toStringSeperation(":"));
 	
 		//Check the first byte to determine if it is a DOCSIS File or PacketCable File
 		super.updateDictionaryTablename(sTlvType);
@@ -86,13 +91,13 @@ public class TlvDisassemble extends DictionarySQLQueries {
 		super();
 
 		if (this.debug) 
-			System.out.println("TlvDisassemble(tvb,s) DICTIONARY-TABLE-NAME: " + sTlvType);
+			logger.debug("TlvDisassemble(tvb,s) DICTIONARY-TABLE-NAME: " + sTlvType);
 
 		//Update local pointer
 		this.tvbTlvBuffer = tvbTlvBuffer;
 
 		if (this.debug) 
-			System.out.println("TlvDisassemble(tvb,s) TLV Buffer: " + tvbTlvBuffer.toString());
+			logger.debug("TlvDisassemble(tvb,s) TLV Buffer: " + tvbTlvBuffer.toString());
 
 		
 		//Check the first byte to determine if it is a DOCSIS File or PacketCable File
@@ -109,7 +114,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 		super();
 		
 		if (debug) 
-			System.out.println("TlvDisassemble(f,s) DICTIONARY-TABLE-NAME: " + sTlvType);
+			logger.debug("TlvDisassemble(f,s) DICTIONARY-TABLE-NAME: " + sTlvType);
 		
         byte[] bTlvBuffer = new byte[(int) fTlvBuffer.length()];
                 
@@ -125,7 +130,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 		this.tbTlvBuffer = new TlvBuilder();
 
 		if (this.debug) 
-			System.out.println("TlvDisassemble(f,s) TLV Buffer: " + tbTlvBuffer.toStringSeperation(":"));
+			logger.debug("TlvDisassemble(f,s) TLV Buffer: " + tbTlvBuffer.toStringSeperation(":"));
 		
 		try {
 			tbTlvBuffer.add(new HexString(bTlvBuffer));
@@ -133,7 +138,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 			e.printStackTrace();
 		}
 		
-		if (debug) System.out.println("TlvDisassemble(f,s) TLV-BUFFER: " + tbTlvBuffer.toStringSeperation(":"));
+		if (debug) logger.debug("TlvDisassemble(f,s) TLV-BUFFER: " + tbTlvBuffer.toStringSeperation(":"));
 		
 		//Check the first byte to determine if it is a DOCSIS File or PacketCable File
 		super.updateDictionaryTablename(sTlvType);
@@ -163,20 +168,20 @@ public class TlvDisassemble extends DictionarySQLQueries {
 		if (tbTlvBuffer != null) {
 			
 			if (debug|localDebug) 
-				System.out.println("TlvDisassemble.getTlvDictionary() - Using TlvBuilder Class");
+				logger.debug("TlvDisassemble.getTlvDictionary() - Using TlvBuilder Class");
 			
 			liTlvBuffer = tbTlvBuffer.getTopLevelTlvList(getTopLevelByteLength());
 		
 		} else if (tvbTlvBuffer != null) {
 			
 			if (debug|localDebug) 
-				System.out.println("TlvDisassemble.getTlvDictionary() - Using TlvVariableBinding Class");
+				logger.debug("TlvDisassemble.getTlvDictionary() - Using TlvVariableBinding Class");
 			
 			liTlvBuffer = tvbTlvBuffer.getTopLevelTlvList();
 		}
 
 		if (debug|localDebug) 
-			System.out.println("TlvDisassemble.getTlvDictionary() - TLV-LIST: " + liTlvBuffer);
+			logger.debug("TlvDisassemble.getTlvDictionary() - TLV-LIST: " + liTlvBuffer);
 	
 		//Get Major TLV from tbTlvBuffer via Map Type -> Byte Length
 		for (Integer iType : liTlvBuffer) {
@@ -185,16 +190,16 @@ public class TlvDisassemble extends DictionarySQLQueries {
 			boasTlvBufferTemp = new ByteArrayOutputStream();
 			
 			if (debug|localDebug) 
-				System.out.println("TlvDisassemble.getTlvDictionary() MAJOR-TLV-TYPE: " + iType);
+				logger.debug("TlvDisassemble.getTlvDictionary() MAJOR-TLV-TYPE: " + iType);
 
 			//Get TLV Dictionary via TLV Type
 			joTlvDictionary = super.getTlvDictionary(iType);
 			
 			if (debug|localDebug)
-				System.out.println("TlvDisassemble.getTlvDictionary.joTlvDictionary("+ iType +"): " + joTlvDictionary);
+				logger.debug("TlvDisassemble.getTlvDictionary.joTlvDictionary("+ iType +"): " + joTlvDictionary);
 			
 			if (joTlvDictionary == null) {
-				if (debug|localDebug) System.out.println("TlvDisassemble.getTlvDictionary() -> INVALID-TLV: " + iType);
+				if (debug|localDebug) logger.debug("TlvDisassemble.getTlvDictionary() -> INVALID-TLV: " + iType);
 				continue;
 			}
 
@@ -232,8 +237,8 @@ public class TlvDisassemble extends DictionarySQLQueries {
 				}
 				
 				if (debug|localDebug) { 
-					System.out.println("TlvDisassemble.getTlvDictionary() VAR-BIND-TLV-BUFFER: " + tvbTlvBuffer);
-					System.out.println("TlvDisassemble.getTlvDictionary() joTlvDictionary: " + joTlvDictionary);
+					logger.debug("TlvDisassemble.getTlvDictionary() VAR-BIND-TLV-BUFFER: " + tvbTlvBuffer);
+					logger.debug("TlvDisassemble.getTlvDictionary() joTlvDictionary: " + joTlvDictionary);
 				}
 				
 			} else if (tbTlvBuffer != null) {
@@ -246,7 +251,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 				}
 	
 				if (debug|localDebug) { 
-					System.out.println("TlvDisassemble.getTlvDictionary() MapTypeToByteLen: " + miiTypeByteLength);
+					logger.debug("TlvDisassemble.getTlvDictionary() MapTypeToByteLen: " + miiTypeByteLength);
 				}
 				
 				//fetch Major TLV and store in BASO
@@ -259,9 +264,9 @@ public class TlvDisassemble extends DictionarySQLQueries {
 				}
 
 				if (debug|localDebug) {
-					System.out.println("TlvDisassemble.getTlvDictionary() - BEFORE-LOAD-TLV - TLV-BUFFER-LENGTH: " + boasTlvBufferTemp.size());
-					System.out.println("TlvDisassemble.getTlvDictionary() - BEFORE-LOAD-TLV - TLV-BUFFER: " + new HexString(boasTlvBufferTemp.toByteArray()).toString(":"));
-					System.out.println("TlvDisassemble.getTlvDictionary() - BEFORE-LOAD-TLV - joTlvDictionary: " + joTlvDictionary);
+					logger.debug("TlvDisassemble.getTlvDictionary() - BEFORE-LOAD-TLV - TLV-BUFFER-LENGTH: " + boasTlvBufferTemp.size());
+					logger.debug("TlvDisassemble.getTlvDictionary() - BEFORE-LOAD-TLV - TLV-BUFFER: " + new HexString(boasTlvBufferTemp.toByteArray()).toString(":"));
+					logger.debug("TlvDisassemble.getTlvDictionary() - BEFORE-LOAD-TLV - joTlvDictionary: " + joTlvDictionary);
 				}
 				
 				try {
@@ -271,8 +276,8 @@ public class TlvDisassemble extends DictionarySQLQueries {
 				}
 				
 				if (debug|localDebug) { 
-					System.out.println("TlvDisassemble.getTlvDictionary() - AFTER-LOAD-TLV - TLV-BUFFER-LENGTH: " + new HexString(boasTlvBufferTemp.toByteArray()).toString(":"));
-					System.out.println("TlvDisassemble.getTlvDictionary() - AFTER-LOAD-TLV - joTlvDictionary: " + joTlvDictionary);
+					logger.debug("TlvDisassemble.getTlvDictionary() - AFTER-LOAD-TLV - TLV-BUFFER-LENGTH: " + new HexString(boasTlvBufferTemp.toByteArray()).toString(":"));
+					logger.debug("TlvDisassemble.getTlvDictionary() - AFTER-LOAD-TLV - joTlvDictionary: " + joTlvDictionary);
 				}
 			}
 					
@@ -314,7 +319,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 			}
 			
 			if (debug|localDebug) {
-				System.out.println("TlvDisassemble.getTopLevelTLVJSON() - JSONObject: " + joTlvDictionary);
+				logger.debug("TlvDisassemble.getTopLevelTLVJSON() - JSONObject: " + joTlvDictionary);
 			}
 			
 			try {
@@ -368,7 +373,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 		for (int iJsonArrayIndex = 0 ; iJsonArrayIndex < iLength ; iJsonArrayIndex++ ) {
 
 			if (debug|localDebug) 
-				System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,ja) +-----INDEX: " + iJsonArrayIndex + "-----+");
+				logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,ja) +-----INDEX: " + iJsonArrayIndex + "-----+");
 
 			JSONObject joTlvDictionary = null;
 
@@ -384,7 +389,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 				if (joTlvDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
 					
 					if (debug|localDebug) 
-						System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,ja) SUB-TYPE-ARRAY-FALSE: " + joTlvDictionary);
+						logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,ja) SUB-TYPE-ARRAY-FALSE: " + joTlvDictionary);
 
 					//If this is the start of the array, I need only advance 2 bytes to the next Type
 					loadTlvValuesIntoTlvDictionary (bTlvBuffer , joTlvDictionary.getJSONArray(Dictionary.SUBTYPE_ARRAY)); 
@@ -392,7 +397,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 				} else {
 
 					if (debug) 
-						System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,ja) SUB-TYPE-ARRAY-FALSE: " + joTlvDictionary);
+						logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,ja) SUB-TYPE-ARRAY-FALSE: " + joTlvDictionary);
 
 					//If this is the start of the array, I need only advance 2 bytes to the next Type
 					try {
@@ -401,23 +406,23 @@ public class TlvDisassemble extends DictionarySQLQueries {
 					
 						if (joCheckForMultiSubTLVInstance.has(Dictionary.MULTI_SUB_TLV_INSTANCE)) {
 							
-							if (debug|localDebug)System.out.println(joCheckForMultiSubTLVInstance);
-							if (debug|localDebug)System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(ba,ja) - MULTI-SUB");
+							if (debug|localDebug)logger.debug(joCheckForMultiSubTLVInstance);
+							if (debug|localDebug)logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(ba,ja) - MULTI-SUB");
 							
 							JSONArray ja_ = joCheckForMultiSubTLVInstance.getJSONArray(Dictionary.MULTI_SUB_TLV_INSTANCE);
-							if (debug|localDebug)System.out.println(ja_);
+							if (debug|localDebug)logger.debug(ja_);
 							
 							for (int iIndex = 0 ; iIndex < ja_.length() ; iIndex++ ) {
-								if (debug|localDebug)System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(ba,ja) - JSONObject ");
+								if (debug|localDebug)logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(ba,ja) - JSONObject ");
 								jaTlvDictionary.put(new JSONObject(ja_.get(iIndex).toString()));
 							}
 							
-							if (debug|localDebug)System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(ba,ja) - ADDED-MULTI-SUB ");
-							if (debug|localDebug)System.out.println(jaTlvDictionary);						
+							if (debug|localDebug)logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(ba,ja) - ADDED-MULTI-SUB ");
+							if (debug|localDebug)logger.debug(jaTlvDictionary);						
 						}
 						
 					} catch (TlvException e) {
-						System.out.println(jaTlvDictionary);
+						logger.debug(jaTlvDictionary);
 						e.printStackTrace();
 					}						
 				}
@@ -445,10 +450,10 @@ public class TlvDisassemble extends DictionarySQLQueries {
 		JSONArray jaMultiSubTlvInstance = null;
 		
 		if (debug|localDebug) {
-			System.out.println("+=================================loadTlvValuesIntoTlvDictionary============================================+");
-			System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - joTlvDictionary: " + joTlvDictionary);
-			System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - TlvBufferLength: " + bTlvBuffer.length);
-			System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - ByteArray: " + new HexString(bTlvBuffer).toString(":"));
+			logger.debug("+=================================loadTlvValuesIntoTlvDictionary============================================+");
+			logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - joTlvDictionary: " + joTlvDictionary);
+			logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - TlvBufferLength: " + bTlvBuffer.length);
+			logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - ByteArray: " + new HexString(bTlvBuffer).toString(":"));
 		}
 		
 		try {
@@ -456,14 +461,14 @@ public class TlvDisassemble extends DictionarySQLQueries {
 			if (joTlvDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
 				
 				if (debug|localDebug) 
-					System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo).joTlvDictionary.SubTypesFound");
+					logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo).joTlvDictionary.SubTypesFound");
 				
 				loadTlvValuesIntoTlvDictionary (bTlvBuffer , new JSONArray().put(joTlvDictionary));	
 			
 			} else {
 
 				if (debug|localDebug) 
-					System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo).joTlvDictionary.No-SubTypesFound");
+					logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo).joTlvDictionary.No-SubTypesFound");
 				
 				//Get ParentTypeList Array
 				byte [] bParentChildTlvEncodeList = toParentTypeListByteArray(joTlvDictionary.getJSONArray(Dictionary.PARENT_TYPE_LIST));
@@ -479,7 +484,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 				
 				
 				if (debug|localDebug) 
-					System.out.println(	"TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) " +
+					logger.debug(	"TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) " +
 										" -> TlvBufferLength: " + bTlvBuffer.length +
 										" -> bParentChildTlvEncodeList: " + hsPCTEL +
 										" -> HexPointerIndex: " + hsPCTEPointer + 
@@ -489,7 +494,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 				if (bPCTEPointer.length != 0) {
 
 					if (debug|localDebug|Boolean.FALSE) 
-						System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) -> NextTLV -> " + hsPCTEPointer.toString(":"));
+						logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) -> NextTLV -> " + hsPCTEPointer.toString(":"));
 
 					/* Need to create a special case when there are 2 of the same TLV - Example TLV 43 Vendor Specific */
 					for (int iIndex = 0; iIndex < bPCTEPointer.length; iIndex++) {
@@ -498,11 +503,11 @@ public class TlvDisassemble extends DictionarySQLQueries {
 						byte [] bValue = TlvBuilder.getTlvValue(bTlvBuffer, bPCTEPointer[iIndex], joTlvDictionary.getInt(Dictionary.BYTE_LENGTH));
 
 						if (debug|localDebug) {
-							System.out.println("+-------------------------------------------------------------------------------------------------+");
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) BYTE-ARRAY-VALUE-LENGTH: " + bValue.length);
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TlvDictionaryObject: " + joTlvDictionary);
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV_NAME: " + joTlvDictionary.getString(Dictionary.TLV_NAME));
-							System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) BYTE_LENGTH: " + joTlvDictionary.getString(Dictionary.BYTE_LENGTH));
+							logger.debug("+-------------------------------------------------------------------------------------------------+");
+							logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) BYTE-ARRAY-VALUE-LENGTH: " + bValue.length);
+							logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TlvDictionaryObject: " + joTlvDictionary);
+							logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV_NAME: " + joTlvDictionary.getString(Dictionary.TLV_NAME));
+							logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) BYTE_LENGTH: " + joTlvDictionary.getString(Dictionary.BYTE_LENGTH));
 						}
 
 						//Determine the Data Type of Value
@@ -512,7 +517,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 						if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-INT: " + new HexString(bValue).toHexStringList());
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-INT: " + new HexString(bValue).toHexStringList());
 
 							//Get Value
 							int iTlvValue = new HexString(bValue).toInteger();
@@ -521,18 +526,18 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							joTlvDictionary.put(Dictionary.VALUE, iTlvValue);
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-VALUE: " + iTlvValue);
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-VALUE: " + iTlvValue);
 
 						} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID)) {
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-OID-PRE: " + new HexString(bValue).toHexStringList());
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-OID-PRE: " + new HexString(bValue).toHexStringList());
 
 							//Need to see if this is a BER byte array
 							//bValue = BERService.cleanBEROIDPrefix(bValue);
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-OID-PST: " + new HexString(bValue).toHexStringList());
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-OID-PST: " + new HexString(bValue).toHexStringList());
 
 							//Get Value
 							BEROIDConversion bocOID = new BEROIDConversion(bValue); 
@@ -545,7 +550,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							joTlvDictionary.put(Dictionary.VALUE, jaOID);
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - DATA_TYPE_OID - joTlvDictionary: " + joTlvDictionary);
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - DATA_TYPE_OID - joTlvDictionary: " + joTlvDictionary);
 
 						} 
 						
@@ -553,7 +558,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 						else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY)) {
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-BYTE-ARRAY: " + new HexString(bValue).toHexStringList());
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-BYTE-ARRAY: " + new HexString(bValue).toHexStringList());
 
 							//Get Value
 							String sTlvValue = new HexString(bValue).toString(":");
@@ -585,12 +590,12 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							}
 							
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) " + joTlvDictionary);
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) " + joTlvDictionary);
 							
 						} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED)) {
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-STRING-NULL-TERMINATED: " + new HexString(bValue).toHexStringList());
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-STRING-NULL-TERMINATED: " + new HexString(bValue).toHexStringList());
 
 							//Get Value
 							String sTlvValueASCII = new HexString(HexString.stripNullTerminatedString(bValue)).toASCII();
@@ -601,7 +606,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 						} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING)) {
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-STRING: " + new HexString(bValue).toHexStringList());
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-STRING: " + new HexString(bValue).toHexStringList());
 
 							//Get Value
 							String sTlvValueASCII = new HexString(bValue).toASCII();
@@ -612,7 +617,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 						} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_MULTI_TLV_BYTE_ARRAY)) {
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-MULTI-TLV-BYTE-ARRAY: " + new HexString(bValue).toString(":"));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-MULTI-TLV-BYTE-ARRAY: " + new HexString(bValue).toString(":"));
 
 							//Get Value
 							String sTlvValue = new HexString(bValue).toString(":");
@@ -625,7 +630,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							String sTlvValue = null;
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR: " + new HexString(bValue).toString(":"));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR: " + new HexString(bValue).toString(":"));
 
 							try {
 								sTlvValue = DataTypeFormatConversion.byteArrayToIPv4TransportAddress(bValue);
@@ -641,7 +646,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							String sTlvValue = null;
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR: " + new HexString(bValue).toString(":"));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR: " + new HexString(bValue).toString(":"));
 
 							try {
 								sTlvValue = DataTypeFormatConversion.byteArrayToIPv6TransportAddress(bValue);
@@ -657,7 +662,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							String sTlvValue = null;
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_TRANSPORT_ADDR_INET_ADDR: " + new HexString(bValue).toString(":"));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_TRANSPORT_ADDR_INET_ADDR: " + new HexString(bValue).toString(":"));
 
 							try {
 								sTlvValue = DataTypeFormatConversion.byteArrayToInetTransportAddress(bValue);
@@ -673,7 +678,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							String sTlvValue = null;
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_DOUBLE_BYTE_ARRAY: " + new HexString(bValue).toString(":"));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_DOUBLE_BYTE_ARRAY: " + new HexString(bValue).toString(":"));
 
 							try {
 								sTlvValue = DataTypeFormatConversion.doubleByteArray(bValue);
@@ -689,7 +694,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							StringBuilder sbTlvValue = null;
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_STRING_BITS: " + new HexString(bValue).toString(":"));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_STRING_BITS: " + new HexString(bValue).toString(":"));
 
 							sbTlvValue = DataTypeFormatConversion.byteArrayBinaryBitMaskToString(bValue,8);
 
@@ -701,9 +706,9 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							String sTlvValue = null;
 
 							if (debug|localDebug) { 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_MAC_ADDRESS: " + new HexString(bValue).toString(":"));
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-NAME: " + joTlvDictionary.getString(Dictionary.TLV_NAME));
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-NAME: " + joTlvDictionary.getString(Dictionary.PARENT_TYPE_LIST));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_MAC_ADDRESS: " + new HexString(bValue).toString(":"));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-NAME: " + joTlvDictionary.getString(Dictionary.TLV_NAME));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-NAME: " + joTlvDictionary.getString(Dictionary.PARENT_TYPE_LIST));
 							}
 
 							sTlvValue = DataTypeFormatConversion.byteArrayToMacAddressFormat(bValue);
@@ -716,7 +721,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							String sTlvValue = null;
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE_ARRAY_IPV4_ADDR: " + new HexString(bValue).toString(":"));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE_ARRAY_IPV4_ADDR: " + new HexString(bValue).toString(":"));
 
 							sTlvValue = DataTypeFormatConversion.inetAddressToString(bValue);
 
@@ -728,7 +733,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							String sTlvValue = null;
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE_ARRAY_IPV6_ADDR: " + new HexString(bValue).toString(":"));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE_ARRAY_IPV6_ADDR: " + new HexString(bValue).toString(":"));
 
 							sTlvValue = DataTypeFormatConversion.inetAddressToString(bValue);
 
@@ -740,7 +745,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							String sTlvValue = null;
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE: " + new HexString(bValue).toString(":"));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE: " + new HexString(bValue).toString(":"));
 
 							sTlvValue = new HexString(bValue).toString();
 
@@ -750,7 +755,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 						}  else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
 
 							if (debug|localDebug) 
-								System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE: " + new HexString(bValue).toString(":"));
+								logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE: " + new HexString(bValue).toString(":"));
 
 							String sObjectOnlyHex = "30" + HexString.toHexString(bValue.length) + new HexString(bValue).toString();
 
@@ -759,7 +764,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 							BEROIDConversion bocOidAsnObj5 = new BEROIDConversion(hsHexOID.toByteArray());
 
 							if (debug|localDebug) 
-								System.out.println("Hex -> OID-DOT: " + bocOidAsnObj5.getOidDotNotaion());
+								logger.debug("Hex -> OID-DOT: " + bocOidAsnObj5.getOidDotNotaion());
 
 							//Insert Value into JSON Object
 							joTlvDictionary.put(Dictionary.VALUE,  bocOidAsnObj5.getOidDotNotaion());
@@ -770,7 +775,7 @@ public class TlvDisassemble extends DictionarySQLQueries {
 				}
 				
 				if (debug|localDebug) 
-					System.out.println("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) " + joTlvDictionary);
+					logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) " + joTlvDictionary);
 			}
 			
 			

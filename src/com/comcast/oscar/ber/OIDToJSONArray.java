@@ -33,9 +33,7 @@ import com.comcast.oscar.utilities.HexString;
 
 public class OIDToJSONArray {
 
-	private String sOID = null;
-	private String sDataType = null;
-	private String sValue = null;
+	private String sOID, sDataType, sValue = null;
 	
 	private final String OID = "OID";
 	private final String DATA_TYPE = "DATA_TYPE";

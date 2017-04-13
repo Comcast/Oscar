@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.antlr.v4.runtime.misc.NotNull;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,6 +40,8 @@ import com.comcast.oscar.utilities.HexString;
 
 
 public class TlvConfigurationFileParser extends tlvBaseListener {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(TlvConfigurationFileParser.class);
 
 	private DictionarySQLQueries dsqTlvDictionary = null;
 	
@@ -94,7 +98,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 		}   
 		
 		if (debug|localDebug) 
-			System.out.println("TlvConfigurationFileParser.enterConfigType() " + ctx.getText());
+			logger.debug("TlvConfigurationFileParser.enterConfigType() " + ctx.getText());
 		
 		//Create a Map of String TypeName -> Type
 		hmsiTopLevelTypeNameToType = (HashMap<String, Integer>) dsqTlvDictionary.getAllTopLevelTypeNameToType();
@@ -112,13 +116,13 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 		boolean localDebug = Boolean.FALSE;
 
 		if (debug|localDebug) { 
-			System.out.println("TlvConfigurationFileParser.enterStartTLV() " + ctx.getStart().getText());
+			logger.debug("TlvConfigurationFileParser.enterStartTLV() " + ctx.getStart().getText());
 		}
 		
 		joWorkingTLVDictionary = dsqTlvDictionary.getTlvDefinition(hmsiTopLevelTypeNameToType.get(ctx.getStart().getText()));
 
 		if (debug|localDebug) 
-			System.out.println("TlvConfigurationFileParser.enterStartTLV() " + joWorkingTLVDictionary);
+			logger.debug("TlvConfigurationFileParser.enterStartTLV() " + joWorkingTLVDictionary);
 				
 		jaTlvDictionary.put(joWorkingTLVDictionary);
 		
@@ -140,7 +144,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 		boolean localDebug = Boolean.FALSE;
 
 		if (debug|localDebug) 
-			System.out.println("TlvConfigurationFileParser.enterTlv() " + ctx.getStart().getText());
+			logger.debug("TlvConfigurationFileParser.enterTlv() " + ctx.getStart().getText());
 	
 		aqsSubTypeHierarchyStack.push(ctx.getStart().getText());	
 	}
@@ -156,12 +160,12 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 		boolean localDebug = Boolean.FALSE;
 
 		if (debug|localDebug) 
-			System.out.println("TlvConfigurationFileParser.enterSnmp() " + ctx.getStart().getText());
+			logger.debug("TlvConfigurationFileParser.enterSnmp() " + ctx.getStart().getText());
 	
 		aqsSubTypeHierarchyStack.push(ctx.getStart().getText());
 		
 		if (debug|localDebug) 
-			System.out.println("TlvConfigurationFileParser.enterSnmp(): ArrayDeque:  " + aqsSubTypeHierarchyStack);
+			logger.debug("TlvConfigurationFileParser.enterSnmp(): ArrayDeque:  " + aqsSubTypeHierarchyStack);
 
 		DictionaryTLV.updateDictionaryValue(aqsSubTypeHierarchyStack, joWorkingTLVDictionary, ctx);
 		
@@ -224,8 +228,8 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 		boolean localDebug = Boolean.FALSE;
 				
 		if (debug|localDebug) {
-			System.out.println("TlvConfigurationFileParser.enterSubTypeValue(): ArrayDeque:  " + aqsSubTypeHierarchyStack);
-			System.out.println("TlvConfigurationFileParser.enterSubTypeValue(): SubValue:  " + ctx.getStart().getText());
+			logger.debug("TlvConfigurationFileParser.enterSubTypeValue(): ArrayDeque:  " + aqsSubTypeHierarchyStack);
+			logger.debug("TlvConfigurationFileParser.enterSubTypeValue(): SubValue:  " + ctx.getStart().getText());
 		}
 		
 		DictionaryTLV.updateDictionaryValue(aqsSubTypeHierarchyStack, joWorkingTLVDictionary, ctx.getStart().getText());
@@ -243,8 +247,8 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 		boolean localDebug = Boolean.FALSE;
 		
 		if (debug|localDebug) {
-			System.out.println("TlvConfigurationFileParser.enterSubTypeValue(): ArrayDeque:  " + aqsSubTypeHierarchyStack);
-			System.out.println("TlvConfigurationFileParser.enterSubTypeValue(): Value:  " + ctx.getStart().getText());		
+			logger.debug("TlvConfigurationFileParser.enterSubTypeValue(): ArrayDeque:  " + aqsSubTypeHierarchyStack);
+			logger.debug("TlvConfigurationFileParser.enterSubTypeValue(): Value:  " + ctx.getStart().getText());		
 		}
 		
 		DictionaryTLV.updateDictionaryValue(aqsSubTypeHierarchyStack, joWorkingTLVDictionary, ctx.getStart().getText());		
@@ -281,7 +285,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 		byte[] baTlvAssembler = null;
 		
 		if (debug|localDebug) 
-			System.out.println("TlvConfigurationFileParser.toByteArray() " + jaTlvDictionary);	
+			logger.debug("TlvConfigurationFileParser.toByteArray() " + jaTlvDictionary);	
 		
 		try {
 			baTlvAssembler = TlvBuilder.stripZeroByteTLV(new TlvAssembler(jaTlvDictionary).toByteArray(), getTopLevelTypeToNumByteLength());
@@ -291,7 +295,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 		
 		if (debug|localDebug)
 			for (HexString hs : TlvBuilder.topLevelTlvToHexStringList(baTlvAssembler, getTopLevelTypeToNumByteLength())) {
-				System.out.println("TlvConfigurationFileParser.toByteArray() " + hs.toString(":"));
+				logger.debug("TlvConfigurationFileParser.toByteArray() " + hs.toString(":"));
 			}
 		
 		return baTlvAssembler;

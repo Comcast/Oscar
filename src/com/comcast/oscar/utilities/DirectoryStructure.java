@@ -9,6 +9,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.comcast.oscar.sql.SqlConnection;
+
 /**
  * 
  * @author Allen Flickinger (allen.flickinger@gmail.com)
@@ -31,6 +36,8 @@ import java.util.Date;
 
 public class DirectoryStructure {
 	
+	private static final Logger logger = LogManager.getLogger(DirectoryStructure.class);
+	
 	private static boolean fromJar = false;
 	
 	/**
@@ -45,6 +52,7 @@ public class DirectoryStructure {
 	 * @return base directory 
 	 * */
 	public static String sBasePath() {
+		
 		if(fromJar) {
 			File file = new File(System.getProperty("java.class.path"));
 			
@@ -174,7 +182,7 @@ public class DirectoryStructure {
 	public void exportDictionary() {	
 		InputStream is = this.getClass().getResourceAsStream("/dictionary.sqlite");		
 		OutputStream os = null;
-
+		
 		try {
 			os = new FileOutputStream(fDictionaryFile());
 			byte[] buffer = new byte[1024];

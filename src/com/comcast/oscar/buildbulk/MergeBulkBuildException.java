@@ -19,7 +19,6 @@ package com.comcast.oscar.buildbulk;
  */
 
 public class MergeBulkBuildException  extends Exception {
-	
 	/**
 	 * 
 	 */

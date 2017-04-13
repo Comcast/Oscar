@@ -1,6 +1,5 @@
 package com.comcast.oscar.compiler;
 
-
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>
@@ -21,7 +20,6 @@ package com.comcast.oscar.compiler;
 
 
 public class CompilerException extends Exception {
-
 	private static final long serialVersionUID = -4911433822248330700L;
 
 	private Throwable cause;

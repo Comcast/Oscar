@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.snmp4j.asn1.BER;
 import org.snmp4j.smi.OID;
 
@@ -37,6 +39,8 @@ import com.comcast.oscar.utilities.HexString;
 
 
 public class PacketCableCompiler extends TlvBuilder {
+	//Log4J2 logging
+    private static final Logger logger = LogManager.getLogger(PacketCableCompiler.class);
 	
 	private Integer iPacketCableVersion = 0;
 	
@@ -77,7 +81,7 @@ public class PacketCableCompiler extends TlvBuilder {
 		}
 		
 		if (localDebug|debug)
-			System.out.println("PacketCableCompiler.finalize() = STRIP-FILE-MRK:        " + new HexString(bTlvFileMarker).toString());
+			logger.debug("PacketCableCompiler.finalize() = STRIP-FILE-MRK:        " + new HexString(bTlvFileMarker).toString());
 		
 		//Insert StartOfFileMarker + EndOfFileMarker
 		try {
@@ -87,13 +91,13 @@ public class PacketCableCompiler extends TlvBuilder {
 		}
 		
 		if (localDebug|debug)
-			System.out.println("PacketCableCompiler.finalize() = SET-FILE-MRK:          " + new HexString(bTlvFileMarker).toString());
+			logger.debug("PacketCableCompiler.finalize() = SET-FILE-MRK:          " + new HexString(bTlvFileMarker).toString());
 
 		//Calculate SHA-1 HASH with File Markers
 		bSHA1 = CheckSum.getSHA1(bTlvFileMarker);
 
 		if (localDebug|debug)
-			System.out.println("PacketCableCompiler.finalize() = SHA1-HASH-HEX:         " + new HexString(bSHA1).toString());
+			logger.debug("PacketCableCompiler.finalize() = SHA1-HASH-HEX:         " + new HexString(bSHA1).toString());
 		
 		//Strip FILE Markers
 		try {
@@ -103,7 +107,7 @@ public class PacketCableCompiler extends TlvBuilder {
 		}
 		
 		if (localDebug|debug)
-			System.out.println("PacketCableCompiler.finalize() = STRIP-FILE-MRK-HEX:    " + new HexString(bTlvFileMarker).toString());
+			logger.debug("PacketCableCompiler.finalize() = STRIP-FILE-MRK-HEX:    " + new HexString(bTlvFileMarker).toString());
 		
 		//Insert SHA1 HASH BASIC.1 Authentication
 		try {
@@ -113,7 +117,7 @@ public class PacketCableCompiler extends TlvBuilder {
 		}
 
 		if (localDebug|debug)
-			System.out.println("PacketCableCompiler.finalize() = ADD-SHA1-OID-HASH-HEX: " + new HexString(bTlvFileMarker).toString());
+			logger.debug("PacketCableCompiler.finalize() = ADD-SHA1-OID-HASH-HEX: " + new HexString(bTlvFileMarker).toString());
 	
 		//Insert StartOfFileMarker + EndOfFileMarker		
 		try {
@@ -123,7 +127,7 @@ public class PacketCableCompiler extends TlvBuilder {
 		}
 	
 		if (localDebug|debug)
-			System.out.println("PacketCableCompiler.finalize() = SET-FILE-MRK:          " + new HexString(bTlvFileMarker).toString());
+			logger.debug("PacketCableCompiler.finalize() = SET-FILE-MRK:          " + new HexString(bTlvFileMarker).toString());
 		
 		try {
 			this.baosTlvFinalizeArray.write(bTlvFileMarker);
@@ -200,8 +204,8 @@ public class PacketCableCompiler extends TlvBuilder {
 			throw new TlvException("TlvBuilder.stripTlv() Byte Array is NULL");
 		
 		if (localDebug) {
-			System.out.println("PacketCableCompiler.stripTlv(i,b) -> StripType: " + iType + " - ByteArray Size: " + bTlvByteArray.length);
-			System.out.println("PacketCableCompiler.stripTlv(i,b) -> Hex: " + new HexString(bTlvByteArray).toString(":"));
+			logger.debug("PacketCableCompiler.stripTlv(i,b) -> StripType: " + iType + " - ByteArray Size: " + bTlvByteArray.length);
+			logger.debug("PacketCableCompiler.stripTlv(i,b) -> Hex: " + new HexString(bTlvByteArray).toString(":"));
 		}
 		
 		ByteArrayOutputStream  baosStripedTlvByteArray = new ByteArrayOutputStream();
@@ -213,8 +217,8 @@ public class PacketCableCompiler extends TlvBuilder {
 		while (iIndex < bTlvByteArray.length) {
 			
 			if (localDebug) {
-				System.out.println("+----------------------------------------------------------------------------+");
-				System.out.println("PacketCableCompiler.stripTlv(i,b)" +
+				logger.debug("+----------------------------------------------------------------------------+");
+				logger.debug("PacketCableCompiler.stripTlv(i,b)" +
 						" -> Type: " + BinaryConversion.byteToUnsignedInteger(bTlvByteArray[iIndex]) + 
 						" - Index: " + iIndex + 
 						" - ByteArray Size: " + bTlvByteArray.length);
@@ -224,7 +228,7 @@ public class PacketCableCompiler extends TlvBuilder {
 			if (bTlvByteArray[iIndex] == PacketCableConstants.SNMP_TLV_64) {
 
 				if (localDebug)
-					System.out.println("PacketCableCompiler.stripTlv(i,b) -> Found: Type64 - Index: " + iIndex );
+					logger.debug("PacketCableCompiler.stripTlv(i,b) -> Found: Type64 - Index: " + iIndex );
 												
 				ByteArrayOutputStream  baosMultiByteLength = new ByteArrayOutputStream();
 				
@@ -240,7 +244,7 @@ public class PacketCableCompiler extends TlvBuilder {
 				iTypeLength = new HexString(baosMultiByteLength.toByteArray()).toInteger();
 				
 				if (localDebug) {
-					System.out.println("PacketCableCompiler.stripTlv(i,b) -> Found: Type64 - Index: " + iIndex + " - TypeLength: " + iTypeLength);
+					logger.debug("PacketCableCompiler.stripTlv(i,b) -> Found: Type64 - Index: " + iIndex + " - TypeLength: " + iTypeLength);
 				}
 				
 			} else {
@@ -257,8 +261,8 @@ public class PacketCableCompiler extends TlvBuilder {
 				baosStripedTlvByteArray.write(bTlvByteArray, iIndex, (iTypeLength + iByteLengthOffSet));
 				
 				if (localDebug) {
-					System.out.println("PacketCableCompiler.stripTlv(i,b) -> Copying Bytes to ByteArray - Index: " + iIndex + " - TypeLength: " + iTypeLength);
-					System.out.println("PacketCableCompiler.stripTlv(i,b) -> Hex: " + new HexString(baosStripedTlvByteArray.toByteArray()).toString(":"));
+					logger.debug("PacketCableCompiler.stripTlv(i,b) -> Copying Bytes to ByteArray - Index: " + iIndex + " - TypeLength: " + iTypeLength);
+					logger.debug("PacketCableCompiler.stripTlv(i,b) -> Hex: " + new HexString(baosStripedTlvByteArray.toByteArray()).toString(":"));
 				}
 			}
 
@@ -266,7 +270,7 @@ public class PacketCableCompiler extends TlvBuilder {
 			iIndex += (iByteLengthOffSet + iTypeLength);
 
 			if (localDebug)
-				System.out.println("PacketCableCompiler.stripTlv(i,b) -> NextIndex: " + iIndex + " - ByteArray Size: " + bTlvByteArray.length);
+				logger.debug("PacketCableCompiler.stripTlv(i,b) -> NextIndex: " + iIndex + " - ByteArray Size: " + bTlvByteArray.length);
 
 			
 		}		
@@ -287,7 +291,7 @@ public class PacketCableCompiler extends TlvBuilder {
 		boolean localDebug = Boolean.FALSE;
 
 		if (localDebug|debug)
-			System.out.println("+==============================================================================================================+");
+			logger.debug("+==============================================================================================================+");
 		
 		List<HexString> lhs = new ArrayList<HexString>();
 
@@ -319,7 +323,7 @@ public class PacketCableCompiler extends TlvBuilder {
 			HexString hsTLV = new HexString(baosTopLevelTLV.toByteArray());
 
 			if (localDebug|debug)
-				System.out.println("PacketCableCompiler.getTopLevelTlvToHexStringList() - TLV -> " + hsTLV.toString(":"));
+				logger.debug("PacketCableCompiler.getTopLevelTlvToHexStringList() - TLV -> " + hsTLV.toString(":"));
 
 			//Load HexString Object to List
 			lhs.add(hsTLV);
