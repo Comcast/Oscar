@@ -1,5 +1,9 @@
 package com.comcast.oscar.parser;
 
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.antlr.v4.runtime.misc.NotNull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -1,5 +1,8 @@
 package com.comcast.oscar.utilities;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>

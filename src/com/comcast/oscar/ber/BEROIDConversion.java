@@ -1,5 +1,11 @@
 package com.comcast.oscar.ber;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.snmp4j.asn1.BER;

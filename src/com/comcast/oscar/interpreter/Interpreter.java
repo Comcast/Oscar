@@ -1,5 +1,9 @@
 package com.comcast.oscar.interpreter;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
 import com.comcast.oscar.cli.CommandRun;
 import com.comcast.oscar.constants.Constants;
 

@@ -1,5 +1,10 @@
 package com.comcast.oscar.datatype;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.snmp4j.smi.OID;
 
 import com.comcast.oscar.utilities.BinaryConversion;

@@ -1,5 +1,8 @@
 package com.comcast.oscar.cli.commands;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 

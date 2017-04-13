@@ -1,5 +1,8 @@
 package com.comcast.oscar.utilities;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>

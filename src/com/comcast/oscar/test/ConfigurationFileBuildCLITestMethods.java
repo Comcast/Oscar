@@ -1,5 +1,7 @@
 package com.comcast.oscar.test;
 
+import java.util.Arrays;
+
 import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.cli.CommandRun;
 import com.comcast.oscar.utilities.DirectoryStructure;
