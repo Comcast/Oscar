@@ -1,8 +1,5 @@
 package com.comcast.oscar.ber;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

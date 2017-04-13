@@ -1,21 +1,18 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry excluding="com/comcast/oscar/examples/doc/|com/comcast/oscar/examples/testfiles/|com/comcast/oscar/examples/|com/comcast/oscar/interpreter/|com/comcast/oscar/parserbuilder/|com/comcast/oscar/test/" kind="src" path="src"/>
-	<classpathentry kind="src" path="res"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry exported="true" kind="lib" path="lib/commons-cli-1.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/json-2.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/sqlite-jdbc-3.7.15-M1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/zip4j_1.3.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/antlr-4.1-complete.jar"/>
-	<classpathentry kind="lib" path="lib/snmp4j-2.3.0.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-core-2.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-annotations-2.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-databind-2.5.3.jar"/>
+	<classpathentry excluding="com/comcast/oscar/examples/" kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/antlr-4.1-complete.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections4-4.0.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-annotations-2.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-2.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.5.3.jar"/>
+	<classpathentry kind="lib" path="lib/json-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-api-2.8.2.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-core-2.8.2.jar"/>
+	<classpathentry kind="lib" path="lib/README"/>
+	<classpathentry kind="lib" path="lib/snmp4j-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.7.15-M1.jar"/>
+	<classpathentry kind="lib" path="lib/zip4j_1.3.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
-

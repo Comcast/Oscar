@@ -1,9 +1,5 @@
 package com.comcast.oscar.cablelabsdefinitions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>

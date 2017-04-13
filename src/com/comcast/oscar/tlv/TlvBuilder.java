@@ -1,18 +1,8 @@
 package com.comcast.oscar.tlv;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
-
-import org.snmp4j.smi.OID;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.snmp4j.smi.OID;
 
 import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.cablelabsdefinitions.Constants;

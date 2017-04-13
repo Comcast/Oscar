@@ -1,9 +1,5 @@
 package com.comcast.oscar.cli.commands;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 

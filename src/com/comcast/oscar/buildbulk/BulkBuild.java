@@ -1,20 +1,15 @@
 package com.comcast.oscar.buildbulk;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-
+import org.antlr.v4.runtime.misc.FlexibleHashMap.Entry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
+import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
-import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;

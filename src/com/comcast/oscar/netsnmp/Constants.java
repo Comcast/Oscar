@@ -1,7 +1,5 @@
 package com.comcast.oscar.netsnmp;
 
-import java.util.regex.Pattern;
-
 import com.comcast.oscar.utilities.DirectoryStructure;
 
 public class Constants {

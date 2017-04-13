@@ -1,9 +1,5 @@
 package com.comcast.oscar.cli;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Map;
-
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
@@ -35,8 +31,8 @@ import com.comcast.oscar.cli.commands.TLVDescription;
 import com.comcast.oscar.cli.commands.TLVtoJSON;
 import com.comcast.oscar.cli.commands.Translate;
 import com.comcast.oscar.configurationfile.CommonTlvInsertions;
-import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
+import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.constants.Constants;

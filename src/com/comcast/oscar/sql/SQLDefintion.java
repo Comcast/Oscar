@@ -1,8 +1,5 @@
 package com.comcast.oscar.sql;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @bannerLicense
 	Copyright 2015 Comcast Cable Communications Management, LLC<br>
