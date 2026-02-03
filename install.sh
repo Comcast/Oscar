@@ -22,10 +22,92 @@ verify_java21() {
   java -version
 }
 
+install_local_jdk21() {
+  local jdk_base="${HOME}/.local/temurin-21"
+  local jdk_tgz="${HOME}/.local/temurin21.tgz"
+  local url="https://github.com/adoptium/temurin21-binaries/releases/latest/download/OpenJDK21U-jdk_x64_linux_hotspot.tar.gz"
+
+  if [ -x "${jdk_base}/bin/javac" ]; then
+    return 0
+  fi
+
+  mkdir -p "${HOME}/.local"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$url" -o "$jdk_tgz"
+  else
+    wget -qO "$jdk_tgz" "$url"
+  fi
+
+  tar -xzf "$jdk_tgz" -C "${HOME}/.local"
+  rm -f "$jdk_tgz"
+
+  local extracted_dir
+  extracted_dir="$(find "${HOME}/.local" -maxdepth 1 -type d -name 'jdk-21*' | head -n1 || true)"
+  if [ -n "${extracted_dir:-}" ] && [ ! -d "$jdk_base" ]; then
+    mv "$extracted_dir" "$jdk_base"
+  fi
+}
+
+install_local_maven() {
+  local maven_version="3.9.9"
+  local maven_base="${HOME}/.local/apache-maven-${maven_version}"
+  local maven_tgz="${HOME}/.local/maven.tgz"
+  local url="https://archive.apache.org/dist/maven/maven-3/${maven_version}/binaries/apache-maven-${maven_version}-bin.tar.gz"
+
+  if [ -x "${maven_base}/bin/mvn" ]; then
+    return 0
+  fi
+
+  mkdir -p "${HOME}/.local"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$url" -o "$maven_tgz"
+  else
+    wget -qO "$maven_tgz" "$url"
+  fi
+
+  tar -xzf "$maven_tgz" -C "${HOME}/.local"
+  rm -f "$maven_tgz"
+}
+
+ensure_maven() {
+  if command -v mvn >/dev/null 2>&1; then
+    mvn -v
+    return 0
+  fi
+
+  if [ "$(uname -s 2>/dev/null || echo "")" = "Linux" ]; then
+    if command -v sudo >/dev/null 2>&1; then
+      if sudo -n true 2>/dev/null; then
+        sudo apt-get update -y
+        sudo apt-get install -y maven
+      else
+        install_local_maven
+      fi
+    else
+      install_local_maven
+    fi
+  else
+    echo "Maven is not installed and this installer only supports auto-install on Linux."
+    return 1
+  fi
+}
+
 case "$(uname -s 2>/dev/null || echo "")" in
   Linux)
-    "$(dirname "$0")/scripts/install-jdk21-linux.sh"
-    verify_java21
+    if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+      "$(dirname "$0")/scripts/install-jdk21-linux.sh"
+    else
+      install_local_jdk21
+      export JAVA_HOME="${HOME}/.local/temurin-21"
+      export PATH="${JAVA_HOME}/bin:${PATH}"
+    fi
+    verify_java21 || {
+      install_local_jdk21
+      export JAVA_HOME="${HOME}/.local/temurin-21"
+      export PATH="${JAVA_HOME}/bin:${PATH}"
+      verify_java21
+    }
+    ensure_maven
     ;;
   Darwin)
     echo "macOS is not supported by this installer yet."

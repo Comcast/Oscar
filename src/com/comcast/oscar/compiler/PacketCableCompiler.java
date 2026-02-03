@@ -338,8 +338,6 @@ public class PacketCableCompiler extends TlvBuilder {
 	 * @throws NullPointerException */
 	public static TlvBuilder stripFileMarkers (byte[] baTLV) throws NullPointerException {
 		
-		@SuppressWarnings("unused")
-		
 		if (baTLV == null)
 			throw new NullPointerException("PacketCableCompiler.stripFileMarkers() - Null Byte Array");
 		
