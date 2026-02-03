@@ -33,7 +33,14 @@ This runs:
 - strict hygiene compile (`-Xlint:all -Werror`)
 - full compile + tests
 
-[Wiki](https://github.com/Comcast/Oscar/wiki)
+### Documentation (Local)
+
+The legacy GitHub Wiki has been imported into this repo under `docs/wiki/`.
+
+Start here:
+- `docs/wiki/Home.md` (if present)
+- `docs/wiki/CLI-Overview.md`
+- `docs/wiki/API-Overview.md`
 
 [JavaDoc](http://comcast.github.io/Oscar/doc/index.html)
 
