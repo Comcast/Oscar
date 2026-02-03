@@ -12,34 +12,31 @@ package com.comcast.oscar.examples;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-import java.io.File;
-
 import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.utilities.HexString;
+import java.io.File;
 
-/**
- */
+/** */
 public class InBinaryFileTest {
 
-	/**
-	 * Method main.
-	 * @param args String[]
-	 */
-	public static void main(String[] args) {
-		
-		File fBin = TestDirectoryStructure.fInputDirFileName("xxxx.bin");
-		
-		if (HexString.verifyAsciiPlainText(HexString.fileToByteArray(fBin))) {
-			System.out.println("ASCII");
-		} else {
-			System.out.println("BIN");
-		}
-		
-	}
-	
+  /**
+   * Method main.
+   *
+   * @param args String[]
+   */
+  public static void main(String[] args) {
+
+    File fBin = TestDirectoryStructure.fInputDirFileName("xxxx.bin");
+
+    if (HexString.verifyAsciiPlainText(HexString.fileToByteArray(fBin))) {
+      System.out.println("ASCII");
+    } else {
+      System.out.println("BIN");
+    }
+  }
 }

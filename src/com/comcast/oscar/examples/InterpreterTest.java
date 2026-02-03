@@ -12,28 +12,23 @@ package com.comcast.oscar.examples;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-
 import com.comcast.oscar.interpreter.Interpreter;
 
-
-/**
- */
+/** */
 public class InterpreterTest {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+  /**
+   * @param args
+   */
+  public static void main(String[] args) {
 
-		Interpreter inter = new Interpreter();
-		
-		inter.start();
-	
-	}
+    Interpreter inter = new Interpreter();
 
+    inter.start();
+  }
 }

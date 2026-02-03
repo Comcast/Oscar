@@ -12,97 +12,103 @@ package com.comcast.oscar.examples;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
-
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.tlv.TlvDisassemble;
 import com.comcast.oscar.tlv.TlvException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-
-/**
- */
+/** */
 public class JSONDumpPacketCableTest {
 
-	/**
-	 * @param args
-	 */
-	@SuppressWarnings("deprecation")
-	public static void main(String[] args) {
+  /**
+   * @param args
+   */
+  @SuppressWarnings("deprecation")
+  public static void main(String[] args) {
 
-		boolean TEXT = true;
-		boolean BINARY = true;
-		
-		File fPacketCableTxt = null;
-		File fPacketCableBin = null;
-		
-		ConfigurationFileImport cfiPacketCable = null;
+    boolean TEXT = true;
+    boolean BINARY = true;
 
-																			/* TEXT */
-		if (TEXT) {													
+    File fPacketCableTxt = null;
+    File fPacketCableBin = null;
 
-			try {
-				
-				fPacketCableTxt = new File(new java.io.File( "." ).getCanonicalPath() 
-						+ File.separatorChar + "testfiles" 
-						+ File.separatorChar +  "IMS-PKT-CABLE-CONFIG.txt");
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+    ConfigurationFileImport cfiPacketCable = null;
 
-			try {
-				try {
-					cfiPacketCable = new ConfigurationFileImport(fPacketCableTxt);
-				} catch (ConfigurationFileException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			}
+    /* TEXT */
+    if (TEXT) {
 
-			TlvDisassemble tdPacketCable = new TlvDisassemble(cfiPacketCable.getTlvBuilder(),TlvDisassemble.TLV_TYPE_PACKET_CABLE);
+      try {
 
-			System.out.println("PacketCable-TEXT-JSONArray: " + tdPacketCable.getTlvDictionary().toString());
+        fPacketCableTxt =
+            new File(
+                new java.io.File(".").getCanonicalPath()
+                    + File.separatorChar
+                    + "testfiles"
+                    + File.separatorChar
+                    + "IMS-PKT-CABLE-CONFIG.txt");
 
-		}
-		
-																			/* Binary */
-		if (BINARY) {
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
 
-			TlvDisassemble tdPacketCable = null;
-			
-			try {
-				
-				fPacketCableBin = new File(new java.io.File( "." ).getCanonicalPath() 
-						+ File.separatorChar + "testfiles" 
-						+ File.separatorChar +  "IMS-PKT-CABLE-CONFIG.bin");
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+      try {
+        try {
+          cfiPacketCable = new ConfigurationFileImport(fPacketCableTxt);
+        } catch (ConfigurationFileException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      } catch (FileNotFoundException e1) {
+        e1.printStackTrace();
+      }
 
-			ConfigurationFileExport cfePacketCable = new ConfigurationFileExport(fPacketCableBin);
+      TlvDisassemble tdPacketCable =
+          new TlvDisassemble(cfiPacketCable.getTlvBuilder(), TlvDisassemble.TLV_TYPE_PACKET_CABLE);
 
-			try {
-				tdPacketCable = new TlvDisassemble(cfePacketCable.getTlvBuilder(),TlvDisassemble.TLV_TYPE_PACKET_CABLE);
-			} catch (TlvException e) {
-				e.printStackTrace();
-			}
+      System.out.println(
+          "PacketCable-TEXT-JSONArray: " + tdPacketCable.getTlvDictionary().toString());
+    }
 
-			System.out.println("PacketCable-BIN-JSONArray: " + tdPacketCable.getTlvDictionary().toString());	
-		}
+    /* Binary */
+    if (BINARY) {
 
-	}
+      TlvDisassemble tdPacketCable = null;
 
+      try {
+
+        fPacketCableBin =
+            new File(
+                new java.io.File(".").getCanonicalPath()
+                    + File.separatorChar
+                    + "testfiles"
+                    + File.separatorChar
+                    + "IMS-PKT-CABLE-CONFIG.bin");
+
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      ConfigurationFileExport cfePacketCable = new ConfigurationFileExport(fPacketCableBin);
+
+      try {
+        tdPacketCable =
+            new TlvDisassemble(
+                cfePacketCable.getTlvBuilder(), TlvDisassemble.TLV_TYPE_PACKET_CABLE);
+      } catch (TlvException e) {
+        e.printStackTrace();
+      }
+
+      System.out.println(
+          "PacketCable-BIN-JSONArray: " + tdPacketCable.getTlvDictionary().toString());
+    }
+  }
 }

@@ -9,18 +9,18 @@ Use these guidelines when working in this codebase.
 - Entry point: `com.comcast.oscar.cli.Main`
 
 ## Required Workflow
-- After every change: compile and run tests.
-  - Compile: `mvn -q -DskipTests package`
-  - Tests: `mvn -q test`
+- After every change: run the single verification script.
+  - `tools/run-all.sh`
 - Keep code hygienic: no unused variables/imports, proper indentation, no dead code.
 - Prefer Log4j2 (`logger.debug/info/warn/error`) over `System.out.println`.
 - Guard expensive debug work with `logger.isDebugEnabled()`.
 
-## Commands
-- Build: `mvn -q -DskipTests package`
-- Test: `mvn -q test`
-- Clean: `mvn -q clean`
-- Verify (compile + test): `./scripts/verify.sh`
+## Scripts
+- `tools/run-all.sh`: format, hygiene checks, compile, and tests.
+- `scripts/ci-verify.sh`: invoked by `tools/run-all.sh`.
+- `tools/code-hygene-checker.sh`: strict compile with `-Xlint:all -Werror`.
+- `tools/setup-formatter.sh`: fetches `google-java-format`.
+- `scripts/verify.sh`: compile + test.
 
 ## Tests
 - Use JUnit 5 (Jupiter).

@@ -1,4 +1,5 @@
 package com.comcast.oscar.examples;
+
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 
 /*
@@ -13,28 +14,28 @@ import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-/**
- */
+/** */
 public class DisplayFullDefaultsTest {
 
-	/**
-	 * @param args
-	 */
-	@SuppressWarnings("deprecation")
-	public static void main(String[] args) {
+  /**
+   * @param args
+   */
+  @SuppressWarnings("deprecation")
+  public static void main(String[] args) {
 
-		ConfigurationFileExport cfeDOCSIS = new ConfigurationFileExport(ConfigurationFileExport.DOCSIS_VER_31);
-		
-		System.out.println(cfeDOCSIS.toPrettyPrint(2));
-		
-		ConfigurationFileExport cfePacketCable = new ConfigurationFileExport(ConfigurationFileExport.PKT_CBL_VER_20);
-		
-		System.out.println(cfePacketCable.toPrettyPrint(2));		
-	}
+    ConfigurationFileExport cfeDOCSIS =
+        new ConfigurationFileExport(ConfigurationFileExport.DOCSIS_VER_31);
 
+    System.out.println(cfeDOCSIS.toPrettyPrint(2));
+
+    ConfigurationFileExport cfePacketCable =
+        new ConfigurationFileExport(ConfigurationFileExport.PKT_CBL_VER_20);
+
+    System.out.println(cfePacketCable.toPrettyPrint(2));
+  }
 }

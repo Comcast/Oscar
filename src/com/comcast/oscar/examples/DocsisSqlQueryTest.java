@@ -1,9 +1,9 @@
 package com.comcast.oscar.examples;
-import org.json.JSONArray;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.sql.SqlConnection;
 import com.comcast.oscar.sql.queries.DocsisSqlQuery;
+import org.json.JSONArray;
 
 /*
 	Copyright 2015 Comcast Cable Communications Management, LLC
@@ -17,26 +17,23 @@ import com.comcast.oscar.sql.queries.DocsisSqlQuery;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-/**
- */
+/** */
 public class DocsisSqlQueryTest {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+  /**
+   * @param args
+   */
+  public static void main(String[] args) {
 
-		DocsisSqlQuery dsqTest = new DocsisSqlQuery(new SqlConnection().getConnectionID());
-		
-		JSONArray jaTlvDef = dsqTest.getAllTlvDefinition(Constants.CONFIGURATION_FILE_TYPE_DOCSIS);
-		
-		System.out.println("jaTlvDef: " + jaTlvDef);
+    DocsisSqlQuery dsqTest = new DocsisSqlQuery(new SqlConnection().getConnectionID());
 
-	}
+    JSONArray jaTlvDef = dsqTest.getAllTlvDefinition(Constants.CONFIGURATION_FILE_TYPE_DOCSIS);
 
+    System.out.println("jaTlvDef: " + jaTlvDef);
+  }
 }

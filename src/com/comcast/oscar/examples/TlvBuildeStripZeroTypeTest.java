@@ -12,42 +12,38 @@ package com.comcast.oscar.examples;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-
-import java.util.HashMap;
-import java.util.Map;
-
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- */
+/** */
 public class TlvBuildeStripZeroTypeTest {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		
-		Map<Integer,Integer> mii = new HashMap<Integer,Integer>();
-		
-		String sTLV = "010101020101030004010105000600";
-		
-		byte[] ba = null;
-		
-		try {
-			ba = TlvBuilder.stripZeroByteTLV(HexString.toByteArray(sTLV), mii);
-		} catch (TlvException e) {
-			e.printStackTrace();
-		}
+  /**
+   * @param args
+   */
+  public static void main(String[] args) {
 
-		System.out.println("TLV: " + sTLV);
-		System.out.println("TLV: " + new HexString(ba).toString(""));
-	}
+    Map<Integer, Integer> mii = new HashMap<Integer, Integer>();
 
+    String sTLV = "010101020101030004010105000600";
+
+    byte[] ba = null;
+
+    try {
+      ba = TlvBuilder.stripZeroByteTLV(HexString.toByteArray(sTLV), mii);
+    } catch (TlvException e) {
+      e.printStackTrace();
+    }
+
+    System.out.println("TLV: " + sTLV);
+    System.out.println("TLV: " + new HexString(ba).toString(""));
+  }
 }

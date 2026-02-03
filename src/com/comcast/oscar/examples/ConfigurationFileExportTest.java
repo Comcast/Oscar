@@ -1,7 +1,7 @@
 package com.comcast.oscar.examples;
-import java.io.File;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
+import java.io.File;
 
 /*
 	Copyright 2015 Comcast Cable Communications Management, LLC
@@ -15,62 +15,69 @@ import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-/**
- */
+/** */
 public class ConfigurationFileExportTest {
 
-	/**
-	 * Method main.
-	 * @param args String[]
-	 */
-	@SuppressWarnings("deprecation")
-	public static void main(String[] args) {
-		
-		boolean DOCSIS = false;
-		
-		boolean PACKETCABLE = true;
-		
-		boolean DEXTER_TEST_FILE = false;
-		
-		if (DOCSIS) {
-			System.out.println("+--------------------------------------------------------------------------------------------------------+");
+  /**
+   * Method main.
+   *
+   * @param args String[]
+   */
+  @SuppressWarnings("deprecation")
+  public static void main(String[] args) {
 
-			System.out.println("ConfigurationFileExportTest: DOCSIS File");
+    boolean DOCSIS = false;
 
-			ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport (new File("c:\\d10_syscontact.cm"));
+    boolean PACKETCABLE = true;
 
-			//ConfigrationFileExport cfeDOCTLV = new ConfigrationFileExport (new File("c:\\d10_syscontact-reduce.cm"));
-		
-			System.out.println(cfeDOCTLV.toPrettyPrint(0));
-		}
+    boolean DEXTER_TEST_FILE = false;
 
-		if (PACKETCABLE) {
-			System.out.println("+--------------------------------------------------------------------------------------------------------+");
+    if (DOCSIS) {
+      System.out.println(
+          "+--------------------------------------------------------------------------------------------------------+");
 
-			System.out.println("ConfigurationFileExportTest: PACKET CABLE IMS File");
+      System.out.println("ConfigurationFileExportTest: DOCSIS File");
 
-			ConfigurationFileExport cfePCTLV = new ConfigurationFileExport (new File("c:\\IMS-PKT-CABLE-CONFIG.bin"));
+      ConfigurationFileExport cfeDOCTLV =
+          new ConfigurationFileExport(new File("c:\\d10_syscontact.cm"));
 
-			System.out.println(cfePCTLV.toPrettyPrint(0));
-		}
-	
-		if (DEXTER_TEST_FILE) {
-			System.out.println("+--------------------------------------------------------------------------------------------------------+");
+      // ConfigrationFileExport cfeDOCTLV = new ConfigrationFileExport (new
+      // File("c:\\d10_syscontact-reduce.cm"));
 
-			System.out.println("ConfigurationFileExportTest: DOCSIS File");
+      System.out.println(cfeDOCTLV.toPrettyPrint(0));
+    }
 
-			//ConfigrationFileExport cfeDOCTLV = new ConfigrationFileExport (new File("c:\\d10_syscontact.cm"));
+    if (PACKETCABLE) {
+      System.out.println(
+          "+--------------------------------------------------------------------------------------------------------+");
 
-			ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport (new File("C:\\dexter\\-2035192058\\Freedom\\tg852_gold_c01_pd_freq1"));
-		
-			System.out.println(cfeDOCTLV.toPrettyPrint(0));
-		}
+      System.out.println("ConfigurationFileExportTest: PACKET CABLE IMS File");
 
-	}
+      ConfigurationFileExport cfePCTLV =
+          new ConfigurationFileExport(new File("c:\\IMS-PKT-CABLE-CONFIG.bin"));
 
+      System.out.println(cfePCTLV.toPrettyPrint(0));
+    }
+
+    if (DEXTER_TEST_FILE) {
+      System.out.println(
+          "+--------------------------------------------------------------------------------------------------------+");
+
+      System.out.println("ConfigurationFileExportTest: DOCSIS File");
+
+      // ConfigrationFileExport cfeDOCTLV = new ConfigrationFileExport (new
+      // File("c:\\d10_syscontact.cm"));
+
+      ConfigurationFileExport cfeDOCTLV =
+          new ConfigurationFileExport(
+              new File("C:\\dexter\\-2035192058\\Freedom\\tg852_gold_c01_pd_freq1"));
+
+      System.out.println(cfeDOCTLV.toPrettyPrint(0));
+    }
+  }
 }

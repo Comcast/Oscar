@@ -12,43 +12,38 @@ package com.comcast.oscar.sql.queries;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-/**
- */
+/** */
 public class DocsisSqlQueryException extends Exception {
 
-	private static final long serialVersionUID = -2055294037239125894L;
+  private static final long serialVersionUID = -2055294037239125894L;
 
-	private Throwable cause;
+  private Throwable cause;
 
-	/**
-	 * 
-	 * @param message
-	 */
-	public DocsisSqlQueryException(String message) {
-        super(message);
-    }
-    
-	/**
-	 * 
-	 * @param cause
-	 */
-    public DocsisSqlQueryException (Throwable cause) {
-        super(cause.getMessage());
-        this.cause = cause;
-    }
-    
-    /**
-     * 
-     * @return Throwable
-     */
-    @Override
-	public Throwable getCause() {
-        return this.cause;
-    }
-	
+  /**
+   * @param message
+   */
+  public DocsisSqlQueryException(String message) {
+    super(message);
+  }
+
+  /**
+   * @param cause
+   */
+  public DocsisSqlQueryException(Throwable cause) {
+    super(cause.getMessage());
+    this.cause = cause;
+  }
+
+  /**
+   * @return Throwable
+   */
+  @Override
+  public Throwable getCause() {
+    return this.cause;
+  }
 }

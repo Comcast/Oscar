@@ -1,20 +1,5 @@
 package com.comcast.oscar.netsnmp;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.commons.collections4.BidiMap;
-import org.apache.commons.collections4.bidimap.DualHashBidiMap;
-
 import com.comcast.oscar.utilities.DirectoryStructure;
 import com.comcast.oscar.utilities.Disk;
 import com.comcast.oscar.utilities.HexString;
@@ -24,428 +9,415 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
- * @bannerLicense
-	Copyright 2015 Comcast Cable Communications Management, LLC<br>
-	___________________________________________________________________<br>
-	Licensed under the Apache License, Version 2.0 (the "License")<br>
-	you may not use this file except in compliance with the License.<br>
-	You may obtain a copy of the License at<br>
-	http://www.apache.org/licenses/LICENSE-2.0<br>
-	Unless required by applicable law or agreed to in writing, software<br>
-	distributed under the License is distributed on an "AS IS" BASIS,<br>
-	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
-	See the License for the specific language governing permissions and<br>
-	limitations under the License.<br>
-
-
+ * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ *     ___________________________________________________________________<br>
+ *     Licensed under the Apache License, Version 2.0 (the "License")<br>
+ *     you may not use this file except in compliance with the License.<br>
+ *     You may obtain a copy of the License at<br>
+ *     http://www.apache.org/licenses/LICENSE-2.0<br>
+ *     Unless required by applicable law or agreed to in writing, software<br>
+ *     distributed under the License is distributed on an "AS IS" BASIS,<br>
+ *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+ *     See the License for the specific language governing permissions and<br>
+ *     limitations under the License.<br>
  * @author Maurice Garcia (mgarcia01752@outlook.com)
  */
-public class NetSNMP  {
+public class NetSNMP {
 
-	private static final Logger logger = LogManager.getLogger(NetSNMP.class);
+  private static final Logger logger = LogManager.getLogger(NetSNMP.class);
 
-		
-	private static ObjectMapper omNetSNMP = null;	
-	private static BidiMap<String, String> bmDotTextMap = null;
-    
-	private static final Pattern NETSNMP_DESCRIPTION = Pattern.compile(""
-            + ".*DESCRIPTION\\s+\"(.*)\"", Pattern.CASE_INSENSITIVE);
-	
-	static {
-		
-		/*If no Mapping Exist, Create a new Mapping file */
-		FixNullNetSNMPJSON();
-		
-		omNetSNMP = new ObjectMapper();
-		
-		bmDotTextMap = new DualHashBidiMap<String,String>();
-		
-		try {
-			bmDotTextMap = omNetSNMP.readValue(	DirectoryStructureNetSNMP.fNetSNMPJSON(), 
-												new TypeReference<DualHashBidiMap<String, String>>() {});
-		} catch (JsonParseException e) {
-			System.out.println(	"Error in reading " + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE +
-								", Delete File");
-		} catch (JsonMappingException e) {
-			System.out.println(	"Error in reading " + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE +
-								", Delete File");
-		} catch (IOException e) {
-			System.out.println(	"Error in reading " + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE +
-								", Delete File");
-		}	
-	}
-	
-	/**
-	 * Convert: docsDevNmAccessIp.1 -> .1.3.6.1.2.1.69.1.2.1.2.1
-	 * 
-	 * @param sOID OID either Dotted or Textual OID
-	 * @return .1.3.6.x.x.x.x.x */
-	public static String toDottedOID(String sOID) {
-	
-		
-		if (logger.isDebugEnabled())
-			logger.debug("NetSNMP.toDottedOID(): " + sOID);
-		
-		if (isDottedOID(sOID)) {
-			
-			if (logger.isDebugEnabled())
-				logger.debug("NetSNMP.toDottedOID() Is a DootedOID -> " + sOID);
-			
-			return sOID;
-		}
-		
-		/* If there is an entry, get OID Lookup*/
-		if (!CheckOIDDBLookup(sOID).isEmpty()) {
-			return CheckOIDDBLookup(sOID);
-		}
-		
-		/* If not installed, bypass and return input */
-		if (!isSnmptranslateInstalled()) {
-			return sOID;
-		}
-		
-		String sDottedOID = "";
-		
-		/* Not a clean way to do it, but it works */
-		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD + 	
-								Constants.MIB_PARAMETER + 
-								Constants.SNMP_TRANSLATE_OID_NAME_2_OID_DEC +
-								sOID.replaceAll("\\s+1", " .iso")
-									.replaceAll("\\s+\\.1", " .iso");
+  private static ObjectMapper omNetSNMP = null;
+  private static BidiMap<String, String> bmDotTextMap = null;
 
-		if (logger.isDebugEnabled())
-			logger.debug("NetSNMP.toDottedOID(): " + sSnmpTranslate);
+  private static final Pattern NETSNMP_DESCRIPTION =
+      Pattern.compile("" + ".*DESCRIPTION\\s+\"(.*)\"", Pattern.CASE_INSENSITIVE);
 
-		/* Get the String Return */
-		sDottedOID = runSnmpTranslate(sSnmpTranslate).get(0);
-		
-		/* Add Converted OIDS to Map for later Storage */
-		UpdateJsonDB(sOID,sDottedOID);
-		
-		if (logger.isDebugEnabled())
-			logger.debug("NetSNMP.toDottedOID(): " + sDottedOID);
-		
-		return runSnmpTranslate(sSnmpTranslate).get(0);
-	}
+  static {
 
-	/**
-	 * 
-	 * Convert: .1.3.6.1.2.1.69.1.2.1.2.1 -> docsDevNmAccessIp.1
-	 * 
-	 * @param sOID OID either Dotted or Textual OID
-	 * @return Example: docsDevNmAccessIp.1 */
-	public static String toTextualOID(String sOID) {
+    /*If no Mapping Exist, Create a new Mapping file */
+    FixNullNetSNMPJSON();
 
-	
-		if (logger.isDebugEnabled())
-			logger.debug("NetSNMP.toTextualOID(): " + sOID);
-		
-		if (!isDottedOID(sOID)) {
-			return sOID;
-		}
-		
-		if (!CheckOIDDBLookup(sOID).isEmpty()) {
-			
-			if (logger.isDebugEnabled())
-				logger.debug("NetSNMP.toTextualOID(): (" + CheckOIDDBLookup(sOID) + ")");
-			
-			return CheckOIDDBLookup(sOID);
-		}
-		
-		/* If not installed, bypass and return input */
-		if (!isSnmptranslateInstalled()) {
-			return sOID;
-		}
-		
-		String sTextualOID = "";
-		
-		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD +  	
-								Constants.MIB_PARAMETER + 
-								Constants.SNMP_TRANSLATE_OID_DEC_2_OID_NAME +
-								sOID;
+    omNetSNMP = new ObjectMapper();
 
-		if (logger.isDebugEnabled())
-			logger.debug("NetSNMP.toTextualOID(): " + sSnmpTranslate);
+    bmDotTextMap = new DualHashBidiMap<String, String>();
 
-		sTextualOID = runSnmpTranslate(sSnmpTranslate).get(0);
-		
-		/* Add Converted OIDS to Map for later Storage */
-		UpdateJsonDB(sOID,sTextualOID);
-		
-		if (logger.isDebugEnabled())
-			logger.debug("NetSNMP.toTextualOID(): " + sTextualOID);
-		
-		return sTextualOID;
+    try {
+      bmDotTextMap =
+          omNetSNMP.readValue(
+              DirectoryStructureNetSNMP.fNetSNMPJSON(),
+              new TypeReference<DualHashBidiMap<String, String>>() {});
+    } catch (JsonParseException e) {
+      System.out.println(
+          "Error in reading " + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE + ", Delete File");
+    } catch (JsonMappingException e) {
+      System.out.println(
+          "Error in reading " + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE + ", Delete File");
+    } catch (IOException e) {
+      System.out.println(
+          "Error in reading " + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE + ", Delete File");
+    }
+  }
 
-	}
-	
-	/**
-	 * 
-	 * @param sOID OID either Dotted or Textual OID
-	 * @param boolDotTextFormat TRUE = Textual OID Output , FALSE = Dotted OID Output
-	 * @return Dotted or Textual OID */
-	public static String toOIDFormat(String sOID , boolean boolDotTextFormat) {
-		
-		/* Textual OID */
-		if (boolDotTextFormat) {
-			return toTextualOID(sOID);
-		} 
-		/* Dotted OID */
-		else {
-			return toDottedOID(sOID);
-		}
-		
-	}
+  /**
+   * Convert: docsDevNmAccessIp.1 -> .1.3.6.1.2.1.69.1.2.1.2.1
+   *
+   * @param sOID OID either Dotted or Textual OID
+   * @return .1.3.6.x.x.x.x.x
+   */
+  public static String toDottedOID(String sOID) {
 
-	/**
-	 * 
-	 * @return True = Install | False = Not-Install*/
-	public static boolean isSnmptranslateInstalled() {
+    if (logger.isDebugEnabled()) logger.debug("NetSNMP.toDottedOID(): " + sOID);
 
-		String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD +  	
-								Constants.SNMP_TRANSLATE_VERSION;
+    if (isDottedOID(sOID)) {
 
-		if (runSnmpTranslate(sSnmpTranslate) == null) {
-			return false;
-		} else {
-			return true;
-		}
-				
-	}
+      if (logger.isDebugEnabled()) logger.debug("NetSNMP.toDottedOID() Is a DootedOID -> " + sOID);
 
-	/**
-	 * 
-	 * If OID starts with .1.3.6 it is considered a DottedOID
-	 * 
-	 * @param sOID .1.3.6.1.2.1.69.1.2.1.2.1 OR docsDevNmAccessIp.1
-	 * @return True if Dotted, False is not Dotted*/
-	public static boolean isDottedOID(String sOID) {
+      return sOID;
+    }
 
-		if (Constants.ISO_ORG_DOD_DOTTED.matcher(sOID).find()) {
-			return true;
-		}
+    /* If there is an entry, get OID Lookup*/
+    if (!CheckOIDDBLookup(sOID).isEmpty()) {
+      return CheckOIDDBLookup(sOID);
+    }
 
-		return false;	
-	}
-	
-	/**
-	 * 
-	 * @param sOID .1.3.6.1.2.1.69.1.2.1.2.1 OR docsDevNmAccessIp.1
-	 * @return Description of OID*/
-	public static String getDescription(String sOID) {
-		
-		String sDescription = "";
-		String sSnmpTranslate = "";	
-		
-		if (logger.isDebugEnabled())
-			logger.debug("NetSNMP.getDescription(): " + sOID);
-		
-		/* If not installed, bypass and return input */
-		if (!isSnmptranslateInstalled()) {
-			return sOID;
-		}
-		
-		/* If Dotted, Get Textual OID*/
-		if (isDottedOID(sOID)) {
-			
-			sSnmpTranslate = 	Constants.SNMP_TRANSLATE_CMD +  	
-								Constants.MIB_PARAMETER + 
-								Constants.SNMP_TRANSLATE_DESCRIPTION_DOTTED_OID +
-								sOID;
-		} 
-		/* If Textual, Get Dotted OID */
-		else {
-			sSnmpTranslate = 	Constants.SNMP_TRANSLATE_CMD +  	
-					Constants.MIB_PARAMETER + 
-					Constants.SNMP_TRANSLATE_DESCRIPTION_TEXTUAL_OID +
-					sOID;			
-		}
-		
-		if (logger.isDebugEnabled())
-			logger.debug("NetSNMP.getDescription() TRANSLATE-CLI: " + sSnmpTranslate);
-		
-		Matcher mDescription = NETSNMP_DESCRIPTION.matcher(runSnmpTranslate(sSnmpTranslate).toString());
-		
-		if (mDescription.find()) {			
-			sDescription = "\n" + PrettyPrint.ToParagraphForm(mDescription.group(1).replaceAll("\\s+", " "));		
-		}
-		
-		if (logger.isDebugEnabled())
-			logger.debug("NetSNMP.getDescription() TRANSLATE-DESCRIPTION: " + sDescription);
-		
-		if (sDescription.isEmpty()) {
-			sDescription = "\nVerify that MIBS are loaded for OID: " + sOID;
-		}
-		
-		return sDescription;	
-	}
+    /* If not installed, bypass and return input */
+    if (!isSnmptranslateInstalled()) {
+      return sOID;
+    }
 
-	/**
-	 * Clear DottedTextualNetSNMPMap.json and start new
-	 */
-	public static void clearJsonDB() {
-		
-		if (DirectoryStructureNetSNMP.fNetSNMPJSON().exists()) {
-					
-			PrintWriter pw = null;
-			try {
-				pw = new PrintWriter(DirectoryStructureNetSNMP.fNetSNMPJSON());
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-			pw.print("");
-			pw.close();
-			
-		}
-		
-		FixNullNetSNMPJSON();
-	}
-	
-	/**
-	 * 
-	 * @param sSnmpTranslateCMD
-	 * @return OID Translation - Null is snmptranslate is not installed*/
-	private static ArrayList<String> runSnmpTranslate(String sSnmpTranslateCMD) {
+    String sDottedOID = "";
 
+    /* Not a clean way to do it, but it works */
+    String sSnmpTranslate =
+        Constants.SNMP_TRANSLATE_CMD
+            + Constants.MIB_PARAMETER
+            + Constants.SNMP_TRANSLATE_OID_NAME_2_OID_DEC
+            + sOID.replaceAll("\\s+1", " .iso").replaceAll("\\s+\\.1", " .iso");
 
-		if (logger.isDebugEnabled())
-			logger.debug(sSnmpTranslateCMD);
+    if (logger.isDebugEnabled()) logger.debug("NetSNMP.toDottedOID(): " + sSnmpTranslate);
 
-		ArrayList<String> als = new ArrayList<String>();
+    /* Get the String Return */
+    sDottedOID = runSnmpTranslate(sSnmpTranslate).get(0);
 
-		Process p = null;
-		try {
-			p = Runtime.getRuntime().exec(sSnmpTranslateCMD);
-		} catch (IOException e1) {
-			/* If not found or installed */
-			return null;
-		}
+    /* Add Converted OIDS to Map for later Storage */
+    UpdateJsonDB(sOID, sDottedOID);
 
-		BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+    if (logger.isDebugEnabled()) logger.debug("NetSNMP.toDottedOID(): " + sDottedOID);
 
-		BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+    return runSnmpTranslate(sSnmpTranslate).get(0);
+  }
 
-		String sStd_IO = "";
+  /**
+   * Convert: .1.3.6.1.2.1.69.1.2.1.2.1 -> docsDevNmAccessIp.1
+   *
+   * @param sOID OID either Dotted or Textual OID
+   * @return Example: docsDevNmAccessIp.1
+   */
+  public static String toTextualOID(String sOID) {
 
-		/*Read the output from the command If Any */
+    if (logger.isDebugEnabled()) logger.debug("NetSNMP.toTextualOID(): " + sOID);
 
-		int iCounter = 0;
-		try {
-			while ((sStd_IO = stdInput.readLine()) != null) {
+    if (!isDottedOID(sOID)) {
+      return sOID;
+    }
 
-				//Clean up White Space
-				if (!sStd_IO.isEmpty())
-					als.add(sStd_IO);
+    if (!CheckOIDDBLookup(sOID).isEmpty()) {
 
-				if (logger.isDebugEnabled())
-					logger.debug(++iCounter + " IN: " + sStd_IO);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+      if (logger.isDebugEnabled())
+        logger.debug("NetSNMP.toTextualOID(): (" + CheckOIDDBLookup(sOID) + ")");
 
-		try {
-			while ((sStd_IO = stdError.readLine()) != null) {
+      return CheckOIDDBLookup(sOID);
+    }
 
-				als.add(sStd_IO);
+    /* If not installed, bypass and return input */
+    if (!isSnmptranslateInstalled()) {
+      return sOID;
+    }
 
-				if (logger.isDebugEnabled())
-					logger.debug(++iCounter + " OUT: " + sStd_IO);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    String sTextualOID = "";
 
-		return als;
-	}
-	
-	/**
-	 * @bannerLicense
-		Copyright 2015 Comcast Cable Communications Management, LLC<br>
-		___________________________________________________________________<br>
-		Licensed under the Apache License, Version 2.0 (the "License")<br>
-		you may not use this file except in compliance with the License.<br>
-		You may obtain a copy of the License at<br>
-		http://www.apache.org/licenses/LICENSE-2.0<br>
-		Unless required by applicable law or agreed to in writing, software<br>
-		distributed under the License is distributed on an "AS IS" BASIS,<br>
-		WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
-		See the License for the specific language governing permissions and<br>
-		limitations under the License.<br>
+    String sSnmpTranslate =
+        Constants.SNMP_TRANSLATE_CMD
+            + Constants.MIB_PARAMETER
+            + Constants.SNMP_TRANSLATE_OID_DEC_2_OID_NAME
+            + sOID;
 
+    if (logger.isDebugEnabled()) logger.debug("NetSNMP.toTextualOID(): " + sSnmpTranslate);
 
-	 * @author Maurice Garcia (mgarcia01752@outlook.com)
-	 */
-	public static class DirectoryStructureNetSNMP extends DirectoryStructure {
-		
-		/**
-		 * @return NetSNMP subdirectory*/
-		public static File fNetSNMPJSON() 
-		{
-			return new File(fDbDir().getName() + File.separator + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE) ;
-		}
-		
-	} 
-	
-	/**
-	 * 
-	 * @param sOIDKey
-	 * @param sOIDConvert*/
-	private static void UpdateJsonDB(String sOIDKey, String sOIDConvert) {
+    sTextualOID = runSnmpTranslate(sSnmpTranslate).get(0);
 
-		bmDotTextMap.put(sOIDKey, sOIDConvert);
-		
-		try {
-			omNetSNMP.writeValue(DirectoryStructureNetSNMP.fNetSNMPJSON(), bmDotTextMap);
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-	}
-	
-	/**
-	 * 
-	 * @param sOID
-	 * @return returns a lookup value, blank if nothing is found*/
-	private static String CheckOIDDBLookup(String sOID) {
-		
-		String sReturn = "";
-				
-		if (bmDotTextMap.containsKey(sOID)) {
-			
-			if (logger.isDebugEnabled())
-				logger.debug("CheckOIDDBLookup().containsKey " + sOID + " -> " + bmDotTextMap.get(sOID));
-			
-			return bmDotTextMap.get(sOID);
-		
-		} else if (bmDotTextMap.containsValue(sOID)) {
-			
-			if (logger.isDebugEnabled())
-				logger.debug("CheckOIDDBLookup().containsValue " + sOID + " -> " + bmDotTextMap.getKey(sOID));
-			
-			return bmDotTextMap.getKey(sOID);			
-		}
-		
-		return sReturn;
-		
-	}
-	
-	/**
-	 * Checks to see if the DB file is empty, if so put a single entry to prevent error*/
-	private static void FixNullNetSNMPJSON() {
-		
-		if (!DirectoryStructureNetSNMP.fNetSNMPJSON().exists()) {
-			Disk.writeToDisk("{\"1.3.6\":\"dod\"}", DirectoryStructureNetSNMP.fNetSNMPJSON());
-		} else if (HexString.fileToByteArray(DirectoryStructureNetSNMP.fNetSNMPJSON()).length == 0) {
-			Disk.writeToDisk("{\"1.3.6\":\"dod\"}", DirectoryStructureNetSNMP.fNetSNMPJSON());
-		}
-		
-	}
-	
+    /* Add Converted OIDS to Map for later Storage */
+    UpdateJsonDB(sOID, sTextualOID);
+
+    if (logger.isDebugEnabled()) logger.debug("NetSNMP.toTextualOID(): " + sTextualOID);
+
+    return sTextualOID;
+  }
+
+  /**
+   * @param sOID OID either Dotted or Textual OID
+   * @param boolDotTextFormat TRUE = Textual OID Output , FALSE = Dotted OID Output
+   * @return Dotted or Textual OID
+   */
+  public static String toOIDFormat(String sOID, boolean boolDotTextFormat) {
+
+    /* Textual OID */
+    if (boolDotTextFormat) {
+      return toTextualOID(sOID);
+    }
+    /* Dotted OID */
+    else {
+      return toDottedOID(sOID);
+    }
+  }
+
+  /**
+   * @return True = Install | False = Not-Install
+   */
+  public static boolean isSnmptranslateInstalled() {
+
+    String sSnmpTranslate = Constants.SNMP_TRANSLATE_CMD + Constants.SNMP_TRANSLATE_VERSION;
+
+    if (runSnmpTranslate(sSnmpTranslate) == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  /**
+   * If OID starts with .1.3.6 it is considered a DottedOID
+   *
+   * @param sOID .1.3.6.1.2.1.69.1.2.1.2.1 OR docsDevNmAccessIp.1
+   * @return True if Dotted, False is not Dotted
+   */
+  public static boolean isDottedOID(String sOID) {
+
+    if (Constants.ISO_ORG_DOD_DOTTED.matcher(sOID).find()) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * @param sOID .1.3.6.1.2.1.69.1.2.1.2.1 OR docsDevNmAccessIp.1
+   * @return Description of OID
+   */
+  public static String getDescription(String sOID) {
+
+    String sDescription = "";
+    String sSnmpTranslate = "";
+
+    if (logger.isDebugEnabled()) logger.debug("NetSNMP.getDescription(): " + sOID);
+
+    /* If not installed, bypass and return input */
+    if (!isSnmptranslateInstalled()) {
+      return sOID;
+    }
+
+    /* If Dotted, Get Textual OID*/
+    if (isDottedOID(sOID)) {
+
+      sSnmpTranslate =
+          Constants.SNMP_TRANSLATE_CMD
+              + Constants.MIB_PARAMETER
+              + Constants.SNMP_TRANSLATE_DESCRIPTION_DOTTED_OID
+              + sOID;
+    }
+    /* If Textual, Get Dotted OID */
+    else {
+      sSnmpTranslate =
+          Constants.SNMP_TRANSLATE_CMD
+              + Constants.MIB_PARAMETER
+              + Constants.SNMP_TRANSLATE_DESCRIPTION_TEXTUAL_OID
+              + sOID;
+    }
+
+    if (logger.isDebugEnabled())
+      logger.debug("NetSNMP.getDescription() TRANSLATE-CLI: " + sSnmpTranslate);
+
+    Matcher mDescription = NETSNMP_DESCRIPTION.matcher(runSnmpTranslate(sSnmpTranslate).toString());
+
+    if (mDescription.find()) {
+      sDescription =
+          "\n" + PrettyPrint.ToParagraphForm(mDescription.group(1).replaceAll("\\s+", " "));
+    }
+
+    if (logger.isDebugEnabled())
+      logger.debug("NetSNMP.getDescription() TRANSLATE-DESCRIPTION: " + sDescription);
+
+    if (sDescription.isEmpty()) {
+      sDescription = "\nVerify that MIBS are loaded for OID: " + sOID;
+    }
+
+    return sDescription;
+  }
+
+  /** Clear DottedTextualNetSNMPMap.json and start new */
+  public static void clearJsonDB() {
+
+    if (DirectoryStructureNetSNMP.fNetSNMPJSON().exists()) {
+
+      PrintWriter pw = null;
+      try {
+        pw = new PrintWriter(DirectoryStructureNetSNMP.fNetSNMPJSON());
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      }
+      pw.print("");
+      pw.close();
+    }
+
+    FixNullNetSNMPJSON();
+  }
+
+  /**
+   * @param sSnmpTranslateCMD
+   * @return OID Translation - Null is snmptranslate is not installed
+   */
+  private static ArrayList<String> runSnmpTranslate(String sSnmpTranslateCMD) {
+
+    if (logger.isDebugEnabled()) logger.debug(sSnmpTranslateCMD);
+
+    ArrayList<String> als = new ArrayList<String>();
+
+    Process p = null;
+    try {
+      p = Runtime.getRuntime().exec(sSnmpTranslateCMD);
+    } catch (IOException e1) {
+      /* If not found or installed */
+      return null;
+    }
+
+    BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+    BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+
+    String sStd_IO = "";
+
+    /*Read the output from the command If Any */
+
+    int iCounter = 0;
+    try {
+      while ((sStd_IO = stdInput.readLine()) != null) {
+
+        // Clean up White Space
+        if (!sStd_IO.isEmpty()) als.add(sStd_IO);
+
+        if (logger.isDebugEnabled()) logger.debug(++iCounter + " IN: " + sStd_IO);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    try {
+      while ((sStd_IO = stdError.readLine()) != null) {
+
+        als.add(sStd_IO);
+
+        if (logger.isDebugEnabled()) logger.debug(++iCounter + " OUT: " + sStd_IO);
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return als;
+  }
+
+  /**
+   * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+   *     ___________________________________________________________________<br>
+   *     Licensed under the Apache License, Version 2.0 (the "License")<br>
+   *     you may not use this file except in compliance with the License.<br>
+   *     You may obtain a copy of the License at<br>
+   *     http://www.apache.org/licenses/LICENSE-2.0<br>
+   *     Unless required by applicable law or agreed to in writing, software<br>
+   *     distributed under the License is distributed on an "AS IS" BASIS,<br>
+   *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
+   *     See the License for the specific language governing permissions and<br>
+   *     limitations under the License.<br>
+   * @author Maurice Garcia (mgarcia01752@outlook.com)
+   */
+  public static class DirectoryStructureNetSNMP extends DirectoryStructure {
+
+    /**
+     * @return NetSNMP subdirectory
+     */
+    public static File fNetSNMPJSON() {
+      return new File(
+          fDbDir().getName() + File.separator + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE);
+    }
+  }
+
+  /**
+   * @param sOIDKey
+   * @param sOIDConvert
+   */
+  private static void UpdateJsonDB(String sOIDKey, String sOIDConvert) {
+
+    bmDotTextMap.put(sOIDKey, sOIDConvert);
+
+    try {
+      omNetSNMP.writeValue(DirectoryStructureNetSNMP.fNetSNMPJSON(), bmDotTextMap);
+    } catch (JsonGenerationException e) {
+      e.printStackTrace();
+    } catch (JsonMappingException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * @param sOID
+   * @return returns a lookup value, blank if nothing is found
+   */
+  private static String CheckOIDDBLookup(String sOID) {
+
+    String sReturn = "";
+
+    if (bmDotTextMap.containsKey(sOID)) {
+
+      if (logger.isDebugEnabled())
+        logger.debug("CheckOIDDBLookup().containsKey " + sOID + " -> " + bmDotTextMap.get(sOID));
+
+      return bmDotTextMap.get(sOID);
+
+    } else if (bmDotTextMap.containsValue(sOID)) {
+
+      if (logger.isDebugEnabled())
+        logger.debug(
+            "CheckOIDDBLookup().containsValue " + sOID + " -> " + bmDotTextMap.getKey(sOID));
+
+      return bmDotTextMap.getKey(sOID);
+    }
+
+    return sReturn;
+  }
+
+  /** Checks to see if the DB file is empty, if so put a single entry to prevent error */
+  private static void FixNullNetSNMPJSON() {
+
+    if (!DirectoryStructureNetSNMP.fNetSNMPJSON().exists()) {
+      Disk.writeToDisk("{\"1.3.6\":\"dod\"}", DirectoryStructureNetSNMP.fNetSNMPJSON());
+    } else if (HexString.fileToByteArray(DirectoryStructureNetSNMP.fNetSNMPJSON()).length == 0) {
+      Disk.writeToDisk("{\"1.3.6\":\"dod\"}", DirectoryStructureNetSNMP.fNetSNMPJSON());
+    }
+  }
 }

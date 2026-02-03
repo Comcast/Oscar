@@ -1,12 +1,12 @@
 package com.comcast.oscar.examples;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.DigitMapOperation;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /*
 	Copyright 2015 Comcast Cable Communications Management, LLC
@@ -20,84 +20,90 @@ import com.comcast.oscar.configurationfile.DigitMapOperation;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-/**
- */
+/** */
 public class DigitMapFromPacketCableFileTest {
 
-	/**
-	 * @param args
-	 */
-	@SuppressWarnings("deprecation")
-	public static void main(String[] args) {
+  /**
+   * @param args
+   */
+  @SuppressWarnings("deprecation")
+  public static void main(String[] args) {
 
-		File fPacketCableBin = null;
-		
-		File fPacketCableTxt = null;
-		
-		DigitMapOperation dmo = null;
+    File fPacketCableBin = null;
 
-		boolean BIN = true;
-		boolean TEXT = false;
-		
-											/* Binary Input */
-		if (BIN) {
-			
-			try {
+    File fPacketCableTxt = null;
 
-				fPacketCableBin = new File(new java.io.File( "." ).getCanonicalPath()	
-						+ File.separatorChar + "output" 
-						+ File.separatorChar + "IMS-PKT-CABLE-CONFIG-DIGIT-MAP.txt-102.bin");
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+    DigitMapOperation dmo = null;
 
-			ConfigurationFileExport cfePacketCable = new ConfigurationFileExport (fPacketCableBin);	
+    boolean BIN = true;
+    boolean TEXT = false;
 
-			dmo = new DigitMapOperation(cfePacketCable);
+    /* Binary Input */
+    if (BIN) {
 
-			System.out.println(dmo.getDigitMap());
+      try {
 
+        fPacketCableBin =
+            new File(
+                new java.io.File(".").getCanonicalPath()
+                    + File.separatorChar
+                    + "output"
+                    + File.separatorChar
+                    + "IMS-PKT-CABLE-CONFIG-DIGIT-MAP.txt-102.bin");
 
-											/* Text Input */
-		}
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
 
-		System.out.println("+==============================================================================================================+");
-		
-		if (TEXT) {
-			
-			try {
+      ConfigurationFileExport cfePacketCable = new ConfigurationFileExport(fPacketCableBin);
 
-				fPacketCableTxt = new File(new java.io.File( "." ).getCanonicalPath()	
-						+ File.separatorChar + "testfiles" 
-						+ File.separatorChar + "IMS-PKT-CABLE-CONFIG.txt");
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+      dmo = new DigitMapOperation(cfePacketCable);
 
-			ConfigurationFileImport cfiPacketCable = null;
+      System.out.println(dmo.getDigitMap());
 
-			try {
-				try {
-					cfiPacketCable = new ConfigurationFileImport (fPacketCableTxt);
-				} catch (ConfigurationFileException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}	
+      /* Text Input */
+    }
 
-			dmo = new DigitMapOperation(cfiPacketCable);
+    System.out.println(
+        "+==============================================================================================================+");
 
-			System.out.println(dmo.getDigitMap());
+    if (TEXT) {
 
-		}
-	}
+      try {
+
+        fPacketCableTxt =
+            new File(
+                new java.io.File(".").getCanonicalPath()
+                    + File.separatorChar
+                    + "testfiles"
+                    + File.separatorChar
+                    + "IMS-PKT-CABLE-CONFIG.txt");
+
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      ConfigurationFileImport cfiPacketCable = null;
+
+      try {
+        try {
+          cfiPacketCable = new ConfigurationFileImport(fPacketCableTxt);
+        } catch (ConfigurationFileException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      }
+
+      dmo = new DigitMapOperation(cfiPacketCable);
+
+      System.out.println(dmo.getDigitMap());
+    }
+  }
 }

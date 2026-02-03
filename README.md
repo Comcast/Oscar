@@ -2,7 +2,7 @@
 
 OSCAR is a Java-based CableLabs&reg; Configuration File Builder API for DOCSIS&reg;, PacketCable&trade;, DPoE&trade; and DPoG&trade;.
 
-### Install Java (JRE 21)
+### Install Java (JDK 21) + Maven
 
 Run:
 
@@ -15,6 +15,23 @@ Run:
 ```bash
 mvn -q -DskipTests package
 ```
+
+### Test
+
+```bash
+mvn -q test
+```
+
+### All Checks (Format + Hygiene + Compile + Test)
+
+```bash
+tools/run-all.sh
+```
+
+This runs:
+- Google Java Format across `src/` and `src/test/java`
+- strict hygiene compile (`-Xlint:all -Werror`)
+- full compile + tests
 
 [Wiki](https://github.com/Comcast/Oscar/wiki)
 

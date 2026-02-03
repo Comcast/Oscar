@@ -1,9 +1,8 @@
 package com.comcast.oscar.examples;
-import java.io.File;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.utilities.DirectoryStructure;
-
+import java.io.File;
 
 /*
 	Copyright 2015 Comcast Cable Communications Management, LLC
@@ -17,50 +16,46 @@ import com.comcast.oscar.utilities.DirectoryStructure;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-
-/**
- */
+/** */
 public class BinaryToTextTest {
 
-	/**
-	 * @param args
-	 */
-	@SuppressWarnings("deprecation")
-	public static void main(String[] args) {
+  /**
+   * @param args
+   */
+  @SuppressWarnings("deprecation")
+  public static void main(String[] args) {
 
-		boolean DOCSIS = true;
-		boolean PC = false;
+    boolean DOCSIS = true;
+    boolean PC = false;
 
-		File fDocsisBin = null;
-		File fPacketCableBin = null;
+    File fDocsisBin = null;
+    File fPacketCableBin = null;
 
-		if (DOCSIS) {
+    if (DOCSIS) {
 
-			fDocsisBin = DirectoryStructure.fTestFile("d10_ssd_codetest_862_oscar.cm");
+      fDocsisBin = DirectoryStructure.fTestFile("d10_ssd_codetest_862_oscar.cm");
 
-			ConfigurationFileExport cfeDocsis = new ConfigurationFileExport (fDocsisBin,ConfigurationFileExport.DOCSIS_VER_30);
+      ConfigurationFileExport cfeDocsis =
+          new ConfigurationFileExport(fDocsisBin, ConfigurationFileExport.DOCSIS_VER_30);
 
-			System.out.println(cfeDocsis.toPrettyPrint(false));
+      System.out.println(cfeDocsis.toPrettyPrint(false));
+    }
 
-		} 
+    // System.out.println("+============================================================================================================================+");
 
-		//System.out.println("+============================================================================================================================+");
+    if (PC) {
 
-		if (PC) {
+      //	fPacketCableBin = TestDirectoryStructure.fInputDirFileName("xxxxxx.bin");
+      //
+      //		ConfigurationFileExport cfePCTLV = new ConfigurationFileExport (fPacketCableBin);
+      //
+      //		System.out.println(cfePCTLV.toPrettyPrint(0));
 
-		//	fPacketCableBin = TestDirectoryStructure.fInputDirFileName("xxxxxx.bin");
-//
-	//		ConfigurationFileExport cfePCTLV = new ConfigurationFileExport (fPacketCableBin);
-//
-	//		System.out.println(cfePCTLV.toPrettyPrint(0));
-			
-			
-		}
-	}
-
+    }
+  }
 }

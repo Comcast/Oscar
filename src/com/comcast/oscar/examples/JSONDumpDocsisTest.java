@@ -12,97 +12,99 @@ package com.comcast.oscar.examples;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
-
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.tlv.TlvDisassemble;
 import com.comcast.oscar.tlv.TlvException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-
-/**
- */
+/** */
 public class JSONDumpDocsisTest {
 
-	/**
-	 * @param args
-	 */
-	@SuppressWarnings("deprecation")
-	public static void main(String[] args) {
+  /**
+   * @param args
+   */
+  @SuppressWarnings("deprecation")
+  public static void main(String[] args) {
 
-		boolean TEXT = true;
-		boolean BINARY = true;
-		
-		File fDocsisText = null;		
-		File fDocsisBin = null;
-		TlvDisassemble tdDOCSIS = null;
-		ConfigurationFileImport cfiDOCSIS = null;
-																	/* TEXT */
-		
-		if (TEXT) {													
+    boolean TEXT = true;
+    boolean BINARY = true;
 
-			try {
-				
-				fDocsisText = new File(new java.io.File( "." ).getCanonicalPath() 
-						+ File.separatorChar + "testfiles" 
-						+ File.separatorChar + "DOCSIS-GOLDEN.txt");
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+    File fDocsisText = null;
+    File fDocsisBin = null;
+    TlvDisassemble tdDOCSIS = null;
+    ConfigurationFileImport cfiDOCSIS = null;
+    /* TEXT */
 
-			try {
-				try {
-					cfiDOCSIS = new ConfigurationFileImport(fDocsisText);
-				} catch (ConfigurationFileException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			}
+    if (TEXT) {
 
-			tdDOCSIS = new TlvDisassemble(cfiDOCSIS.getTlvBuilder(),TlvDisassemble.TLV_TYPE_DOCSIS);
+      try {
 
-			System.out.println("DOCSIS-TEXT-JSONArray: " + tdDOCSIS.getTlvDictionary().toString());
+        fDocsisText =
+            new File(
+                new java.io.File(".").getCanonicalPath()
+                    + File.separatorChar
+                    + "testfiles"
+                    + File.separatorChar
+                    + "DOCSIS-GOLDEN.txt");
 
-		}
-		
-															/* Binary */
-		
-		if (BINARY) {
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
 
-			try {
-				
-				fDocsisBin = new File(new java.io.File( "." ).getCanonicalPath() 
-						+ File.separatorChar + "testfiles" 
-						+ File.separatorChar + "DOCSIS-GOLDEN.bin");
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+      try {
+        try {
+          cfiDOCSIS = new ConfigurationFileImport(fDocsisText);
+        } catch (ConfigurationFileException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      } catch (FileNotFoundException e1) {
+        e1.printStackTrace();
+      }
 
-			ConfigurationFileExport cfeDocsis = new ConfigurationFileExport(fDocsisBin);
+      tdDOCSIS = new TlvDisassemble(cfiDOCSIS.getTlvBuilder(), TlvDisassemble.TLV_TYPE_DOCSIS);
 
-			TlvDisassemble tdDocsis = null;
-			
-			try {
-				tdDocsis = new TlvDisassemble(cfeDocsis.getTlvBuilder(),TlvDisassemble.TLV_TYPE_DOCSIS);
-			} catch (TlvException e) {
-				e.printStackTrace();
-			}
+      System.out.println("DOCSIS-TEXT-JSONArray: " + tdDOCSIS.getTlvDictionary().toString());
+    }
 
-			System.out.println("DOCSIS-BIN-JSONArray: " + tdDocsis.getTlvDictionary().toString());	
-		}	
-	}
+    /* Binary */
 
+    if (BINARY) {
+
+      try {
+
+        fDocsisBin =
+            new File(
+                new java.io.File(".").getCanonicalPath()
+                    + File.separatorChar
+                    + "testfiles"
+                    + File.separatorChar
+                    + "DOCSIS-GOLDEN.bin");
+
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+      ConfigurationFileExport cfeDocsis = new ConfigurationFileExport(fDocsisBin);
+
+      TlvDisassemble tdDocsis = null;
+
+      try {
+        tdDocsis = new TlvDisassemble(cfeDocsis.getTlvBuilder(), TlvDisassemble.TLV_TYPE_DOCSIS);
+      } catch (TlvException e) {
+        e.printStackTrace();
+      }
+
+      System.out.println("DOCSIS-BIN-JSONArray: " + tdDocsis.getTlvDictionary().toString());
+    }
+  }
 }
