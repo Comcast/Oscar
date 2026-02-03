@@ -25,7 +25,7 @@ import com.comcast.oscar.tlv.TlvException;
 	limitations under the License.<br>
 
 
- * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
+ * @author Maurice Garcia (mgarcia01752@outlook.com)
  */
 public class EditJSonObjectThenConvertToTLV {
 

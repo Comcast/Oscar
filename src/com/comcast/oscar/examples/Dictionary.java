@@ -15,7 +15,7 @@ import org.json.JSONObject;
 	See the License for the specific language governing permissions and
 	limitations under the License.
 	
-	@author Maurice Garcia (maurice.garcia.2015@gmail.com)
+	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 

@@ -15,7 +15,7 @@ package com.comcast.oscar.tlv;
 	limitations under the License.<br>
 
 
- * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
+ * @author Maurice Garcia (mgarcia01752@outlook.com)
  */
 
 public class TlvException extends Exception {

@@ -38,7 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 	limitations under the License.<br>
 
 
- * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
+ * @author Maurice Garcia (mgarcia01752@outlook.com)
  */
 public class NetSNMP  {
 
@@ -377,7 +377,7 @@ public class NetSNMP  {
 		limitations under the License.<br>
 
 
-	 * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
+	 * @author Maurice Garcia (mgarcia01752@outlook.com)
 	 */
 	public static class DirectoryStructureNetSNMP extends DirectoryStructure {
 		

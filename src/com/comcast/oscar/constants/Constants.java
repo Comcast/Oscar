@@ -15,7 +15,7 @@ package com.comcast.oscar.constants;
 	limitations under the License.<br>
 
 
- * @author Maurice Garcia (maurice.garcia.2015@gmail.com)
+ * @author Maurice Garcia (mgarcia01752@outlook.com)
  */
 
 
@@ -48,7 +48,7 @@ public class Constants {
 																TAB +"limitations under the License.\n\n"+
 																
 																
-																TAB +"Author: Maurice Garcia (maurice.garcia.2015@gmail.com)\n"+
+																TAB +"Author: Maurice Garcia (mgarcia01752@outlook.com)\n"+
 																TAB +"Author: Allen Flickinger (allen.flickinger@gmail.com)\n";
 	
 	
