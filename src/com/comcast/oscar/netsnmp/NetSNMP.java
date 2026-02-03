@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 
@@ -42,7 +44,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class NetSNMP  {
 
-	private static Boolean debug = Boolean.FALSE;	
+	private static final Logger logger = LogManager.getLogger(NetSNMP.class);
+
 		
 	private static ObjectMapper omNetSNMP = null;	
 	private static BidiMap<String, String> bmDotTextMap = null;
@@ -81,15 +84,14 @@ public class NetSNMP  {
 	 * @return .1.3.6.x.x.x.x.x */
 	public static String toDottedOID(String sOID) {
 	
-		boolean localDebug = Boolean.FALSE;
 		
-		if (debug|localDebug)
-			System.out.println("NetSNMP.toDottedOID(): " + sOID);
+		if (logger.isDebugEnabled())
+			logger.debug("NetSNMP.toDottedOID(): " + sOID);
 		
 		if (isDottedOID(sOID)) {
 			
-			if (debug|localDebug)
-				System.out.println("NetSNMP.toDottedOID() Is a DootedOID -> " + sOID);
+			if (logger.isDebugEnabled())
+				logger.debug("NetSNMP.toDottedOID() Is a DootedOID -> " + sOID);
 			
 			return sOID;
 		}
@@ -113,8 +115,8 @@ public class NetSNMP  {
 								sOID.replaceAll("\\s+1", " .iso")
 									.replaceAll("\\s+\\.1", " .iso");
 
-		if (debug|localDebug)
-			System.out.println("NetSNMP.toDottedOID(): " + sSnmpTranslate);
+		if (logger.isDebugEnabled())
+			logger.debug("NetSNMP.toDottedOID(): " + sSnmpTranslate);
 
 		/* Get the String Return */
 		sDottedOID = runSnmpTranslate(sSnmpTranslate).get(0);
@@ -122,8 +124,8 @@ public class NetSNMP  {
 		/* Add Converted OIDS to Map for later Storage */
 		UpdateJsonDB(sOID,sDottedOID);
 		
-		if (debug|localDebug)
-			System.out.println("NetSNMP.toDottedOID(): " + sDottedOID);
+		if (logger.isDebugEnabled())
+			logger.debug("NetSNMP.toDottedOID(): " + sDottedOID);
 		
 		return runSnmpTranslate(sSnmpTranslate).get(0);
 	}
@@ -136,10 +138,9 @@ public class NetSNMP  {
 	 * @return Example: docsDevNmAccessIp.1 */
 	public static String toTextualOID(String sOID) {
 
-		boolean localDebug = Boolean.FALSE;
 	
-		if (debug|localDebug)
-			System.out.println("NetSNMP.toTextualOID(): " + sOID);
+		if (logger.isDebugEnabled())
+			logger.debug("NetSNMP.toTextualOID(): " + sOID);
 		
 		if (!isDottedOID(sOID)) {
 			return sOID;
@@ -147,8 +148,8 @@ public class NetSNMP  {
 		
 		if (!CheckOIDDBLookup(sOID).isEmpty()) {
 			
-			if (debug|localDebug)
-				System.out.println("NetSNMP.toTextualOID(): (" + CheckOIDDBLookup(sOID) + ")");
+			if (logger.isDebugEnabled())
+				logger.debug("NetSNMP.toTextualOID(): (" + CheckOIDDBLookup(sOID) + ")");
 			
 			return CheckOIDDBLookup(sOID);
 		}
@@ -165,16 +166,16 @@ public class NetSNMP  {
 								Constants.SNMP_TRANSLATE_OID_DEC_2_OID_NAME +
 								sOID;
 
-		if (debug|localDebug)
-			System.out.println("NetSNMP.toTextualOID(): " + sSnmpTranslate);
+		if (logger.isDebugEnabled())
+			logger.debug("NetSNMP.toTextualOID(): " + sSnmpTranslate);
 
 		sTextualOID = runSnmpTranslate(sSnmpTranslate).get(0);
 		
 		/* Add Converted OIDS to Map for later Storage */
 		UpdateJsonDB(sOID,sTextualOID);
 		
-		if (debug|localDebug)
-			System.out.println("NetSNMP.toTextualOID(): " + sTextualOID);
+		if (logger.isDebugEnabled())
+			logger.debug("NetSNMP.toTextualOID(): " + sTextualOID);
 		
 		return sTextualOID;
 
@@ -235,12 +236,11 @@ public class NetSNMP  {
 	 * @return Description of OID*/
 	public static String getDescription(String sOID) {
 		
-		boolean localDebug = Boolean.FALSE;
 		String sDescription = "";
 		String sSnmpTranslate = "";	
 		
-		if (debug|localDebug)
-			System.out.println("NetSNMP.getDescription(): " + sOID);
+		if (logger.isDebugEnabled())
+			logger.debug("NetSNMP.getDescription(): " + sOID);
 		
 		/* If not installed, bypass and return input */
 		if (!isSnmptranslateInstalled()) {
@@ -263,8 +263,8 @@ public class NetSNMP  {
 					sOID;			
 		}
 		
-		if (debug|localDebug)
-			System.out.println("NetSNMP.getDescription() TRANSLATE-CLI: " + sSnmpTranslate);
+		if (logger.isDebugEnabled())
+			logger.debug("NetSNMP.getDescription() TRANSLATE-CLI: " + sSnmpTranslate);
 		
 		Matcher mDescription = NETSNMP_DESCRIPTION.matcher(runSnmpTranslate(sSnmpTranslate).toString());
 		
@@ -272,8 +272,8 @@ public class NetSNMP  {
 			sDescription = "\n" + PrettyPrint.ToParagraphForm(mDescription.group(1).replaceAll("\\s+", " "));		
 		}
 		
-		if (debug|localDebug)
-			System.out.println("NetSNMP.getDescription() TRANSLATE-DESCRIPTION: " + sDescription);
+		if (logger.isDebugEnabled())
+			logger.debug("NetSNMP.getDescription() TRANSLATE-DESCRIPTION: " + sDescription);
 		
 		if (sDescription.isEmpty()) {
 			sDescription = "\nVerify that MIBS are loaded for OID: " + sOID;
@@ -309,10 +309,9 @@ public class NetSNMP  {
 	 * @return OID Translation - Null is snmptranslate is not installed*/
 	private static ArrayList<String> runSnmpTranslate(String sSnmpTranslateCMD) {
 
-		boolean localDebug = Boolean.FALSE;
 
-		if (debug|localDebug)
-			System.out.println(sSnmpTranslateCMD);
+		if (logger.isDebugEnabled())
+			logger.debug(sSnmpTranslateCMD);
 
 		ArrayList<String> als = new ArrayList<String>();
 
@@ -340,8 +339,8 @@ public class NetSNMP  {
 				if (!sStd_IO.isEmpty())
 					als.add(sStd_IO);
 
-				if (debug|localDebug)
-					System.out.println(++iCounter + " IN: " + sStd_IO);
+				if (logger.isDebugEnabled())
+					logger.debug(++iCounter + " IN: " + sStd_IO);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -352,8 +351,8 @@ public class NetSNMP  {
 
 				als.add(sStd_IO);
 
-				if (debug|localDebug)
-					System.out.println(++iCounter + " OUT: " + sStd_IO);
+				if (logger.isDebugEnabled())
+					logger.debug(++iCounter + " OUT: " + sStd_IO);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -420,15 +419,15 @@ public class NetSNMP  {
 				
 		if (bmDotTextMap.containsKey(sOID)) {
 			
-			if (debug)
-				System.out.println("CheckOIDDBLookup().containsKey " + sOID + " -> " + bmDotTextMap.get(sOID));
+			if (logger.isDebugEnabled())
+				logger.debug("CheckOIDDBLookup().containsKey " + sOID + " -> " + bmDotTextMap.get(sOID));
 			
 			return bmDotTextMap.get(sOID);
 		
 		} else if (bmDotTextMap.containsValue(sOID)) {
 			
-			if (debug)
-				System.out.println("CheckOIDDBLookup().containsValue " + sOID + " -> " + bmDotTextMap.getKey(sOID));
+			if (logger.isDebugEnabled())
+				logger.debug("CheckOIDDBLookup().containsValue " + sOID + " -> " + bmDotTextMap.getKey(sOID));
 			
 			return bmDotTextMap.getKey(sOID);			
 		}
@@ -450,4 +449,3 @@ public class NetSNMP  {
 	}
 	
 }
-

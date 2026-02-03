@@ -64,7 +64,6 @@ public class BERService {
 	
 	public static final byte HEX = (byte) 0xFE;
 		
-	final static boolean debug = Boolean.FALSE;
 
 	/**
 	 * 
@@ -75,15 +74,14 @@ public class BERService {
 	 * @throws Exception */
 	public static String setOIDEncoding (String sObjectID , byte bBerDataType , long lNumber) throws Exception {
 		
-		boolean localDebug = Boolean.FALSE;
 		
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("BERService.setOIDEncoding(s,b,l) - OID: " + sObjectID + " -> Value: " + lNumber);
 		}
 		
 		sObjectID = NetSNMP.toDottedOID(sObjectID);
 	
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("BERService.setOIDEncoding(s,b,l) - OID: " + sObjectID + " -> Value: " + lNumber);
 		}
 		
@@ -205,9 +203,8 @@ public class BERService {
 	 * @throws Exception */
 	public static String setOIDEncoding (String sObjectID , byte bBerDataType , String sValue) throws Exception {
 
-		boolean localDebug = Boolean.FALSE;
 		
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("BERService.setOIDEncoding(s,b,s) - OID: " + sObjectID + " -> Value: " + sValue);
 		}
 		
@@ -217,7 +214,7 @@ public class BERService {
 		
 		if (BER.IPADDRESS == bBerDataType) {
 			
-			if (localDebug|debug)
+			if (logger.isDebugEnabled())
 				logger.debug("BERService.setOIDEncoding() -> StringOID: " + sObjectID);
 			
 			VariableBinding vbIpBER = null;
@@ -272,9 +269,8 @@ public class BERService {
 	 * @throws Exception */
 	public static String setOIDEncoding (String sObjectID , byte bBerDataType , byte[] bValue) throws Exception {
 	
-		boolean localDebug = Boolean.FALSE;
 		
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("BERService.setOIDEncoding(s,b,b) - OID: " + sObjectID + " -> Value: " + new HexString(bValue).toString(":"));
 		}
 		
@@ -316,9 +312,8 @@ public class BERService {
 	 * @throws Exception */
 	public static byte[] setOIDEncodingToByteArray (String sObjectID , byte bBerDataType , String sValue) throws Exception {		
 		
-		boolean localDebug = Boolean.FALSE;
 		
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("BERService.setOIDEncodingToByteArray(s,b,s) - OID: " + sObjectID + " -> Value: " + sValue);
 		}
 		
@@ -404,7 +399,6 @@ public class BERService {
 	 * @throws TlvException */
 	public static String getBERSetValue (byte[] bBERSetValueTLV) throws TlvException {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		byte bBerDataType = bBERSetValueTLV[0];
 		byte[] bBerDataValue = TlvBuilder.getTlvValue(bBERSetValueTLV);
@@ -444,7 +438,7 @@ public class BERService {
 			
 		} else if (BER.IPADDRESS == bBerDataType) {
 			
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				HexString hsBerIpAddress = new HexString(bBerDataValue);
 				logger.debug("BER.IPADDRESS: " + hsBerIpAddress);
 			}

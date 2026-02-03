@@ -39,7 +39,6 @@ public class TlvAssembler extends TlvBuilder {
 	
 	private JSONArray jaTlvDictionary = null;
 	
-	private final boolean debug = Boolean.FALSE;
 	
 	/**
 	 * 
@@ -68,14 +67,13 @@ public class TlvAssembler extends TlvBuilder {
 	 *  Convert a JSONArray to TLV to buffer*/
 	private void convertJSONToTLV () {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		TlvBuilder tbLocalBuilder = new TlvBuilder();
 		
 		//Cycle thru JSON Array and inspect each JSON Object
 		for (int iJsonArrayIndex = 0 ; iJsonArrayIndex < jaTlvDictionary.length() ; iJsonArrayIndex++ ) {
 
-			if (debug|localDebug) logger.debug("+--------------------------------JSON-ARRAY-INDEX: " + iJsonArrayIndex + "--------------------------------------------+");
+			if (logger.isDebugEnabled()) logger.debug("+--------------------------------JSON-ARRAY-INDEX: " + iJsonArrayIndex + "--------------------------------------------+");
 
 			JSONObject joTlvDictionary = null;
 
@@ -90,7 +88,7 @@ public class TlvAssembler extends TlvBuilder {
 				//Check to see if this object have SubTypes , if so go into SubType Array
 				if (joTlvDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
 					
-					if (debug|localDebug) 
+					if (logger.isDebugEnabled()) 
 						logger.debug("TlvAssembler.convertJSONToTLV: TRUE-SUBTYPES: " + joTlvDictionary);
 
 					//If this is the start of the array, I need only advance 2 bytes to the next Type
@@ -111,7 +109,7 @@ public class TlvAssembler extends TlvBuilder {
 					
 				} else {
 
-					if (debug|localDebug) 
+					if (logger.isDebugEnabled()) 
 						logger.debug("TlvAssembler.convertJSONToTLV: FALSE-SUBTYPES: " + joTlvDictionary);
 
 					//Add to Superclass TlvBuilder//
@@ -131,7 +129,6 @@ public class TlvAssembler extends TlvBuilder {
 	 * @return TlvBuilder*/
 	private TlvBuilder buildTlvFromTlvDictionary (JSONArray jaTlvDictionary) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		TlvBuilder tbLocalTlvBuilderFinal = new TlvBuilder();
 		
@@ -140,7 +137,7 @@ public class TlvAssembler extends TlvBuilder {
 		//Cycle thru JSON Array and inspect each JSON Object
 		for (int iJsonArrayIndex = 0 ; iJsonArrayIndex < jaTlvDictionary.length() ; iJsonArrayIndex++ ) {
 
-			if (debug|localDebug) 
+			if (logger.isDebugEnabled()) 
 				logger.debug("+--------------------------------JSON-ARRAY-INDEX: " + iJsonArrayIndex + "--------------------------------------------+");
 
 			JSONObject joTlvDictionary = null;
@@ -159,7 +156,7 @@ public class TlvAssembler extends TlvBuilder {
 					//Get Type Value to later prefix
 					int iTypeLocal = joTlvDictionary.getInt(Dictionary.TYPE);
 					
-					if (debug|localDebug) 
+					if (logger.isDebugEnabled()) 
 						logger.debug(
 								"SUB-TYPE-ARRAY-TRUE: -> Type: " + joTlvDictionary.getString(Dictionary.TYPE) + 
 								" -> " + joTlvDictionary.getString(Dictionary.TLV_NAME));
@@ -169,7 +166,7 @@ public class TlvAssembler extends TlvBuilder {
 					
 					if (tbLocalTlvBuilder.length() != 0) {
 
-						if (debug|localDebug) 
+						if (logger.isDebugEnabled()) 
 							logger.debug("TlvAssembler.buildTlvFromTlvDictionary:" +
 									" -> TLV-NAME: " + joTlvDictionary.getString(Dictionary.TLV_NAME) + 
 									" -> tbLocalTlvBuilder.length: " + tbLocalTlvBuilder.length());
@@ -189,7 +186,7 @@ public class TlvAssembler extends TlvBuilder {
 					
 				} else {
 
-					if (debug|localDebug) 
+					if (logger.isDebugEnabled()) 
 						logger.debug(	"SUB-TYPE-ARRAY-TRUE: -> Type: " + joTlvDictionary.getString(Dictionary.TYPE) + 
 											" -> " + joTlvDictionary.getString(Dictionary.TLV_NAME));
 
@@ -210,7 +207,7 @@ public class TlvAssembler extends TlvBuilder {
 			
 		}
 			
-		if (debug|localDebug) 
+		if (logger.isDebugEnabled()) 
 			logger.debug("TlvAssembler.buildTlvFromTlvDictionary().tbLocalTlvBuilderFinal: " + tbLocalTlvBuilderFinal.toStringSeperation(":"));
 		
 
@@ -225,9 +222,8 @@ public class TlvAssembler extends TlvBuilder {
 	 * @throws JSONException */
 	private TlvBuilder buildTlvFromTlvDictionary (JSONObject joTlvDictionary) throws JSONException {
 		
-		boolean localDebug = Boolean.FALSE;
 				
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("TlvAssembler.buildTlvFromTlvDictionary(jo): " + joTlvDictionary.toString());
 			logger.debug("TlvAssembler.buildTlvFromTlvDictionary.super: " + super.toString());
 		}
@@ -265,7 +261,7 @@ public class TlvAssembler extends TlvBuilder {
 			//Determine how to encode the value
 			if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary().DATA_TYPE_INTEGER: " + tbLocalTlvBuilder.toString());
 								
 				//Get Integer Value
@@ -285,12 +281,12 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("DATA_TYPE_INTEGER: " + tbLocalTlvBuilder.toString());
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID)) {
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary().DATA_TYPE_OID: " + tbLocalTlvBuilder.toString());
 				
 				//Convert JSONObject to Map
@@ -298,13 +294,13 @@ public class TlvAssembler extends TlvBuilder {
 				
 				JSONArray ja = joTlvDictionary.getJSONArray(Dictionary.VALUE);
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary()->ja.getJSONObject(0): " + ja.getJSONObject(0).toString());
 				
 				Map<String,Object> msoOidDataTypeValue = JSONTools.toMap(ja.getJSONObject(0));
 				
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary().msoODV: " + msoOidDataTypeValue.toString());
 						
 				OIDBERConversion obcOidDataTypeValue = new  OIDBERConversion(msoOidDataTypeValue);
@@ -335,12 +331,12 @@ public class TlvAssembler extends TlvBuilder {
 					}			
 				}
 							
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_OID: " + tbLocalTlvBuilder.toString());
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY)) {
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary().DATA_TYPE_BYTE_ARRAY: " + tbLocalTlvBuilder.toString());
 				
 				//Get String Value HEX String
@@ -356,12 +352,12 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_BYTE_ARRAY: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED)) {
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary().DATA_TYPE_STRING_NULL_TERMINATED: " + tbLocalTlvBuilder.toString());
 
 				//Get String Value HEX String
@@ -380,12 +376,12 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_STRING_NULL_TERMINATED: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING)) {
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary().DATA_TYPE_STRING: " + tbLocalTlvBuilder.toString());
 
 				//Get String Value HEX String
@@ -402,12 +398,12 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_STRING: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_MULTI_TLV_BYTE_ARRAY)) {
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("Type: " + iType + " -> TlvBuilder.buildTlvFromTlvDictionary().DATA_TYPE_MULTI_TLV_BYTE_ARRAY: " + tbLocalTlvBuilder.toString());
 
 				//Get String Value HEX String
@@ -423,7 +419,7 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_MULTI_TLV_BYTE_ARRAY: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING_BITS)) {
@@ -431,7 +427,7 @@ public class TlvAssembler extends TlvBuilder {
 				//Get String Value HEX String
 				String sTlvValue = joTlvDictionary.getString(Dictionary.VALUE);
 
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_STRING_BITS: " + sTlvValue);
 				
 				//Convert Integer to Byte Array
@@ -444,7 +440,7 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_STRING_BITS: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_DOUBLE_BYTE_ARRAY)) {
@@ -462,7 +458,7 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_DOUBLE_BYTE_ARRAY: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)) {
@@ -481,7 +477,7 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_BYTE_ARRAY_IPV4_ADDR: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV6_ADDR)) {
@@ -499,7 +495,7 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_BYTE_ARRAY_IPV6_ADDR: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR)) {
@@ -517,7 +513,7 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR)) {
@@ -535,7 +531,7 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_INET_ADDR)) {
@@ -553,7 +549,7 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_TRANSPORT_ADDR_INET_ADDR: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_MAC_ADDRESS)) {
@@ -571,7 +567,7 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_MAC_ADDRESS: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE)) {
@@ -589,7 +585,7 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_BYTE: " + tbLocalTlvBuilder.toString());	
 				
 			} else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
@@ -607,7 +603,7 @@ public class TlvAssembler extends TlvBuilder {
 					e.printStackTrace();
 				}
 				
-				if (debug|localDebug) 
+				if (logger.isDebugEnabled()) 
 					logger.debug("TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_OID_ASN1_OBJECT_6: " + tbLocalTlvBuilder.toString());	
 				
 			}			

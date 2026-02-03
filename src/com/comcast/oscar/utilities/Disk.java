@@ -30,7 +30,6 @@ public class Disk {
 	//Log4J2 logging
     private static final Logger logger = LogManager.getLogger(Disk.class);
 	
-	private static boolean debug = Boolean.FALSE;
 	
 	/**
 	 * 
@@ -41,18 +40,17 @@ public class Disk {
 	 */
 	public static boolean writeToDisk(byte[] bStream , File fOutput) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		if (bStream == null) {
 
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				logger.debug("Disk.writeToDisk() - NULL ByteArray");
 			}
 			
 			return false;
 		}
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("Disk.writeToDisk() " +
 									" - Total Byte Count: " + bStream.length +
 									" - FileName: " + fOutput.getName());
@@ -122,7 +120,6 @@ public class Disk {
 	 */
 	public static boolean writeToDisk(String sInput , File fOutput) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		HexString hsInput = new HexString();
 		
@@ -130,7 +127,7 @@ public class Disk {
 		
 		byte[] baInput = hsInput.toByteArray();
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("Disk.writeToDisk() " +
 									" - Total Byte Count: " + baInput.length +
 									" - FileName: " + fOutput);

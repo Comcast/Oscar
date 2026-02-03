@@ -41,7 +41,6 @@ public class PacketCableSqlQuery {
 
 	private Connection sqlConnection;
 	
-	protected Boolean debug = Boolean.FALSE;
 
 	public static final Integer MAJOR_TLV = 0;
 
@@ -71,7 +70,7 @@ public class PacketCableSqlQuery {
 						" AND " +
 						"PARENT_ID = '0'";
 
-		if (debug) 
+		if (logger.isDebugEnabled()) 
 			logger.debug("getMajorTlvDefinition() SQL_QUERY: " + sqlQuery);
 
 		try {
@@ -84,7 +83,7 @@ public class PacketCableSqlQuery {
 		try {
 			resultSet = statement.executeQuery(sqlQuery);
 
-			if (debug) {
+			if (logger.isDebugEnabled()) {
 
 				while (resultSet.next()) {
 					logger.debug("MySQL-Query->TLV-NAME: " + resultSet.getString("TLV_NAME"));	
@@ -136,7 +135,7 @@ public class PacketCableSqlQuery {
 		if (Constants.CONFIGURATION_FILE_TYPE_DOCSIS == iCableLabsConfigType) {
 
 			for (int tlvCounter = Constants.DOCSIS_TLV_MIN ; tlvCounter <= Constants.DOCSIS_TLV_MAX ; tlvCounter++) {
-				if (debug) {
+				if (logger.isDebugEnabled()) {
 					logger.debug("+------------------------------------------------------------------------+");
 					logger.debug("TLV: " + tlvCounter + " -> JSON-TLV-DICT: " + getTlvDefinition(tlvCounter));
 				}
@@ -175,7 +174,7 @@ public class PacketCableSqlQuery {
 						"AND " +
 						"PARENT_ID = '0'";
 
-		if (debug) 
+		if (logger.isDebugEnabled()) 
 			logger.debug("getMajorTlvDefinition() SQL_QUERY: " + sqlQuery);
 
 		try {
@@ -219,7 +218,7 @@ public class PacketCableSqlQuery {
 						"WHERE " +
 						"ID = '" + iRowID + "'";
 
-		if (debug) 
+		if (logger.isDebugEnabled()) 
 			logger.debug("getMajorTlvDefinition() SQL_QUERY: " + sqlQuery);
 
 		try {
@@ -371,7 +370,7 @@ public class PacketCableSqlQuery {
 				aliTlvEncodeHistory.add(resultSetGetRowDefinition.getInt(Dictionary.DB_TBL_COL_TYPE));				
 				tlvJsonObj.put(PacketCableSqlQueryConstants.PARENT_TYPE_LIST, aliTlvEncodeHistory);
 
-				if (debug)
+				if (logger.isDebugEnabled())
 					logger.debug(tlvJsonObj.toString());
 
 			} else if (iParentID == MAJOR_TLV) {
@@ -407,7 +406,7 @@ public class PacketCableSqlQuery {
 				aliTlvEncodeHistory.add(resultSetGetRowDefinition.getInt(Dictionary.DB_TBL_COL_TYPE));
 				tlvJsonObj.put(PacketCableSqlQueryConstants.PARENT_TYPE_LIST, aliTlvEncodeHistory);
 
-				if (debug)
+				if (logger.isDebugEnabled())
 					logger.debug(tlvJsonObj.toString());				
 			}
 
@@ -437,7 +436,7 @@ public class PacketCableSqlQuery {
 
 						aliTlvEncodeHistoryNext.addAll(aliTlvEncodeHistory);
 
-						if (debug)
+						if (logger.isDebugEnabled())
 							logger.debug("aliTlvEncodeHistoryNext: " + aliTlvEncodeHistoryNext);
 
 						aliTlvEncodeHistoryNext.remove(aliTlvEncodeHistoryNext.size()-1);
@@ -558,7 +557,7 @@ public class PacketCableSqlQuery {
 			tlvJsonObj.put(PacketCableSqlQueryConstants.ARE_SUBTYPES, true);
 			tlvJsonObj.put(PacketCableSqlQueryConstants.BYTE_LENGTH, resultSetParentCheck.getString(Dictionary.DB_TBL_COL_BYTE_LENGTH));
 	
-			if (debug)
+			if (logger.isDebugEnabled())
 				logger.debug(tlvJsonObj.toString());			
 
 

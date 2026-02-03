@@ -38,7 +38,6 @@ public class HexString {
 
 	private StringBuilder sbHexBuffer = new StringBuilder();
 	
-	private static final boolean debug = Boolean.FALSE;
 
 	final static String HEX_NULL = "00";
 	
@@ -326,7 +325,7 @@ public class HexString {
 		
 		ByteArrayOutputStream  baosByteArray = new ByteArrayOutputStream();
 		
-		if (debug) 
+		if (logger.isDebugEnabled()) 
 			logger.debug("HexString.prefixNullPaddToLength().itotalLength: " + iTotalLength);
 		
 		//PADD Nulls in first for prefix
@@ -663,7 +662,6 @@ public class HexString {
 	 */
 	public static List<byte[]> byteArrayGroup (byte[] bByteArray, int iNumBytesInGroup) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		List<byte[]> lbByteArrayGroup = new ArrayList<byte[]>();
 		
@@ -674,7 +672,7 @@ public class HexString {
 		
 		while (iIndex < bByteArray.length) {
 			
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				logger.debug(	"HexString.byteArrayGroup() -> " +
 									"iIndex: " + iIndex + " -> " +
 									"iNumBytesInGroupCount: " + iNumBytesInGroupCount);
@@ -693,7 +691,7 @@ public class HexString {
 		
 		lbByteArrayGroup.add(baosByteArrayGroup.toByteArray());
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug(	"HexString.byteArrayGroup() -> " +
 								"lbByteArrayGroup.List.Size: " + lbByteArrayGroup.size());
 		}

@@ -37,7 +37,6 @@ public class SqlConnection {
     private String sqliteURL;
     private String user = "user";
     private String password = "password";  
-	private Boolean debug = Boolean.FALSE;	
 	private static Connection sqlConnection;
 	
 	/**
@@ -45,27 +44,27 @@ public class SqlConnection {
 	 */
 	public SqlConnection() {
 				
-		if (debug)
+		if (logger.isDebugEnabled())
 			logger.debug("SqlConnection(): " + DirectoryStructure.fDictionaryFile());
 		
 		//SQLite
 		String sCurrentPath = DirectoryStructure.fDictionaryFile().toString();
 
-		if (debug)
+		if (logger.isDebugEnabled())
 			logger.debug("SQLite DB Path: " + sCurrentPath);
 		
 		this.sqliteURL = "jdbc:Sqlite:" + sCurrentPath;
 		
 		if (sqlConnection == null) {
 			
-			if (debug) 
+			if (logger.isDebugEnabled()) 
 				logger.debug("SqlConnection() -> First Time Connected to DB");
 			
 			connect();	
 		
 		} else {
 			
-			if (debug) 
+			if (logger.isDebugEnabled()) 
 				logger.debug("SqlConnection() -> Already Connected to DB");
 		
 		}
@@ -131,12 +130,12 @@ public class SqlConnection {
 			//SQLite
 			Class.forName("org.sqlite.JDBC").newInstance();
 			
-			if (debug) 
+			if (logger.isDebugEnabled()) 
 				logger.debug("SqlConnection.connect() -> URL: " + sqliteURL);
 			
 			sqlConnection = DriverManager.getConnection(sqliteURL, user, password);
 			
-			if (debug) 
+			if (logger.isDebugEnabled()) 
 				logger.debug("SqlConnection.connect() -> Is Connected");
 			
 		} catch (InstantiationException e) {

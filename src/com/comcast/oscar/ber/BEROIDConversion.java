@@ -54,7 +54,6 @@ public class BEROIDConversion {
 	//VarBind BER
 	VariableBinding vbBER;
 	
-	private final boolean debug = Boolean.FALSE;
 	
 	public final static String OID = "OID";
 	public final static String DATA_TYPE = "DATA_TYPE";
@@ -68,7 +67,7 @@ public class BEROIDConversion {
 	 */
 	public BEROIDConversion (byte[] bBER) {
 		
-		if (debug) {
+		if (logger.isDebugEnabled()) {
 			
 			HexString hs = new HexString(bBER);
 			
@@ -93,15 +92,12 @@ public class BEROIDConversion {
 		try {
 			vbBER.decodeBER(bisBER);
 		} catch (IOException e) {
-			if (debug) {
-				e.printStackTrace();	
-			}
-			
+			logger.debug("BEROIDConversion() - decodeBER failed", e);
 		}
 
 		oOID = vbBER.getOid();
 		
-		if (debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("BEROIDConversion() " + oOID.toString());
 			logger.debug("BEROIDConversion() " + vbBER.toString());
 			logger.debug("BEROIDConversion() " + vbBER.getSyntax());
@@ -125,9 +121,8 @@ public class BEROIDConversion {
 	 */
 	public String getOidName() {		
 		
-		boolean localDebug = Boolean.FALSE;
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("BEROIDConversion.getOidName() - BER: " + new HexString(bBER).toString());			
 			logger.debug("BEROIDConversion.getOidName() - OID.toString(): " + oOID.toString());
 			logger.debug("BEROIDConversion.getOidName() - OID.format(): " + oOID.format());
@@ -177,7 +172,6 @@ public class BEROIDConversion {
 	 */
 	public Map<String,String> toMap () {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		Map<String, String> mssReturn = new HashMap<String,String>();
 
@@ -200,7 +194,7 @@ public class BEROIDConversion {
 				
 			) {
 			
-			if (localDebug|debug)
+			if (logger.isDebugEnabled())
 				logger.debug("BEROIDConversion.toMap() - Found a NON-ASCII Plain Text Characters");		
 
 			mssReturn.put(DATA_TYPE, Integer.toString(BinaryConversion.byteToUnsignedInteger(BERService.HEX)));
@@ -213,7 +207,7 @@ public class BEROIDConversion {
 				(!HexString.verifyAsciiPlainText(HexString.toByteArray(vbBER.getVariable().toString())))
 			) {
 
-			if (localDebug|debug)
+			if (logger.isDebugEnabled())
 				logger.debug("BEROIDConversion.toMap() - Found a NON-ASCII Plain Text Characters");
 			
 			mssReturn.put(DATA_TYPE, Integer.toString(BinaryConversion.byteToUnsignedInteger(BERService.HEX)));
@@ -225,7 +219,7 @@ public class BEROIDConversion {
 					(HexString.containAsciiWhiteSpace(HexString.toByteArray(HexString.asciiToHex(getOidValue()))))
 				) {
 
-			if (localDebug|debug)
+			if (logger.isDebugEnabled())
 				logger.debug("BEROIDConversion.toMap() - Found a ASCII Plain Text Characters: \"" + getOidValue() + "\"");
 
 			mssReturn.put(DATA_TYPE, getDataType().toString());

@@ -45,7 +45,6 @@ public class CommonTlvInsertions {
 	
 	private List<TlvBuilder> ltb;
 	private Map<Integer,TlvBuilder> mitb;
-	private static boolean debug = Boolean.FALSE;
 	
 	public static boolean FINALIZE_TRUE = true;
 	public static boolean FINALIZE_FALSE= false;
@@ -155,12 +154,11 @@ public class CommonTlvInsertions {
 	 * @throws ConfigurationFileException */
 	public static void insertDownstreamFrequency(int iDownstreamFrequency , ConfigurationFile cf , boolean boolFinalize) throws ConfigurationFileException {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31) 
 			throw new ConfigurationFileException ("Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
 		
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			logger.debug("CommonTlvInsertions.insertDownstreamFrequency() - DS: " + iDownstreamFrequency);
 		
 		TlvBuilder tb = new TlvBuilder();
@@ -171,14 +169,14 @@ public class CommonTlvInsertions {
 			e.printStackTrace();
 		}
 		
-		if (debug|localDebug) { 
+		if (logger.isDebugEnabled()) { 
 			logger.debug("CommonTlvInsertions.insertDownstreamFrequency() - Hex: " + new HexString(tb.toByteArray()).toString(":"));
 			logger.debug("CommonTlvInsertions.insertDownstreamFrequency() - ConfigFileSize: " + cf.size());
 		}			
 		
 		cf.add(tb);
 
-		if (debug|localDebug) { 
+		if (logger.isDebugEnabled()) { 
 			logger.debug("CommonTlvInsertions.insertDownstreamFrequency() - ConfigFileSize: " + cf.size());
 		}
 		
@@ -250,9 +248,8 @@ public class CommonTlvInsertions {
 	 * @throws ConfigurationFileException if not a DOCSIS ConfigurationFile  */
 	public static void insertManufactureCVC(File fCertificate, ConfigurationFile cf , boolean boolFinalize) throws ConfigurationFileException {
 
-		boolean localDebug = Boolean.FALSE;
 		
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("CommonTlvInsertions.insertManufactureCVC(ba,cf,bool)");
 			//Thread.dumpStack();
 		}
@@ -289,9 +286,8 @@ public class CommonTlvInsertions {
 	 * @throws ConfigurationFileException if not a DOCSIS ConfigurationFile  */
 	public static void insertManufactureCVC(byte[] bCertificate, ConfigurationFile cf , boolean boolFinalize) throws ConfigurationFileException {
 
-		boolean localDebug = Boolean.FALSE;
 		
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("CommonTlvInsertions.insertManufactureCVC(ba,cf,bool)");
 			//Thread.dumpStack();
 		}
@@ -328,9 +324,8 @@ public class CommonTlvInsertions {
 	 * @throws ConfigurationFileException if not a DOCSIS ConfigurationFile  */
 	public static void insertCoSignCVC(File fCertificate, ConfigurationFile cf , boolean boolFinalize) throws ConfigurationFileException {
 		
-		boolean localDebug = Boolean.FALSE;
 		
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("CommonTlvInsertions.insertCoSignCVC(f,cf,bool)");
 			//Thread.dumpStack();
 		}

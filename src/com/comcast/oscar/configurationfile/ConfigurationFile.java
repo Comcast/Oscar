@@ -56,7 +56,6 @@ public class ConfigurationFile {
 	//Log4J2 logging
     private static final Logger logger = LogManager.getLogger(ConfigurationFile.class);
 	
-	private boolean debug = Boolean.FALSE;
 	
 	private int iConfigurationFileType;	
 	private TlvBuilder tbConfigurationFile;	
@@ -88,19 +87,18 @@ public class ConfigurationFile {
 	 */
  	public ConfigurationFile(int iConfigurationFileType, TlvBuilder tbConfigurationFile) {
 		
- 		boolean localDebug = Boolean.FALSE;
  				
 		this.iConfigurationFileType = iConfigurationFileType;
 		
 		this.tbConfigurationFile = tbConfigurationFile;
 	
 		//DumpTLV to STDOUT
-		if (localDebug) {		
+		if (logger.isDebugEnabled()) {		
 			logger.debug("ConfigurationFile(i,tb)");		
 			logger.debug(TlvBuilder.tlvDump(tbConfigurationFile.toByteArray()));			
 		}
 		
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("ConfigurationFile(i,tb) " +
 					" ConfigType: " + iConfigurationFileType +
 					" CMTS-Shared-Secret: " + sCmtsSharedSecretKey +
@@ -119,7 +117,6 @@ public class ConfigurationFile {
  	 */
  	public ConfigurationFile(String sConfigurationFileName, int iConfigurationFileType, TlvBuilder tbConfigurationFile) {
 		
- 		boolean localDebug = Boolean.FALSE;
  		
 		this.iConfigurationFileType = iConfigurationFileType;
 		
@@ -127,7 +124,7 @@ public class ConfigurationFile {
 		
 		setConfigurationFileName(sConfigurationFileName);
 
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("ConfigurationFile(s,i,tb) " +
 					" ConfigType: " + iConfigurationFileType +
 					" CMTS-Shared-Secret: " + sCmtsSharedSecretKey +
@@ -147,7 +144,6 @@ public class ConfigurationFile {
  	 */
  	public ConfigurationFile(String sConfigurationFileName, int iConfigurationFileType, TlvBuilder tbConfigurationFile, String sCmtsSharedSecretKey) {
 		
- 		boolean localDebug = Boolean.FALSE;
  		
 		this.iConfigurationFileType = iConfigurationFileType;
 		
@@ -157,7 +153,7 @@ public class ConfigurationFile {
 		
 		setConfigurationFileName(sConfigurationFileName);
 
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("ConfigurationFile(s,i,tb) " +
 					" ConfigType: " + iConfigurationFileType +
 					" CMTS-Shared-Secret: " + sCmtsSharedSecretKey +
@@ -176,7 +172,6 @@ public class ConfigurationFile {
 	 */
 	public ConfigurationFile(int iConfigurationFileType, TlvBuilder tbConfigurationFile, String sCmtsSharedSecretKey) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		this.iConfigurationFileType = iConfigurationFileType;
 		
@@ -184,7 +179,7 @@ public class ConfigurationFile {
 		
 		this.sCmtsSharedSecretKey = sCmtsSharedSecretKey;
 		
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("ConfigurationFile(i,tb,s) " +
 					" -> ConfigType: " + iConfigurationFileType +
 					" -> CMTS-Shared-Secret: " + sCmtsSharedSecretKey +
@@ -222,9 +217,8 @@ public class ConfigurationFile {
 	 */
 	public void add(TlvBuilder tb) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			logger.debug("ConfigurationFile.add(tb): - Hex: " + tb.toStringSeperation(":"));
 				
 		addTlvBuilder(tb);
@@ -237,9 +231,8 @@ public class ConfigurationFile {
 	 */
 	public void add(TlvBuilder tb , List<Integer> liTlvToStrip) {
 	 	
-		boolean localDebug = Boolean.FALSE;
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("ConfigurationFile.add(tb,li): - Hex: " + tb.toStringSeperation(":"));
 			logger.debug("ConfigurationFile.add(tb,li): - TlvToStripFromBufferCLassList: " + liTlvToStrip);
 		}	
@@ -316,11 +309,10 @@ public class ConfigurationFile {
 	 */
 	public void commit() {
  		
- 		boolean localDebug = Boolean.FALSE;
  				
 		if (dcConfigurationFile != null) {
 			
-			if (localDebug|debug) 
+			if (logger.isDebugEnabled()) 
 				logger.debug("ConfigurationFile.commit() - DOCSIS - ByteLength: " + dcConfigurationFile.length());
 			
 			removeZeroLengthTopLevelTLV ();
@@ -329,14 +321,14 @@ public class ConfigurationFile {
 				
 		} else if (pcConfigurationFile != null) {
 			
-			if (localDebug|debug) 
+			if (logger.isDebugEnabled()) 
 				logger.debug("ConfigurationFile.commit() - PACKET-CABLE - ByteLength: " + pcConfigurationFile.length());
 			
 			pcConfigurationFile.commit();
 			
 		} else if (dpoeConfigurationFile != null) {
 			
-			if (localDebug|debug) 
+			if (logger.isDebugEnabled()) 
 				logger.debug("ConfigurationFile.commit() - DPoE-CABLE - ByteLength: " + dpoeConfigurationFile.length());
 			
 			dpoeConfigurationFile.commit();
@@ -360,7 +352,6 @@ public class ConfigurationFile {
  	 * @return a true if no OID duplications are found */
  	public boolean checkOIDDuplication() {
  		
- 		//boolean localDebug = Boolean.FALSE;
  		
  		boolean boolStatus = false;
  		
@@ -461,18 +452,17 @@ public class ConfigurationFile {
 	 */
 	public boolean writeToDisk () {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		if (toByteArray() == null) {
 
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				logger.debug("ConfigurationFile.writeToDisk() - NULL ByteArray");
 			}
 			
 			return false;
 		}
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("ConfigurationFile.writeToDisk() " +
 									" - Total Byte Count: " + toByteArray().length +
 									" - FileName: " + sConfigurationFileName );
@@ -488,7 +478,7 @@ public class ConfigurationFile {
 				e.printStackTrace();
 			}
 			
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				logger.debug("BuildFile.writeToDisk() " +
 										" - Total Byte Count: " + toByteArray().length +
 										" - FileName: " + fConfigurationFileName );
@@ -521,7 +511,7 @@ public class ConfigurationFile {
 				e.printStackTrace();
 			}
 			
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				logger.debug("BuildFile.writeToDisk() " +
 										" - Total Byte Count: " + toByteArray().length +
 										" - FileName: " + fCf );
@@ -570,12 +560,11 @@ public class ConfigurationFile {
 	 */
 	public void stripTlv(List<Integer> liStripTLV) {
 		
-		boolean localDebug = Boolean.FALSE;
 			
 		//Copy Class TLV Buffer
 		byte[] baTLV = toByteArray();
 
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("ConfigurationFile.stripTlv(li,bool): - BufferSize: " + baTLV.length);
 		}
 		
@@ -587,7 +576,7 @@ public class ConfigurationFile {
 				e.printStackTrace();
 			}
 			
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				logger.debug("ConfigurationFile.stripTlv(li,bool): - BufferSize: " + baTLV.length);
 			}
 		}
@@ -698,7 +687,6 @@ public class ConfigurationFile {
 	 */
 	private void init() {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE) && 
 				(iConfigurationFileType <= ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE)) {
@@ -724,7 +712,7 @@ public class ConfigurationFile {
 			//Update DOCSIS Compiler
 			updateCompiler(this.tbConfigurationFile);
 			
-			if (debug|localDebug)
+			if (logger.isDebugEnabled())
 				logger.debug(
 						"ConfigurationFile.init() - DOCSIS-TYPE " +
 						" -> TlvBuilder: " + this.tbConfigurationFile.toString() +
@@ -741,7 +729,7 @@ public class ConfigurationFile {
 			
 			updateCompiler(this.tbConfigurationFile);
 						
-			if (debug|localDebug)
+			if (logger.isDebugEnabled())
 				logger.debug(
 						"ConfigurationFile.init() - PACKET-CABLE-TYPE " +
 						" -> TlvBuilder: " + tbConfigurationFile.toString()
@@ -768,13 +756,13 @@ public class ConfigurationFile {
 
 			updateConfigurationFileTlvBuilder(tbNoFinalize);
 			
-			if (localDebug)
+			if (logger.isDebugEnabled())
 				logger.debug("ConfigurationFile.init() -> " + TlvBuilder.tlvDump(tbConfigurationFile.toByteArray()));
 			
 			//Update DOCSIS Compiler
 			updateCompiler(this.tbConfigurationFile);
 			
-			if (debug|localDebug)
+			if (logger.isDebugEnabled())
 				logger.debug(
 						"ConfigurationFile.init()" + "\n" + 
 						" -> DPOE-TYPE " + "\n" +
@@ -795,12 +783,11 @@ public class ConfigurationFile {
 	 */
 	private void addTlvBuilder(TlvBuilder tbTLV) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			logger.debug("ConfigurationFile.addFinalize() - ARG-Length: " + tbTLV.toString());
 
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			logger.debug("ConfigurationFile.addFinalize(): Length-BeforeAdd: " + tbConfigurationFile.length() + " - " + tbConfigurationFile.toString());
 				
 		//Strip Finalize
@@ -813,7 +800,7 @@ public class ConfigurationFile {
 		//Update Local TlvBuilder
 		updateConfigurationFileTlvBuilder(tbTLV);
 				
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			logger.debug("ConfigurationFile.addFinalize(): Length-After-Add: " 	+ tbConfigurationFile.length() 
 																						+ " - " + tbConfigurationFile.toString());
 				
@@ -828,12 +815,11 @@ public class ConfigurationFile {
 	@SuppressWarnings("unused")
 	private void addFirstTlvBuilder(TlvBuilder tbTLV) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			logger.debug("ConfigurationFile.addFirstTlvBuilder() - ARG-Length: " + tbTLV.toString());
 
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			logger.debug("ConfigurationFile.addFirstTlvBuilder(): Length-BeforeAdd: " + tbConfigurationFile.length() + " - " + tbConfigurationFile.toString());
 				
 		//Strip Finalize
@@ -846,7 +832,7 @@ public class ConfigurationFile {
 		//Update Local TlvBuilder
 		updateConfigurationFileTlvBuilder(tbTLV);
 				
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			logger.debug("ConfigurationFile.addFirstTlvBuilder(): Length-After-Add: " 	+ tbConfigurationFile.length() 
 																								+ " - " + tbConfigurationFile.toString());
 				
@@ -859,9 +845,8 @@ public class ConfigurationFile {
 	 * @param liStripTlvList*/
 	private void addTlvBuilder(TlvBuilder tbTLV, List<Integer> liStripTlvList) {
 		
-		boolean localDebug = Boolean.FALSE;
 
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("ConfigurationFile.addTlvBuilder(tb,li): - Hex: " + tbTLV.toStringSeperation(":"));
 			logger.debug("ConfigurationFile.addTlvBuilder(tb,li): - TlvToStripFromBufferCLassList: " + liStripTlvList);
 		}

@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,13 +43,14 @@ import com.comcast.oscar.utilities.HexString;
  */
 public class InsertDigitMapToConfigurationBinaryTest {
 
+	private static final Logger logger = LogManager.getLogger(InsertDigitMapToConfigurationBinaryTest.class);
+
 	/**
 	 * @param args
 	 */
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) {
 
-		boolean debug = Boolean.FALSE;
 	
 		File fDigitMap = null;
 		File fPacketCableTxt = null;
@@ -86,8 +89,8 @@ public class InsertDigitMapToConfigurationBinaryTest {
 		}
 		
 		// Validate: http://www.jsoneditoronline.org/
-		if (debug)
-			System.out.println("Snmp64 - JSON-DICTIONARY: " + joDictSnmp64);
+		if (logger.isDebugEnabled())
+			logger.debug("Snmp64 - JSON-DICTIONARY: " + joDictSnmp64);
 				
 										/* Convert to TLV */
 		
@@ -104,8 +107,8 @@ public class InsertDigitMapToConfigurationBinaryTest {
 		taSnmp64 = new TlvAssembler(jaSnmp64);
 		
 		//Display JSONObject
-		if (debug)
-			System.out.println("Snmp64: " + taSnmp64.toString());	
+		if (logger.isDebugEnabled())
+			logger.debug("Snmp64: " + taSnmp64.toString());	
 		
 		
 		

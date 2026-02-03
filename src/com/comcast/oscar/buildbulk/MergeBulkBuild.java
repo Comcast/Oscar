@@ -52,7 +52,6 @@ public class MergeBulkBuild {
 	private boolean boolOutputType;
 	private boolean boolDefaultVerboseMode = VERBOSE_DEFAULT_OUTPUT_OFF;
 	
-	private boolean debug = Boolean.FALSE;
 	
 	/**
 	 * 
@@ -101,7 +100,6 @@ public class MergeBulkBuild {
 	 */
 	public void start() {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		alalcf.clear();
 		
@@ -114,7 +112,7 @@ public class MergeBulkBuild {
 		/*Load the first part of the configuration*/
 		alcfTemp.addAll(alalcf.get(0));
 
-		if(localDebug|debug)
+		if (logger.isDebugEnabled())
 			logger.debug("MergeBulkBuild.start() -> Files: " + alcfTemp);
 
 		
@@ -127,10 +125,10 @@ public class MergeBulkBuild {
 			}
 		}
 		
-		if(localDebug|debug)
+		if (logger.isDebugEnabled())
 			logger.debug("MergeBulkBuild.start() -> Number of Configurations: " + alcfTemp.size());
 
-		if(localDebug|debug)
+		if (logger.isDebugEnabled())
 			logger.debug("MergeBulkBuild.start() -> Number of Configurations: " + alcfTemp.toString());
 
 		for(ConfigurationFile cf:alcfTemp) {
@@ -160,7 +158,6 @@ public class MergeBulkBuild {
 	 */
 	private ArrayList<ConfigurationFile> mergerDirectories(ArrayList<ConfigurationFile> alcf1, ArrayList<ConfigurationFile> alcf2) throws MergeBulkBuildException {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		ArrayList<ConfigurationFile> alcf = new ArrayList<ConfigurationFile>();
 		
@@ -189,7 +186,7 @@ public class MergeBulkBuild {
 						NOMENCLATURE_SEPERATOR + 
 						TrimFileExtention(cf2.getConfigurationFileName());
 				
-				if (localDebug|debug)
+				if (logger.isDebugEnabled())
 					logger.debug("MergeBulkBuild.mergerDirectories() -> " + sMergeFileName);
 
 				/* Add Configuration file to list */
@@ -209,13 +206,12 @@ public class MergeBulkBuild {
 	 */
 	private ArrayList<ConfigurationFile> getInputConfigurationFiles(File fInputDirectory) {
 
-		boolean localDebug = Boolean.FALSE;
 		
 		ArrayList<ConfigurationFile> alfConfigurationFile = new ArrayList<ConfigurationFile>();
 
 		for (File fConfigurationFile : fInputDirectory.listFiles()) {
 			
-			if (localDebug|debug)
+			if (logger.isDebugEnabled())
 				logger.debug("MergeBulkBuild.getInputConfigurationFiles() " + fConfigurationFile);
 			
 			byte[] bConfigurationFile = HexString.fileToByteArray(fConfigurationFile);

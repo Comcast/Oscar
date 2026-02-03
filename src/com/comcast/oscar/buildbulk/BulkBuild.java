@@ -56,7 +56,6 @@ public class BulkBuild {
 	
 	private String sSharedSecretKey = " ";
 
-	private boolean debug = Boolean.TRUE;
 	
 	private CommonTlvInsertions ctiCommonTlvInsertions = null;
 	
@@ -100,12 +99,11 @@ public class BulkBuild {
 
 		boolean boolStatus = true;
 
-		boolean localDebug = Boolean.FALSE;
 		
 		//Loops thur all the files found in the input directory
 		for (File fInput : getInputFiles()) {
 			
-			if (debug|localDebug)
+			if (logger.isDebugEnabled())
 				logger.debug("BulkBuild.start() - File: " + fInput.toString());
 			
 			byte[] bInput = HexString.fileToByteArray(fInput);
@@ -120,7 +118,7 @@ public class BulkBuild {
 					
 					if (HexString.verifyAsciiPlainText(bInput)) {
 						
-						if (debug|localDebug)
+						if (logger.isDebugEnabled())
 							logger.debug("BulkBuild.start() - Building From Text File: (" + fInput.getName() + ") To Binary File: " + fInput.getName());
 						
 						textToBinary(fInput , buildNewFilePath(fOutputDirectory , fInput.getName()) , sSharedSecretKey);						
@@ -133,14 +131,14 @@ public class BulkBuild {
 							
 				if (iCompilingMethod == TEXT_OUTPUT) {
 					
-					if (debug|localDebug)
+					if (logger.isDebugEnabled())
 						logger.debug("BulkBuild.start() - Building From Binary File: (" + fInput.getName() + ") To Text File: " + fInput.getName());
 					
 					binaryToText(fInput , buildNewFilePath(fOutputDirectory , fInput.getName()) , sSharedSecretKey);
 										
 				} else if (iCompilingMethod == BINARY_OUTPUT) {
 					
-					if (debug|localDebug)
+					if (logger.isDebugEnabled())
 						logger.debug("BulkBuild.start() - Building From Binary File: (" + fInput.toString() + ") To Binary File: " + fInput.getName());
 					
 					binaryToBinary(fInput , buildNewFilePath(fOutputDirectory , fInput.getName()) , sSharedSecretKey);				
@@ -249,11 +247,10 @@ public class BulkBuild {
 	@SuppressWarnings("deprecation")
 	public boolean binaryToText(File fBinInput , File fTextOutput , String sSharedSecretKey) {
 
-		boolean localDebug = Boolean.FALSE;
 
 		boolean boolStripFinalize = true;
 
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			logger.debug("BulkBuild.binaryToText(f,f,s) +------------------------------------------------------+");
 
 		ConfigurationFileExport cfe = null;
@@ -317,9 +314,8 @@ public class BulkBuild {
 	 */
 	public boolean binaryToBinary(File fBinInput , File fBinOutput , String sSharedSecretKey) {
 		
-		boolean localDebug = Boolean.TRUE;
 		
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			logger.debug("BulkBuild.binaryToBinary(f,f,s)");
 		
 		@SuppressWarnings("deprecation")

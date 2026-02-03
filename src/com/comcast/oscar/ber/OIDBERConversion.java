@@ -31,7 +31,6 @@ public class OIDBERConversion {
 	//Log4J2 logging
     private static final Logger logger = LogManager.getLogger(OIDBERConversion.class);
 	
-	private boolean debug = Boolean.FALSE;
 	
 	private Map<String,String> mssOidDataTypeValue;
 
@@ -84,18 +83,17 @@ public class OIDBERConversion {
 	 * @throws Exception */
 	public byte[] getBER() throws Exception {
 		
-		boolean localDebug = Boolean.FALSE;
 				
 		int iDataType = Integer.decode(mssOidDataTypeValue.get(DATA_TYPE));
 
-		if (localDebug|debug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("OIDBERConversion.getBER() DT: " + iDataType);
 			logger.debug("OIDBERConversion.getBER() VA: " + mssOidDataTypeValue.get(VALUE));	
 		}
 		
 		if (BERService.isNumberDataType(iDataType)) {
 			
-			if (localDebug|debug) 
+			if (logger.isDebugEnabled()) 
 				logger.debug("OIDBERConversion.getBER() DT-INTEGER: " + iDataType);
 			
 			return BERService.setOIDEncodingToByteArray (	mssOidDataTypeValue.get(OID),
@@ -104,7 +102,7 @@ public class OIDBERConversion {
 			
 		} else if (BERService.isStringDataType(iDataType)){
 			
-			if (localDebug|debug) 
+			if (logger.isDebugEnabled()) 
 				logger.debug("OIDBERConversion.getBER() DT-STRING: " + iDataType);
 			
 			return BERService.setOIDEncodingToByteArray (	mssOidDataTypeValue.get(OID),
@@ -113,7 +111,7 @@ public class OIDBERConversion {
 		
 		} else if (iDataType == BinaryConversion.byteToUnsignedInteger(BERService.HEX)) {
 			
-			if (localDebug|debug) {
+			if (logger.isDebugEnabled()) {
 				logger.debug("OIDBERConversion.getBER() DT-HEX: " + iDataType);
 				logger.debug("OIDBERConversion.getBER() HEX:    " + mssOidDataTypeValue.get(VALUE));
 			}

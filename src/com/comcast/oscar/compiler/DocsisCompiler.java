@@ -42,7 +42,6 @@ public class DocsisCompiler extends TlvBuilder {
 	//Log4J2 logging
     private static final Logger logger = LogManager.getLogger(DocsisCompiler.class);
 	
-	boolean debug = Boolean.FALSE;
 	
 	private String sSharedSecretKey = " ";
 
@@ -155,14 +154,13 @@ public class DocsisCompiler extends TlvBuilder {
 	 */
 	public void commit() {
 		
- 		boolean localDebug = Boolean.FALSE;
  		
 		byte[] bTlvFinalizeArray = null;
 		
 		//Reseting to new ByteArray
 		this.baosTlvFinalizeArray = new ByteArrayOutputStream();
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("DocsisCompiler.commit() LengthOfConfig: " + toByteArray().length);
 		}
 		
@@ -278,11 +276,10 @@ public class DocsisCompiler extends TlvBuilder {
  	 * @return byte[]
  	 */
  	private byte[] setExtendedCMTSMic(byte[] baTLV) {
- 		boolean localDebug = Boolean.FALSE;
  		
  		ByteArrayOutputStream baosExtMicTlv43_6 = new ByteArrayOutputStream();
  		
- 		if (debug|localDebug)
+ 		if (logger.isDebugEnabled())
  			logger.debug("DocsisCompiler.setExtendedCMTSMic()");
  		
  		return baosExtMicTlv43_6.toByteArray();
@@ -303,11 +300,10 @@ public class DocsisCompiler extends TlvBuilder {
 	 * @return the TLV byte array with the CM/CMTS MICs */
 	private byte[] setCmCmtsMIC(byte[] bTlvArray) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		byte[] bTlvArrayNoCmCmtsMIC = null;
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-Before: " + bTlvArray.length);
 		}
 				
@@ -319,14 +315,14 @@ public class DocsisCompiler extends TlvBuilder {
 			e.printStackTrace();
 		}
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-AfterCmCmtsStrip: " + bTlvArrayNoCmCmtsMIC.length);
 		}
 
 		// Strip EOF TLV Buffer		
 		bTlvArrayNoCmCmtsMIC = stripEOFPADD(bTlvArrayNoCmCmtsMIC);
 
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-AfterEOF-PADD: " + bTlvArrayNoCmCmtsMIC.length);
 		}
 		
@@ -347,7 +343,7 @@ public class DocsisCompiler extends TlvBuilder {
 			e.printStackTrace();
 		}
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-After-Adding-CM-MIC: " + tbTlvArrayCmCmtsMIC.length());
 			logger.debug("DocsisCompiler.setCmCmtsMIC() WITH-CM-MIC: " + tbTlvArrayCmCmtsMIC);
 		}
@@ -359,7 +355,7 @@ public class DocsisCompiler extends TlvBuilder {
 			e.printStackTrace();
 		}
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("DocsisCompiler.setCmCmtsMIC() LengthOfConfig-After-2: " + tbTlvArrayCmCmtsMIC.length());
 			logger.debug("DocsisCompiler.setCmCmtsMIC() CMTS-CM-MIC: " + tbTlvArrayCmCmtsMIC);
 		}		
@@ -386,7 +382,6 @@ public class DocsisCompiler extends TlvBuilder {
 		These TLVs are the last TLVs in the CM configuration file. */
 	public  byte[] getCmMIC(byte[] bTlvArray) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		MessageDigest mdMD5 = null;
 		
@@ -397,7 +392,7 @@ public class DocsisCompiler extends TlvBuilder {
 	        e.printStackTrace();
 	    }
 	     
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("DocsisCompiler.setCmCmtsMIC() CM-MIC-HASH: " + new HexString(mdMD5.digest(bTlvArray)).toString());
 		}
 	    
@@ -412,7 +407,6 @@ public class DocsisCompiler extends TlvBuilder {
 	 * @return the CMTS MIC HASH of the TLV Byte Array */
 	private byte[] getCmtsMIC(String sCmtsSharedSecret , byte[] bTlvArray) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		byte[] bCmtsMicTlv = fetchTlv (Constants.DOCSIS_CMTS_MIC_TLV_LIST , bTlvArray);
        
@@ -436,7 +430,7 @@ public class DocsisCompiler extends TlvBuilder {
  
         bHmacMD5 = mHmacMD5.doFinal(bCmtsMicTlv);
         
-        if (localDebug|debug) {
+        if (logger.isDebugEnabled()) {
         	logger.debug("DocsisCompiler.getCmtsMIC() - SharedSecret: " + sCmtsSharedSecret);
         	logger.debug("DocsisCompiler.getCmtsMIC() - CMTS-MIC-HASH: " + new HexString(bHmacMD5).toString());     	
         }
@@ -468,7 +462,6 @@ public class DocsisCompiler extends TlvBuilder {
 	 * @return returns a byte array padded with nulls if needed */
 	private byte[] paddTlvBuffer (byte[] bTlvArray) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		ByteArrayOutputStream  baosbTlvArray = new ByteArrayOutputStream();
 		
@@ -481,7 +474,7 @@ public class DocsisCompiler extends TlvBuilder {
 		//Make sure TLV Buffer is divisible by 4
 		while ((baosbTlvArray.size()%4) != 0) {
 			
-			if (debug|localDebug)
+			if (logger.isDebugEnabled())
 				logger.debug("DocsisCompiler.paddTlvBuffer() - Adding Padding");
 			
 			baosbTlvArray.write(NULL);

@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.snmp4j.smi.OID;
 
 import com.comcast.oscar.utilities.BinaryConversion;
@@ -30,6 +32,8 @@ import com.comcast.oscar.utilities.HexString;
 
 public class DataTypeFormatConversion {
 
+	private static final Logger logger = LogManager.getLogger(DataTypeFormatConversion.class);
+
 	
 	public static final Integer IPV4_ADDRESS_BYTE_LENGTH = 4;
 	public static final Integer IPV6_ADDRESS_BYTE_LENGTH = 16;
@@ -42,7 +46,6 @@ public class DataTypeFormatConversion {
 	//public static String IP_PORT_RANGE = "(6553[0-5]|655[0-2][0-9]\\d|65[0-4](\\d){2}|6[0-4](\\d){3}|[1-5](\\d){4}| {0,3})";	
 	public static final String IP_PORT_RANGE = "([0-9]|6[0-4](\\d){3}|65[0-4](\\d){2}|655[0-2][0-9]\\d|6553[0-5])";
 
-	public static boolean debug = Boolean.FALSE;
 	
 	//http://www.pretechsol.com/2013/05/ipv6-java-regular-expression-example.html#.UnujD_lwp8E
     public static final Pattern IPV6_ADDRESS_REGEX = Pattern.compile(""
@@ -113,7 +116,6 @@ public class DataTypeFormatConversion {
 	 */
  	public static String byteArrayToIPv6TransportAddress (byte[] bIPv6TransportAddress) throws DataTypeFormatException {
 		
-		boolean localDebug = true;
 		
 		if (bIPv6TransportAddress.length != (IPV6_ADDRESS_BYTE_LENGTH + IP_PORT_BYTE_LENGTH)) {
 			 throw new DataTypeFormatException ("Invalid bIpv6TransportAddress Byte Length");
@@ -133,7 +135,7 @@ public class DataTypeFormatConversion {
 		
 		String sIPv6TransportAddress = sIPv6Address+"(" + iIpPort + ")";
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			System.out.println("DataTypeFormatConversion.byteArrayToIpv6TransportAddress() : " + sIPv6TransportAddress);
 		}
 		
@@ -154,9 +156,8 @@ public class DataTypeFormatConversion {
 		
 		ByteArrayOutputStream baosIPv6TransportAddress = new ByteArrayOutputStream();
 		
-		boolean localDebug = Boolean.FALSE;
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			System.out.println("DataTypeFormatConversion.IPv6TransportAddressToByteArray() -> sIPv6TransportAddress: " + sIPv6TransportAddress);
 		}
 		
@@ -166,7 +167,7 @@ public class DataTypeFormatConversion {
 			
 			if (mIPv6TransportAddress.find()) {
 				
-				if (debug|localDebug) {
+				if (logger.isDebugEnabled()) {
 					for (int groupCount = 0 ; groupCount < mIPv6TransportAddress.groupCount() ; groupCount++)				
 						System.out.println("Group:" + groupCount + " Found value: -" + mIPv6TransportAddress.group(groupCount) + "-");
 				}
@@ -200,7 +201,7 @@ public class DataTypeFormatConversion {
 			}			
 		}
 	
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			System.out.println("DataTypeFormatConversion.IPv6TransportAddressToByteArray() -> " 
 								+ "Input: " + sIPv6TransportAddress + " -> "
 								+ "HEX: " + new HexString(baosIPv6TransportAddress.toByteArray()).toString(":"));			
@@ -218,17 +219,16 @@ public class DataTypeFormatConversion {
 	 */
 	public static boolean verifyIPv6TransportAddressFormat (String sIPv6TransportAddress) {
 	
-		boolean localDebug = Boolean.FALSE;
 			
 		if (IPV6_TRANSPORT_REGEX.matcher(sIPv6TransportAddress).matches()) {
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				System.out.println("DataTypeFormatConversion.verifyIPv6TransportAddressFormat() -> GOOD: " + sIPv6TransportAddress);
 			}
 			
 			return true;
 		} else {
 			
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				System.out.println("DataTypeFormatConversion.verifyIPv6TransportAddressFormat() -> BAD: " + sIPv6TransportAddress);
 			}
 			
@@ -251,7 +251,6 @@ public class DataTypeFormatConversion {
 	 */
 	public static String byteArrayToIPv4TransportAddress (byte[] bIPv4TransportAddress) throws DataTypeFormatException {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		if (bIPv4TransportAddress.length != (IPV4_ADDRESS_BYTE_LENGTH + IP_PORT_BYTE_LENGTH)) {
 			 throw new DataTypeFormatException ("Invalid bIPv4TransportAddress Byte Length");
@@ -271,7 +270,7 @@ public class DataTypeFormatConversion {
 		
 		String sIPv4TransportAddress = sIPv4Address+"(" + iIpPort + ")";
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			System.out.println("DataTypeFormatConversion.byteArrayToIpv6TransportAddress() : " + sIPv4TransportAddress);
 		}
 		
@@ -288,9 +287,8 @@ public class DataTypeFormatConversion {
 		
 		ByteArrayOutputStream baosIPv4TransportAddress = new ByteArrayOutputStream();
 		
-		boolean localDebug = Boolean.FALSE;
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			System.out.println("DataTypeFormatConversion.ipv4TransportAddressToByteArray() -> sIpv4TransportAddress: " + sIpv4TransportAddress);
 		}
 		
@@ -300,7 +298,7 @@ public class DataTypeFormatConversion {
 			
 			if (mIPv4TransportAddress.find()) {
 				
-				if (debug|localDebug) {
+				if (logger.isDebugEnabled()) {
 					for (int groupCount = 0 ; groupCount < mIPv4TransportAddress.groupCount() ; groupCount++)				
 						System.out.println("Group:" + groupCount + " Found value: -" + mIPv4TransportAddress.group(groupCount) + "-");
 				}
@@ -329,7 +327,7 @@ public class DataTypeFormatConversion {
 			
 		}
 	
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			System.out.println("DataTypeFormatConversion.IPv4TransportAddressToByteArray() -> " 
 								+ "Input: " + sIpv4TransportAddress + " -> "
 								+ "HEX: " + new HexString(baosIPv4TransportAddress.toByteArray()).toString(":"));			
@@ -347,7 +345,6 @@ public class DataTypeFormatConversion {
 	 * @throws DataTypeFormatException */
 	public static String byteArrayToInetTransportAddress (byte[] bInetTransportAddress) throws DataTypeFormatException  {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		String sInetAddress = null;
 		
@@ -383,7 +380,7 @@ public class DataTypeFormatConversion {
 				
 		sInetTransportAddress = sInetAddress + "(" + iIpPort + ")";
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			System.out.println("DataTypeFormatConversion.byteArrayToIpv6TransportAddress() : " + sInetTransportAddress);
 		}
 		
@@ -398,7 +395,6 @@ public class DataTypeFormatConversion {
 	 */
 	public static byte[] inetTransportAddressToByteArray (String sInetTransportAddress) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		if (verifyIPv6TransportAddressFormat(sInetTransportAddress)) {
 			
@@ -409,7 +405,7 @@ public class DataTypeFormatConversion {
 			return ipv4TransportAddressToByteArray(sInetTransportAddress);
 		
 		} else {
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				System.out.println("DataTypeFormatConversion.inetTransportAddressToByteArray() IncorrectFormat: " + sInetTransportAddress);
 			}
 		}
@@ -426,10 +422,9 @@ public class DataTypeFormatConversion {
 	 */
 	public static boolean verifyIPv4TransportAddressFormat (String sIPv4TransportAddress) {
 		
-		boolean localDebug = Boolean.FALSE;
 			
 		if (IPV4_TRANSPORT_REGEX.matcher(sIPv4TransportAddress).matches()) {
-			if (localDebug) {
+			if (logger.isDebugEnabled()) {
 				System.out.println("DataTypeFormatConversion.verifyIPv4TransportAddressFormat() -> GOOD: " + sIPv4TransportAddress);
 			}
 			
@@ -437,7 +432,7 @@ public class DataTypeFormatConversion {
 			
 		} else {
 			
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				System.out.println("DataTypeFormatConversion.verifyIPv4TransportAddressFormat() -> BAD: " + sIPv4TransportAddress);
 			}
 			
@@ -494,7 +489,6 @@ public class DataTypeFormatConversion {
 	 * @throws IllegalArgumentException */
 	public static byte[] doubleByteArray (String sDoubleByteArray) throws IllegalArgumentException {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		if (!doubleByteArrayValidate(sDoubleByteArray)) {
 			throw new IllegalArgumentException("DataTypeFormatConversion.doubleByteArray() Invalid String Format: " + sDoubleByteArray);	
@@ -505,13 +499,13 @@ public class DataTypeFormatConversion {
 	
 		ByteArrayOutputStream baosDoubleByteArray = new ByteArrayOutputStream();
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			System.out.println("DataTypeFormatConversion.doubleByteArray() : " + sDoubleByteArray);
 		}
 		
 		for (String sNumber : sDoubleByteArray.split(",")) {
 	
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				System.out.println("DataTypeFormatConversion.doubleByteArray() : " 
 						+ sNumber + " -> " + new HexString(HexString.intToByteArray(Integer.parseInt(sNumber))).toString(":")
 						+ " -> " + new HexString(HexString.intToByteArray(Integer.parseInt(sNumber))).toAsciiBinary());
@@ -535,13 +529,12 @@ public class DataTypeFormatConversion {
 	 */
 	public static boolean doubleByteArrayValidate (String sDoubleByteArray) {
 		
-		boolean localDebug = Boolean.FALSE;
 
 		Matcher mDoubleByteArray =  DOUBLE_BYTE_ARRAY_REGEX.matcher(sDoubleByteArray);
 		
 		if (mDoubleByteArray.find()) {
 			
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				for (int groupCount = 0 ; groupCount < mDoubleByteArray.groupCount() ; groupCount++)				
 					System.out.println("Group:" + groupCount + " Found value: -" + mDoubleByteArray.group(groupCount) + "-");
 			}
@@ -549,14 +542,14 @@ public class DataTypeFormatConversion {
 		}
 		
 		if (DOUBLE_BYTE_ARRAY_REGEX.matcher(sDoubleByteArray).matches()) {
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				System.out.println("DataTypeFormatConversion.doubleByteArrayValidate() -> GOOD: " + sDoubleByteArray);
 			}
 			
 			return true;
 		} else {
 			
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				System.out.println("DataTypeFormatConversion.doubleByteArrayValidate() -> BAD: " + sDoubleByteArray);
 			}
 			
@@ -594,14 +587,13 @@ public class DataTypeFormatConversion {
 	 */
 	public static StringBuilder byteArrayBinaryBitMaskToString (byte[] bBinaryBitMask , int iBitGroup) {		
 		
-		boolean localDebug = Boolean.FALSE;
 		
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			System.out.println("sbBinaryBitMask: " + new HexString(bBinaryBitMask).toAsciiBinary() + " -> BitGroup: " + iBitGroup);
 		
 		StringBuilder sbBinaryBitMask = new StringBuilder(new HexString(bBinaryBitMask).toAsciiBinary());
 		
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			System.out.println("sbBinaryBitMask: " + sbBinaryBitMask);
 		
 		StringBuilder sbBinaryBitMaskUpdate = new StringBuilder();
@@ -686,13 +678,12 @@ public class DataTypeFormatConversion {
 	 */
 	public static boolean macAddressFormatValidation (String sMacAddress) {
 
-		boolean localDebug = Boolean.FALSE;
 
 		Matcher mMacAddress =  MAC_ADDRESS_REGEX.matcher(sMacAddress);
 		
 		if (mMacAddress.find()) {
 			
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				for (int groupCount = 0 ; groupCount < mMacAddress.groupCount() ; groupCount++)				
 					System.out.println("Group:" + groupCount + " Found value: -" + mMacAddress.group(groupCount) + "-");
 			}
@@ -700,7 +691,7 @@ public class DataTypeFormatConversion {
 		}
 		
 		if (MAC_ADDRESS_REGEX.matcher(sMacAddress).matches()) {
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				System.out.println("DataTypeFormatConversion.macAddressFormatValidation() -> GOOD: " + mMacAddress);
 			}
 			
@@ -708,7 +699,7 @@ public class DataTypeFormatConversion {
 			
 		} else {
 			
-			if (debug|localDebug) {
+			if (logger.isDebugEnabled()) {
 				System.out.println("DataTypeFormatConversion.macAddressFormatValidation() -> BAD: " + mMacAddress);
 			}
 			

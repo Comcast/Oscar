@@ -46,7 +46,6 @@ public class DigitMapOperation {
 
 	public final static String DEFAULT_DIGIT_MAP_OID = PacketCableConstants.PKT_CABLE_DIGIT_MAP_OID;
 	
-	private static boolean debug = Boolean.FALSE;
 	
 	private ConfigurationFileExport cfe = null;
 	
@@ -92,7 +91,6 @@ public class DigitMapOperation {
 			dialPhone = ";user=phone" */
 	public String getDigitMap() {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		String sDigitMapScript = null;
 		
@@ -106,7 +104,7 @@ public class DigitMapOperation {
 			
 			joTLV64 = jaTLV64.getJSONObject(0);
 						
-			if (debug|localDebug)
+			if (logger.isDebugEnabled())
 				logger.debug("DigitMapOperation.getDigitMap()" + joTLV64);
 			
 			JSONArray jaDigitMap = joTLV64.getJSONArray(Dictionary.VALUE);
@@ -174,7 +172,6 @@ public class DigitMapOperation {
 	 */
 	public static TlvBuilder getDigitMapTlvBuilder(File fDigitMap) {
 		
-		boolean localDebug = Boolean.FALSE;
 						
 		//Convert File to ByteArray
 		byte[] bDigitMap = HexString.fileToByteArray(fDigitMap);
@@ -195,7 +192,7 @@ public class DigitMapOperation {
 		}
 		
 		// Validate: http://www.jsoneditoronline.org/
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			logger.debug("DigitMapOperation.getDigitMapTlvBuilder() - Snmp64 - JSON-DICTIONARY: " + joDictSnmp64);
 				
 										/* Convert to TLV */
@@ -227,7 +224,7 @@ public class DigitMapOperation {
 		//Add TlvVariable to TlvBuilder
 		tb.add(tvb);
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder: " + tb.toStringSeperation(":"));
 			logger.debug("DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder-Map: " + tb.getMapTypeToByteLength());	
 		}
@@ -246,7 +243,6 @@ public class DigitMapOperation {
 	 */
 	public static TlvBuilder getDigitMapTlvBuilder(byte[] baDigitMap, String sOID) {
 		
-		boolean localDebug = Boolean.FALSE;
 		
 		//Need to get the JSON Dictionary Object, in this case, we need to use Snmp64
 		DictionarySQLQueries dsqSnmp64 = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
@@ -264,7 +260,7 @@ public class DigitMapOperation {
 		}
 		
 		// Validate: http://www.jsoneditoronline.org/
-		if (debug|localDebug)
+		if (logger.isDebugEnabled())
 			logger.debug("DigitMapOperation.getDigitMapTlvBuilder() - Snmp64 - JSON-DICTIONARY: " + joDictSnmp64);
 				
 										/* Convert to TLV */
@@ -296,7 +292,7 @@ public class DigitMapOperation {
 		//Add TlvVariable to TlvBuilder
 		tb.add(tvb);
 		
-		if (debug|localDebug) {
+		if (logger.isDebugEnabled()) {
 			logger.debug("DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder: " + tb.toStringSeperation(":"));
 			logger.debug("DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder-Map: " + tb.getMapTypeToByteLength());	
 		}
