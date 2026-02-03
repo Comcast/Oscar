@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.snmp4j.smi.OID;
@@ -538,8 +536,7 @@ public class TlvBuilder implements TlvBuild {
 	 * 
 	 * @return TLV in a new byte array, not a pointer to buffer */
 	public byte[] toByteArray() {
-		HexBinaryAdapter adapter = new HexBinaryAdapter();
-		return adapter.unmarshal(this.toString());
+		return HexString.toByteArray(this.toString());
 	}
 
 	/**

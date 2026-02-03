@@ -6,10 +6,11 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
-import net.lingala.zip4j.util.Zip4jConstants;
+import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.CompressionMethod;
 
 /**
  * @bannerLicense
@@ -42,11 +43,7 @@ public class Zip {
 		ZipFile zf = null; 
 		
 		//Create ZIP Build Folder and ZIP file
-		try {
-			zf = new ZipFile(fZipFilename);
-		} catch (ZipException e) {
-			e.printStackTrace();
-		}
+		zf = new ZipFile(fZipFilename);
 		
 		//Create a InputStream from memory
 		InputStream is = new ByteArrayInputStream(ba);
@@ -72,11 +69,7 @@ public class Zip {
 		ZipFile zf = null; 
 
 		//Create ZIP Build Folder and ZIP file
-		try {
-			zf = new ZipFile(new File(fZipFileName + ".zip"));
-		} catch (ZipException e) {
-			e.printStackTrace();
-		}
+		zf = new ZipFile(new File(fZipFileName + ".zip"));
 		
 		//Cycle thru all the files and add them to the Zip File
 		for(Entry<File, byte[]> eEntry : mfba.entrySet()) {
@@ -115,7 +108,7 @@ public class Zip {
 		ZipParameters zp = new ZipParameters();
 		
 		// set compression method to deflate compression
-		zp.setCompressionMethod(Zip4jConstants.COMP_DEFLATE); 
+		zp.setCompressionMethod(CompressionMethod.DEFLATE); 
 		
 		/* 
 		 Set the compression level. This value has to be in between 0 to 9
@@ -126,13 +119,9 @@ public class Zip {
 		 DEFLATE_LEVEL_MAXIMUM - High compression level with a compromise of speed
 		 DEFLATE_LEVEL_ULTRA - Highest compression level but low speed
 		*/
-		zp.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL); 
+		zp.setCompressionLevel(CompressionLevel.NORMAL); 
 		
-		// set this flag to true. If this flag is true, Zip4j identifies that
-		// the data will not be from a file but directly from a stream
-		zp.setSourceExternalStream(true);
-		
-		zp.setRootFolderInZip(f.getPath() + File.separator);
+		zp.setRootFolderNameInZip(f.getPath() + File.separator);
 		
 		zp.setFileNameInZip(f.toString());
 		

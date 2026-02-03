@@ -11,7 +11,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -257,8 +256,7 @@ public class HexString {
 	 * @return byte[]
 	 */
 	public byte[] toByteArray() {
-	     HexBinaryAdapter adapter = new HexBinaryAdapter();    
-	     return adapter.unmarshal(this.hexCompressed());	
+	     return decodeHex(this.hexCompressed());
 	}
 	
 	/**
@@ -441,12 +439,34 @@ public class HexString {
 		sHexString = sHexString	.replaceAll("(\\]|\\)|\\}|\\(|\\[|\\{)", "")
 								.replace(":", "");
 		
-		HexBinaryAdapter adapter = new HexBinaryAdapter();	     
-	     
-	     if (isModulus(sHexString.replace(" ", "")))
-	    	 return adapter.unmarshal(sHexString.replace(" ", ""));
+	     String hex = sHexString.replace(" ", "");
+	     if (isModulus(hex))
+	    	 return decodeHex(hex);
 	     else
 	    	 return new HexString().toByteArray();
+	}
+
+	private static byte[] decodeHex(String hex) {
+		if (hex == null) {
+			return new byte[0];
+		}
+
+		String cleaned = hex.replace(" ", "");
+		if (cleaned.length() % 2 != 0) {
+			return new byte[0];
+		}
+
+		int len = cleaned.length() / 2;
+		byte[] out = new byte[len];
+		for (int i = 0; i < len; i++) {
+			int hi = Character.digit(cleaned.charAt(i * 2), 16);
+			int lo = Character.digit(cleaned.charAt(i * 2 + 1), 16);
+			if (hi < 0 || lo < 0) {
+				return new byte[0];
+			}
+			out[i] = (byte) ((hi << 4) + lo);
+		}
+		return out;
 	}
 
 	/**

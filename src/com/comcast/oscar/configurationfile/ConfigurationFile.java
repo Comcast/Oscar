@@ -27,10 +27,11 @@ import com.comcast.oscar.tlv.TlvVariableBinding;
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 
-import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
-import net.lingala.zip4j.util.Zip4jConstants;
+import net.lingala.zip4j.model.enums.CompressionLevel;
+import net.lingala.zip4j.model.enums.CompressionMethod;
 
 /**
  * @bannerLicense
@@ -1008,7 +1009,7 @@ public class ConfigurationFile {
 		ZipParameters zpParameters = new ZipParameters();
 		
 		// set compression method to deflate compression
-		zpParameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE); 
+		zpParameters.setCompressionMethod(CompressionMethod.DEFLATE); 
 		
 		/* 
 		 Set the compression level. This value has to be in between 0 to 9
@@ -1019,7 +1020,7 @@ public class ConfigurationFile {
 		 DEFLATE_LEVEL_MAXIMUM - High compression level with a compromise of speed
 		 DEFLATE_LEVEL_ULTRA - Highest compression level but low speed
 		*/
-		zpParameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL); 
+		zpParameters.setCompressionLevel(CompressionLevel.NORMAL); 
 		
 		return zpParameters;
 	}
@@ -1032,7 +1033,7 @@ public class ConfigurationFile {
 	 */
 	@SuppressWarnings("unused")
 	private void setZipFolderRoot(ZipParameters zp ,File fFileRootDir) {
-		zp.setRootFolderInZip(fFileRootDir.getPath() + File.separator);
+		zp.setRootFolderNameInZip(fFileRootDir.getPath() + File.separator);
 	}
 
 	/**
