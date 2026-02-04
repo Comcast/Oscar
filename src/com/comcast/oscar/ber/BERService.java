@@ -99,11 +99,7 @@ public class BERService {
         // System.exit(2);
       }
 
-      ByteArrayOutputStream baosCounter32 = new ByteArrayOutputStream();
-
-      vbCounter32BER.encodeBER(baosCounter32);
-
-      berString = new HexString(baosCounter32.toByteArray()).hexCompressed();
+      berString = encodeVariableBinding(vbCounter32BER, sObjectID, bBerDataType, lNumber);
 
     } else if (BER.COUNTER64 == bBerDataType) {
 
@@ -119,11 +115,7 @@ public class BERService {
         logger.debug("ERROR -> (" + e.getMessage() + ")");
       }
 
-      ByteArrayOutputStream baosCounter64 = new ByteArrayOutputStream();
-
-      vbCounter64BER.encodeBER(baosCounter64);
-
-      berString = new HexString(baosCounter64.toByteArray()).hexCompressed();
+      berString = encodeVariableBinding(vbCounter64BER, sObjectID, bBerDataType, lNumber);
 
     } else if ((BER.GAUGE == bBerDataType) || (BER.GAUGE32 == bBerDataType)) {
 
@@ -139,11 +131,7 @@ public class BERService {
         logger.debug("ERROR -> (" + e.getMessage() + ")");
       }
 
-      ByteArrayOutputStream baosGauge32 = new ByteArrayOutputStream();
-
-      vbGauge32BER.encodeBER(baosGauge32);
-
-      berString = new HexString(baosGauge32.toByteArray()).hexCompressed();
+      berString = encodeVariableBinding(vbGauge32BER, sObjectID, bBerDataType, lNumber);
 
     } else if ((BER.INTEGER == bBerDataType) || (BER.INTEGER32 == bBerDataType)) {
 
@@ -159,11 +147,7 @@ public class BERService {
         logger.debug("ERROR -> (" + e.getMessage() + ")");
       }
 
-      ByteArrayOutputStream baosInteger32BER = new ByteArrayOutputStream();
-
-      vbInteger32BER.encodeBER(baosInteger32BER);
-
-      berString = new HexString(baosInteger32BER.toByteArray()).hexCompressed();
+      berString = encodeVariableBinding(vbInteger32BER, sObjectID, bBerDataType, lNumber);
 
     } else if ((BER.TIMETICKS == bBerDataType)) {
 
@@ -179,11 +163,7 @@ public class BERService {
         logger.debug("ERROR -> (" + e.getMessage() + ")");
       }
 
-      ByteArrayOutputStream baosTimeTicksBER = new ByteArrayOutputStream();
-
-      vbTimeTicksBER.encodeBER(baosTimeTicksBER);
-
-      berString = new HexString(baosTimeTicksBER.toByteArray()).hexCompressed();
+      berString = encodeVariableBinding(vbTimeTicksBER, sObjectID, bBerDataType, lNumber);
     }
 
     return berString;
@@ -224,11 +204,7 @@ public class BERService {
         logger.debug("ERROR -> (" + e.getMessage() + ")");
       }
 
-      ByteArrayOutputStream baosIpAddress = new ByteArrayOutputStream();
-
-      vbIpBER.encodeBER(baosIpAddress);
-
-      berString = new HexString(baosIpAddress.toByteArray()).hexCompressed();
+      berString = encodeVariableBinding(vbIpBER, sObjectID, bBerDataType, sValue);
 
     } else if (BER.OCTETSTRING == bBerDataType) {
 
@@ -244,11 +220,7 @@ public class BERService {
         logger.debug("ERROR -> (" + e.getMessage() + ")");
       }
 
-      ByteArrayOutputStream baosOctetString = new ByteArrayOutputStream();
-
-      vbOctBER.encodeBER(baosOctetString);
-
-      berString = new HexString(baosOctetString.toByteArray()).hexCompressed();
+      berString = encodeVariableBinding(vbOctBER, sObjectID, bBerDataType, sValue);
     }
 
     return berString;
@@ -290,11 +262,7 @@ public class BERService {
         logger.debug("ERROR -> (" + e.getMessage() + ")");
       }
 
-      ByteArrayOutputStream baosOctetString = new ByteArrayOutputStream();
-
-      vbOctBER.encodeBER(baosOctetString);
-
-      berString = new HexString(baosOctetString.toByteArray()).hexCompressed();
+      berString = encodeVariableBinding(vbOctBER, sObjectID, bBerDataType, new HexString(bValue));
     }
 
     return berString;
@@ -585,5 +553,24 @@ public class BERService {
     }
 
     return result;
+  }
+
+  private static String encodeVariableBinding(
+      VariableBinding variableBinding, String objectId, byte berDataType, Object value)
+      throws Exception {
+    if (variableBinding == null) {
+      throw new IllegalArgumentException(
+          "Unable to BER encode OID "
+              + objectId
+              + " with data type "
+              + BinaryConversion.byteToUnsignedInteger(berDataType)
+              + " and value "
+              + value
+              + ". Ensure OID is dotted or install Net-SNMP mappings.");
+    }
+
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    variableBinding.encodeBER(baos);
+    return new HexString(baos.toByteArray()).hexCompressed();
   }
 }

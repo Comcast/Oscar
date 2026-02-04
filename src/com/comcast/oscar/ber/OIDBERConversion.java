@@ -25,7 +25,7 @@ public class OIDBERConversion {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(OIDBERConversion.class);
 
-  private Map<String, String> mssOidDataTypeValue;
+  private Map<String, Object> mssOidDataTypeValue;
 
   public final String OID = "OID";
   public final String DATA_TYPE = "DATA_TYPE";
@@ -62,7 +62,7 @@ public class OIDBERConversion {
 
     ByteArrayOutputStream boasOID;
 
-    boasOID = (ByteArrayOutputStream) BERService.encodeOID(mssOidDataTypeValue.get(OID));
+    boasOID = (ByteArrayOutputStream) BERService.encodeOID(stringValue(OID));
 
     return boasOID.toByteArray();
   }
@@ -73,11 +73,11 @@ public class OIDBERConversion {
    */
   public byte[] getBER() throws Exception {
 
-    int iDataType = Integer.decode(mssOidDataTypeValue.get(DATA_TYPE));
+    int iDataType = Integer.decode(stringValue(DATA_TYPE));
 
     if (logger.isDebugEnabled()) {
       logger.debug("OIDBERConversion.getBER() DT: " + iDataType);
-      logger.debug("OIDBERConversion.getBER() VA: " + mssOidDataTypeValue.get(VALUE));
+      logger.debug("OIDBERConversion.getBER() VA: " + stringValue(VALUE));
     }
 
     if (BERService.isNumberDataType(iDataType)) {
@@ -86,9 +86,7 @@ public class OIDBERConversion {
         logger.debug("OIDBERConversion.getBER() DT-INTEGER: " + iDataType);
 
       return BERService.setOIDEncodingToByteArray(
-          mssOidDataTypeValue.get(OID),
-          (byte) iDataType,
-          Long.decode(mssOidDataTypeValue.get(VALUE)));
+          stringValue(OID), (byte) iDataType, Long.decode(stringValue(VALUE)));
 
     } else if (BERService.isStringDataType(iDataType)) {
 
@@ -96,19 +94,24 @@ public class OIDBERConversion {
         logger.debug("OIDBERConversion.getBER() DT-STRING: " + iDataType);
 
       return BERService.setOIDEncodingToByteArray(
-          mssOidDataTypeValue.get(OID), (byte) iDataType, mssOidDataTypeValue.get(VALUE));
+          stringValue(OID), (byte) iDataType, stringValue(VALUE));
 
     } else if (iDataType == BinaryConversion.byteToUnsignedInteger(BERService.HEX)) {
 
       if (logger.isDebugEnabled()) {
         logger.debug("OIDBERConversion.getBER() DT-HEX: " + iDataType);
-        logger.debug("OIDBERConversion.getBER() HEX:    " + mssOidDataTypeValue.get(VALUE));
+        logger.debug("OIDBERConversion.getBER() HEX:    " + stringValue(VALUE));
       }
 
       return BERService.setOIDEncodingToByteArray(
-          mssOidDataTypeValue.get(OID), (byte) iDataType, mssOidDataTypeValue.get(VALUE));
+          stringValue(OID), (byte) iDataType, stringValue(VALUE));
     } else {
       return null;
     }
+  }
+
+  private String stringValue(String key) {
+    Object value = mssOidDataTypeValue.get(key);
+    return value == null ? null : String.valueOf(value);
   }
 }

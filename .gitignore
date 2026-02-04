@@ -3,6 +3,7 @@
 .classpath
 build.xml
 DottedTextualNetSNMPMap.*
+!db/DottedTextualNetSNMPMap.json
 *.sqlite~
 
 # Mobile Tools for Java (J2ME)
