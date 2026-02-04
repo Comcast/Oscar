@@ -33,6 +33,11 @@ This runs:
 - strict hygiene compile (`-Xlint:all -Werror`)
 - full compile + tests
 
+### Output Directory
+
+Use `output/` for generated local artifacts (compiled sample binaries, scratch output, etc.).
+This directory is git-ignored except for `output/.gitkeep`.
+
 ### Documentation (Local)
 
 The legacy GitHub Wiki has been imported into this repo under `docs/wiki/`.

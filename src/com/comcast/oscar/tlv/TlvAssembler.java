@@ -250,9 +250,11 @@ public class TlvAssembler extends TlvBuilder {
        * 	Only Strings will be allowed to have no Value
        * 	Else Return an empty TlvBuilder Object
        */
-      if ((joTlvDictionary.getString(Dictionary.VALUE).matches("\\s*"))
-          && ((!sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED))
-              || (!sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING)))) {
+      Object oValue = joTlvDictionary.get(Dictionary.VALUE);
+      if ((oValue instanceof String)
+          && (((String) oValue).matches("\\s*"))
+          && (!sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED))
+          && (!sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING))) {
         return tbLocalTlvBuilder;
       }
 

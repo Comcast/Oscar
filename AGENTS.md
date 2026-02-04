@@ -31,3 +31,4 @@ Use these guidelines when working in this codebase.
 - `src/` is the main source directory.
 - `res/` contains runtime resources.
 - `doc/` is generated documentation; avoid manual edits.
+- `output/` is the standard location for generated local test/output files.
