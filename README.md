@@ -16,6 +16,8 @@ Build dependencies and a local `oscar.jar` in one command:
 ./install.sh --build-oscar-jar
 ```
 
+This also updates a project-root symlink: `latest-build -> oscar.jar`.
+
 ### Build (JDK 21 required)
 
 ```bash
