@@ -25,3 +25,6 @@ hs_err_pid*
 /bin/
 *.classpath
 /target/
+lib/*
+# Local tooling binaries
+/tools/google-java-format.jar

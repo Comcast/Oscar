@@ -1,4 +1,0 @@
-language: java
-
-install: 
-  ant init build
