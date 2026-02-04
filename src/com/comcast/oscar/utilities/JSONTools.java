@@ -37,17 +37,17 @@ public class JSONTools {
    * @return boolean
    */
   public static boolean containJSONArray(JSONObject jo, String sKey) {
-
-    boolean boolContainJSON = false;
-
-    try {
-      if (jo.getString(sKey).toString().substring(0).contains("[")) boolContainJSON = true;
-
-    } catch (JSONException e) {
-      e.printStackTrace();
+    Object value = jo.opt(sKey);
+    if (value == null) {
+      return false;
     }
-
-    return boolContainJSON;
+    if (value instanceof JSONArray) {
+      return true;
+    }
+    if (value instanceof String) {
+      return ((String) value).trim().startsWith("[");
+    }
+    return false;
   }
 
   /**
