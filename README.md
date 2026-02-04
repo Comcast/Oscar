@@ -13,6 +13,7 @@ OSCAR is a Java-based CableLabs&reg; Configuration File Builder API for DOCSIS&r
 For build, test, release, cleanup, and development workflow details, see:
 
 - `development.md`
+- `tools.md`
 
 ### Documentation (Local)
 

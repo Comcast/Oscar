@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-./scripts/ci-verify.sh
+"$(dirname "$0")/quality/run-all.sh" "$@"

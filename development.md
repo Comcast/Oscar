@@ -57,7 +57,7 @@ tools/clean.sh --all
 Build release artifacts:
 
 ```bash
-python3 tools/release.py
+python3 tools/release/release.py
 ```
 
 By default this will:
@@ -75,30 +75,30 @@ Release guardrails:
 Explicit bump options:
 
 ```bash
-python3 tools/release.py --bump major
-python3 tools/release.py --bump minor
-python3 tools/release.py --bump maintenance
+python3 tools/release/release.py --bump major
+python3 tools/release/release.py --bump minor
+python3 tools/release/release.py --bump maintenance
 ```
 
 Change git behavior:
 
 ```bash
-python3 tools/release.py --no-push
-python3 tools/release.py --no-tag
-python3 tools/release.py --no-commit
+python3 tools/release/release.py --no-push
+python3 tools/release/release.py --no-tag
+python3 tools/release/release.py --no-commit
 ```
 
 Dry-run:
 
 ```bash
-python3 tools/release.py --dry-run
+python3 tools/release/release.py --dry-run
 ```
 
 Show current and next version only:
 
 ```bash
-python3 tools/release.py -v
-python3 tools/release.py --next-version --bump minor
+python3 tools/release/release.py -v
+python3 tools/release/release.py --next-version --bump minor
 ```
 
 ## Output Locations

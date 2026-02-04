@@ -16,12 +16,13 @@ Use these guidelines when working in this codebase.
 - Guard expensive debug work with `logger.isDebugEnabled()`.
 
 ## Scripts
-- `tools/run-all.sh`: format, hygiene checks, compile, and tests.
-- `tools/clean.sh`: remove generated artifacts (`--all`, `--output`, `--dist`, `--target`, `--jar`).
-- `tools/release.py`: release helper to run checks, package jars, and refresh `oscar.jar` + `latest-build`.
-- `scripts/ci-verify.sh`: invoked by `tools/run-all.sh`.
-- `tools/code-hygene-checker.sh`: strict compile with `-Xlint:all -Werror`.
-- `tools/setup-formatter.sh`: fetches `google-java-format`.
+- `tools/quality/run-all.sh`: format, hygiene checks, compile, and tests.
+- `tools/maintenance/clean.sh`: remove generated artifacts (`--all`, `--output`, `--dist`, `--target`, `--jar`).
+- `tools/release/release.py`: release helper to run checks, package jars, and refresh `oscar.jar` + `latest-build`.
+- `scripts/ci-verify.sh`: invoked by `tools/quality/run-all.sh`.
+- `tools/quality/code-hygene-checker.sh`: strict compile with `-Xlint:all -Werror`.
+- `tools/quality/setup-formatter.sh`: fetches `google-java-format`.
+- `tools/run-all.sh`, `tools/clean.sh`, `tools/code-hygene-checker.sh`, `tools/setup-formatter.sh`: compatibility wrappers.
 - `scripts/verify.sh`: compile + test.
 
 ## Tests
