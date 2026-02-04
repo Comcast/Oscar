@@ -1,0 +1,50 @@
+name: Release Binary
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Maven cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+
+      - name: Build oscar.jar
+        run: |
+          mvn -B -DskipTests package
+          source_jar="$(find dist target -maxdepth 1 -type f -name '*-all.jar' | head -n1 || true)"
+          if [ -z "${source_jar}" ]; then
+            echo "Shaded jar was not found in dist/ or target/." >&2
+            exit 1
+          fi
+          cp "${source_jar}" oscar.jar
+
+      - name: Generate checksum
+        run: sha256sum oscar.jar > oscar.jar.sha256
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            oscar.jar
+            oscar.jar.sha256
