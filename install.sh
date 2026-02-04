@@ -1,6 +1,36 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+BUILD_OSCAR_JAR=0
+
+usage() {
+  cat <<'EOF'
+Usage: ./install.sh [options]
+
+Options:
+  -b, --build-oscar-jar   Build a local oscar.jar after dependency install
+  -h, --help              Show this help message
+EOF
+}
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -b|--build-oscar-jar)
+      BUILD_OSCAR_JAR=1
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+  shift
+done
+
 get_java_major() {
   if ! command -v java >/dev/null 2>&1; then
     return 1
@@ -133,6 +163,22 @@ ensure_maven() {
   fi
 }
 
+build_oscar_jar() {
+  echo "Building oscar.jar ..."
+  mvn -q -DskipTests package
+
+  local source_jar=""
+  source_jar="$(find dist target -maxdepth 1 -type f -name '*-all.jar' | head -n1 || true)"
+
+  if [ -z "${source_jar}" ]; then
+    echo "Build completed, but shaded jar was not found in dist/ or target/." >&2
+    return 1
+  fi
+
+  cp "${source_jar}" oscar.jar
+  echo "Created oscar.jar from ${source_jar}"
+}
+
 case "$(uname -s 2>/dev/null || echo "")" in
   Linux)
     # Keep existing Java 21 if already available.
@@ -150,6 +196,11 @@ case "$(uname -s 2>/dev/null || echo "")" in
     fi
     ensure_maven
     configure_local_tool_paths
+
+    if [ "${BUILD_OSCAR_JAR}" -eq 1 ]; then
+      build_oscar_jar
+    fi
+
     echo "Installation complete."
     echo "Run: source \"${HOME}/.oscar-env\""
     exit 0

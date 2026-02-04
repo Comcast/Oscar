@@ -10,6 +10,12 @@ Run:
 ./install.sh
 ```
 
+Build dependencies and a local `oscar.jar` in one command:
+
+```bash
+./install.sh --build-oscar-jar
+```
+
 ### Build (JDK 21 required)
 
 ```bash
