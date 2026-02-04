@@ -14,6 +14,7 @@ import xml.etree.ElementTree as ET
 VERSION_PATTERN = re.compile(r"^(?P<major>\d+)\.(?P<minor>\d+)\.(?P<maintenance>\d+)$")
 BUMP_CHOICES = ("major", "minor", "maintenance")
 ALLOWED_RELEASE_BRANCHES = ("main", "master")
+CONSTANTS_FILE_PATH = Path("src/com/comcast/oscar/constants/Constants.java")
 
 
 def run(cmd: list[str], dry_run: bool = False, capture: bool = False) -> str:
@@ -81,6 +82,26 @@ def write_version(pom_path: Path, old_version: str, new_version: str, dry_run: b
     pom_path.write_text(updated, encoding="utf-8")
 
 
+def write_constants_version(
+    constants_path: Path, old_version: str, new_version: str, dry_run: bool = False
+) -> None:
+    if old_version == new_version:
+        return
+    constants_text = constants_path.read_text(encoding="utf-8")
+    updated, replacements = re.subn(
+        r'(OSCAR_VERSION\s*=\s*")' + re.escape(old_version) + r'(";\s*)',
+        rf'\g<1>{new_version}\g<2>',
+        constants_text,
+        count=1,
+    )
+    if replacements != 1:
+        raise RuntimeError("Failed to update OSCAR_VERSION in Constants.java")
+    if dry_run:
+        print(f"+ update Constants.java version: {old_version} -> {new_version}")
+        return
+    constants_path.write_text(updated, encoding="utf-8")
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -137,7 +158,7 @@ def ensure_release_branch(branch: str, dry_run: bool = False) -> None:
 
 
 def commit_release(version: str, dry_run: bool = False) -> None:
-    run(["git", "add", "pom.xml"], dry_run=dry_run)
+    run(["git", "add", "pom.xml", str(CONSTANTS_FILE_PATH)], dry_run=dry_run)
     run(["git", "commit", "-m", f"release: v{version}"], dry_run=dry_run)
 
 
@@ -160,6 +181,9 @@ def build_release(
     current_version = read_version(pom_path)
     new_version = bump_version(current_version, bump)
     write_version(pom_path, current_version, new_version, dry_run=dry_run)
+    write_constants_version(
+        repo_root / CONSTANTS_FILE_PATH, current_version, new_version, dry_run=dry_run
+    )
     version = new_version
     tag_name = f"v{version}"
     branch = current_branch(dry_run=dry_run)

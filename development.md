@@ -62,6 +62,7 @@ python3 tools/release.py
 
 By default this will:
 - bump maintenance version (`X.Y.Z` -> `X.Y.(Z+1)`)
+- sync version in `pom.xml` and `src/com/comcast/oscar/constants/Constants.java`
 - run checks and package artifacts
 - commit the version bump (`release: vX.Y.Z`)
 - create release tag (`vX.Y.Z`)
