@@ -615,7 +615,9 @@ public class HexString {
       }
     }
 
-    lbByteArrayGroup.add(baosByteArrayGroup.toByteArray());
+    if (baosByteArrayGroup.size() > 0) {
+      lbByteArrayGroup.add(baosByteArrayGroup.toByteArray());
+    }
 
     if (logger.isDebugEnabled()) {
       logger.debug(

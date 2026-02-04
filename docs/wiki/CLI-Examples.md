@@ -26,7 +26,7 @@
 
 #### Binary To Text -> Add OID and Display
 
-		java -jar oscar.jar -d -s d 3 -i docsis.bin -OID [sysContact.0][1234567890][OctetString]
+		java -jar oscar.jar -d -s d 3 -i docsis.bin -O [sysContact.0][1234567890][OctetString]
 
 #### Binary To Text -> Add Downstream Frequency and Display
 
@@ -107,7 +107,7 @@
 
 		java -jar oscar.jar -x -i pktcbl-2.0-DigitMap.bin
 
-		java -jar oscar.jar -hex t -i docsis.bin
+		java -jar oscar.jar -x t -i docsis.bin
 
 #### Snmptranslate
 
