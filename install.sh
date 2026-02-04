@@ -22,6 +22,47 @@ verify_java21() {
   java -version
 }
 
+configure_local_tool_paths() {
+  local env_file="${HOME}/.oscar-env"
+  local marker_start="# >>> oscar local tools >>>"
+  local marker_end="# <<< oscar local tools <<<"
+
+  cat > "${env_file}" <<'EOF'
+#!/usr/bin/env bash
+if [ -d "${HOME}/.local/temurin-21/bin" ]; then
+  export JAVA_HOME="${HOME}/.local/temurin-21"
+  case ":${PATH}:" in
+    *":${JAVA_HOME}/bin:"*) ;;
+    *) export PATH="${JAVA_HOME}/bin:${PATH}" ;;
+  esac
+fi
+
+if [ -d "${HOME}/.local/apache-maven-3.9.9/bin" ]; then
+  case ":${PATH}:" in
+    *":${HOME}/.local/apache-maven-3.9.9/bin:"*) ;;
+    *) export PATH="${HOME}/.local/apache-maven-3.9.9/bin:${PATH}" ;;
+  esac
+fi
+EOF
+  chmod +x "${env_file}"
+
+  for shell_rc in "${HOME}/.bashrc" "${HOME}/.profile"; do
+    touch "${shell_rc}"
+    if ! grep -Fq "${marker_start}" "${shell_rc}"; then
+      {
+        echo ""
+        echo "${marker_start}"
+        echo "[ -f \"${env_file}\" ] && . \"${env_file}\""
+        echo "${marker_end}"
+      } >> "${shell_rc}"
+    fi
+  done
+
+  # Apply to current shell process for immediate script use.
+  # shellcheck source=/dev/null
+  . "${env_file}"
+}
+
 install_local_jdk21() {
   local jdk_base="${HOME}/.local/temurin-21"
   local jdk_tgz="${HOME}/.local/temurin21.tgz"
@@ -108,6 +149,9 @@ case "$(uname -s 2>/dev/null || echo "")" in
       verify_java21
     fi
     ensure_maven
+    configure_local_tool_paths
+    echo "Installation complete."
+    echo "Run: source \"${HOME}/.oscar-env\""
     exit 0
     ;;
   Darwin)
