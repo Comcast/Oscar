@@ -28,3 +28,17 @@ Start here:
 - `docs/wiki/Home.md` (if present)
 - `docs/wiki/CLI-Overview.md`
 - `docs/wiki/API-Overview.md`
+
+### Quick CLI Test
+
+Text to binary:
+
+```bash
+java -jar oscar.jar -c -s d 3 -i src/com/comcast/oscar/examples/testfiles/DOCSIS-GOLDEN.txt -o output/DOCSIS-GOLDEN.bin
+```
+
+Binary to text:
+
+```bash
+java -jar oscar.jar -d -s d 3 -i output/DOCSIS-GOLDEN.bin > output/DOCSIS-GOLDEN-roundtrip.txt
+```
