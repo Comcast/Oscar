@@ -34,7 +34,7 @@ public class BuildOptions {
    */
   public static Options run(Options options) {
     options.addOption("h", "help", false, "View all commands with descriptions.");
-    options.addOption("version", false, "Display current version.");
+    options.addOption("v", "version", false, "Display current version.");
     options.addOption(CVC.OptionParameters());
     options.addOption(Decompile.OptionParameters());
     options.addOption(DigitmapDisplay.OptionParameters());
