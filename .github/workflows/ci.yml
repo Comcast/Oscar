@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-linux:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -44,4 +44,41 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: surefire-reports-${{ matrix.os }}
+          path: target/surefire-reports/
+
+  build-macos:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Setup Maven cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2-
+
+      - name: Setup formatter
+        run: tools/setup-formatter.sh
+
+      - name: Run all checks
+        run: tools/run-all.sh
+
+      - name: Run JUnit tests
+        run: mvn -B test
+
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports-macos-14
           path: target/surefire-reports/
