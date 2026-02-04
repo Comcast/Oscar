@@ -205,13 +205,27 @@ get_node_major() {
 install_local_node20() {
   local node_base="${HOME}/.local/node-20"
   local node_tgz="${HOME}/.local/node20.tar.xz"
-  local url="https://nodejs.org/dist/latest-v20.x/node-v20.19.5-linux-x64.tar.xz"
+  local shasums_url="https://nodejs.org/dist/latest-v20.x/SHASUMS256.txt"
+  local tar_name=""
+  local url=""
 
   if [ -x "${node_base}/bin/node" ]; then
     return 0
   fi
 
   mkdir -p "${HOME}/.local"
+  if command -v curl >/dev/null 2>&1; then
+    tar_name="$(curl -fsSL "$shasums_url" | awk '/linux-x64.tar.xz$/ {print $2; exit}')"
+  else
+    tar_name="$(wget -qO- "$shasums_url" | awk '/linux-x64.tar.xz$/ {print $2; exit}')"
+  fi
+
+  if [ -z "${tar_name:-}" ]; then
+    echo "Unable to resolve latest Node 20 Linux tarball from ${shasums_url}" >&2
+    return 1
+  fi
+
+  url="https://nodejs.org/dist/latest-v20.x/${tar_name}"
   if command -v curl >/dev/null 2>&1; then
     curl -fsSL "$url" -o "$node_tgz"
   else
@@ -222,7 +236,7 @@ install_local_node20() {
   rm -f "$node_tgz"
 
   local extracted_dir
-  extracted_dir="$(find "${HOME}/.local" -maxdepth 1 -type d -name 'node-v20.*-linux-x64' | head -n1 || true)"
+  extracted_dir="$(find "${HOME}/.local" -maxdepth 1 -type d -name 'node-v20.*-linux-x64' | sort | tail -n1 || true)"
   if [ -n "${extracted_dir:-}" ] && [ ! -d "$node_base" ]; then
     mv "$extracted_dir" "$node_base"
   fi
