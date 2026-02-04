@@ -315,9 +315,16 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def find_repo_root(start: Path) -> Path:
+    for candidate in [start, *start.parents]:
+        if (candidate / "pom.xml").is_file():
+            return candidate
+    raise RuntimeError("Unable to locate repo root (pom.xml not found in parent paths)")
+
+
 def main() -> int:
     args = parse_args()
-    repo_root = Path(__file__).resolve().parent.parent
+    repo_root = find_repo_root(Path(__file__).resolve().parent)
 
     try:
         if args.show_version:
