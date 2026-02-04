@@ -17,9 +17,6 @@ It also verifies or installs Net-SNMP (`snmptranslate`) on Linux.
 ./install.sh --build-oscar-jar
 ```
 
-This also updates:
-- `latest-build -> oscar.jar`
-
 ## First Run Directories
 When OSCAR runs, it may initialize these folders if missing:
 - `certificates/`

@@ -319,9 +319,6 @@ build_oscar_jar() {
 
   cp "${source_jar}" oscar.jar
   echo "Created oscar.jar from ${source_jar}"
-
-  ln -sfn oscar.jar latest-build
-  echo "Updated symlink latest-build -> oscar.jar"
 }
 
 case "$(uname -s 2>/dev/null || echo "")" in
