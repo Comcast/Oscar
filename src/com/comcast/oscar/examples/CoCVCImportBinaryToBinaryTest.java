@@ -1,7 +1,4 @@
 package com.comcast.oscar.examples;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
@@ -12,7 +9,9 @@ import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;
-
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /*
 	Copyright 2015 Comcast Cable Communications Management, LLC
@@ -26,82 +25,95 @@ import com.comcast.oscar.utilities.HexString;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
-	@author Maurice Garcia (maurice.garcia.2015@gmail.com)
+
+	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-
-/**
- */
+/** */
 public class CoCVCImportBinaryToBinaryTest {
 
-	/**
-	 * @param args
-	 */
-	@SuppressWarnings("deprecation")
-	public static void main(String[] args) {
+  /**
+   * @param args
+   */
+  @SuppressWarnings("deprecation")
+  public static void main(String[] args) {
 
-		File file = null;
-		
-		System.out.println("+------------------------------------------------------------------------------------------------------------+");
-		System.out.println("+----------------------------------------DOCSIS--------------------------------------------------------------+");
-		System.out.println("+------------------------------------------------------------------------------------------------------------+");
-		
-		try {
-			file = new File(new java.io.File( "." ).getCanonicalPath() + File.separatorChar + "testfiles" + File.separatorChar + "DocsisTestFile-CVC-Test.txt");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		System.out.println(new HexString(HexString.fileToByteArray(file)).toASCII());
-		
-		ConfigurationFileImport cfi = null;
+    File file = null;
 
-		try {
-			try {
-				cfi = new ConfigurationFileImport(file);
-			} catch (ConfigurationFileException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		
-		ConfigurationFile cf = new ConfigurationFile(ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE,cfi.getTlvBuilder());
-		
-															
-		/* Get CVC File */
-		
-		File fCVC = null;
-		
-		try {
-			fCVC = new File(new java.io.File( "." ).getCanonicalPath() + File.separatorChar + "testfiles" + File.separatorChar + "XXXXX-NA-CVC.der");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		TlvBuilder tbCVC = new TlvBuilder();
-		
-		try {
-			tbCVC.add(Constants.CO_SIGNER_CVC, HexString.fileToByteArray(fCVC));
-		} catch (TlvException e1) {
-			e1.printStackTrace();
-		}
-		
-		
-		//Add CVC
-		cf.add(tbCVC);
-		
-		cf.commit();
+    System.out.println(
+        "+------------------------------------------------------------------------------------------------------------+");
+    System.out.println(
+        "+----------------------------------------DOCSIS--------------------------------------------------------------+");
+    System.out.println(
+        "+------------------------------------------------------------------------------------------------------------+");
 
-		System.out.println("+-------------------------------------------AFTER CVC INSERTION-----------------------------------------------------------------+");
+    try {
+      file =
+          new File(
+              new java.io.File(".").getCanonicalPath()
+                  + File.separatorChar
+                  + "testfiles"
+                  + File.separatorChar
+                  + "DocsisTestFile-CVC-Test.txt");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
-		ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport(cf);
+    System.out.println(new HexString(HexString.fileToByteArray(file)).toASCII());
 
-		System.out.println(cfeDOCTLV.toPrettyPrint(0));
+    ConfigurationFileImport cfi = null;
 
-	}
+    try {
+      try {
+        cfi = new ConfigurationFileImport(file);
+      } catch (ConfigurationFileException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
 
+    ConfigurationFile cf =
+        new ConfigurationFile(
+            ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE, cfi.getTlvBuilder());
+
+    /* Get CVC File */
+
+    File fCVC = null;
+
+    try {
+      fCVC =
+          new File(
+              new java.io.File(".").getCanonicalPath()
+                  + File.separatorChar
+                  + "testfiles"
+                  + File.separatorChar
+                  + "XXXXX-NA-CVC.der");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    TlvBuilder tbCVC = new TlvBuilder();
+
+    try {
+      tbCVC.add(Constants.CO_SIGNER_CVC, HexString.fileToByteArray(fCVC));
+    } catch (TlvException e1) {
+      e1.printStackTrace();
+    }
+
+    // Add CVC
+    cf.add(tbCVC);
+
+    cf.commit();
+
+    System.out.println(
+        "+-------------------------------------------AFTER CVC"
+            + " INSERTION-----------------------------------------------------------------+");
+
+    ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport(cf);
+
+    System.out.println(cfeDOCTLV.toPrettyPrint(0));
+  }
 }

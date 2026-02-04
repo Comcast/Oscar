@@ -12,171 +12,169 @@ package com.comcast.oscar.test;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
+
 	@author Maurice Garcia (maurice.garcia.2015@gmail.com)
 
 */
 
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 
-
-/**
- */
+/** */
 public class ConfigurationFileBuildAPIUnitTest {
 
-	/**
-	 * Method main.
-	 * @param args String[]
-	 */
-	public static void main(String[] args) {
+  /**
+   * Method main.
+   *
+   * @param args String[]
+   */
+  public static void main(String[] args) {
 
-		boolean DOCSIS 					= false;
-		boolean PACKET_CABLE 			= false;
-		boolean ULTILS 					= false;
-		boolean BULK_BUILD				= false;
+    boolean DOCSIS = false;
+    boolean PACKET_CABLE = false;
+    boolean ULTILS = false;
+    boolean BULK_BUILD = false;
 
-		boolean DOCSIS_TEXT_BINARY 		= true;
-		boolean DOCSIS_BINARY_TEXT 		= true;
-		boolean DOCSIS_BINARY_BINARY 	= false;
+    boolean DOCSIS_TEXT_BINARY = true;
+    boolean DOCSIS_BINARY_TEXT = true;
+    boolean DOCSIS_BINARY_BINARY = false;
 
-		boolean PKTC_TEXT_BINARY 		= true;
-		boolean PKTC_BINARY_TEXT 		= true;
-		boolean PKTC_BINARY_BINARY 		= false;		
-		boolean PKTC_DIGIT_MAP 			= true;
+    boolean PKTC_TEXT_BINARY = true;
+    boolean PKTC_BINARY_TEXT = true;
+    boolean PKTC_BINARY_BINARY = false;
+    boolean PKTC_DIGIT_MAP = true;
 
-		boolean BULK_BUILD_TEXT			= false;
-		boolean BULK_BUILD_BINARY		= false;
+    boolean BULK_BUILD_TEXT = false;
+    boolean BULK_BUILD_BINARY = false;
 
+    ConfigurationFileBuildAPITestMethods cfbatm = new ConfigurationFileBuildAPITestMethods();
 
-		ConfigurationFileBuildAPITestMethods cfbatm = new ConfigurationFileBuildAPITestMethods();
+    /* ***************************************************************
+     * 							DOCSIS
+     *****************************************************************/
 
-		/* ***************************************************************
-		 * 							DOCSIS
-		 *****************************************************************/
+    /*Text To Binary*/
+    if (DOCSIS | DOCSIS_TEXT_BINARY) {
 
-				
-		/*Text To Binary*/
-		if (DOCSIS|DOCSIS_TEXT_BINARY) {
+      cfbatm.TextToBinaryDOCSIS();
 
-			cfbatm.TextToBinaryDOCSIS();
+      cfbatm.TextToBinaryInsertManufactureCVC();
 
-			cfbatm.TextToBinaryInsertManufactureCVC();
+      cfbatm.TextToBinaryInsertCoSignCVC();
 
-			cfbatm.TextToBinaryInsertCoSignCVC();
+      cfbatm.TextToBinaryInsertDownstreamFrequecy();
 
-			cfbatm.TextToBinaryInsertDownstreamFrequecy();
+      cfbatm.TextToBinaryInsertMaxCPE();
 
-			cfbatm.TextToBinaryInsertMaxCPE();
+      cfbatm.TextToBinaryInsertTLV();
 
-			cfbatm.TextToBinaryInsertTLV();
-			
-			cfbatm.TextToBinaryFullDOCSISConfiguration();
-			
-			cfbatm.TextToBinaryInsertTFTPServerAddress();
-			
-			cfbatm.TextToBinaryInsertOID();
-			
-		}
+      cfbatm.TextToBinaryFullDOCSISConfiguration();
 
-		/*Binary To Text*/
-		if (DOCSIS|DOCSIS_BINARY_TEXT) {
+      cfbatm.TextToBinaryInsertTFTPServerAddress();
 
-			cfbatm.BinaryToTextDOCSIS();
+      cfbatm.TextToBinaryInsertOID();
+    }
 
-			cfbatm.BinaryToTextDOCSISMaxCPE();
+    /*Binary To Text*/
+    if (DOCSIS | DOCSIS_BINARY_TEXT) {
 
-			cfbatm.BinaryToTextDOCSISFirmwareFileName();
+      cfbatm.BinaryToTextDOCSIS();
 
-			cfbatm.BinaryToTextDOCSISManCVC();
+      cfbatm.BinaryToTextDOCSISMaxCPE();
 
-			cfbatm.BinaryToTextDOCSISCoSignCVC();
+      cfbatm.BinaryToTextDOCSISFirmwareFileName();
 
-			cfbatm.BinaryToTextDOCSIS_TLV_MaxCPE_Firmware_Man_CoSignCVC();
-			
-			cfbatm.BinaryToTextDOCSISTFTPServerAddress();
-			
-			cfbatm.BinaryToTextInsertOID();
-		}
+      cfbatm.BinaryToTextDOCSISManCVC();
 
-		/*Binary To Binary*/
-		if (DOCSIS|DOCSIS_BINARY_BINARY) {
-			cfbatm.BinaryToBinaryDOCSIS();
-		}
+      cfbatm.BinaryToTextDOCSISCoSignCVC();
 
-		/* ***************************************************************
-		 * 							Packet Cable
-		 *****************************************************************/
+      cfbatm.BinaryToTextDOCSIS_TLV_MaxCPE_Firmware_Man_CoSignCVC();
 
-		/* Text To Binary */
-		if (PACKET_CABLE|PKTC_TEXT_BINARY) {
-			cfbatm.TextToBinaryPacketCable(ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE);
+      cfbatm.BinaryToTextDOCSISTFTPServerAddress();
 
-			cfbatm.TextToBinaryPacketCable(ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE);
+      cfbatm.BinaryToTextInsertOID();
+    }
 
-			cfbatm.TextToBinaryPacketCable(ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE);
-		}
+    /*Binary To Binary*/
+    if (DOCSIS | DOCSIS_BINARY_BINARY) {
+      cfbatm.BinaryToBinaryDOCSIS();
+    }
 
-		/* Binary To Text */
-		if (PACKET_CABLE|PKTC_BINARY_TEXT) {
+    /* ***************************************************************
+     * 							Packet Cable
+     *****************************************************************/
 
-			cfbatm.BinaryToTextPacketCable();
+    /* Text To Binary */
+    if (PACKET_CABLE | PKTC_TEXT_BINARY) {
+      cfbatm.TextToBinaryPacketCable(
+          ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE);
 
-			cfbatm.GetDigitMapFromBinary();
-		}
+      cfbatm.TextToBinaryPacketCable(
+          ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE);
 
-		/* Binary To Binary */
-		if (PACKET_CABLE|PKTC_BINARY_BINARY) {
-			cfbatm.BinaryToBinaryPacketCable();
-		}
+      cfbatm.TextToBinaryPacketCable(
+          ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE);
+    }
 
+    /* Binary To Text */
+    if (PACKET_CABLE | PKTC_BINARY_TEXT) {
 
-		/* DigitMap Operations */
-		if (PACKET_CABLE|PKTC_DIGIT_MAP) {
+      cfbatm.BinaryToTextPacketCable();
 
-			cfbatm.TextToBinaryPacketCableInsertDigitMap();
+      cfbatm.GetDigitMapFromBinary();
+    }
 
-			cfbatm.TextToBinaryInsertMultiDigitMap();
+    /* Binary To Binary */
+    if (PACKET_CABLE | PKTC_BINARY_BINARY) {
+      cfbatm.BinaryToBinaryPacketCable();
+    }
 
-			cfbatm.BinaryToBinaryInsertMultiDigitMap();
+    /* DigitMap Operations */
+    if (PACKET_CABLE | PKTC_DIGIT_MAP) {
 
-			cfbatm.BinaryToTextInsertMultiDigitMap(); 
-		}
+      cfbatm.TextToBinaryPacketCableInsertDigitMap();
 
-		/* ***************************************************************
-		 * 							ULTILITIES
-		 *****************************************************************/		
+      cfbatm.TextToBinaryInsertMultiDigitMap();
 
-		if (ULTILS) {
+      cfbatm.BinaryToBinaryInsertMultiDigitMap();
 
-			cfbatm.PrintDefaultDOCSISConfigurationTemplate();
+      cfbatm.BinaryToTextInsertMultiDigitMap();
+    }
 
-			cfbatm.PrintDefaultPacketCableConfigurationTemplate();
+    /* ***************************************************************
+     * 							ULTILITIES
+     *****************************************************************/
 
-			cfbatm.PrintTlvDotNotationDOCSISDefinition();
+    if (ULTILS) {
 
-			cfbatm.PrintTlvDotNotationPacketCableDefinition();
+      cfbatm.PrintDefaultDOCSISConfigurationTemplate();
 
-			cfbatm.PrintDOCSISJSONDump();
+      cfbatm.PrintDefaultPacketCableConfigurationTemplate();
 
-			cfbatm.PrintPacketCableJSONDump();
+      cfbatm.PrintTlvDotNotationDOCSISDefinition();
 
-			cfbatm.PrintTlvToJSON();
+      cfbatm.PrintTlvDotNotationPacketCableDefinition();
 
-			cfbatm.PrintJSONToTlv();
-		}
+      cfbatm.PrintDOCSISJSONDump();
 
-		/* ***************************************************************
-		 * 					BULK BUILD OPERATIONS
-		 *****************************************************************/
+      cfbatm.PrintPacketCableJSONDump();
 
-		if (BULK_BUILD|BULK_BUILD_TEXT) {
-			cfbatm.BulkBuildToText();
-		}
+      cfbatm.PrintTlvToJSON();
 
-		if (BULK_BUILD|BULK_BUILD_BINARY) {
-			cfbatm.BulkBuildToBinary();	
-		}
+      cfbatm.PrintJSONToTlv();
+    }
 
-		/* END OF MAIN*/
-	}
+    /* ***************************************************************
+     * 					BULK BUILD OPERATIONS
+     *****************************************************************/
+
+    if (BULK_BUILD | BULK_BUILD_TEXT) {
+      cfbatm.BulkBuildToText();
+    }
+
+    if (BULK_BUILD | BULK_BUILD_BINARY) {
+      cfbatm.BulkBuildToBinary();
+    }
+
+    /* END OF MAIN*/
+  }
 }

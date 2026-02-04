@@ -1,32 +1,38 @@
-### [OSCAR - OpenSource Cablemodem file AssembleR](http://comcast.github.io/Oscar/)
+# OSCAR - OpenSource Cablemodem file AssembleR
+
+[![CI](https://github.com/mgarcia01752/Oscar/actions/workflows/ci.yml/badge.svg)](https://github.com/mgarcia01752/Oscar/actions/workflows/ci.yml)
+![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)
+![Ubuntu 22.04](https://img.shields.io/badge/Ubuntu-22.04-E95420?logo=ubuntu&logoColor=white)
+![Ubuntu 24.04](https://img.shields.io/badge/Ubuntu-24.04-E95420?logo=ubuntu&logoColor=white)
+![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)
 
 OSCAR is a Java-based CableLabs&reg; Configuration File Builder API for DOCSIS&reg;, PacketCable&trade;, DPoE&trade; and DPoG&trade;.
 
-[Wiki](https://github.com/Comcast/Oscar/wiki)
+## Project Status
 
-[JavaDoc](http://comcast.github.io/Oscar/doc/index.html)
+I have taken this project back and resumed active development, building on the original codebase I wrote years ago.
+It has been updated to the latest JRE baseline, and upcoming work will focus on DOCSIS 4.0 support.
 
-### Travis CL Build Status
+## Quick Start
 
-[![Build Status](https://travis-ci.org/Comcast/Oscar.svg?branch=master)](https://travis-ci.org/Comcast/Oscar)
+```bash
+./install.sh --build-oscar-jar
+```
 
-### New
+## Quick CLI Test
 
-* Configuration Merge Bulk Build
-* NetSNMP OID Description
-* Dotted or Textual OID Text Configuration File Output
-* Toplevel TLV HEX Dump
+Text to binary:
 
-### 2015 TODO's Features
-* ADD REST Support - 2015
-* DPoG Support - Later 2015
-* ADD Extended CMTS MIC
-* Provide GUI Support to ADD/EDIT TLV Types to SQLite Database (soon)
-* Compile a JSON to Configuration File via CLI Later 2015
-* Complete CLI Interpreter functionality(API Started)
-* Edit Service Flow via Service Flow ID Directly
+```bash
+java -jar oscar.jar -c -s d 3 -i src/com/comcast/oscar/examples/testfiles/DOCSIS-GOLDEN.txt -o output/DOCSIS-GOLDEN.bin
+```
 
-### Known Issues
+Binary to text:
 
-* Add Multiple CommonTlvInserts at one time
+```bash
+java -jar oscar.jar -d -s d 3 -i output/DOCSIS-GOLDEN.bin > output/DOCSIS-GOLDEN-roundtrip.txt
+```
 
+📧 [Email](mailto:mgarcia01752@outlook.com)
+
+🔗 [LinkedIn](https://www.linkedin.com/in/mauricemgarcia)

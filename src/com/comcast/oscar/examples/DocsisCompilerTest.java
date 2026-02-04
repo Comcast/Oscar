@@ -1,13 +1,13 @@
 package com.comcast.oscar.examples;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 
 import com.comcast.oscar.compiler.DocsisCompiler;
 import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /*
 	Copyright 2015 Comcast Cable Communications Management, LLC
@@ -21,47 +21,46 @@ import com.comcast.oscar.utilities.HexString;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
-	@author Maurice Garcia (maurice.garcia.2015@gmail.com)
+
+	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-/**
- */
+/** */
 public class DocsisCompilerTest {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		
-		System.out.println("+----------------------------------DOCSIS COMPILER---------------------------------------------------+");
+  /**
+   * @param args
+   */
+  public static void main(String[] args) {
 
-		File fDocsisConfiguration = TestDirectoryStructure.inputDir();
-		
-        byte[] bDocsisConfiguration = new byte[(int) fDocsisConfiguration.length()];
-                
-        FileInputStream fisDocsisConfiguration;
-        
-		try {
-			fisDocsisConfiguration = new FileInputStream(fDocsisConfiguration);
-			fisDocsisConfiguration.read(bDocsisConfiguration);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		DocsisCompiler dcDocsisCompiler = new DocsisCompiler(1);
+    System.out.println(
+        "+----------------------------------DOCSIS"
+            + " COMPILER---------------------------------------------------+");
 
-        TlvBuilder tbDocsisConfiguration = new TlvBuilder();
-        
-        try {
-			tbDocsisConfiguration.add(new HexString(bDocsisConfiguration));
-		} catch (TlvException e) {
-			e.printStackTrace();
-		}
-		
-		dcDocsisCompiler.add(tbDocsisConfiguration);
+    File fDocsisConfiguration = TestDirectoryStructure.inputDir();
 
-	}
+    byte[] bDocsisConfiguration = new byte[(int) fDocsisConfiguration.length()];
 
+    FileInputStream fisDocsisConfiguration;
+
+    try {
+      fisDocsisConfiguration = new FileInputStream(fDocsisConfiguration);
+      fisDocsisConfiguration.read(bDocsisConfiguration);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    DocsisCompiler dcDocsisCompiler = new DocsisCompiler(1);
+
+    TlvBuilder tbDocsisConfiguration = new TlvBuilder();
+
+    try {
+      tbDocsisConfiguration.add(new HexString(bDocsisConfiguration));
+    } catch (TlvException e) {
+      e.printStackTrace();
+    }
+
+    dcDocsisCompiler.add(tbDocsisConfiguration);
+  }
 }

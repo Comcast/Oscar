@@ -1,7 +1,7 @@
 package com.comcast.oscar.examples;
-import java.io.File;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
+import java.io.File;
 
 /*
 	Copyright 2015 Comcast Cable Communications Management, LLC
@@ -15,37 +15,37 @@ import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
-	@author Maurice Garcia (maurice.garcia.2015@gmail.com)
+
+	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-/**
- */
+/** */
 public class ConfigurationFileTest {
 
-	/**
-	 * Method main.
-	 * @param args String[]
-	 */
-	@SuppressWarnings("deprecation")
-	public static void main(String[] args) {
-	
-		boolean DOCSIS = true;
-		
-		if (DOCSIS) {
-			System.out.println("+--------------------------------------------------------------------------------------------------------+");
+  /**
+   * Method main.
+   *
+   * @param args String[]
+   */
+  @SuppressWarnings("deprecation")
+  public static void main(String[] args) {
 
-			System.out.println("ConfigurationFileExportTest: DOCSIS File");
+    boolean DOCSIS = true;
 
-			ConfigurationFileExport cfeDOCTLV = new ConfigurationFileExport (new File("c:\\d10_syscontact.cm"));
+    if (DOCSIS) {
+      System.out.println(
+          "+--------------------------------------------------------------------------------------------------------+");
 
-			//ConfigrationFileExport cfeDOCTLV = new ConfigrationFileExport (new File("c:\\d10_syscontact-reduce.cm"));
-		
-			System.out.println(cfeDOCTLV.toPrettyPrint(0));
-		}
+      System.out.println("ConfigurationFileExportTest: DOCSIS File");
 
-	}	
-		
+      ConfigurationFileExport cfeDOCTLV =
+          new ConfigurationFileExport(new File("c:\\d10_syscontact.cm"));
 
+      // ConfigrationFileExport cfeDOCTLV = new ConfigrationFileExport (new
+      // File("c:\\d10_syscontact-reduce.cm"));
+
+      System.out.println(cfeDOCTLV.toPrettyPrint(0));
+    }
+  }
 }

@@ -1,4 +1,5 @@
 package com.comcast.oscar.examples;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -14,33 +15,34 @@ import org.json.JSONObject;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
-	@author Maurice Garcia (maurice.garcia.2015@gmail.com)
+
+	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-/**
- */
+/** */
 public interface Dictionary {
 
-	/**
-	 * Method getMajorTlvDefinition.
-	 * @param iType Integer
-	 */
-	public void getMajorTlvDefinition (Integer iType);
-	
-	/**
-	 * Method getTlvDefinition.
-	 * @param iType Integer
-	 * @return JSONObject
-	 */
-	public JSONObject getTlvDefinition (Integer iType);
-	
-	/**
-	 * Method getAllTlvDefinition.
-	 * @param iCableLabsConfigType int
-	 * @return JSONArray
-	 */
-	public JSONArray getAllTlvDefinition(int iCableLabsConfigType);
-	
+  /**
+   * Method getMajorTlvDefinition.
+   *
+   * @param iType Integer
+   */
+  public void getMajorTlvDefinition(Integer iType);
+
+  /**
+   * Method getTlvDefinition.
+   *
+   * @param iType Integer
+   * @return JSONObject
+   */
+  public JSONObject getTlvDefinition(Integer iType);
+
+  /**
+   * Method getAllTlvDefinition.
+   *
+   * @param iCableLabsConfigType int
+   * @return JSONArray
+   */
+  public JSONArray getAllTlvDefinition(int iCableLabsConfigType);
 }

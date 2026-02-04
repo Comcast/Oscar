@@ -12,94 +12,93 @@ package com.comcast.oscar.examples;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
-	@author Maurice Garcia (maurice.garcia.2015@gmail.com)
+
+	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.test.TestDirectoryStructure;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
- * 
- * Verifies CLI Operation:
- *      -c,--compile
-          compile the text to a binary
- * 
- * @author mgarci00
+ * Verifies CLI Operation: -c,--compile compile the text to a binary
  *
+ * @author mgarci00
  * @version $Revision: 1.0 $
  */
 public class TextToBinaryTest {
 
-	/**
-	 * Method main.
-	 * @param args String[]
-	 */
-	public static void main(String[] args) {
+  /**
+   * Method main.
+   *
+   * @param args String[]
+   */
+  public static void main(String[] args) {
 
-		ConfigurationFileImport cfiDocsis = null;
-		
-		boolean DOCSIS 	= true, 
-				PC 		= false;
-		
-		if (DOCSIS) {
+    ConfigurationFileImport cfiDocsis = null;
 
-			try {
-				try {
-					cfiDocsis = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName("DOCSIS-US-FLOW.txt"));
-				} catch (ConfigurationFileException e) {
-					e.printStackTrace();
-				}
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+    boolean DOCSIS = true, PC = false;
 
-			ConfigurationFile cfDocsis = new ConfigurationFile(ConfigurationFile.DOCSIS_VER_30,cfiDocsis.getTlvBuilder());
+    if (DOCSIS) {
 
-			cfDocsis.commit();
+      try {
+        try {
+          cfiDocsis =
+              new ConfigurationFileImport(
+                  TestDirectoryStructure.fInputDirFileName("DOCSIS-US-FLOW.txt"));
+        } catch (ConfigurationFileException e) {
+          e.printStackTrace();
+        }
+      } catch (IOException e1) {
+        e1.printStackTrace();
+      }
 
-			cfDocsis.setConfigurationFileName(TestDirectoryStructure.fOutputDirFileName("DOCSIS-US-FLOW.bin"));
+      ConfigurationFile cfDocsis =
+          new ConfigurationFile(ConfigurationFile.DOCSIS_VER_30, cfiDocsis.getTlvBuilder());
 
-			if (cfDocsis.writeToDisk()) {
-				System.out.println("Write to File: ");
-			} else {
-				System.out.println("Write to File FAILED: ");
-			}
+      cfDocsis.commit();
 
-		}
+      cfDocsis.setConfigurationFileName(
+          TestDirectoryStructure.fOutputDirFileName("DOCSIS-US-FLOW.bin"));
 
-		if (PC) {
-			
-			ConfigurationFileImport cfiPacketCable = null;
+      if (cfDocsis.writeToDisk()) {
+        System.out.println("Write to File: ");
+      } else {
+        System.out.println("Write to File FAILED: ");
+      }
+    }
 
-			try {
-				cfiPacketCable = new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName("xxxx.txt"));
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ConfigurationFileException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    if (PC) {
 
-			ConfigurationFile cfPacketCAble = new ConfigurationFile(ConfigurationFile.PKT_CBL_VER_20,cfiPacketCable.getTlvBuilder());
+      ConfigurationFileImport cfiPacketCable = null;
 
-			cfPacketCAble.commit();
+      try {
+        cfiPacketCable =
+            new ConfigurationFileImport(TestDirectoryStructure.fInputDirFileName("xxxx.txt"));
+      } catch (FileNotFoundException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (ConfigurationFileException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
 
-			cfPacketCAble.setConfigurationFileName(TestDirectoryStructure.fOutputDirFileName("xxxx.bin"));
+      ConfigurationFile cfPacketCAble =
+          new ConfigurationFile(ConfigurationFile.PKT_CBL_VER_20, cfiPacketCable.getTlvBuilder());
 
-			if (cfPacketCAble.writeToDisk()) {
-				System.out.println("Write to File: ");
-			} else {
-				System.out.println("Write to File FAILED: ");
-			}
-		}
+      cfPacketCAble.commit();
 
-	}
+      cfPacketCAble.setConfigurationFileName(TestDirectoryStructure.fOutputDirFileName("xxxx.bin"));
+
+      if (cfPacketCAble.writeToDisk()) {
+        System.out.println("Write to File: ");
+      } else {
+        System.out.println("Write to File FAILED: ");
+      }
+    }
+  }
 }

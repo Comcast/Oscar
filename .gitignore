@@ -3,6 +3,7 @@
 .classpath
 build.xml
 DottedTextualNetSNMPMap.*
+!db/DottedTextualNetSNMPMap.json
 *.sqlite~
 
 # Mobile Tools for Java (J2ME)
@@ -10,6 +11,7 @@ DottedTextualNetSNMPMap.*
 
 # Package Files #
 snmp4j-smi.jar
+*.jar
 *.war
 *.ear
 
@@ -18,8 +20,17 @@ snmp4j-smi.jar
 
 # Directories #
 test/
+assessment/
+output/*
+!output/.gitkeep
+dist/*
+!dist/.gitkeep
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /bin/
 *.classpath
+/target/
+lib/*
+# Local tooling binaries
+/tools/google-java-format.jar

@@ -12,36 +12,32 @@ package com.comcast.oscar.examples;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
-	@author Maurice Garcia (maurice.garcia.2015@gmail.com)
+
+	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-
 import java.util.Stack;
 
-
-/**
- */
+/** */
 public class StackClassTest {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
+  /**
+   * @param args
+   */
+  public static void main(String[] args) {
 
-		Stack<String> sksStackTest = new Stack<String>();
-		
-		sksStackTest.push("Test-1");
-		sksStackTest.push("Test-2");
-		sksStackTest.push("Test-3");
-		sksStackTest.push("Test-4");
-		
-		System.out.println("Stack-Info: " + sksStackTest);
-		
-		Object[] oStackTest = sksStackTest.toArray();
-		
-		System.out.println("String[]-Info: " + oStackTest[0] + " -> " + oStackTest.length);
-	}
+    Stack<String> sksStackTest = new Stack<String>();
 
+    sksStackTest.push("Test-1");
+    sksStackTest.push("Test-2");
+    sksStackTest.push("Test-3");
+    sksStackTest.push("Test-4");
+
+    System.out.println("Stack-Info: " + sksStackTest);
+
+    Object[] oStackTest = sksStackTest.toArray();
+
+    System.out.println("String[]-Info: " + oStackTest[0] + " -> " + oStackTest.length);
+  }
 }

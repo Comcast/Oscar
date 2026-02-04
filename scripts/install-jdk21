@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "$(uname -s 2>/dev/null || echo "")" in
+  Linux|Darwin)
+    exec "$(dirname "$0")/install-jdk21-linux.sh"
+    ;;
+  MINGW*|MSYS*|CYGWIN*|Windows_NT)
+    if command -v powershell >/dev/null 2>&1; then
+      exec powershell -NoProfile -ExecutionPolicy Bypass -File ".\\scripts\\install-jdk21-windows.ps1"
+    fi
+    ;;
+esac
+
+echo "Unsupported or unknown OS. Run one of:"
+echo "  ./scripts/install-jdk21-linux.sh"
+echo "  powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\install-jdk21-windows.ps1"
+exit 1

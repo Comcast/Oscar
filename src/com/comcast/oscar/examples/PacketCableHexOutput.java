@@ -12,37 +12,33 @@ package com.comcast.oscar.examples;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
-	@author Maurice Garcia (maurice.garcia.2015@gmail.com)
+
+	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
-
-
 
 import com.comcast.oscar.compiler.PacketCableCompiler;
 import com.comcast.oscar.test.TestDirectoryStructure;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;
 
-/**
- */
+/** */
 public class PacketCableHexOutput {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		
-		byte[] baPacketCable = HexString.fileToByteArray(TestDirectoryStructure.fInputDirFileName("DOCSIS-GOLDEN.bin"));
-		
-		try {
-			for (HexString hs : PacketCableCompiler.getTopLevelTlvToHexStringList(baPacketCable)) {
-				System.out.println("TLV-HEX: " + hs.toString(":"));
-			}
-		} catch (TlvException e) {
-			e.printStackTrace();
-		}
-		
-	}
+  /**
+   * @param args
+   */
+  public static void main(String[] args) {
 
+    byte[] baPacketCable =
+        HexString.fileToByteArray(TestDirectoryStructure.fInputDirFileName("DOCSIS-GOLDEN.bin"));
+
+    try {
+      for (HexString hs : PacketCableCompiler.getTopLevelTlvToHexStringList(baPacketCable)) {
+        System.out.println("TLV-HEX: " + hs.toString(":"));
+      }
+    } catch (TlvException e) {
+      e.printStackTrace();
+    }
+  }
 }

@@ -12,11 +12,10 @@ package com.comcast.oscar.examples;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
-	@author Maurice Garcia (maurice.garcia.2015@gmail.com)
+
+	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
-
 
 import com.comcast.oscar.dictionary.DictionarySQLConstants;
 import com.comcast.oscar.tlv.TlvBuilder;
@@ -24,41 +23,38 @@ import com.comcast.oscar.tlv.TlvDisassemble;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;
 
-
-/**
- */
+/** */
 public class Info {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
-		/*
-		 * 
-		 * http://www.tutorialspoint.com/java/java_regular_expressions.htm
-		 * 
-		 * 
-		 * 
-		 */
-		
-		TlvBuilder tbTLV = new TlvBuilder();
-		
-		String sTlvHex = "03010132080406020401020304";
-		
-		try {
-			tbTLV.add(new HexString(HexString.toByteArray(sTlvHex)));
-		} catch (TlvException e) {
-			e.printStackTrace();
-		}
-		
-		TlvDisassemble tlvDisassemble = new TlvDisassemble(tbTLV,DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME);
+  /**
+   * @param args
+   */
+  public static void main(String[] args) {
+    // TODO Auto-generated method stub
 
-		System.out.println(tlvDisassemble.getTlvDictionary().toString());
-		
-		
-		System.out.println(System.getProperty("user.dir"));
-	}
+    /*
+     *
+     * http://www.tutorialspoint.com/java/java_regular_expressions.htm
+     *
+     *
+     *
+     */
 
+    TlvBuilder tbTLV = new TlvBuilder();
+
+    String sTlvHex = "03010132080406020401020304";
+
+    try {
+      tbTLV.add(new HexString(HexString.toByteArray(sTlvHex)));
+    } catch (TlvException e) {
+      e.printStackTrace();
+    }
+
+    TlvDisassemble tlvDisassemble =
+        new TlvDisassemble(tbTLV, DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME);
+
+    System.out.println(tlvDisassemble.getTlvDictionary().toString());
+
+    System.out.println(System.getProperty("user.dir"));
+  }
 }

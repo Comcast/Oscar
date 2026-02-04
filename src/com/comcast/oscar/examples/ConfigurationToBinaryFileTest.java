@@ -1,6 +1,4 @@
 package com.comcast.oscar.examples;
-import java.io.File;
-import java.io.FileNotFoundException;
 
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
@@ -8,6 +6,8 @@ import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 /*
 	Copyright 2015 Comcast Cable Communications Management, LLC
@@ -21,109 +21,123 @@ import com.comcast.oscar.utilities.HexString;
 	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 	See the License for the specific language governing permissions and
 	limitations under the License.
-	
-	@author Maurice Garcia (maurice.garcia.2015@gmail.com)
+
+	@author Maurice Garcia (mgarcia01752@outlook.com)
 
 */
 
-/**
- */
+/** */
 public class ConfigurationToBinaryFileTest {
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		
-		boolean DOCSIS = true;
-		
-		boolean PACKET_CABLE_20 = false;
-		
-		File file = null;
+  /**
+   * @param args
+   */
+  public static void main(String[] args) {
 
+    boolean DOCSIS = true;
 
+    boolean PACKET_CABLE_20 = false;
 
-		if (DOCSIS) {
-			System.out.println("+------------------------------------------------------------------------------------------------------------+");
-			System.out.println("+----------------------------------------DOCSIS--------------------------------------------------------------+");
-			System.out.println("+------------------------------------------------------------------------------------------------------------+");
-		
-			file = new File("c:" + File.separatorChar + "testfiles" + File.separatorChar + "DOCSIS-GOLDEN.txt");
-			
-			ConfigurationFileImport cfi = null;
+    File file = null;
 
-			try {
-				try {
-					cfi = new ConfigurationFileImport(file);
-				} catch (ConfigurationFileException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+    if (DOCSIS) {
+      System.out.println(
+          "+------------------------------------------------------------------------------------------------------------+");
+      System.out.println(
+          "+----------------------------------------DOCSIS--------------------------------------------------------------+");
+      System.out.println(
+          "+------------------------------------------------------------------------------------------------------------+");
 
-			ConfigurationFile cf = new ConfigurationFile(ConfigurationFile.DOCSIS_VER_30,cfi.getTlvBuilder());
+      file =
+          new File(
+              "c:" + File.separatorChar + "testfiles" + File.separatorChar + "DOCSIS-GOLDEN.txt");
 
-			cf.commit();
+      ConfigurationFileImport cfi = null;
 
-			file = new File("c:" + File.separatorChar + "testfiles" + File.separatorChar + "output" + File.separatorChar + "DOCSIS-GOLDEN.bin");
-			
-			cf.setConfigurationFileName(file);
-			
-			if (cf.writeToDisk()) {
-				System.out.println("Write to File: ");
-			} else {
-				System.out.println("Write to File FAILED: ");
-			}
-			
-		} 
+      try {
+        try {
+          cfi = new ConfigurationFileImport(file);
+        } catch (ConfigurationFileException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
+      }
 
-		if (PACKET_CABLE_20) {
-			
-			System.out.println("+------------------------------------------------------------------------------------------------------------+");
-			System.out.println("+----------------------------------------PACKET CABLE-2.0----------------------------------------------------+");
-			System.out.println("+------------------------------------------------------------------------------------------------------------+");
+      ConfigurationFile cf =
+          new ConfigurationFile(ConfigurationFile.DOCSIS_VER_30, cfi.getTlvBuilder());
 
-			file = new File("c:" + File.separatorChar + "PacketCable-2.0.txt");
-			String sConfigurationFileName = "c:" + File.separatorChar + "config" + File.separatorChar + "PacketCable-2.0.bin";
-			
-			ConfigurationFileImport cfi = null;
+      cf.commit();
 
-			try {
-				try {
-					cfi = new ConfigurationFileImport(file);
-				} catch (ConfigurationFileException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+      file =
+          new File(
+              "c:"
+                  + File.separatorChar
+                  + "testfiles"
+                  + File.separatorChar
+                  + "output"
+                  + File.separatorChar
+                  + "DOCSIS-GOLDEN.bin");
 
-			TlvBuilder tb = new TlvBuilder();
+      cf.setConfigurationFileName(file);
 
-			try {
-				tb.add(new HexString(cfi.toByteArray()));
-			} catch (TlvException e) {
-				e.printStackTrace();
-			}
+      if (cf.writeToDisk()) {
+        System.out.println("Write to File: ");
+      } else {
+        System.out.println("Write to File FAILED: ");
+      }
+    }
 
-			ConfigurationFile cf = new ConfigurationFile(ConfigurationFile.PKT_CBL_VER_20,tb);
+    if (PACKET_CABLE_20) {
 
-			cf.commit();
+      System.out.println(
+          "+------------------------------------------------------------------------------------------------------------+");
+      System.out.println(
+          "+----------------------------------------PACKET"
+              + " CABLE-2.0----------------------------------------------------+");
+      System.out.println(
+          "+------------------------------------------------------------------------------------------------------------+");
 
-			System.out.println(new HexString(cf.toByteArray()).toString(":"));
-			
-			cf.setConfigurationFileName(sConfigurationFileName);
-			
-			if (cf.writeToDisk()) {
-				System.out.println("Write to File: " + sConfigurationFileName);
-			} else {
-				System.out.println("Write to File FAILED: " + sConfigurationFileName);
-			}
-		}
-	}
+      file = new File("c:" + File.separatorChar + "PacketCable-2.0.txt");
+      String sConfigurationFileName =
+          "c:" + File.separatorChar + "config" + File.separatorChar + "PacketCable-2.0.bin";
 
+      ConfigurationFileImport cfi = null;
+
+      try {
+        try {
+          cfi = new ConfigurationFileImport(file);
+        } catch (ConfigurationFileException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      } catch (FileNotFoundException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+
+      TlvBuilder tb = new TlvBuilder();
+
+      try {
+        tb.add(new HexString(cfi.toByteArray()));
+      } catch (TlvException e) {
+        e.printStackTrace();
+      }
+
+      ConfigurationFile cf = new ConfigurationFile(ConfigurationFile.PKT_CBL_VER_20, tb);
+
+      cf.commit();
+
+      System.out.println(new HexString(cf.toByteArray()).toString(":"));
+
+      cf.setConfigurationFileName(sConfigurationFileName);
+
+      if (cf.writeToDisk()) {
+        System.out.println("Write to File: " + sConfigurationFileName);
+      } else {
+        System.out.println("Write to File FAILED: " + sConfigurationFileName);
+      }
+    }
+  }
 }
