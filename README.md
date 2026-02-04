@@ -35,4 +35,4 @@ java -jar oscar.jar -d -s d 3 -i output/DOCSIS-GOLDEN.bin > output/DOCSIS-GOLDEN
 
 📧 [Email](mailto:mgarcia01752@outlook.com)
 
-🔗 [LinkedIn](https://www.linkedin.com/in/mgarcia01752/)
+🔗 [LinkedIn](https://www.linkedin.com/in/mauricemgarcia)
