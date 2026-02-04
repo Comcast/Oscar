@@ -35,3 +35,13 @@ jobs:
 
       - name: Run all checks
         run: tools/run-all.sh
+
+      - name: Run JUnit tests
+        run: mvn -B test
+
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports-${{ matrix.os }}
+          path: target/surefire-reports/
