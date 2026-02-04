@@ -1,5 +1,13 @@
 # OSCAR - OpenSource Cablemodem file AssembleR
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/DOCSIS_Config_Editor_Dark.png">
+    <source media="(prefers-color-scheme: light)" srcset="docs/images/DOCSIS_Config_Editor_Light.png">
+    <img alt="OSCAR UI preview" src="docs/images/DOCSIS_Config_Editor_Light.png" width="280" style="border-radius: 28px;">
+  </picture>
+</p>
+
 [![CI](https://github.com/mgarcia01752/Oscar/actions/workflows/ci.yml/badge.svg)](https://github.com/mgarcia01752/Oscar/actions/workflows/ci.yml)
 ![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)
 ![Ubuntu 22.04](https://img.shields.io/badge/Ubuntu-22.04-E95420?logo=ubuntu&logoColor=white)
