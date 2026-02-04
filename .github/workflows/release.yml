@@ -54,6 +54,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.event.release.tag_name }}
+          make_latest: true
           files: |
             oscar.jar
             oscar.jar.sha256
