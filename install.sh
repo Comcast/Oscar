@@ -175,6 +175,29 @@ ensure_maven() {
   fi
 }
 
+ensure_snmptranslate() {
+  if command -v snmptranslate >/dev/null 2>&1; then
+    snmptranslate -V 2>/dev/null || true
+    return 0
+  fi
+
+  if [ "$(uname -s 2>/dev/null || echo "")" = "Linux" ]; then
+    if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+      sudo apt-get update -y
+      sudo apt-get install -y snmp
+    fi
+  fi
+
+  if command -v snmptranslate >/dev/null 2>&1; then
+    snmptranslate -V 2>/dev/null || true
+    return 0
+  fi
+
+  echo "Net-SNMP (snmptranslate) is required but could not be auto-installed." >&2
+  echo "Install package 'snmp' and re-run: ./install.sh" >&2
+  return 1
+}
+
 ensure_python3() {
   if command -v python3 >/dev/null 2>&1; then
     python3 --version
@@ -317,6 +340,7 @@ case "$(uname -s 2>/dev/null || echo "")" in
       verify_java21
     fi
     ensure_maven
+    ensure_snmptranslate
     configure_local_tool_paths
 
     if [ "${DEVELOPMENT_SETUP}" -eq 1 ]; then

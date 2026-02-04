@@ -9,6 +9,7 @@ From project root:
 ```
 
 This verifies or installs Java 21 + Maven (Linux-supported flow).
+It also verifies or installs Net-SNMP (`snmptranslate`) on Linux.
 
 ## Build `oscar.jar`
 
