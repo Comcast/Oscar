@@ -2,6 +2,7 @@
 set -euo pipefail
 
 BUILD_OSCAR_JAR=0
+DEVELOPMENT_SETUP=0
 
 usage() {
   cat <<'EOF'
@@ -9,6 +10,7 @@ Usage: ./install.sh [options]
 
 Options:
   -b, --build-oscar-jar   Build a local oscar.jar after dependency install
+  -d, --development       Install developer tooling prerequisites (python3)
   -h, --help              Show this help message
 EOF
 }
@@ -17,6 +19,9 @@ while [ $# -gt 0 ]; do
   case "$1" in
     -b|--build-oscar-jar)
       BUILD_OSCAR_JAR=1
+      ;;
+    -d|--development)
+      DEVELOPMENT_SETUP=1
       ;;
     -h|--help)
       usage
@@ -163,6 +168,26 @@ ensure_maven() {
   fi
 }
 
+ensure_python3() {
+  if command -v python3 >/dev/null 2>&1; then
+    python3 --version
+    return 0
+  fi
+
+  if [ "$(uname -s 2>/dev/null || echo "")" = "Linux" ]; then
+    if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+      sudo apt-get update -y
+      sudo apt-get install -y python3
+      python3 --version
+      return 0
+    fi
+  fi
+
+  echo "Python3 is required for --development but could not be auto-installed." >&2
+  echo "Install python3 and re-run: ./install.sh --development" >&2
+  return 1
+}
+
 build_oscar_jar() {
   echo "Building oscar.jar ..."
   mvn -q -DskipTests package
@@ -199,6 +224,10 @@ case "$(uname -s 2>/dev/null || echo "")" in
     fi
     ensure_maven
     configure_local_tool_paths
+
+    if [ "${DEVELOPMENT_SETUP}" -eq 1 ]; then
+      ensure_python3
+    fi
 
     if [ "${BUILD_OSCAR_JAR}" -eq 1 ]; then
       build_oscar_jar
