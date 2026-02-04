@@ -1,31 +1,25 @@
-### DOCSIS 1.0, 1.1, 2.0, 3.0 and 3.1
+# Configuration File Types
 
-	Docsis {
-	
-	}
-	
-### DPoE 1.0 and 2.0
+## DOCSIS
+```text
+Docsis {
+}
+```
 
-	DPoE {
-	
-	}
-	
-### PacketCable 1.0, 1.5 and 2.0
+## DPoE
+```text
+DPoE {
+}
+```
 
-	PacketCable-1.0 {
-	
-	}
-	
-	PacketCable-1.5 {
-	
-	}
-	
-	PacketCable-2.0 {
-	
-	}
+## PacketCable
+```text
+PacketCable-1.0 {
+}
+PacketCable-1.5 {
+}
+PacketCable-2.0 {
+}
+```
 
-### DataTypes
-
-[Configuration File Data Types](https://github.com/Comcast/Oscar/wiki/TLV-Dictionary#datatype-selection)
-	
-	
+For datatype details, see [TLV Dictionary](./TLV-Dictionary.md).

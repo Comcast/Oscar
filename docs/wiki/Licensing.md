@@ -1,6 +1,5 @@
-### OSCAR
+# Licensing
 
-[Apache License 2.0](https://github.com/Comcast/Oscar/blob/master/LICENSE)
+OSCAR is licensed under Apache License 2.0.
 
-
-
+- [LICENSE](../../LICENSE)

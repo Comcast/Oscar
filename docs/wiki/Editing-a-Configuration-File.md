@@ -1,9 +1,12 @@
-### Notepad++
+# Editing a Configuration File
 
-Notepad++ is a free Text Editor that conforms well for OSCAR, it provide code folding and other features. It can be obtained at [Notepad++](http://notepad-plus-plus.org/)
+## Recommended Workflow
+1. Generate a template for your spec/version (`-ftd`).
+2. Edit with a plain text editor.
+3. Compile with `-c` and verify by decompiling with `-d`.
 
-We created a User-defined Language that will make editing a file much easier.  Simply import the file into Notepad++
+## Editor Support
+A Notepad++ user-defined language file is available in this repo:
+- `Notepad++/`
 
-[View Language File](https://github.com/Comcast/Oscar/blob/master/Notepad%2B%2B/OSCAR)
-
-[Download Language File](https://comcast.github.io/Oscar/notepadplusplus/OSCAR.xml)
+Legacy editor XML can still be used if preferred.

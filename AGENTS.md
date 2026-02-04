@@ -22,7 +22,8 @@ Use these guidelines when working in this codebase.
 - `scripts/ci-verify.sh`: invoked by `tools/quality/run-all.sh`.
 - `tools/quality/code-hygene-checker.sh`: strict compile with `-Xlint:all -Werror`.
 - `tools/quality/setup-formatter.sh`: fetches `google-java-format`.
-- `tools/run-all.sh`, `tools/clean.sh`, `tools/code-hygene-checker.sh`, `tools/setup-formatter.sh`: compatibility wrappers.
+- `tools/quality/markdown-check.sh`: markdown lint checks.
+- `tools/run-all.sh`, `tools/clean.sh`, `tools/code-hygene-checker.sh`, `tools/setup-formatter.sh`, `tools/markdown-check.sh`: compatibility wrappers.
 - `scripts/verify.sh`: compile + test.
 
 ## Tests

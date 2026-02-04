@@ -10,7 +10,7 @@ Usage: ./install.sh [options]
 
 Options:
   -b, --build-oscar-jar   Build a local oscar.jar after dependency install
-  -d, --development       Install developer tooling prerequisites (python3)
+  -d, --development       Install developer tooling prerequisites (python3, nodejs, npm)
   -h, --help              Show this help message
 EOF
 }
@@ -76,6 +76,13 @@ if [ -d "${HOME}/.local/apache-maven-3.9.9/bin" ]; then
   case ":${PATH}:" in
     *":${HOME}/.local/apache-maven-3.9.9/bin:"*) ;;
     *) export PATH="${HOME}/.local/apache-maven-3.9.9/bin:${PATH}" ;;
+  esac
+fi
+
+if [ -d "${HOME}/.local/node-20/bin" ]; then
+  case ":${PATH}:" in
+    *":${HOME}/.local/node-20/bin:"*) ;;
+    *) export PATH="${HOME}/.local/node-20/bin:${PATH}" ;;
   esac
 fi
 EOF
@@ -188,6 +195,79 @@ ensure_python3() {
   return 1
 }
 
+get_node_major() {
+  if ! command -v node >/dev/null 2>&1; then
+    return 1
+  fi
+  node -v | sed -E 's/^v([0-9]+).*/\1/'
+}
+
+install_local_node20() {
+  local node_base="${HOME}/.local/node-20"
+  local node_tgz="${HOME}/.local/node20.tar.xz"
+  local url="https://nodejs.org/dist/latest-v20.x/node-v20.19.5-linux-x64.tar.xz"
+
+  if [ -x "${node_base}/bin/node" ]; then
+    return 0
+  fi
+
+  mkdir -p "${HOME}/.local"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "$url" -o "$node_tgz"
+  else
+    wget -qO "$node_tgz" "$url"
+  fi
+
+  tar -xJf "$node_tgz" -C "${HOME}/.local"
+  rm -f "$node_tgz"
+
+  local extracted_dir
+  extracted_dir="$(find "${HOME}/.local" -maxdepth 1 -type d -name 'node-v20.*-linux-x64' | head -n1 || true)"
+  if [ -n "${extracted_dir:-}" ] && [ ! -d "$node_base" ]; then
+    mv "$extracted_dir" "$node_base"
+  fi
+}
+
+ensure_node20() {
+  local major
+  major="$(get_node_major || true)"
+  if [ -n "${major:-}" ] && [ "$major" -ge 20 ]; then
+    return 0
+  fi
+
+  if [ "$(uname -s 2>/dev/null || echo "")" = "Linux" ]; then
+    # Ubuntu apt may provide Node 12; install local Node 20 for markdownlint-cli2 compatibility.
+    install_local_node20
+    export PATH="${HOME}/.local/node-20/bin:${PATH}"
+    major="$(get_node_major || true)"
+    if [ -n "${major:-}" ] && [ "$major" -ge 20 ]; then
+      return 0
+    fi
+  fi
+
+  echo "Node.js >=20 is required for markdownlint-cli2." >&2
+  return 1
+}
+
+ensure_markdownlint() {
+  ensure_node20
+
+  if command -v markdownlint-cli2 >/dev/null 2>&1; then
+    markdownlint-cli2 --version >/dev/null
+    echo "markdownlint-cli2 available"
+    return 0
+  fi
+
+  if command -v npx >/dev/null 2>&1; then
+    npx -y markdownlint-cli2 --version >/dev/null
+    echo "markdownlint-cli2 available via npx"
+    return 0
+  fi
+
+  echo "markdown checker setup failed: markdownlint-cli2 unavailable after Node setup." >&2
+  return 1
+}
+
 build_oscar_jar() {
   echo "Building oscar.jar ..."
   mvn -q -DskipTests package
@@ -227,6 +307,7 @@ case "$(uname -s 2>/dev/null || echo "")" in
 
     if [ "${DEVELOPMENT_SETUP}" -eq 1 ]; then
       ensure_python3
+      ensure_markdownlint
     fi
 
     if [ "${BUILD_OSCAR_JAR}" -eq 1 ]; then

@@ -1,4 +1,6 @@
-DPoE&trade; &  DPoG&trade; is design to accept standard DOCSIS&reg; Configuration Files.  
+# DPoE and DPoG
 
+DPoE and DPoG workflows use DOCSIS-style configuration structures.
 
-DPoG files can be created using DPoE, but will **NOT** perform conformance checks against the DPoG Specification.
+## Important Note
+DPoG files can be built using DPoE-oriented flows, but OSCAR does not currently enforce DPoG conformance checks.

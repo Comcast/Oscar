@@ -1,6 +1,13 @@
+# Template Merge Bulk Build
 
-### [**CLI Example**](https://github.com/Comcast/Oscar/wiki/CLI-Examples#merge-building---binary-extension-is-optional-and-can-be-anything)
+Merge multiple template directories into one output set.
 
-**Below is an example using 3 Directories, but you can define N# directories**
+## Example
+```bash
+java -jar oscar.jar -s d 3 -mbb InputDir1 InputDir2 InputDir3 o=OutputDir e=.bin b
+```
 
-![Template Merge Bulk Build](http://comcast.github.io/Oscar/images/MergeBulkBuild.JPG)
+## Notes
+- `o=` output dir is optional
+- `e=` output extension is optional
+- final mode flag: `b` (binary) or `t` (text)
