@@ -25,7 +25,7 @@ verify_java21() {
 install_local_jdk21() {
   local jdk_base="${HOME}/.local/temurin-21"
   local jdk_tgz="${HOME}/.local/temurin21.tgz"
-  local url="https://github.com/adoptium/temurin21-binaries/releases/latest/download/OpenJDK21U-jdk_x64_linux_hotspot.tar.gz"
+  local url="https://api.adoptium.net/v3/binary/latest/21/ga/linux/x64/jdk/hotspot/normal/eclipse"
 
   if [ -x "${jdk_base}/bin/javac" ]; then
     return 0
@@ -94,20 +94,21 @@ ensure_maven() {
 
 case "$(uname -s 2>/dev/null || echo "")" in
   Linux)
-    if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
-      "$(dirname "$0")/scripts/install-jdk21-linux.sh"
-    else
-      install_local_jdk21
-      export JAVA_HOME="${HOME}/.local/temurin-21"
-      export PATH="${JAVA_HOME}/bin:${PATH}"
-    fi
-    verify_java21 || {
-      install_local_jdk21
-      export JAVA_HOME="${HOME}/.local/temurin-21"
-      export PATH="${JAVA_HOME}/bin:${PATH}"
+    # Keep existing Java 21 if already available.
+    if ! verify_java21 >/dev/null 2>&1; then
+      if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+        "$(dirname "$0")/scripts/install-jdk21-linux.sh"
+      else
+        install_local_jdk21
+        export JAVA_HOME="${HOME}/.local/temurin-21"
+        export PATH="${JAVA_HOME}/bin:${PATH}"
+      fi
       verify_java21
-    }
+    else
+      verify_java21
+    fi
     ensure_maven
+    exit 0
     ;;
   Darwin)
     echo "macOS is not supported by this installer yet."
@@ -119,6 +120,7 @@ case "$(uname -s 2>/dev/null || echo "")" in
       echo "Windows installer currently installs JDK 21, not JRE."
       powershell -NoProfile -ExecutionPolicy Bypass -File ".\\scripts\\install-jdk21-windows.ps1"
       verify_java21
+      exit 0
     fi
     ;;
 esac
