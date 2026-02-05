@@ -28,6 +28,10 @@ It has been updated to the latest JRE baseline, and upcoming work will focus on 
 ./install.sh --build-oscar-jar
 ```
 
+## Requirements
+
+- Java 21 JDK (not just the JRE). `javac` must be on your PATH for the build to succeed.
+
 ## Quick CLI Test
 
 Text to binary:

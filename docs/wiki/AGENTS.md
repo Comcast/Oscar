@@ -14,6 +14,7 @@ Use these guidelines when working in this codebase.
 - Keep code hygienic: no unused variables/imports, proper indentation, no dead code.
 - Prefer Log4j2 (`logger.debug/info/warn/error`) over `System.out.println`.
 - Guard expensive debug work with `logger.isDebugEnabled()`.
+- Commit messages: first line states what is going on; subsequent lines are succinct changes prefixed with `-`.
 
 ## Scripts
 - `tools/quality/run-all.sh`: format, hygiene checks, compile, and tests.

@@ -43,18 +43,39 @@ get_java_major() {
   java -version 2>&1 | head -n1 | sed -E 's/.*"([0-9]+).*/\1/'
 }
 
-verify_java21() {
-  local major
-  major="$(get_java_major || true)"
-  if [ -z "${major:-}" ]; then
+get_javac_major() {
+  if ! command -v javac >/dev/null 2>&1; then
+    return 1
+  fi
+  javac -version 2>&1 | head -n1 | sed -E 's/.* ([0-9]+).*/\1/'
+}
+
+verify_jdk21() {
+  local java_major
+  local javac_major
+
+  java_major="$(get_java_major || true)"
+  if [ -z "${java_major:-}" ]; then
     echo "Java is not on PATH after install."
     return 1
   fi
-  if [ "${major}" != "21" ]; then
-    echo "Java is installed but not version 21 (detected ${major})."
+  if [ "${java_major}" != "21" ]; then
+    echo "Java is installed but not version 21 (detected ${java_major})."
     return 1
   fi
+
+  javac_major="$(get_javac_major || true)"
+  if [ -z "${javac_major:-}" ]; then
+    echo "JDK 21 is required, but 'javac' is not on PATH."
+    return 1
+  fi
+  if [ "${javac_major}" != "21" ]; then
+    echo "JDK is installed but not version 21 (detected ${javac_major})."
+    return 1
+  fi
+
   java -version
+  javac -version
 }
 
 configure_local_tool_paths() {
@@ -324,7 +345,7 @@ build_oscar_jar() {
 case "$(uname -s 2>/dev/null || echo "")" in
   Linux)
     # Keep existing Java 21 if already available.
-    if ! verify_java21 >/dev/null 2>&1; then
+    if ! verify_jdk21 >/dev/null 2>&1; then
       if command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
         "$(dirname "$0")/scripts/install-jdk21-linux.sh"
       else
@@ -332,9 +353,9 @@ case "$(uname -s 2>/dev/null || echo "")" in
         export JAVA_HOME="${HOME}/.local/temurin-21"
         export PATH="${JAVA_HOME}/bin:${PATH}"
       fi
-      verify_java21
+      verify_jdk21
     else
-      verify_java21
+      verify_jdk21
     fi
     ensure_maven
     ensure_snmptranslate
@@ -355,14 +376,14 @@ case "$(uname -s 2>/dev/null || echo "")" in
     ;;
   Darwin)
     echo "macOS is not supported by this installer yet."
-    echo "Install a Java 21 JRE manually."
+    echo "Install a Java 21 JDK manually."
     exit 1
     ;;
   MINGW*|MSYS*|CYGWIN*|Windows_NT)
     if command -v powershell >/dev/null 2>&1; then
       echo "Windows installer currently installs JDK 21, not JRE."
       powershell -NoProfile -ExecutionPolicy Bypass -File ".\\scripts\\install-jdk21-windows.ps1"
-      verify_java21
+      verify_jdk21
       exit 0
     fi
     ;;
