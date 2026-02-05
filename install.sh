@@ -345,6 +345,14 @@ build_oscar_jar() {
   echo "Generating binary and text examples in output/:"
   echo "  - output/DOCSIS-GOLDEN.bin"
   echo "  - output/DOCSIS-GOLDEN-roundtrip.txt"
+
+  mkdir -p output
+  java -jar oscar.jar -c -s d 3 \
+    -i src/com/comcast/oscar/examples/testfiles/DOCSIS-GOLDEN.txt \
+    -o output/DOCSIS-GOLDEN.bin
+  java -jar oscar.jar -d -s d 3 \
+    -i output/DOCSIS-GOLDEN.bin \
+    > output/DOCSIS-GOLDEN-roundtrip.txt
 }
 
 case "$(uname -s 2>/dev/null || echo "")" in
