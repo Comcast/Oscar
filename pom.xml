@@ -5,7 +5,7 @@
 
   <groupId>com.comcast.oscar</groupId>
   <artifactId>oscar</artifactId>
-  <version>2.2.13</version>
+  <version>2.2.14</version>
   <name>OSCAR</name>
 
   <properties>
