@@ -22,7 +22,8 @@ Install dependencies and build a local `oscar.jar`:
 ./install.sh --build-oscar-jar
 ```
 
-This also updates `latest-build -> oscar.jar`.
+This creates symlinks `oscar.jar` and `latest-build` that point at the shaded jar in `dist/`.
+Release automation in CI still produces a real `oscar.jar` file for packaging.
 
 ## Build
 

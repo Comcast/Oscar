@@ -338,8 +338,13 @@ build_oscar_jar() {
     return 1
   fi
 
-  cp "${source_jar}" oscar.jar
-  echo "Created oscar.jar from ${source_jar}"
+  ln -sf "${source_jar}" oscar.jar
+  ln -sf "${source_jar}" latest-build
+  echo "Linked oscar.jar -> ${source_jar}"
+  echo "Linked latest-build -> ${source_jar}"
+  echo "Generating binary and text examples in output/:"
+  echo "  - output/DOCSIS-GOLDEN.bin"
+  echo "  - output/DOCSIS-GOLDEN-roundtrip.txt"
 }
 
 case "$(uname -s 2>/dev/null || echo "")" in
