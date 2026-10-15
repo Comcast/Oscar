@@ -60,11 +60,11 @@ mkdir -p output
 Compile the editable examples; CM/CMTS MICs, End marker and padding are generated:
 
 ```bash
-java -jar target/oscar-2.2.15-all.jar -c -s d 3.1 \
+java -jar target/oscar-3.0.0-all.jar -c -s d 3.1 \
   -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
   -i src/com/comcast/oscar/examples/testfiles/DOCSIS-3.1-LAB.txt \
   -o output/DOCSIS-3.1-LAB.bin
-java -jar target/oscar-2.2.15-all.jar -c -s d4 4.0 \
+java -jar target/oscar-3.0.0-all.jar -c -s d4 4.0 \
   -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
   -i src/com/comcast/oscar/examples/testfiles/DOCSIS-4.0-LAB.txt \
   -o output/DOCSIS-4.0-LAB.bin
@@ -73,9 +73,9 @@ java -jar target/oscar-2.2.15-all.jar -c -s d4 4.0 \
 Decompile to text; decoding does not require a shared key:
 
 ```bash
-java -jar target/oscar-2.2.15-all.jar -d -s d 3.1 \
+java -jar target/oscar-3.0.0-all.jar -d -s d 3.1 \
   -i output/DOCSIS-3.1-LAB.bin > output/DOCSIS-3.1-roundtrip.txt
-java -jar target/oscar-2.2.15-all.jar -d -s d4 4.0 \
+java -jar target/oscar-3.0.0-all.jar -d -s d4 4.0 \
   -i output/DOCSIS-4.0-LAB.bin > output/DOCSIS-4.0-roundtrip.txt
 ```
 

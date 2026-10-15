@@ -1,7 +1,7 @@
 package com.comcast.oscar.constants;
 
 /**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -18,7 +18,7 @@ public class Constants {
 
   private static final String TAB = "\t";
 
-  public static final String OSCAR_VERSION = "2.2.15";
+  public static final String OSCAR_VERSION = "3.0.0";
   public static final String OSCAR_CLI_USAGE =
       "java -jar oscar.jar -k <key> -i <.txt> -o <.bin> -c";
   public static final String OSCAR_CLI_HEADER =
@@ -37,7 +37,7 @@ public class Constants {
           + OSCAR_BANNER
           + "\n\n\n\n"
           + TAB
-          + "Copyright 2015 Comcast Cable Communications Management, LLC\n"
+          + "Copyright 2015 - 2026 Comcast Cable Communications Management, LLC\n"
           + TAB
           + "___________________________________________________________________\n"
           + TAB
