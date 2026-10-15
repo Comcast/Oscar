@@ -27,13 +27,19 @@ for verified coverage and remaining work.
 
 ## Quick Start
 
+Windows users: see [Java setup](docs/wiki/Installation.md#check-and-install-java)
+and [download and run Oscar in PowerShell](docs/wiki/Installation.md#download-and-run-oscar).
+The installer command below is for Linux.
+
 ```bash
 ./install.sh --build-oscar-jar
 ```
 
 ## Requirements
 
-- Java 21 JDK (not just the JRE). `javac` must be on your PATH for the build to succeed.
+- Java 21 to run the downloaded release. See the
+  [Windows Java check and installation steps](docs/wiki/Installation.md#check-and-install-java).
+- Java 21 JDK (not just the JRE) to build from source. `javac` must be on your PATH for the build to succeed.
 
 ## DOCSIS Examples
 
