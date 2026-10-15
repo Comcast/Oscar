@@ -1,0 +1,17 @@
+{
+  "document": "CM-SP-MULPIv3.1-I21-201020",
+  "origin": "https://account.cablelabs.com/server/alfresco/3a751ba9-593c-464a-bc91-3675e1824e30",
+  "acquired": "2026-10-15",
+  "files": [
+    {
+      "file": "CM-SP-MULPIv3.1-I21-201020.pdf",
+      "bytes": 14197622,
+      "sha256": "47b6cc3b865ddea66c3889291f9ceba974b5016134ff3ea57188edbe9cf3112d"
+    },
+    {
+      "file": "CM-SP-MULPIv3.1-I21-201020.txt",
+      "bytes": 2556241,
+      "sha256": "ade59a19b36bfb85f395465cfe946e200d1f2ae9589908ce73d4d44bc1f3fc74"
+    }
+  ]
+}

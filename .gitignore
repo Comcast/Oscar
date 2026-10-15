@@ -19,6 +19,7 @@ latest-build
 
 # Documentation
 *.pdf
+!skills/oscar-docsis-31-config-tlvs/references/sources/CM-SP-MULPIv3.1-I21-201020.pdf
 
 # Directories #
 test/

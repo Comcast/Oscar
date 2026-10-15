@@ -1,0 +1,4 @@
+interface:
+  display_name: "Oscar DOCSIS 3.1 Configuration TLVs"
+  short_description: "Source-backed DOCSIS 3.1 config TLVs for Oscar"
+  default_prompt: "Use $oscar-docsis-31-config-tlvs to implement or validate Oscar configuration-file TLV settings with exact revision citations."
