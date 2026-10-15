@@ -96,7 +96,7 @@ Docsis {
 		MaxSubstainedTrafficRate 768000;	 /* TLV: [24.8]*/
 		MaxTrafficBurst 10000000;	 /* TLV: [24.9]*/
 		MinReservedTrafficRate ;	 /* TLV: [24.10]*/
-		AssumedMinReserved RatePacketSize ;	 /* TLV: [24.11]*/
+		AssumedMinReservedRatePacketSize ;	 /* TLV: [24.11]*/
 		TimeoutForActiveQoS ;	 /* TLV: [24.12]*/
 		TimeoutForAdmittedQoS ;	 /* TLV: [24.13]*/
 		MaxConcatenatedBurst 6088;	 /* TLV: [24.14]*/

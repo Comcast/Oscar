@@ -6,6 +6,7 @@ import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvDisassemble;
+import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.HexString;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -13,8 +14,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.DriverManager;
 import java.util.List;
+import java.util.stream.Stream;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class TlvRegistryTest {
   @Test
@@ -22,10 +27,12 @@ class TlvRegistryTest {
     for (String database : List.of("res/dictionary.sqlite", "db/dictionary.sqlite")) {
       Path path = Path.of(database).toAbsolutePath();
       assertTrue(Files.isRegularFile(path), database);
-      try (var connection = DriverManager.getConnection("jdbc:sqlite:" + path.toUri() + "?mode=ro");
+      try (var connection =
+              DriverManager.getConnection("jdbc:sqlite:" + path.toUri() + "?mode=ro");
           var statement = connection.createStatement()) {
         try (var objects =
-            statement.executeQuery("SELECT name FROM sqlite_master WHERE lower(name) LIKE '%tlv%'")) {
+            statement.executeQuery(
+                "SELECT name FROM sqlite_master WHERE lower(name) LIKE '%tlv%'")) {
           assertFalse(objects.next(), database + " contains legacy TLV schema objects");
         }
         try (var integrity = statement.executeQuery("PRAGMA integrity_check")) {
@@ -161,6 +168,92 @@ class TlvRegistryTest {
         Exception.class,
         () -> read(definition.replace("\"path\":[3]", "\"path\":[3],\"path\":[4]")));
     assertThrows(Exception.class, () -> read(definition.replace("\"lengthBytes\":1,", "")));
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "Docsis { UndefinedTlv 1; }",
+        "DPoE { UndefinedTlv 1; }",
+        "PacketCable-1.0 { UndefinedTlv 1; }",
+        "PacketCable-1.0 { NetworkAccess 1; }",
+        "Docsis { UndefinedTlv; }"
+      })
+  void rejectsNamesOutsideSelectedRegistry(String configuration) {
+    IllegalArgumentException failure =
+        assertThrows(IllegalArgumentException.class, () -> parse(configuration));
+    assertTrue(failure.getMessage().contains("TLV"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "Docsis { ClassOfService { UndefinedChild 7; } }",
+        "Docsis { ClassOfService { UndefinedChild; } }",
+        "Docsis { ClassOfService { NetworkAccess 1; } }",
+        "Docsis { ClassOfService { UndefinedContainer { ClassID 7; } } }",
+        "Docsis { NetworkAccess { ClassID 7; } }"
+      })
+  void rejectsUndefinedNestedPaths(String configuration) {
+    IllegalArgumentException failure =
+        assertThrows(IllegalArgumentException.class, () -> parse(configuration));
+    assertTrue(failure.getMessage().contains("TLV"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "Docsis { NetworkAccess 1 }",
+        "Docsis { NetworkAccess 1;",
+        "Docsis { NetworkAccess @1; }",
+        "Docsis { NetworkAccess 1; } UndefinedTlv 1;",
+        "Docsis { NetworkAccess; } trailing"
+      })
+  void rejectsMalformedConfigurationText(String configuration) {
+    assertThrows(IllegalArgumentException.class, () -> parse(configuration));
+  }
+
+  @Test
+  void rejectsInvalidIntegerValue() {
+    assertThrows(
+        IllegalArgumentException.class, () -> parse("Docsis { NetworkAccess notAnInteger; }"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {"DOCSIS-GOLDEN.txt", "DOCSIS-DUPLICATE-OID.txt", "IMS-PKT-CABLE-CONFIG.txt"})
+  void importsExistingExampleFiles(String filename) throws Exception {
+    Path example = Path.of("src/com/comcast/oscar/examples/testfiles", filename);
+    assertTrue(new ConfigurationFileImport(example.toFile()).toByteArray().length > 0);
+  }
+
+  @Test
+  void rejectsUndefinedNameInGoldenExample() throws Exception {
+    String example =
+        Files.readString(Path.of("src/com/comcast/oscar/examples/testfiles/DOCSIS-GOLDEN.txt"));
+    String invalid = example.replaceFirst("\\bNetworkAccess\\b", "UndefinedTlv");
+    assertNotEquals(example, invalid);
+    IllegalArgumentException failure =
+        assertThrows(IllegalArgumentException.class, () -> parse(invalid));
+    assertTrue(failure.getMessage().contains("UndefinedTlv"));
+  }
+
+  @ParameterizedTest
+  @MethodSource("truncatedTlvBuffers")
+  void rejectsTruncatedBinaryWithoutChangingBuilder(byte[] malformed) throws Exception {
+    TlvBuilder builder = new TlvBuilder();
+    byte[] valid = {3, 1, 1};
+    builder.add(new HexString(valid));
+    assertThrows(TlvException.class, () -> builder.add(new HexString(malformed)));
+    assertArrayEquals(valid, builder.toByteArray());
+  }
+
+  private static Stream<byte[]> truncatedTlvBuffers() {
+    return Stream.of(
+        new byte[] {3},
+        new byte[] {3, 2, 1},
+        new byte[] {3, 1, 1, 4},
+        new byte[] {3, (byte) 255, 1});
   }
 
   private static TlvRegistry read(String definitions) throws Exception {

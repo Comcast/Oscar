@@ -141,6 +141,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     if (logger.isDebugEnabled())
       logger.debug("TlvConfigurationFileParser.enterTlv() " + ctx.getStart().getText());
 
+    validateTlvName(ctx.getStart().getText());
     aqsSubTypeHierarchyStack.push(ctx.getStart().getText());
   }
 
@@ -157,6 +158,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     if (logger.isDebugEnabled())
       logger.debug("TlvConfigurationFileParser.enterSnmp() " + ctx.getStart().getText());
 
+    validateTlvName(ctx.getStart().getText());
     aqsSubTypeHierarchyStack.push(ctx.getStart().getText());
 
     if (logger.isDebugEnabled())
@@ -183,6 +185,11 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
    */
   @Override
   public void enterSub(@NotNull tlvParser.SubContext ctx) {
+    JSONObject definition = validateTlvName(ctx.getStart().getText());
+    if (!definition.getBoolean(Dictionary.ARE_SUBTYPES)) {
+      throw new IllegalArgumentException(
+          "TLV " + ctx.getStart().getText() + " cannot contain child TLVs");
+    }
     aqsSubTypeHierarchyStack.push(ctx.getStart().getText());
   }
 
@@ -207,7 +214,43 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
    */
   @Override
   public void enterSTlv(@NotNull tlvParser.STlvContext ctx) {
+    validateTlvName(ctx.getStart().getText());
     aqsSubTypeHierarchyStack.push(ctx.getStart().getText());
+  }
+
+  @Override
+  public void enterEmptyTLV(@NotNull tlvParser.EmptyTLVContext ctx) {
+    validateTlvName(ctx.getStart().getText());
+  }
+
+  private JSONObject validateTlvName(String name) {
+    JSONObject definition = joWorkingTLVDictionary;
+    var ancestors = aqsSubTypeHierarchyStack.descendingIterator();
+    if (!ancestors.hasNext()) {
+      if (!definition.getString(Dictionary.TLV_NAME).equalsIgnoreCase(name)) {
+        throw new IllegalArgumentException("Unknown TLV: " + name);
+      }
+      return definition;
+    }
+    ancestors.next();
+    while (ancestors.hasNext()) {
+      definition = findChildDefinition(definition, ancestors.next());
+    }
+    return findChildDefinition(definition, name);
+  }
+
+  private JSONObject findChildDefinition(JSONObject parent, String name) {
+    JSONArray children = parent.optJSONArray(Dictionary.SUBTYPE_ARRAY);
+    if (children != null) {
+      for (int index = 0; index < children.length(); index++) {
+        JSONObject child = children.getJSONObject(index);
+        if (child.getString(Dictionary.TLV_NAME).equalsIgnoreCase(name)) {
+          return child;
+        }
+      }
+    }
+    throw new IllegalArgumentException(
+        "Unknown TLV " + name + " under " + parent.getString(Dictionary.TLV_NAME));
   }
 
   /**

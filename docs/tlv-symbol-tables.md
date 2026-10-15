@@ -95,3 +95,24 @@ The JDBC dependency and legacy SQL query classes remain, but their TLV queries
 require a separately supplied legacy database. Editing SQLite databases no
 longer changes the migrated parser/codec behavior. CLI startup no longer
 extracts a SQLite dictionary.
+
+## Negative-input tests
+
+Run the registry and input-validation suite with:
+
+```bash
+mvn -Dtest=TlvRegistryTest test
+```
+
+`src/test/java/com/comcast/oscar/dictionary/TlvRegistryTest.java` contains
+inline invalid text and binary inputs, so no generated bad files are needed.
+It checks unknown names in each catalog family, names used under the wrong
+parent, unknown empty TLVs, scalar TLVs used as containers, invalid integer
+text, missing delimiters, illegal characters, and trailing input. Syntax errors
+include line and column information; nested-name errors identify the parent.
+Truncated binary headers and values must fail without changing a `TlvBuilder`.
+
+The suite also imports the existing DOCSIS golden, duplicate-OID, and PacketCable
+text examples and rejects an undefined-name mutation of the golden example.
+These checks cover registry lookup and input handling, not full specification
+conformance or a new policy for unknown binary TLV types.

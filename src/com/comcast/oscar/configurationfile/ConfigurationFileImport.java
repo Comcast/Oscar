@@ -14,7 +14,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.json.JSONArray;
@@ -225,12 +229,39 @@ public class ConfigurationFileImport {
     // create a Lexer that feeds off of input CharStream
     tlvLexer tlConfigLexer = new tlvLexer(input);
 
+    BaseErrorListener errors =
+        new BaseErrorListener() {
+          @Override
+          public void syntaxError(
+              Recognizer<?, ?> recognizer,
+              Object offendingSymbol,
+              int line,
+              int position,
+              String message,
+              RecognitionException cause) {
+            throw new IllegalArgumentException(
+                "Invalid TLV syntax at " + line + ":" + position + ": " + message, cause);
+          }
+        };
+    tlConfigLexer.removeErrorListeners();
+    tlConfigLexer.addErrorListener(errors);
+
     // create a buffer of tokens pulled from the lexer
     CommonTokenStream ctsConfigTokens = new CommonTokenStream(tlConfigLexer);
 
     tlvParser tpConfigParser = new tlvParser(ctsConfigTokens);
+    tpConfigParser.removeErrorListeners();
+    tpConfigParser.addErrorListener(errors);
 
     ParseTree ptConfigParseTree = tpConfigParser.begin();
+    if (ctsConfigTokens.LA(1) != Token.EOF) {
+      Token trailing = ctsConfigTokens.LT(1);
+      throw new IllegalArgumentException(
+          "Unexpected input after TLV configuration at "
+              + trailing.getLine()
+              + ":"
+              + trailing.getCharPositionInLine());
+    }
 
     ParseTreeWalker walker = new ParseTreeWalker();
 

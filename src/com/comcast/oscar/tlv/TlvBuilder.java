@@ -91,8 +91,6 @@ public class TlvBuilder implements TlvBuild {
       lsTlvBuffer.add(hsObject.toString());
       bTlvBuilder.add(hsObject.toByteArray());
     } else {
-      lsTlvBuffer.add(hsObject.toString());
-      bTlvBuilder.add(hsObject.toByteArray());
       throw new TlvException("HexString Object not in a TLV Format\n" + hsObject.toString(":"));
     }
   }
@@ -2424,11 +2422,15 @@ public class TlvBuilder implements TlvBuild {
         iNumOfByteLength = 1;
       }
 
+      if (bTLV.length - iIndex - 1 < iNumOfByteLength) {
+        return false;
+      }
+
       // Look for Next TLV Index
       try {
         iIndex = nextTLVIndex(bTLV, iIndex, iNumOfByteLength);
       } catch (TlvException e) {
-        e.printStackTrace();
+        return false;
       }
 
       // Check for EOF for DOCSIS due to PADDING
