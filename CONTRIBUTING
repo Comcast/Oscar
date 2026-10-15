@@ -2,6 +2,16 @@ If you would like to contribute code to this project you can do so through GitHu
 
 Before Comcast accepts your code into the project you must sign the Comcast Contributor License Agreement (CLA).
 
-If you haven’t previously signed a Comcast CLA, we can e-mail you a PDF that you can sign and scan back to us. 
+If you havenï¿½t previously signed a Comcast CLA, we can e-mail you a PDF that you can sign and scan back to us. 
 
 Please send us an e-mail or create a new GiHhub issue to request a PDF version of the CLA.
+
+When editing a file with an existing Oscar copyright banner, preserve its original
+start year and extend the range through the current calendar year. For example,
+Copyright 2015 becomes Copyright 2015 - 2026 for changes made in 2026. A banner
+starting in the current year can retain that single year. Do not add banners to
+files without one, or alter third-party notices or bundled specification sources.
+
+The code hygiene gate checks banners in staged, unstaged and untracked files.
+Run only this check with tools/code-hygene-checker.sh --copyright-only.
+To check explicit paths (for example in CI), append them after --copyright-only.

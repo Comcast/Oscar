@@ -21,6 +21,7 @@ public final class TlvRegistry {
   private static final Set<String> CODECS =
       Set.of(
           "integer",
+          "unsigned_integer",
           "string",
           "string_bits",
           "string_null_terminated",
@@ -96,9 +97,14 @@ public final class TlvRegistry {
   }
 
   public static TlvRegistry forFamily(String family) {
+    if (family.equals("docsis40")) return Docsis40Catalog.INSTANCE;
     TlvRegistry registry = Catalogs.ALL.get(family);
     if (registry == null) throw new IllegalArgumentException("Unknown TLV family: " + family);
     return registry;
+  }
+
+  private static class Docsis40Catalog {
+    private static final TlvRegistry INSTANCE = load("docsis40");
   }
 
   private static TlvRegistry load(String family) {

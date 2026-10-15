@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 /** Compatibility-shaped lookup API backed by JSON symbol tables, not SQL. */
 public class TlvDictionary {
+  public static final String DOCSIS_40_DICTIONARY_TABLE_NAME = "DOCSIS40_TLV_DEFINITION";
   public static final String DOCSIS_DICTIONARY_TABLE_NAME =
       DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;
   public static final String PACKET_CABLE_DICTIONARY_TABLE_NAME =
@@ -35,6 +36,7 @@ public class TlvDictionary {
   public void updateDictionaryTablename(String table) {
     String family =
         switch (table) {
+          case DOCSIS_40_DICTIONARY_TABLE_NAME -> "docsis40";
           case DOCSIS_DICTIONARY_TABLE_NAME -> "docsis";
           case PACKET_CABLE_DICTIONARY_TABLE_NAME -> "packetcable";
           case DPOE_DICTIONARY_TABLE_NAME -> "dpoe";
@@ -78,7 +80,10 @@ public class TlvDictionary {
 
   public JSONArray getAllTlvDefinition(int configurationType) {
     String selected;
-    if (configurationType >= 0 && configurationType <= 4) selected = DOCSIS_DICTIONARY_TABLE_NAME;
+    if (configurationType == ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE)
+      selected = DOCSIS_40_DICTIONARY_TABLE_NAME;
+    else if (configurationType >= 0 && configurationType <= 4)
+      selected = DOCSIS_DICTIONARY_TABLE_NAME;
     else if (configurationType >= 100 && configurationType <= 102)
       selected = PACKET_CABLE_DICTIONARY_TABLE_NAME;
     else if (configurationType == 200 || configurationType == 201)

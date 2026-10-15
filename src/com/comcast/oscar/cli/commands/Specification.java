@@ -7,7 +7,7 @@ import org.apache.commons.cli.OptionBuilder;
 
 /**
  * @author Allen Flickinger (allen.flickinger@gmail.com)
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -53,6 +53,7 @@ public class Specification {
    * @param args
    */
   public void setValues(String[] args) {
+    this.boolPacketCable = false;
     String sSpecification = "";
     String sVersion = "0";
 
@@ -92,6 +93,12 @@ public class Specification {
 
       if (sVersion.equalsIgnoreCase("3.1") || sVersion.equalsIgnoreCase("31")) {
         this.iConfigurationFileType = ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE;
+      }
+      if (sVersion.equalsIgnoreCase("4")
+          || sVersion.equalsIgnoreCase("40")
+          || sVersion.equalsIgnoreCase("4.0")) {
+        this.iConfigurationFileType = ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE;
+        this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS_40;
       }
     } else if (sSpecification.equalsIgnoreCase("p")
         || sSpecification.equalsIgnoreCase("packetcable")) {
@@ -169,6 +176,14 @@ public class Specification {
         || sSpecification.equalsIgnoreCase("docsis31")) {
       this.iConfigurationFileType = ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE;
       this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
+    } else if (sSpecification.equalsIgnoreCase("d4")
+        || sSpecification.equalsIgnoreCase("docsis4")
+        || sSpecification.equalsIgnoreCase("d4.0")
+        || sSpecification.equalsIgnoreCase("docsis4.0")
+        || sSpecification.equalsIgnoreCase("d40")
+        || sSpecification.equalsIgnoreCase("docsis40")) {
+      this.iConfigurationFileType = ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE;
+      this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS_40;
     } else if (sSpecification.equalsIgnoreCase("p1")
         || sSpecification.equalsIgnoreCase("packetcable1")
         || sSpecification.equalsIgnoreCase("p1.0")

@@ -25,7 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -47,6 +47,7 @@ public class TlvDisassemble extends TlvDictionary {
   private TlvVariableBinding tvbTlvBuffer = null;
 
   public static final String TLV_TYPE_DOCSIS = DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;
+  public static final String TLV_TYPE_DOCSIS_40 = "DOCSIS40_TLV_DEFINITION";
   public static final String TLV_TYPE_PACKET_CABLE =
       DictionarySQLConstants.PACKET_CABLE_DICTIONARY_TABLE_NAME;
   public static final String TLV_TYPE_DPOE = DictionarySQLConstants.DPOE_DICTIONARY_TABLE_NAME;
@@ -489,11 +490,21 @@ public class TlvDisassemble extends TlvDictionary {
         HexString hsPCTEL = new HexString(bParentChildTlvEncodeList);
 
         // Get Specific TLV if available
-        byte[] bPCTEPointer =
-            TlvVariableBinding.findTLVIndex(
-                bTlvBuffer, bParentChildTlvEncodeList, joTlvDictionary.getInt("ByteLength"));
+        int[] bPCTEPointer;
+        if (TLV_TYPE_DOCSIS_40.equals(getDictionaryTableName())) {
+          bPCTEPointer =
+              findDocsis40Offsets(
+                  bTlvBuffer, joTlvDictionary.getJSONArray(Dictionary.PARENT_TYPE_LIST));
+        } else {
+          byte[] indices =
+              TlvVariableBinding.findTLVIndex(
+                  bTlvBuffer, bParentChildTlvEncodeList, joTlvDictionary.getInt("ByteLength"));
+          bPCTEPointer = new int[indices.length];
+          for (int index = 0; index < indices.length; index++)
+            bPCTEPointer[index] = Byte.toUnsignedInt(indices[index]);
+        }
 
-        HexString hsPCTEPointer = new HexString(bPCTEPointer);
+        String hsPCTEPointer = java.util.Arrays.toString(bPCTEPointer);
 
         if (logger.isDebugEnabled())
           logger.debug(
@@ -512,7 +523,7 @@ public class TlvDisassemble extends TlvDictionary {
           if (logger.isDebugEnabled())
             logger.debug(
                 "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) -> NextTLV -> "
-                    + hsPCTEPointer.toString(":"));
+                    + hsPCTEPointer);
 
           /* Need to create a special case when there are 2 of the same TLV - Example TLV 43 Vendor Specific */
           for (int iIndex = 0; iIndex < bPCTEPointer.length; iIndex++) {
@@ -545,7 +556,9 @@ public class TlvDisassemble extends TlvDictionary {
             String sDataType = joTlvDictionary.getString(Dictionary.DATA_TYPE);
 
             // Convert Value to Proper Data Type
-            if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
+            if (sDataType.equals("unsigned_integer")) {
+              joTlvDictionary.put(Dictionary.VALUE, new java.math.BigInteger(1, bValue));
+            } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
 
               if (logger.isDebugEnabled())
                 logger.debug(
@@ -793,8 +806,8 @@ public class TlvDisassemble extends TlvDictionary {
               // Insert Value into JSON Object
               joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
 
-            } else if (sDataType.equals(
-                DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)) {
+            } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)
+                || sDataType.equals("byte_array_inet_address")) {
 
               String sTlvValue = null;
 
@@ -877,6 +890,52 @@ public class TlvDisassemble extends TlvDictionary {
    * @param jaParentTypeList
    * @return byte[]
    */
+  private static int[] findDocsis40Offsets(byte[] bytes, JSONArray parents) {
+    java.util.List<Integer> path = new java.util.ArrayList<>();
+    for (int index = 0; index < parents.length(); index++) {
+      int type = parents.getInt(index);
+      if (type >= 0) path.add(type);
+    }
+    java.util.List<Integer> offsets = new java.util.ArrayList<>();
+    findDocsis40Offsets(bytes, 0, bytes.length, path, 0, offsets);
+    return offsets.stream().mapToInt(Integer::intValue).toArray();
+  }
+
+  private static void findDocsis40Offsets(
+      byte[] bytes,
+      int start,
+      int end,
+      java.util.List<Integer> path,
+      int depth,
+      java.util.List<Integer> offsets) {
+    int offset = start;
+    while (offset < end) {
+      int type = Byte.toUnsignedInt(bytes[offset]);
+      if (depth == 0 && type == 0) {
+        offset++;
+        continue;
+      }
+      if (depth == 0 && type == 255) return;
+      java.util.List<Integer> current = new java.util.ArrayList<>(path.subList(0, depth));
+      current.add(type);
+      var definition = com.comcast.oscar.dictionary.TlvRegistry.forFamily("docsis40").find(current);
+      int width = definition == null ? 1 : definition.lengthBytes();
+      if (width > end - offset - 1)
+        throw new IllegalArgumentException("Truncated D4.0 header at " + current);
+      int length = 0;
+      for (int index = 1; index <= width; index++)
+        length = (length << 8) | Byte.toUnsignedInt(bytes[offset + index]);
+      int valueStart = offset + 1 + width;
+      if (length > end - valueStart)
+        throw new IllegalArgumentException("Truncated D4.0 value at " + current);
+      if (type == path.get(depth)) {
+        if (depth == path.size() - 1) offsets.add(offset);
+        else findDocsis40Offsets(bytes, valueStart, valueStart + length, path, depth + 1, offsets);
+      }
+      offset = valueStart + length;
+    }
+  }
+
   private byte[] toParentTypeListByteArray(JSONArray jaParentTypeList) {
 
     ByteArrayOutputStream baosParentTypeList = new ByteArrayOutputStream();

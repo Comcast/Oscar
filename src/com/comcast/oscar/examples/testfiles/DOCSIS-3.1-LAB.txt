@@ -1,0 +1,22 @@
+/*
+ * DOCSIS 3.1 lab example: 100 Mbit/s upstream, 1 Gbit/s downstream.
+ * CM-SP-MULPIv3.1-I21-201020, Annexes C and D.
+ * Select -s d 3.1; pass the adjacent DOCSIS-LAB.key file with -k.
+ * Public test key only; key-file bytes are used verbatim.
+ * Lab fixture, not a production provisioning profile.
+ */
+Docsis {
+    NetworkAccess 1;
+    UpstreamServiceFlow {
+        ServiceFlowReference 1;
+        QualityOfServiceParameterSetType 07;
+        MaxSubstainedTrafficRate 100000000;
+        MaxTrafficBurst 3044;
+    }
+    DownstreamServiceFlow {
+        ServiceFlowReference 2;
+        QualityOfServiceParameterSetType 07;
+        MaxSubstainedTrafficRate 1000000000;
+        MaxTrafficBurst 3044;
+    }
+}

@@ -7,6 +7,7 @@ public class ConfigurationFileTypeConstants {
   public static final Integer DOCSIS_20_CONFIGURATION_TYPE = 2;
   public static final Integer DOCSIS_30_CONFIGURATION_TYPE = 3;
   public static final Integer DOCSIS_31_CONFIGURATION_TYPE = 4;
+  public static final Integer DOCSIS_40_CONFIGURATION_TYPE = 5;
 
   public static final Integer PKT_CABLE_10_CONFIGURATION_TYPE = 100;
   public static final Integer PKT_CABLE_15_CONFIGURATION_TYPE = 101;

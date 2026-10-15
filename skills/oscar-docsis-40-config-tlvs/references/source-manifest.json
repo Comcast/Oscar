@@ -1,10 +1,73 @@
 {
-  "document": "CM-SP-MULPIv4.0-I11-260219",
+  "document": "CM-SP-MULPIv4.0-I12-261014",
   "origin": "https://www.cablelabs.com/specifications/CM-SP-MULPIv4.0",
   "acquired": "2026-10-15",
   "files": [
     {
+      "file": "CM-SP-SEC3.0-C01-171207.pdf",
+      "document": "CM-SP-SEC3.0-C01-171207",
+      "referenceAlias": "DOCSIS SECv3.0 / CM-SP-SECv3.0-C01-171207 in MULPI I12",
+      "provenance": "User-supplied original PDF, moved unchanged from the DOCSIS 3.1 skill root; filename normalized to the cover identifier",
+      "bytes": 1578038,
+      "sha256": "cc7570f6e93cd70870d5e2b0ef7f4fed700b683f34942facc22aa08b6f9f0839"
+    },
+    {
+      "file": "CM-SP-SEC3.0-C01-171207.txt",
+      "document": "CM-SP-SEC3.0-C01-171207",
+      "derivedFrom": "CM-SP-SEC3.0-C01-171207.pdf",
+      "extraction": "pdftotext -layout",
+      "bytes": 676317,
+      "sha256": "0795948094e7fcfb23a993011524dddcd461e1ea4d09db43ddba2a2d0b358d9f"
+    },
+    {
+      "file": "CM-SP-SECv4.0-I08-250903.pdf",
+      "document": "CM-SP-SECv4.0-I08-250903",
+      "provenance": "User-supplied original PDF, moved unchanged from the DOCSIS 3.1 skill root",
+      "bytes": 3222141,
+      "sha256": "97ecc85c4b1f00c37d02ca25efa74ae207c554bbbf1534d1c5dd3ca721012663"
+    },
+    {
+      "file": "CM-SP-SECv4.0-I08-250903.txt",
+      "document": "CM-SP-SECv4.0-I08-250903",
+      "derivedFrom": "CM-SP-SECv4.0-I08-250903.pdf",
+      "extraction": "pdftotext -layout",
+      "bytes": 874964,
+      "sha256": "4b56708c19a73b8d148eb8665ebd859ef6550d33ed9a5efe087ef7e4970cdbbe"
+    },
+    {
+      "file": "CM-SP-SYNC-I03-220715.pdf",
+      "document": "CM-SP-SYNC-I03-220715",
+      "provenance": "User-supplied original PDF, moved unchanged from the DOCSIS 3.1 skill root",
+      "bytes": 2491410,
+      "sha256": "b8ad33a38aa05c51cd1cc0e3d62e4c03accdab73538e3e4a8ec0e07832cc7ed0"
+    },
+    {
+      "file": "CM-SP-SYNC-I03-220715.txt",
+      "document": "CM-SP-SYNC-I03-220715",
+      "derivedFrom": "CM-SP-SYNC-I03-220715.pdf",
+      "extraction": "pdftotext -layout",
+      "bytes": 355233,
+      "sha256": "b4bd40406e4bfcdc87728395e6b5963101a4cddf3b7ffaf2d07ad8dd2c8340ca"
+    },
+    {
+      "file": "CM-SP-MULPIv4.0-I12-261014.pdf",
+      "document": "CM-SP-MULPIv4.0-I12-261014",
+      "provenance": "User-supplied original PDF, preserved unchanged",
+      "bytes": 16031277,
+      "sha256": "9c875d90a800a59aa0adf3663d771fe06f8f4426e5886d31cde09a5e6328f935"
+    },
+    {
+      "file": "CM-SP-MULPIv4.0-I12-261014.txt",
+      "document": "CM-SP-MULPIv4.0-I12-261014",
+      "derivedFrom": "CM-SP-MULPIv4.0-I12-261014.pdf",
+      "extraction": "pdftotext -layout",
+      "bytes": 3549109,
+      "sha256": "ba049b5b68347df7c5a73072b91f5faa24e79f393bf474f64f7035e091828802"
+    },
+    {
       "file": "CM-SP-MULPIv4.0-I11-260219.txt",
+      "document": "CM-SP-MULPIv4.0-I11-260219",
+      "role": "Historical reference only; not the active baseline",
       "bytes": 2913373,
       "sha256": "f2e8135511284bb12a2401db3c3fbdef4f3a1f7fd84c9f8dc05b4bbdc9b294d4"
     }

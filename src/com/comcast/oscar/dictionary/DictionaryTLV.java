@@ -16,7 +16,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -427,7 +427,14 @@ public class DictionaryTLV implements Dictionary {
 
         // Determine Data Type and insert with correct
         // Convert Value to Proper Data Type
-        if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
+        if (sDataType.equals("unsigned_integer")) {
+          java.math.BigInteger value = new java.math.BigInteger(sValue);
+          int width = joTlvDictionary.getInt(Dictionary.LENGTH_MIN);
+          if (value.signum() < 0 || value.bitLength() > width * 8) {
+            throw new IllegalArgumentException("Unsigned TLV value exceeds " + width + " octets");
+          }
+          joTlvDictionary.put(Dictionary.VALUE, value);
+        } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
 
           if (logger.isDebugEnabled())
             logger.debug("DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s): " + sValue);
@@ -554,7 +561,8 @@ public class DictionaryTLV implements Dictionary {
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
 
-        } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)) {
+        } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)
+            || sDataType.equals("byte_array_inet_address")) {
 
           if (logger.isDebugEnabled())
             logger.debug(

@@ -151,6 +151,15 @@ class TlvRegistryTest {
   }
 
   @Test
+  void cliSelectsDocsis40WithoutUsingLegacyCatalog() {
+    var specification = new com.comcast.oscar.cli.commands.Specification();
+    specification.setValues(new String[] {"d", "4.0"});
+    assertEquals(5, specification.getConfigurationFileType());
+    assertEquals("DOCSIS40_TLV_DEFINITION", specification.getTlvDisassemble());
+    assertFalse(specification.isPacketCable());
+  }
+
+  @Test
   void rejectsMalformedCatalogsBeforeUse() throws Exception {
     String definition =
         """

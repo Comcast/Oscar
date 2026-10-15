@@ -43,7 +43,7 @@ import org.apache.commons.cli.ParseException;
 
 /**
  * @author Allen Flickinger (allen.flickinger@gmail.com)
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -385,6 +385,11 @@ public class CommandRun {
           e.printStackTrace();
         }
 
+        if ((comSpecification.getConfigurationFileType() == ConfigurationFile.DOCSIS_VER_40)
+            != (cfi.getConfigurationFileType() == ConfigurationFile.DOCSIS_VER_40)) {
+          throw new IllegalArgumentException(
+              "DOCSIS 4.0 requires both -s d 4.0 and a Docsis-4.0 text header");
+        }
         cf =
             new ConfigurationFile(
                 comSpecification.getConfigurationFileType(), cfi.getTlvBuilder(), comKey.getKey());

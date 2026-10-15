@@ -14,7 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -91,7 +91,7 @@ public class TlvAssembler extends TlvBuilder {
 
           // Add TopLevel TLV Type
           try {
-            tbLocalBuilder.encapsulateTlv(joTlvDictionary.getInt(Dictionary.TYPE));
+            tbLocalBuilder = encapsulate(joTlvDictionary, tbLocalBuilder);
           } catch (TlvException e) {
             e.printStackTrace();
           }
@@ -174,7 +174,7 @@ public class TlvAssembler extends TlvBuilder {
                       + tbLocalTlvBuilder.length());
 
             try {
-              tbLocalTlvBuilder.encapsulateTlv(iTypeLocal);
+              tbLocalTlvBuilder = encapsulate(joTlvDictionary, tbLocalTlvBuilder);
             } catch (TlvException e) {
               e.printStackTrace();
             }
@@ -223,6 +223,20 @@ public class TlvAssembler extends TlvBuilder {
    * @return TlvBuilder
    * @throws JSONException
    */
+  private static TlvBuilder encapsulate(JSONObject definition, TlvBuilder value)
+      throws TlvException {
+    int type = definition.getInt(Dictionary.TYPE);
+    if (definition.getInt(Dictionary.BYTE_LENGTH) == 1) {
+      value.encapsulateTlv(type);
+      return value;
+    }
+    var binding = new TlvVariableBinding();
+    binding.add(type, value.toByteArray(), definition.getInt(Dictionary.BYTE_LENGTH));
+    var result = new TlvBuilder();
+    result.add(binding);
+    return result;
+  }
+
   private TlvBuilder buildTlvFromTlvDictionary(JSONObject joTlvDictionary) throws JSONException {
 
     if (logger.isDebugEnabled()) {
@@ -259,7 +273,24 @@ public class TlvAssembler extends TlvBuilder {
       }
 
       // Determine how to encode the value
-      if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
+      if (sDataType.equals("unsigned_integer")) {
+        java.math.BigInteger value =
+            new java.math.BigInteger(joTlvDictionary.get(Dictionary.VALUE).toString());
+        if (value.signum() < 0 || value.bitLength() > iTlvValueLength * 8) {
+          throw new IllegalArgumentException(
+              "Unsigned TLV value exceeds " + iTlvValueLength + " octets");
+        }
+        byte[] magnitude = value.toByteArray();
+        byte[] encoded = new byte[iTlvValueLength];
+        int count = Math.min(encoded.length, magnitude.length);
+        System.arraycopy(
+            magnitude, magnitude.length - count, encoded, encoded.length - count, count);
+        try {
+          tbLocalTlvBuilder.add(iType, new HexString(encoded));
+        } catch (TlvException failure) {
+          throw new IllegalArgumentException("Cannot encode unsigned TLV " + iType, failure);
+        }
+      } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
 
         if (logger.isDebugEnabled())
           logger.debug(
@@ -498,7 +529,8 @@ public class TlvAssembler extends TlvBuilder {
               "TlvAssembler.buildTlvFromTlvDictionary() -> DATA_TYPE_DOUBLE_BYTE_ARRAY: "
                   + tbLocalTlvBuilder.toString());
 
-      } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)) {
+      } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)
+          || sDataType.equals("byte_array_inet_address")) {
 
         // Get String Value HEX String
         String sTlvValue = joTlvDictionary.getString(Dictionary.VALUE);

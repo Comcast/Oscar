@@ -31,7 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -68,6 +68,8 @@ public class ConfigurationFile {
       ConfigurationFileTypeConstants.DOCSIS_30_CONFIGURATION_TYPE;
   public static final Integer DOCSIS_VER_31 =
       ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE;
+  public static final Integer DOCSIS_VER_40 =
+      ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE;
 
   public static final Integer PKT_CBL_VER_10 =
       ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
@@ -103,7 +105,7 @@ public class ConfigurationFile {
               + " ConfigType: "
               + iConfigurationFileType
               + " CMTS-Shared-Secret: "
-              + sCmtsSharedSecretKey
+              + "[redacted]"
               + " ConfigFile-Length: "
               + tbConfigurationFile.length()
               + " ConfigFile-HEX: "
@@ -133,7 +135,7 @@ public class ConfigurationFile {
               + " ConfigType: "
               + iConfigurationFileType
               + " CMTS-Shared-Secret: "
-              + sCmtsSharedSecretKey
+              + "[redacted]"
               + " ConfigFile-Length: "
               + tbConfigurationFile.length()
               + " ConfigFile-HEX: "
@@ -169,7 +171,7 @@ public class ConfigurationFile {
               + " ConfigType: "
               + iConfigurationFileType
               + " CMTS-Shared-Secret: "
-              + sCmtsSharedSecretKey
+              + "[redacted]"
               + " ConfigFile-Length: "
               + tbConfigurationFile.length()
               + " ConfigFile-HEX: "
@@ -199,7 +201,7 @@ public class ConfigurationFile {
               + " -> ConfigType: "
               + iConfigurationFileType
               + " -> CMTS-Shared-Secret: "
-              + sCmtsSharedSecretKey
+              + "[redacted]"
               + " -> ConfigFile-Length: "
               + tbConfigurationFile.length()
               + " -> ConfigFile-HEX: "
@@ -441,7 +443,7 @@ public class ConfigurationFile {
     HashMap<String, String> hmssPrettyPrint = new HashMap<String, String>();
 
     hmssPrettyPrint.put("FileName", sConfigurationFileName);
-    hmssPrettyPrint.put("SharedSecret", this.sCmtsSharedSecretKey);
+    hmssPrettyPrint.put("SharedSecret", "[redacted]");
     hmssPrettyPrint.put("ByteLength", Integer.toString((size())));
     hmssPrettyPrint.put("ConfigVersion", Integer.toString((iConfigurationFileType)));
 
@@ -652,7 +654,7 @@ public class ConfigurationFile {
     // Lets Strip TLV 6,7,255 and PADDs
     byte[] bTLV = null;
 
-    if (iConfigurationFileType <= ConfigurationFile.DOCSIS_VER_31) {
+    if (iConfigurationFileType <= ConfigurationFile.DOCSIS_VER_40) {
 
       if (tbTLV != null) {
 
@@ -669,7 +671,7 @@ public class ConfigurationFile {
       }
 
       // TODO - will need to write a striping Hashing Method
-    } else if (iConfigurationFileType > ConfigurationFile.DOCSIS_VER_31) {
+    } else if (iConfigurationFileType > ConfigurationFile.DOCSIS_VER_40) {
 
       // Need to pass any Snmp64 Type TLVs, copying over the byteArray may break Encoding
       tb.add(tbTLV);
@@ -687,12 +689,19 @@ public class ConfigurationFile {
 
     if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE)
         && (iConfigurationFileType
-            <= ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE)) {
+            <= ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE)) {
 
       this.miiTypeToByteLengh =
-          new TlvDictionary().getTypeToByteLengthMap(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
+          new TlvDictionary()
+              .getTypeToByteLengthMap(
+                  iConfigurationFileType == DOCSIS_VER_40
+                      ? TlvDictionary.DOCSIS_40_DICTIONARY_TABLE_NAME
+                      : TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
 
-      dcConfigurationFile = new DocsisCompiler(sCmtsSharedSecretKey, iConfigurationFileType);
+      dcConfigurationFile =
+          iConfigurationFileType == DOCSIS_VER_40
+              ? new com.comcast.oscar.compiler.Docsis40Compiler(sCmtsSharedSecretKey)
+              : new DocsisCompiler(sCmtsSharedSecretKey, iConfigurationFileType);
 
       TlvBuilder tbNoFinalize = null;
 
@@ -911,7 +920,7 @@ public class ConfigurationFile {
         e.printStackTrace();
       }
 
-      tb.add(new HexString(bTLV));
+      tb.add(new TlvVariableBinding(bTLV, this.getTypeToByteLengthMap()));
 
     } else if (pcConfigurationFile != null) {
     }
@@ -964,7 +973,7 @@ public class ConfigurationFile {
 
     if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE)
         && (iConfigurationFileType
-            <= ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE)) {
+            <= ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE)) {
       this.dcConfigurationFile.add(tb);
     } else if ((iConfigurationFileType
             >= ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE)
@@ -984,7 +993,7 @@ public class ConfigurationFile {
 
     if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE)
         && (iConfigurationFileType
-            <= ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE)) {
+            <= ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE)) {
       this.dcConfigurationFile.add(tvb);
     } else if ((iConfigurationFileType
             >= ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE)

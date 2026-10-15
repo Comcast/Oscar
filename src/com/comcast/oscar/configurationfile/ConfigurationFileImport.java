@@ -26,7 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -159,6 +159,15 @@ public class ConfigurationFileImport {
   public TlvBuilder getTlvBuilder() {
 
     TlvBuilder tb = new TlvBuilder();
+
+    if (iConfigurationFileType == ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE) {
+      Map<Integer, Integer> widths = new HashMap<>();
+      com.comcast.oscar.dictionary.TlvRegistry.forFamily("docsis40")
+          .children(java.util.List.of())
+          .forEach(definition -> widths.put(definition.type(), definition.lengthBytes()));
+      tb.add(new TlvVariableBinding(toByteArray(), widths));
+      return tb;
+    }
 
     if (iConfigurationFileType > DOCSIS_VER_31) {
 

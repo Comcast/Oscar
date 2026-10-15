@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.snmp4j.smi.OID;
 
 /**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -2237,16 +2237,14 @@ public class TlvBuilder implements TlvBuild {
       }
 
       // Look ahead to see if we exceed Byte Array Length
-      if ((iIndex + TLV_LENGTH_POS_OFFSET) >= bTlvByteArray.length) {
-
-        if (logger.isDebugEnabled())
-          logger.debug("TlvBuilder.stripZeroByteTLV(b,mii): - Look Ahead Exceeds Index");
-
-        break;
+      if (iTypeByteLength < 1 || iTypeByteLength > bTlvByteArray.length - iIndex - 1) {
+        throw new TlvException("TlvBuilder.stripZeroByteTLV(): Truncated length field");
       }
 
+      iTypeLength = TlvBuilder.getTlvLength(bTlvByteArray, iIndex, iTypeByteLength);
+
       // Check for 0 byte Length if so move to next TLV Index
-      if (bTlvByteArray[iIndex + 1] == ZERO_BYTE_LENGTH) {
+      if (iTypeLength == ZERO_BYTE_LENGTH) {
 
         if (logger.isDebugEnabled())
           logger.debug(
@@ -2259,13 +2257,15 @@ public class TlvBuilder implements TlvBuild {
                   + iIndex);
 
         // Advance to the next Type
-        iIndex += TLV_TYPE_LENGTH_OVERHEAD;
+        iIndex += iTypeByteLength + TLV_TYPE_OVERHEAD;
 
         continue;
       }
 
       // Get Value Length
-      iTypeLength = TlvBuilder.getTlvLength(bTlvByteArray, iIndex, iTypeByteLength);
+      if (iTypeLength < 0 || iTypeLength > bTlvByteArray.length - iIndex - iTypeByteLength - 1) {
+        throw new TlvException("TlvBuilder.stripZeroByteTLV(): Truncated value");
+      }
 
       if (logger.isDebugEnabled())
         logger.debug(

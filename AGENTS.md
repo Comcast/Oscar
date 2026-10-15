@@ -12,7 +12,12 @@ editor, codec, and file-integrity changes:
 - DOCSIS 3.1: [oscar-docsis-31-config-tlvs](skills/oscar-docsis-31-config-tlvs/SKILL.md),
   pinned to **CM-SP-MULPIv3.1-I21-201020**.
 - DOCSIS 4.0: [oscar-docsis-40-config-tlvs](skills/oscar-docsis-40-config-tlvs/SKILL.md),
-  pinned to **CM-SP-MULPIv4.0-I11-260219**.
+    pinned to **CM-SP-MULPIv4.0-I12-261014**.
+
+Current DOCSIS 4.0 implementation scope excludes L2VPN-specific settings and
+eDOCSIS/eSAFE settings. Record them as deferred rather than claiming coverage.
+Generated configuration tests use a public lab key, not production credentials;
+passing them is not proof of CM/CMTS interoperability.
 
 Choose the version from the requested target and existing project context. If
 the target remains ambiguous and affects the encoding, clarify it before making
@@ -35,8 +40,8 @@ the contents in discovery directories. Keep directory names and frontmatter
 names identical. Preserve bundled source files and their manifest hashes.
 
 After updating a skill, validate its `SKILL.md`, resolve both discovery links,
-and check referenced files and source-manifest hashes. Keep the bundled 3.1 PDF
-included through its scoped `.gitignore` exception.
+and check referenced files and source-manifest hashes. Keep the bundled 3.1 and
+4.0 PDFs included through their scoped `.gitignore` exceptions.
 
 ## Commit workflow
 

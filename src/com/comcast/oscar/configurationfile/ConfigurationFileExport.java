@@ -39,7 +39,7 @@ import org.json.JSONObject;
 import org.snmp4j.asn1.BER;
 
 /**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -82,6 +82,8 @@ public class ConfigurationFileExport {
       ConfigurationFileTypeConstants.DOCSIS_30_CONFIGURATION_TYPE;
   public static final Integer DOCSIS_VER_31 =
       ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE;
+  public static final Integer DOCSIS_VER_40 =
+      ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE;
 
   public static final Integer PKT_CBL_VER_10 =
       ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
@@ -180,7 +182,7 @@ public class ConfigurationFileExport {
       init();
 
     } else if ((iConfigurationFileType >= DOCSIS_VER_10)
-        && (iConfigurationFileType <= DOCSIS_VER_31)) {
+        && (iConfigurationFileType <= DOCSIS_VER_40)) {
 
       if (logger.isDebugEnabled())
         logger.debug("DOCSIS Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
@@ -262,7 +264,7 @@ public class ConfigurationFileExport {
 
     this.iConfigurationFileType = iConfigurationFileType;
 
-    if ((iConfigurationFileType >= DOCSIS_VER_10) && (iConfigurationFileType <= DOCSIS_VER_31)) {
+    if ((iConfigurationFileType >= DOCSIS_VER_10) && (iConfigurationFileType <= DOCSIS_VER_40)) {
 
       if (logger.isDebugEnabled()) logger.debug("DOCSIS Configuration File");
 
@@ -432,15 +434,18 @@ public class ConfigurationFileExport {
       logger.debug("ConfigurationFileExport(i): ConfigurationFileType: " + iConfigurationFileType);
 
     if ((this.iConfigurationFileType >= DOCSIS_VER_10)
-        && (this.iConfigurationFileType <= DOCSIS_VER_31)) {
+        && (this.iConfigurationFileType <= DOCSIS_VER_40)) {
 
       if (logger.isDebugEnabled())
         logger.debug("ConfigurationFileExport(i): DOCSIS -> CONFIGURATION-TYPE");
 
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary =
+          new TlvDictionary(
+              iConfigurationFileType == DOCSIS_VER_40
+                  ? TlvDictionary.DOCSIS_40_DICTIONARY_TABLE_NAME
+                  : TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
 
-      jaTlvDictionary =
-          dsqTlvDictionary.getAllTlvDefinition(TlvDictionary.CONFIGURATION_FILE_TYPE_DOCSIS);
+      jaTlvDictionary = dsqTlvDictionary.getAllTlvDefinition(iConfigurationFileType);
 
       bTLV = docsisPsuedoTLVArray();
 
@@ -828,7 +833,7 @@ public class ConfigurationFileExport {
    * @return the ConfigurationFile Type per the ConfigurationFile() field statics
    */
   public int getConfigurationFileType() {
-
+    if (iConfigurationFileType >= 0) return iConfigurationFileType;
     if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
       return ConfigurationFile.PKT_CBL_VER_20;
     } else {
@@ -1295,6 +1300,12 @@ public class ConfigurationFileExport {
 
     initBER();
 
+    if (iConfigurationFileType == DOCSIS_VER_40) {
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_40_DICTIONARY_TABLE_NAME);
+      sConfigurationFileStart = "Docsis-4.0";
+      return;
+    }
+
     // Figure Out the Configuration file Type DOCSIS vs. PacketCable
 
     if (bTLV[0] != PacketCableConstants.FILE_MARKER) {
@@ -1419,7 +1430,7 @@ public class ConfigurationFileExport {
 
     sbBanner.append("\tSnmp11 OID DataType Value\n");
 
-    if (this.iConfigurationFileType > DOCSIS_VER_31)
+    if (this.iConfigurationFileType > DOCSIS_VER_40)
       sbBanner.append("\tSnmp64 OID DataType Value\n\n");
     else sbBanner.append('\n');
 

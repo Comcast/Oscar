@@ -20,7 +20,10 @@ OSCAR is a Java-based CableLabs&reg; Configuration File Builder API for DOCSIS&r
 ## Project Status
 
 I have taken this project back and resumed active development, building on the original codebase I wrote years ago.
-It has been updated to the latest JRE baseline, and upcoming work will focus on DOCSIS 4.0 support.
+It has been updated to the latest JRE baseline. Partial DOCSIS 4.0 I12 support is
+available through `-s d4 4.0`, including source-verified settings and configuration
+file MIC generation. See the [implementation status](development/docsis40-implementation.md)
+for verified coverage and remaining work.
 
 ## Quick Start
 
@@ -32,19 +35,52 @@ It has been updated to the latest JRE baseline, and upcoming work will focus on 
 
 - Java 21 JDK (not just the JRE). `javac` must be on your PATH for the build to succeed.
 
-## Quick CLI Test
+## DOCSIS Examples
 
-Text to binary:
+| Version | Editable Text | Compiled Binary | Lab Profile |
+| --- | --- | --- | --- |
+| DOCSIS 3.1 | [DOCSIS-3.1-LAB.txt](src/com/comcast/oscar/examples/testfiles/DOCSIS-3.1-LAB.txt) | [DOCSIS-3.1-LAB.bin](src/com/comcast/oscar/examples/testfiles/DOCSIS-3.1-LAB.bin) | 100 Mbit/s upstream, 1 Gbit/s downstream |
+| DOCSIS 4.0 | [DOCSIS-4.0-LAB.txt](src/com/comcast/oscar/examples/testfiles/DOCSIS-4.0-LAB.txt) | [DOCSIS-4.0-LAB.bin](src/com/comcast/oscar/examples/testfiles/DOCSIS-4.0-LAB.bin) | 1 Gbit/s upstream, 10 Gbit/s downstream; per-flow AQM |
+
+Both binaries use the public [lab-key file](src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key)
+containing `SHAREDSECRET`. The `-k` option takes a filename, not a literal key.
+They are not production
+provisioning profiles or evidence of CM/CMTS interoperability. D4.0 support
+remains partial; L2VPN and eDOCSIS/eSAFE are deferred.
+
+## Compile and Decompile
+
+Run from the repository root. Build the current executable JAR:
 
 ```bash
-java -jar oscar.jar -c -s d 3 -i src/com/comcast/oscar/examples/testfiles/DOCSIS-GOLDEN.txt -o output/DOCSIS-GOLDEN.bin
+mvn package
+mkdir -p output
 ```
 
-Binary to text:
+Compile the editable examples; CM/CMTS MICs, End marker and padding are generated:
 
 ```bash
-java -jar oscar.jar -d -s d 3 -i output/DOCSIS-GOLDEN.bin > output/DOCSIS-GOLDEN-roundtrip.txt
+java -jar target/oscar-2.2.15-all.jar -c -s d 3.1 \
+  -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
+  -i src/com/comcast/oscar/examples/testfiles/DOCSIS-3.1-LAB.txt \
+  -o output/DOCSIS-3.1-LAB.bin
+java -jar target/oscar-2.2.15-all.jar -c -s d4 4.0 \
+  -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
+  -i src/com/comcast/oscar/examples/testfiles/DOCSIS-4.0-LAB.txt \
+  -o output/DOCSIS-4.0-LAB.bin
 ```
+
+Decompile to text; decoding does not require a shared key:
+
+```bash
+java -jar target/oscar-2.2.15-all.jar -d -s d 3.1 \
+  -i output/DOCSIS-3.1-LAB.bin > output/DOCSIS-3.1-roundtrip.txt
+java -jar target/oscar-2.2.15-all.jar -d -s d4 4.0 \
+  -i output/DOCSIS-4.0-LAB.bin > output/DOCSIS-4.0-roundtrip.txt
+```
+
+See [CLI Examples](docs/wiki/CLI-Examples.md) for recompilation checks and
+[CLI Overview](docs/wiki/CLI-Overview.md) for new features and version selection.
 
 📧 [Email](mailto:mgarcia01752@outlook.com)
 

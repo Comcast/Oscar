@@ -16,6 +16,25 @@ java -jar oscar.jar --version
 - Decompile binary -> text: `-d`
 - Set spec/version: `-s`
 - Input/output: `-i` and `-o`
+- CMTS shared-key file for compilation: `-k path/to/key` (not a literal secret)
+
+## DOCSIS Version Selection
+
+| Target | CLI Selection | Text Wrapper | Catalog |
+| --- | --- | --- | --- |
+| DOCSIS 3.1 | `-s d 3.1` | `Docsis { ... }` | Legacy DOCSIS |
+| DOCSIS 4.0 I12 | `-s d4 4.0` or `-s d 4.0` | `Docsis-4.0 { ... }` | Independent I12 definitions |
+
+D4.0 adds unsigned rate handling, selectable bps/kbps/Mbps/Gbps units,
+per-flow AQM and latency histograms, band-plan controls, SYNC settings and common
+SSH settings. Its compiler validates supported lengths, repeated fields and
+selected dependencies, and generates CM/CMTS MICs using HMAC-MD5 or MMH E-MIC
+settings. Text syntax and unknown nested names are checked before assembly.
+
+The D4.0 catalog is intentionally separate from legacy DOCSIS. Its coverage is
+[partial](../../development/docsis40-implementation.md); L2VPN and eDOCSIS/eSAFE
+are deferred. For runnable text/binary pairs and build, compile, decompile and
+recompile commands, see [CLI Examples](./CLI-Examples.md).
 
 ## Common Commands
 

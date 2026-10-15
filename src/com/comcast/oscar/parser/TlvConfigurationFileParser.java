@@ -19,7 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -50,6 +50,9 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 
   private int iConfigurationFileType = -1;
 
+  private final java.util.Set<JSONObject> seenDefinitions =
+      java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+
   public TlvConfigurationFileParser() {
 
     // Create Dictionary Object
@@ -70,6 +73,11 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     if (ctx.getText().equals("Docsis")) {
       dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
       iConfigurationFileType = ConfigurationFile.DOCSIS_VER_31;
+    } else if (ctx.getText().equals("Docsis-4.0")) {
+      dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.DOCSIS_40_DICTIONARY_TABLE_NAME);
+      iConfigurationFileType =
+          com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants
+              .DOCSIS_40_CONFIGURATION_TYPE;
     } else if (ctx.getText().equals("PacketCable-1.0")) {
       dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
       iConfigurationFileType = ConfigurationFile.PKT_CBL_VER_10;
@@ -113,6 +121,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
       throw new IllegalArgumentException("Unknown top-level TLV: " + ctx.getStart().getText());
     }
     joWorkingTLVDictionary = dsqTlvDictionary.getTlvDefinition(type);
+    seenDefinitions.clear();
 
     if (logger.isDebugEnabled())
       logger.debug("TlvConfigurationFileParser.enterStartTLV() " + joWorkingTLVDictionary);
@@ -230,13 +239,22 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
       if (!definition.getString(Dictionary.TLV_NAME).equalsIgnoreCase(name)) {
         throw new IllegalArgumentException("Unknown TLV: " + name);
       }
-      return definition;
+      return trackDefinition(definition);
     }
     ancestors.next();
     while (ancestors.hasNext()) {
       definition = findChildDefinition(definition, ancestors.next());
     }
-    return findChildDefinition(definition, name);
+    return trackDefinition(findChildDefinition(definition, name));
+  }
+
+  private JSONObject trackDefinition(JSONObject definition) {
+    if (iConfigurationFileType == ConfigurationFile.DOCSIS_VER_40
+        && !seenDefinitions.add(definition)) {
+      throw new IllegalArgumentException(
+          "Repeated DOCSIS 4.0 child TLV: " + definition.getString(Dictionary.TLV_NAME));
+    }
+    return definition;
   }
 
   private JSONObject findChildDefinition(JSONObject parent, String name) {

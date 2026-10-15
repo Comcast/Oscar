@@ -147,6 +147,7 @@ SNMP_OID                  : (ALPHA_NUMERIC|'.'|'"'|'\''|'('|')')+?;
 configType      : (
                     'Main'
                 |   'Docsis'
+                |   'Docsis-4.0'
                 |   'PacketCable-1.0'
                 |   'PacketCable-1.5'
                 |   'PacketCable-2.0'

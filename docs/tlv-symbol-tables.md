@@ -8,10 +8,20 @@ TLV definitions from JSON files. SQLite is no longer used by these paths.
 | `res/tlv-registry/docsis.json` | 676 legacy DOCSIS definitions |
 | `res/tlv-registry/packetcable.json` | 13 legacy PacketCable definitions |
 | `res/tlv-registry/dpoe.json` | 624 distinct legacy DPoE definitions |
+| `res/tlv-registry/docsis40.json` | Source-verified DOCSIS 4.0 I12 definitions; see [coverage](../development/docsis40-implementation.md) |
 
-These are the migrated Oscar 2.2.15 catalogs, identified by edition
+The first three are the migrated Oscar 2.2.15 catalogs, identified by edition
 `oscar-legacy-2.2.15`. They are not a claim of complete DOCSIS 3.1 or 4.0
-specification coverage. This change does not add DOCSIS 4.0 CLI support.
+specification coverage. The separate `docsis40` catalog is pinned to
+`CM-SP-MULPIv4.0-I12-261014`. Select it with `-s d4 4.0` and use
+`Docsis-4.0 { ... }` text input. Its runtime support is partial, not complete I12
+coverage; unknown or unverified names are rejected instead of borrowing legacy
+definitions.
+
+Runnable [D3.1 text](../src/com/comcast/oscar/examples/testfiles/DOCSIS-3.1-LAB.txt)
+and [D4.0 text](../src/com/comcast/oscar/examples/testfiles/DOCSIS-4.0-LAB.txt)
+examples, compiled binaries and version-specific commands are documented in
+[CLI Examples](wiki/CLI-Examples.md).
 
 ## Editing and loading
 
@@ -24,7 +34,7 @@ mvn package
 
 By default, Oscar reads the catalogs packaged in its JAR. There is no extracted
 working dictionary to synchronize. To load edited repository files at startup
-without rebuilding the JAR, specify a directory containing all three catalogs:
+without rebuilding the JAR, specify a directory containing all four catalogs:
 
 ```bash
 java -Doscar.tlv.directory="$PWD/res/tlv-registry" -jar oscar.jar \
@@ -39,7 +49,7 @@ Relative directory paths resolve from the caller's working directory.
 ## Definition fields
 
 Each catalog has `formatVersion` (currently 1), `family`, `edition`,
-`sourceSha256` (the original migration source fingerprint), and `definitions`.
+`sourceSha256` (the migration source or pinned specification fingerprint), and `definitions`.
 Each definition is one JSON object:
 
 | Field | Meaning |
@@ -63,8 +73,10 @@ length bounds, missing fields, and unsupported catalog formats.
 
 Definitions are immutable and loaded once. Existing codecs receive fresh JSON
 working templates, so values from one configuration cannot modify the shared
-table. `maxInstances` and version metadata do not introduce new runtime
-occurrence or specification-conformance enforcement in this migration.
+table. The legacy catalogs' `maxInstances` and version metadata do not introduce
+new runtime occurrence or specification-conformance enforcement in the migration.
+The DOCSIS 4.0 compiler additionally validates its catalog's lengths and
+multiplicity plus the source-derived constraints described in its coverage notes.
 
 ## Compatibility and migration decisions
 
