@@ -2,8 +2,8 @@ package com.comcast.oscar.parser;
 
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.dictionary.Dictionary;
-import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.dictionary.DictionaryTLV;
+import com.comcast.oscar.dictionary.TlvDictionary;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
@@ -36,9 +36,9 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(TlvConfigurationFileParser.class);
 
-  private DictionarySQLQueries dsqTlvDictionary = null;
+  private TlvDictionary dsqTlvDictionary = null;
 
-  private HashMap<String, Integer> hmsiTopLevelTypeNameToType = null;
+  private Map<String, Integer> hmsiTopLevelTypeNameToType = null;
 
   private Map<Integer, Integer> miiTopLevelTypeToNumByteLength = new HashMap<Integer, Integer>();
 
@@ -53,7 +53,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   public TlvConfigurationFileParser() {
 
     // Create Dictionary Object
-    this.dsqTlvDictionary = new DictionarySQLQueries();
+    this.dsqTlvDictionary = new TlvDictionary();
   }
 
   /**
@@ -68,25 +68,22 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 
     // Determine which Dictionary to select
     if (ctx.getText().equals("Docsis")) {
-      dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
       iConfigurationFileType = ConfigurationFile.DOCSIS_VER_31;
     } else if (ctx.getText().equals("PacketCable-1.0")) {
-      dsqTlvDictionary.updateDictionaryTablename(
-          DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
       iConfigurationFileType = ConfigurationFile.PKT_CBL_VER_10;
     } else if (ctx.getText().equals("PacketCable-1.5")) {
-      dsqTlvDictionary.updateDictionaryTablename(
-          DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
       iConfigurationFileType = ConfigurationFile.PKT_CBL_VER_15;
     } else if (ctx.getText().equals("PacketCable-2.0")) {
-      dsqTlvDictionary.updateDictionaryTablename(
-          DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
       iConfigurationFileType = ConfigurationFile.PKT_CBL_VER_20;
     }
 
     // Added DPoE as a Configuration File Type
     else if (ctx.getText().equals("DPoE")) {
-      dsqTlvDictionary.updateDictionaryTablename(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
       iConfigurationFileType = ConfigurationFile.DPOE_VER_20;
     }
 
@@ -94,8 +91,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
       logger.debug("TlvConfigurationFileParser.enterConfigType() " + ctx.getText());
 
     // Create a Map of String TypeName -> Type
-    hmsiTopLevelTypeNameToType =
-        (HashMap<String, Integer>) dsqTlvDictionary.getAllTopLevelTypeNameToType();
+    hmsiTopLevelTypeNameToType = dsqTlvDictionary.getAllTopLevelTypeNameToType();
   }
 
   /**
@@ -112,8 +108,11 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
       logger.debug("TlvConfigurationFileParser.enterStartTLV() " + ctx.getStart().getText());
     }
 
-    joWorkingTLVDictionary =
-        dsqTlvDictionary.getTlvDefinition(hmsiTopLevelTypeNameToType.get(ctx.getStart().getText()));
+    Integer type = hmsiTopLevelTypeNameToType.get(ctx.getStart().getText());
+    if (type == null) {
+      throw new IllegalArgumentException("Unknown top-level TLV: " + ctx.getStart().getText());
+    }
+    joWorkingTLVDictionary = dsqTlvDictionary.getTlvDefinition(type);
 
     if (logger.isDebugEnabled())
       logger.debug("TlvConfigurationFileParser.enterStartTLV() " + joWorkingTLVDictionary);

@@ -24,6 +24,7 @@ latest-build
 # Directories #
 test/
 assessment/
+/development/
 output/*
 !output/.gitkeep
 dist/*
@@ -37,3 +38,6 @@ hs_err_pid*
 lib/*
 # Local tooling binaries
 /tools/google-java-format.jar
+
+# Track Maven regression tests.
+!/src/test/

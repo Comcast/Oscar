@@ -7,7 +7,7 @@ import com.comcast.oscar.datatype.DataTypeFormatConversion;
 import com.comcast.oscar.datatype.DataTypeFormatException;
 import com.comcast.oscar.dictionary.Dictionary;
 import com.comcast.oscar.dictionary.DictionarySQLConstants;
-import com.comcast.oscar.dictionary.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.TlvDictionary;
 import com.comcast.oscar.utilities.HexString;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,7 +38,7 @@ import org.json.JSONObject;
  *     limitations under the License.<br>
  * @author Maurice Garcia (mgarcia01752@outlook.com)
  */
-public class TlvDisassemble extends DictionarySQLQueries {
+public class TlvDisassemble extends TlvDictionary {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(TlvDisassemble.class);
 

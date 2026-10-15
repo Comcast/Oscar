@@ -7,7 +7,7 @@ import com.comcast.oscar.compiler.DPoECompiler;
 import com.comcast.oscar.compiler.DocsisCompiler;
 import com.comcast.oscar.compiler.PacketCableCompiler;
 import com.comcast.oscar.compiler.PacketCableConstants;
-import com.comcast.oscar.dictionary.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.TlvDictionary;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.tlv.TlvVariableBinding;
@@ -690,8 +690,7 @@ public class ConfigurationFile {
             <= ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE)) {
 
       this.miiTypeToByteLengh =
-          new DictionarySQLQueries()
-              .getTypeToByteLengthMap(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+          new TlvDictionary().getTypeToByteLengthMap(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
 
       dcConfigurationFile = new DocsisCompiler(sCmtsSharedSecretKey, iConfigurationFileType);
 
@@ -728,8 +727,8 @@ public class ConfigurationFile {
             <= ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE)) {
 
       this.miiTypeToByteLengh =
-          new DictionarySQLQueries()
-              .getTypeToByteLengthMap(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+          new TlvDictionary()
+              .getTypeToByteLengthMap(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
       pcConfigurationFile = new PacketCableCompiler(iConfigurationFileType);
 
@@ -745,8 +744,7 @@ public class ConfigurationFile {
         && (iConfigurationFileType <= ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE)) {
 
       this.miiTypeToByteLengh =
-          new DictionarySQLQueries()
-              .getTypeToByteLengthMap(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+          new TlvDictionary().getTypeToByteLengthMap(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
 
       dpoeConfigurationFile = new DPoECompiler(sCmtsSharedSecretKey, iConfigurationFileType);
 

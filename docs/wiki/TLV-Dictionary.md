@@ -1,28 +1,8 @@
 # TLV Dictionary
 
-OSCAR dictionary data is stored in SQLite:
-- `db/dictionary.sqlite`
+Oscar's parser and codecs now use startup-loaded JSON symbol tables under
+`res/tlv-registry/`. See [TLV symbol tables](../tlv-symbol-tables.md) for the schema,
+editing workflow, external-directory option, and migration compatibility notes.
 
-## Editing Guidance
-- Back up the database before edits.
-- Use a SQLite editor (for example DB Browser for SQLite).
-- Keep naming and datatype choices consistent with parser expectations.
-
-## Common Data Types
-- `integer`
-- `string`
-- `string_null_terminated`
-- `byte_array`
-- `double_byte_array`
-- `multi_tlv_byte_array`
-- `oid`
-- `transport_address_ipv4_address`
-- `transport_address_ipv6_address`
-- `mac_address`
-
-## Validation Tip
-After dictionary edits, run:
-```bash
-tools/run-all.sh
-```
-Then compile/decompile a sample config to verify behavior.
+The SQLite dictionaries remain available to legacy SQL API callers. They are no
+longer the definition source for normal parser, encoder, decoder, or bulk operations.

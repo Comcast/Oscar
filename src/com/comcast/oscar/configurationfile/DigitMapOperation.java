@@ -4,7 +4,7 @@ import com.comcast.oscar.ber.BEROIDConversion;
 import com.comcast.oscar.ber.OIDToJSONArray;
 import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.dictionary.Dictionary;
-import com.comcast.oscar.dictionary.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.TlvDictionary;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvVariableBinding;
@@ -156,8 +156,7 @@ public class DigitMapOperation {
     byte[] bDigitMap = HexString.fileToByteArray(fDigitMap);
 
     // Need to get the JSON Dictionary Object, in this case, we need to use Snmp64
-    DictionarySQLQueries dsqSnmp64 =
-        new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+    TlvDictionary dsqSnmp64 = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
     // Get JSON Dictionary Object
     JSONObject joDictSnmp64 = dsqSnmp64.getTlvDictionary(64);
@@ -225,8 +224,7 @@ public class DigitMapOperation {
   public static TlvBuilder getDigitMapTlvBuilder(byte[] baDigitMap, String sOID) {
 
     // Need to get the JSON Dictionary Object, in this case, we need to use Snmp64
-    DictionarySQLQueries dsqSnmp64 =
-        new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+    TlvDictionary dsqSnmp64 = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
     // Get JSON Dictionary Object
     JSONObject joDictSnmp64 = dsqSnmp64.getTlvDictionary(64);

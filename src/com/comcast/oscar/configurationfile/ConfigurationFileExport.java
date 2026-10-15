@@ -9,7 +9,7 @@ import com.comcast.oscar.datatype.DataTypeDictionaryReference;
 import com.comcast.oscar.datatype.DataTypeFormatConversion;
 import com.comcast.oscar.dictionary.Dictionary;
 import com.comcast.oscar.dictionary.DictionarySQLConstants;
-import com.comcast.oscar.dictionary.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.TlvDictionary;
 import com.comcast.oscar.netsnmp.NetSNMP;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvDisassemble;
@@ -62,7 +62,7 @@ public class ConfigurationFileExport {
   private ArrayList<JSONObject> aljoTopLevelTlvDictionary;
   private final Integer RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH = -1;
   private Map<Integer, String> BER_DATA_TYPE = new HashMap<Integer, String>();
-  private DictionarySQLQueries dsqDictionarySQLQueries = null;
+  private TlvDictionary dsqTlvDictionary = null;
   private String sConfigurationFileStart;
   private int iConfigurationFileType = -1;
   private boolean boolVerboseExport = true;
@@ -119,13 +119,11 @@ public class ConfigurationFileExport {
 
     if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
     } else {
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
     }
 
     init();
@@ -166,8 +164,7 @@ public class ConfigurationFileExport {
                   + iConfigurationFileType
                   + ")");
 
-        dsqDictionarySQLQueries =
-            new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+        dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
       } else {
 
@@ -177,8 +174,7 @@ public class ConfigurationFileExport {
                   + iConfigurationFileType
                   + ")");
 
-        dsqDictionarySQLQueries =
-            new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+        dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
       }
 
       init();
@@ -189,8 +185,7 @@ public class ConfigurationFileExport {
       if (logger.isDebugEnabled())
         logger.debug("DOCSIS Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
 
       init();
 
@@ -201,8 +196,7 @@ public class ConfigurationFileExport {
         logger.debug(
             "PacketCable Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
       init();
 
@@ -211,8 +205,7 @@ public class ConfigurationFileExport {
       if (logger.isDebugEnabled())
         logger.debug("DPoE Configuration File - ConfigType -> (" + iConfigurationFileType + ")");
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
 
       init(iConfigurationFileType);
     }
@@ -241,8 +234,7 @@ public class ConfigurationFileExport {
         logger.debug("ConfigrationFileExport(tb) - PacketCable File");
       }
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
     } else {
 
@@ -250,8 +242,7 @@ public class ConfigurationFileExport {
         logger.debug("ConfigrationFileExport(tb) - DOCSIS File");
       }
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
     }
 
     init();
@@ -275,8 +266,7 @@ public class ConfigurationFileExport {
 
       if (logger.isDebugEnabled()) logger.debug("DOCSIS Configuration File");
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
 
       init();
 
@@ -285,8 +275,7 @@ public class ConfigurationFileExport {
 
       if (logger.isDebugEnabled()) logger.debug("PacketCable Configuration File");
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
       init();
 
@@ -294,8 +283,7 @@ public class ConfigurationFileExport {
 
       if (logger.isDebugEnabled()) logger.debug("DPoE Configuration File");
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
 
       init(iConfigurationFileType);
     }
@@ -352,13 +340,11 @@ public class ConfigurationFileExport {
 
     if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
     } else {
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
     }
 
     init();
@@ -394,8 +380,7 @@ public class ConfigurationFileExport {
                 + iConfigurationFileType
                 + ")");
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
 
       init(this.iConfigurationFileType);
 
@@ -409,8 +394,7 @@ public class ConfigurationFileExport {
                   + iConfigurationFileType
                   + ")");
 
-        dsqDictionarySQLQueries =
-            new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+        dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
         init();
 
@@ -422,8 +406,7 @@ public class ConfigurationFileExport {
                   + iConfigurationFileType
                   + ")");
 
-        dsqDictionarySQLQueries =
-            new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+        dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
 
         init();
       }
@@ -454,12 +437,10 @@ public class ConfigurationFileExport {
       if (logger.isDebugEnabled())
         logger.debug("ConfigurationFileExport(i): DOCSIS -> CONFIGURATION-TYPE");
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
 
       jaTlvDictionary =
-          dsqDictionarySQLQueries.getAllTlvDefinition(
-              DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DOCSIS);
+          dsqTlvDictionary.getAllTlvDefinition(TlvDictionary.CONFIGURATION_FILE_TYPE_DOCSIS);
 
       bTLV = docsisPsuedoTLVArray();
 
@@ -471,12 +452,10 @@ public class ConfigurationFileExport {
       if (logger.isDebugEnabled())
         logger.debug("ConfigurationFileExport(i): PACKET-CABLE -> CONFIGURATION-TYPE");
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
       jaTlvDictionary =
-          dsqDictionarySQLQueries.getAllTlvDefinition(
-              DictionarySQLQueries.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
+          dsqTlvDictionary.getAllTlvDefinition(TlvDictionary.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
 
       bTLV = packetCablePsuedoTLVArray();
 
@@ -488,12 +467,10 @@ public class ConfigurationFileExport {
       if (logger.isDebugEnabled())
         logger.debug("ConfigurationFileExport(i): DPoE -> CONFIGURATION-TYPE");
 
-      dsqDictionarySQLQueries =
-          new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
 
       jaTlvDictionary =
-          dsqDictionarySQLQueries.getAllTlvDefinition(
-              DictionarySQLQueries.CONFIGURATION_FILE_TYPE_DPOE);
+          dsqTlvDictionary.getAllTlvDefinition(TlvDictionary.CONFIGURATION_FILE_TYPE_DPOE);
 
       bTLV = packetCablePsuedoTLVArray();
 
@@ -653,7 +630,7 @@ public class ConfigurationFileExport {
 
     // Get TLV Dictionary for the Top Level
     JSONObject joTlvDictionary =
-        dsqDictionarySQLQueries.getTlvDefinition(Integer.decode(lsTlvDotNotation.get(0)));
+        dsqTlvDictionary.getTlvDefinition(Integer.decode(lsTlvDotNotation.get(0)));
 
     // Search for TLV Definition
     if (lsTlvDotNotation.size() == 1) {
@@ -919,13 +896,13 @@ public class ConfigurationFileExport {
       }
 
       // Get Top Level TLV Dictionary
-      dsqDictionarySQLQueries = new DictionarySQLQueries(sDictionaryTableName);
+      dsqTlvDictionary = new TlvDictionary(sDictionaryTableName);
     } else {
-      sDictionaryTableName = dsqDictionarySQLQueries.getDictionaryTableName();
+      sDictionaryTableName = dsqTlvDictionary.getDictionaryTableName();
     }
 
     // Build Map to determine the Type to ByteLength Mapping
-    Map<Integer, Integer> miiTopLevelTLV = dsqDictionarySQLQueries.getTopLevelByteLength();
+    Map<Integer, Integer> miiTopLevelTLV = dsqTlvDictionary.getTopLevelByteLength();
 
     // Add TLV Byte Array from Constructor for later processing
     tbTLV.add(new TlvVariableBinding(bTLV, miiTopLevelTLV));
@@ -984,7 +961,7 @@ public class ConfigurationFileExport {
       }
 
       // Get TLV Dictionary for iTlvType
-      JSONObject joDictionaryTemp = dsqDictionarySQLQueries.getTlvDefinition(iTlvType);
+      JSONObject joDictionaryTemp = dsqTlvDictionary.getTlvDefinition(iTlvType);
 
       // Check for TLV's that are DATA_TYPE_MULTI_TLV_BYTE_ARRAY
       try {
@@ -1588,7 +1565,7 @@ public class ConfigurationFileExport {
   private void removeNonDictionaryTopLevelTLV() {
 
     /* Get TopLevel List*/
-    List<Integer> liTopLevelDict = dsqDictionarySQLQueries.getTopLevelTLV();
+    List<Integer> liTopLevelDict = dsqTlvDictionary.getTopLevelTLV();
 
     List<Integer> liTopLevelCFE = null;
 

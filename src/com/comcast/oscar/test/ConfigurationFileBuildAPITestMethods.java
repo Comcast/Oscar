@@ -10,7 +10,7 @@ import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.configurationfile.DigitMapOperation;
-import com.comcast.oscar.dictionary.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.TlvDictionary;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvDisassemble;
@@ -1236,8 +1236,7 @@ public class ConfigurationFileBuildAPITestMethods implements TestMethod {
     }
 
     TlvDisassemble td =
-        new TlvDisassemble(
-            cfi.getTlvBuilder(), DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+        new TlvDisassemble(cfi.getTlvBuilder(), TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
     Disk.writeToDisk(
         td.getTlvDictionary().toString(),

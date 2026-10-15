@@ -6,7 +6,7 @@ import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
-import com.comcast.oscar.dictionary.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.TlvDictionary;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.BinaryConversion;
@@ -263,7 +263,7 @@ public class BulkBuild {
 
       TlvBuilder tb = new TlvBuilder();
 
-      DictionarySQLQueries dsq = null;
+      TlvDictionary dsq = null;
 
       try {
         tb.add(new HexString(HexString.fileToByteArray(fBinInput)));
@@ -277,9 +277,9 @@ public class BulkBuild {
        */
 
       if (baConfigFile[0] == PacketCableConstants.FILE_MARKER) {
-        dsq = new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+        dsq = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
       } else {
-        dsq = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+        dsq = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
       }
 
       // At this point, need to check if TLV is of Configuration Type
@@ -359,7 +359,7 @@ public class BulkBuild {
 
     if (cti != null) {
 
-      DictionarySQLQueries dsq = null;
+      TlvDictionary dsq = null;
 
       /*
        * There should only be 1 TopLevel TLV in the TlvBuilder
@@ -367,9 +367,9 @@ public class BulkBuild {
        */
 
       if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31) {
-        dsq = new DictionarySQLQueries(DictionarySQLQueries.DPOE_DICTIONARY_TABLE_NAME);
+        dsq = new TlvDictionary(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
       } else {
-        dsq = new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME);
+        dsq = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
       }
 
       // Cycle thru Each Map Entry and insert the TlvBuilder -

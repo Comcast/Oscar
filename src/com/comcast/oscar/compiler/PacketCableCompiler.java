@@ -1,7 +1,7 @@
 package com.comcast.oscar.compiler;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
-import com.comcast.oscar.dictionary.DictionarySQLQueries;
+import com.comcast.oscar.dictionary.TlvDictionary;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.tlv.TlvVariableBinding;
@@ -368,8 +368,7 @@ public class PacketCableCompiler extends TlvBuilder {
       e.printStackTrace();
     }
 
-    DictionarySQLQueries dsq =
-        new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+    TlvDictionary dsq = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
     TlvBuilder tb = new TlvBuilder();
 
@@ -401,8 +400,7 @@ public class PacketCableCompiler extends TlvBuilder {
     }
 
     // Get Type to Byte Length Mapping
-    DictionarySQLQueries dsq =
-        new DictionarySQLQueries(DictionarySQLQueries.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+    TlvDictionary dsq = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
 
     // Get TlvVariableBinding due to variable byte Length TLVs
     TlvVariableBinding tvb = new TlvVariableBinding(baPcTlv, dsq.getTopLevelByteLength());

@@ -119,7 +119,7 @@ public class Specification {
       }
     } else if (sSpecification.equalsIgnoreCase("de") || sSpecification.equalsIgnoreCase("dpoe")) {
       this.iConfigurationFileType = -1;
-      this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
+      this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DPOE;
       this.boolPacketCable = true;
 
       if (sVersion.equalsIgnoreCase("1") || sVersion.equalsIgnoreCase("1.0")) {
@@ -199,13 +199,13 @@ public class Specification {
         || sSpecification.equalsIgnoreCase("dpoe1")
         || sSpecification.equalsIgnoreCase("dpoe1.0")) {
       this.iConfigurationFileType = ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
-      this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
+      this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DPOE;
     } else if (sSpecification.equalsIgnoreCase("de2")
         || sSpecification.equalsIgnoreCase("de2.0")
         || sSpecification.equalsIgnoreCase("dpoe2")
         || sSpecification.equalsIgnoreCase("dpoe2.0")) {
       this.iConfigurationFileType = ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE;
-      this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
+      this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DPOE;
     } else if (sSpecification.equalsIgnoreCase("dg1")
         || sSpecification.equalsIgnoreCase("dg1.0")
         || sSpecification.equalsIgnoreCase("dpog1")

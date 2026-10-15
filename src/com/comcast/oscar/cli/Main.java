@@ -31,9 +31,8 @@ public class Main {
     /* Create sub-directories if they do not exist */
     DirectoryStructure.createDirectories();
 
-    /* Import files if they do not exist */
-    DirectoryStructure ds = new DirectoryStructure();
-    ds.exportFiles();
+    /* Load and validate immutable TLV catalogs before running commands. */
+    com.comcast.oscar.dictionary.TlvRegistry.forFamily("docsis");
 
     /* Run commands */
     System.out.println(Constants.OSCAR_CLI_HEADER);

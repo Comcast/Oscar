@@ -68,11 +68,24 @@ public class DictionaryTLV implements Dictionary {
 
   /**
    * @param sTlvDotNotation Example 24.1.3
-   * @param dsq DictionarySQLQueries
+   * @param dsq TlvDictionary
    * @return ArrayDeque<String> of TLV Names found in Dictionary
    */
   public static ArrayDeque<String> getTypeHierarchyStack(
+      String sTlvDotNotation, TlvDictionary dsq) {
+    return getTypeHierarchyStack(
+        sTlvDotNotation, dsq.getTlvDefinition(Integer.decode(sTlvDotNotation.split("\\.")[0])));
+  }
+
+  /** Preserve the legacy SQL-backed API for external callers. */
+  public static ArrayDeque<String> getTypeHierarchyStack(
       String sTlvDotNotation, DictionarySQLQueries dsq) {
+    return getTypeHierarchyStack(
+        sTlvDotNotation, dsq.getTlvDefinition(Integer.decode(sTlvDotNotation.split("\\.")[0])));
+  }
+
+  private static ArrayDeque<String> getTypeHierarchyStack(
+      String sTlvDotNotation, JSONObject joTlvDictionary) {
 
     ArrayDeque<String> adTypeHierarchyStack = new ArrayDeque<String>();
 
@@ -82,9 +95,6 @@ public class DictionaryTLV implements Dictionary {
 
     if (logger.isDebugEnabled())
       logger.debug("ConfigrationFileExport.getTlvDefintion(): " + lsTlvDotNotation.toString());
-
-    // Get TLV Dictionary for the Top Level
-    JSONObject joTlvDictionary = dsq.getTlvDefinition(Integer.decode(lsTlvDotNotation.get(0)));
 
     // Search for TLV Definition
     if (lsTlvDotNotation.size() == 1) {
