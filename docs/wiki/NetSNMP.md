@@ -15,6 +15,19 @@ Dotted:
 Textual:
 - `Snmp11 docsDevNmAccessIp.1 IpAddress "0.0.0.0";`
 
+## Example Communities
+
+Documentation and sample configurations use `public` for read-only access and
+`private` for read-write access. These are example values, not production
+credentials.
+
+```text
+Snmp11 docsDevNmAccessCommunity.1 OctetString "public";
+Snmp11 docsDevNmAccessControl.1 Integer32 "2";
+Snmp11 docsDevNmAccessCommunity.2 OctetString "private";
+Snmp11 docsDevNmAccessControl.2 Integer32 "3";
+```
+
 ## SNMP Data Types Supported in OID Insertion
 - `Counter32`
 - `Counter64`

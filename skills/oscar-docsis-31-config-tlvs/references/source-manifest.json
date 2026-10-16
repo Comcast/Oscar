@@ -4,14 +4,17 @@
   "acquired": "2026-10-15",
   "files": [
     {
-      "file": "CM-SP-MULPIv3.1-I21-201020.pdf",
-      "bytes": 14197622,
-      "sha256": "47b6cc3b865ddea66c3889291f9ceba974b5016134ff3ea57188edbe9cf3112d"
-    },
-    {
       "file": "CM-SP-MULPIv3.1-I21-201020.txt",
       "bytes": 2556241,
       "sha256": "ade59a19b36bfb85f395465cfe946e200d1f2ae9589908ce73d4d44bc1f3fc74"
     }
-  ]
+  ],
+  "removedOriginals": [
+    {
+      "file": "CM-SP-MULPIv3.1-I21-201020.pdf",
+      "bytes": 14197622,
+      "sha256": "47b6cc3b865ddea66c3889291f9ceba974b5016134ff3ea57188edbe9cf3112d"
+    }
+  ],
+  "note": "PDF originals removed at user request; hashes retained as provenance. Only files listed in files are bundled."
 }

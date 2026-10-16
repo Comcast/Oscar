@@ -5,9 +5,8 @@
 - Identifier: **CM-SP-MULPIv3.1-I21-201020**; issue date **2020-10-20**.
 - [Official source/discovery page](https://account.cablelabs.com/server/alfresco/3a751ba9-593c-464a-bc91-3675e1824e30).
 - [Complete searchable source](sources/CM-SP-MULPIv3.1-I21-201020.txt).
-- [Original PDF](sources/CM-SP-MULPIv3.1-I21-201020.pdf).
 
-Retrieved directly from CableLabs on 2026-10-15. The complete PDF is retained unchanged; the TXT is a search aid extracted with pypdf. The PDF controls when extraction is ambiguous.
+Retrieved directly from CableLabs on 2026-10-15. The extracted TXT is retained; the PDF was removed at user request. Obtain the original matching issue if extraction is ambiguous.
 
 This is a deliberately pinned older 3.1 edition, not a claim to cover the latest 3.1 issue. No local 3.1 specification skill/source was found in the searched user files.
 

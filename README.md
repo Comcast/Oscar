@@ -88,6 +88,10 @@ java -jar target/oscar-3.0.0-all.jar -d -s d4 4.0 \
 See [CLI Examples](docs/wiki/CLI-Examples.md) for recompilation checks and
 [CLI Overview](docs/wiki/CLI-Overview.md) for new features and version selection.
 
+Maintain wiki pages under `docs/wiki/`. Preview updates with
+`tools/update-wiki.sh`; see [wiki publishing](docs/wiki-publishing.md) for
+publishing commands and link handling.
+
 📧 [Email](mailto:mgarcia01752@outlook.com)
 
 🔗 [Maurice LinkedIn](https://www.linkedin.com/in/mauricemgarcia)

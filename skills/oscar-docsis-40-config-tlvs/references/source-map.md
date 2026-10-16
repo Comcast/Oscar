@@ -4,13 +4,12 @@
 
 - Identifier: **CM-SP-MULPIv4.0-I12-261014**; issue date **2026-10-14**.
 - [Official source/discovery page](https://www.cablelabs.com/specifications/CM-SP-MULPIv4.0).
-- [Original PDF](sources/CM-SP-MULPIv4.0-I12-261014.pdf).
 - [Complete searchable source](sources/CM-SP-MULPIv4.0-I12-261014.txt).
 
 The user supplied the original I12 PDF on 2026-10-15. Its title and document
-status sheet identify the issue and date. The PDF is preserved unchanged;
-the TXT was generated using `pdftotext -layout` and is a search aid. The PDF
-controls if extraction leaves an encoding ambiguous. The public URL is a
+status sheet identified the issue and date. Only the TXT extracted with
+`pdftotext -layout` is retained. The PDF was removed at user request; obtain
+the original matching issue if extraction leaves an encoding ambiguous. The public URL is a
 discovery page, not evidence that its current download is the pinned issue.
 
 The [previous I11 text](sources/CM-SP-MULPIv4.0-I11-260219.txt) is retained
@@ -25,15 +24,15 @@ The sources retain CableLabs notices. They are included for Oscar product develo
 
 ### External configuration dependencies
 
-The following user-supplied PDFs were moved unchanged from the DOCSIS 3.1
-skill root on 2026-10-15. They supplement, and do not replace, MULPI I12.
-Their exact editions, hashes, and derived text are recorded in the manifest.
+The following text references were extracted from user-supplied PDFs.
+They supplement, and do not replace, MULPI I12. The PDFs were removed at
+user request; their original hashes remain in the manifest as provenance.
 
-| Dependency | Original PDF | Searchable text | Use |
-| --- | --- | --- | --- |
-| CM-SP-SEC3.0-C01-171207 | [PDF](sources/CM-SP-SEC3.0-C01-171207.pdf) | [TXT](sources/CM-SP-SEC3.0-C01-171207.txt) | MMH algorithms referenced by MULPI D.2.1 |
-| CM-SP-SECv4.0-I08-250903 | [PDF](sources/CM-SP-SECv4.0-I08-250903.pdf) | [TXT](sources/CM-SP-SECv4.0-I08-250903.txt) | Security and certificate configuration dependencies |
-| CM-SP-SYNC-I03-220715 | [PDF](sources/CM-SP-SYNC-I03-220715.pdf) | [TXT](sources/CM-SP-SYNC-I03-220715.txt) | Configuration TLVs 101 and 102 |
+| Dependency | Searchable text | Use |
+| --- | --- | --- |
+| CM-SP-SEC3.0-C01-171207 | [TXT](sources/CM-SP-SEC3.0-C01-171207.txt) | MMH algorithms referenced by MULPI D.2.1 |
+| CM-SP-SECv4.0-I08-250903 | [TXT](sources/CM-SP-SECv4.0-I08-250903.txt) | Security and certificate configuration dependencies |
+| CM-SP-SYNC-I03-220715 | [TXT](sources/CM-SP-SYNC-I03-220715.txt) | Configuration TLVs 101 and 102 |
 
 MULPI calls the SEC3 document `CM-SP-SECv3.0-C01-171207`; the supplied
 document's cover and running headers use `CM-SP-SEC3.0-C01-171207`. The stored

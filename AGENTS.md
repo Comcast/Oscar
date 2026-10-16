@@ -40,8 +40,8 @@ the contents in discovery directories. Keep directory names and frontmatter
 names identical. Preserve bundled source files and their manifest hashes.
 
 After updating a skill, validate its `SKILL.md`, resolve both discovery links,
-and check referenced files and source-manifest hashes. Keep the bundled 3.1 and
-4.0 PDFs included through their scoped `.gitignore` exceptions.
+and check referenced files and source-manifest hashes. Keep extracted specification text and its provenance manifests. PDF originals
+are intentionally excluded; obtain the matching issue if text is ambiguous.
 
 ## Commit workflow
 

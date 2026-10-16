@@ -52,11 +52,6 @@ coverage.xml
 
 # Documentation
 *.pdf
-!skills/oscar-docsis-31-config-tlvs/references/sources/CM-SP-MULPIv3.1-I21-201020.pdf
-!skills/oscar-docsis-40-config-tlvs/references/sources/CM-SP-MULPIv4.0-I12-261014.pdf
-!skills/oscar-docsis-40-config-tlvs/references/sources/CM-SP-SEC3.0-C01-171207.pdf
-!skills/oscar-docsis-40-config-tlvs/references/sources/CM-SP-SECv4.0-I08-250903.pdf
-!skills/oscar-docsis-40-config-tlvs/references/sources/CM-SP-SYNC-I03-220715.pdf
 
 # Directories #
 test/

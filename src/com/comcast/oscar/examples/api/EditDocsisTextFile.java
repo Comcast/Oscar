@@ -7,7 +7,7 @@ import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 
 /**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -32,7 +32,7 @@ public class EditDocsisTextFile {
             + " /* TLV: [17.4]*/ RekeyWaitTimeout 10;	 /* TLV: [17.5]*/ TEKGraceTime 600;	 /* TLV:"
             + " [17.6]*/ AuthorizeRejectWaitTimeout 60;	 /* TLV: [17.7]*/ SAMapWaitTimeout 1;	 /*"
             + " TLV: [17.8]*/ SAMapMaxRetries 4;	 /* TLV: [17.9]*/ } PrivacyEnable 1;	 /* TLV:"
-            + " [29]*/ SNMPv1v2cCoexistenceConfig { SNMPv1v2cCommunityName ReadOnly;	 /* TLV:"
+            + " [29]*/ SNMPv1v2cCoexistenceConfig { SNMPv1v2cCommunityName private;	 /* TLV:"
             + " [53.1]*/ SNMPv1v2cTransportAddressAccess { SNMPv1v2cTransportAddress 0.0.0.0(0);	"
             + " /* TLV: [53.2.1]*/ SNMPv1v2cTransportMask 0.0.0.0(0);	 /* TLV: [53.2.2]*/ }"
             + " SNMPv1v2cAccessViewType 2;	 /* TLV: [53.3]*/ SNMPv1v2cAccessViewName"
