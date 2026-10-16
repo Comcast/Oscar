@@ -17,6 +17,39 @@ snmp4j-smi.jar
 oscar.jar
 latest-build
 
+# Python bytecode and build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.eggs/
+*.egg-info/
+*.egg
+pip-wheel-metadata/
+
+# Python virtual environments
+.venv/
+venv/
+env/
+ENV/
+__pypackages__/
+
+# Python test, lint and coverage output
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.pytype/
+.tox/
+.nox/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+.ipynb_checkpoints/
+
 # Documentation
 *.pdf
 !skills/oscar-docsis-31-config-tlvs/references/sources/CM-SP-MULPIv3.1-I21-201020.pdf
