@@ -1,8 +1,6 @@
 package com.comcast.oscar.netsnmp;
 
 import com.comcast.oscar.utilities.DirectoryStructure;
-import com.comcast.oscar.utilities.Disk;
-import com.comcast.oscar.utilities.HexString;
 import com.comcast.oscar.utilities.PrettyPrint;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -13,8 +11,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -50,7 +51,7 @@ public class NetSNMP {
   static {
 
     /*If no Mapping Exist, Create a new Mapping file */
-    FixNullNetSNMPJSON();
+    initializeCache(DirectoryStructureNetSNMP.fNetSNMPJSON());
 
     omNetSNMP = new ObjectMapper();
 
@@ -284,7 +285,7 @@ public class NetSNMP {
       pw.close();
     }
 
-    FixNullNetSNMPJSON();
+    initializeCache(DirectoryStructureNetSNMP.fNetSNMPJSON());
   }
 
   /**
@@ -341,7 +342,7 @@ public class NetSNMP {
   }
 
   /**
-   * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+   * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
    *     ___________________________________________________________________<br>
    *     Licensed under the Apache License, Version 2.0 (the "License")<br>
    *     you may not use this file except in compliance with the License.<br>
@@ -360,8 +361,7 @@ public class NetSNMP {
      * @return NetSNMP subdirectory
      */
     public static File fNetSNMPJSON() {
-      return new File(
-          fDbDir().getName() + File.separator + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE);
+      return new File(fResourcesDir(), Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE);
     }
   }
 
@@ -411,13 +411,20 @@ public class NetSNMP {
     return sReturn;
   }
 
-  /** Checks to see if the DB file is empty, if so put a single entry to prevent error */
-  private static void FixNullNetSNMPJSON() {
-
-    if (!DirectoryStructureNetSNMP.fNetSNMPJSON().exists()) {
-      Disk.writeToDisk("{\"1.3.6\":\"dod\"}", DirectoryStructureNetSNMP.fNetSNMPJSON());
-    } else if (HexString.fileToByteArray(DirectoryStructureNetSNMP.fNetSNMPJSON()).length == 0) {
-      Disk.writeToDisk("{\"1.3.6\":\"dod\"}", DirectoryStructureNetSNMP.fNetSNMPJSON());
+  /** Initialize a missing or empty cache from the bundled OID map. */
+  static void initializeCache(File cache) {
+    if (cache.isFile() && cache.length() > 0) {
+      return;
+    }
+    try (InputStream bundled =
+        NetSNMP.class.getResourceAsStream("/" + Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE)) {
+      if (bundled == null) {
+        throw new IOException("Bundled SNMP OID map is missing");
+      }
+      Files.createDirectories(cache.toPath().getParent());
+      Files.copy(bundled, cache.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    } catch (IOException error) {
+      throw new IllegalStateException("Cannot initialize SNMP OID map: " + cache, error);
     }
   }
 }

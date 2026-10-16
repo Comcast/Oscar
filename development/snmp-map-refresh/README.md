@@ -3,7 +3,7 @@
 ## Checkpoint
 
 Status: in progress, recorded 2026-10-15. Finish and validate the updater before
-applying a bulk refresh to [the cached map](../../db/DottedTextualNetSNMPMap.json).
+applying a bulk refresh to [the cached map](../../res/DottedTextualNetSNMPMap.json).
 The map has no uncommitted changes at this checkpoint. The two updater scripts
 are present but untracked; this note does not stage them or change the map.
 
@@ -79,7 +79,7 @@ Run from the repository root with Python 3 and Net-SNMP installed:
 ```bash
 command -v python3
 command -v snmptranslate
-python3 -m json.tool db/DottedTextualNetSNMPMap.json > /dev/null
+python3 -m json.tool res/DottedTextualNetSNMPMap.json > /dev/null
 bash tools/update-snmp-map.sh
 ```
 
@@ -94,7 +94,7 @@ the refresh. This writes both downloaded MIBs and validated map changes:
 
 ```bash
 bash tools/update-snmp-map.sh --update-mibs --write
-git diff -- db/DottedTextualNetSNMPMap.json
+git diff -- res/DottedTextualNetSNMPMap.json
 git status --short
 tools/run-all.sh
 ```

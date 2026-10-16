@@ -276,7 +276,7 @@ def main():
     args = parser.parse_args()
     if not shutil.which('snmptranslate'):
         raise ValueError('Install Net-SNMP snmptranslate first')
-    path = ROOT / 'db/DottedTextualNetSNMPMap.json'
+    path = ROOT / 'res/DottedTextualNetSNMPMap.json'
     mapping = json.loads(path.read_text())
     if not isinstance(mapping, dict) or not all(isinstance(k, str) and isinstance(v, str) for k, v in mapping.items()):
         raise ValueError('Mapping must be a JSON object of string pairs')

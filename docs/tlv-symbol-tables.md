@@ -99,14 +99,15 @@ The complete audit and reproducible initial exporter are under
 requires the original pre-cleanup database and replaces the catalogs, so do not
 use it after making intentional catalog edits.
 
-The `docsis_tlv_definition`, `packet_cable_tlv_definition`, and
-`dpoe_tlv_definition` tables and their indexes have been removed from both
-`res/dictionary.sqlite` and `db/dictionary.sqlite`. Both files remain valid,
-empty SQLite databases; TLV definitions live only in the JSON catalogs.
-The JDBC dependency and legacy SQL query classes remain, but their TLV queries
-require a separately supplied legacy database. Editing SQLite databases no
-longer changes the migrated parser/codec behavior. CLI startup no longer
-extracts a SQLite dictionary.
+The obsolete SQLite databases and JDBC dependency have been removed entirely.
+TLV definitions live only in the JSON catalogs. Legacy SQL query classes remain
+for compatibility, but callers must supply their own driver and legacy
+database; SQLite dictionary export is no longer supported. Editing a legacy
+database does not change the migrated parser/codec behavior. CLI startup no
+longer creates a database directory or extracts a SQLite dictionary.
+
+The SNMP OID map is separately maintained under
+`res/DottedTextualNetSNMPMap.json`; see the [resource guide](../res/README.md).
 
 ## Negative-input tests
 

@@ -5,9 +5,19 @@ and symbolic names for Oscar's bidirectional SNMP lookups. Use the
 [update script](../tools/update-snmp-map.sh) to refresh names or generate
 additional DOCSIS definitions instead of editing thousands of entries manually.
 
+The source map is bundled in both release JARs. For `java -jar`, Oscar uses a
+writable `res/DottedTextualNetSNMPMap.json` beside the JAR and initializes a
+missing or empty cache from the bundled map. Existing nonempty caches are
+preserved; runtime translations may add entries. SQLite is not used, and no
+`db/` directory is created. Preserve any custom mappings from an older
+installation by copying its map into the new `res/` location before use.
+
+The maintenance script updates the source map in this repository. Rebuild the
+JARs after refreshing it to include the updated map in release artifacts.
+
 ## Prerequisites
 
-Run the commands below from the Oscar repository root, not from `db/`.
+Run the commands below from the Oscar repository root, not from `res/`.
 Python 3 and Net-SNMP's `snmptranslate` must be available:
 
 ```bash
@@ -68,9 +78,9 @@ MIB, manifest and map writes is not a single transaction.
 ## Review and Verify
 
 ```bash
-git diff -- db/DottedTextualNetSNMPMap.json
+git diff -- res/DottedTextualNetSNMPMap.json
 git status --short
-python3 -m json.tool db/DottedTextualNetSNMPMap.json > /dev/null
+python3 -m json.tool res/DottedTextualNetSNMPMap.json > /dev/null
 python3 -m unittest discover -s tools/maintenance -p 'test_update_snmp_map.py' -v
 tools/run-all.sh
 ```

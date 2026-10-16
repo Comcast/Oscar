@@ -12,7 +12,6 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.DriverManager;
 import java.util.List;
 import java.util.stream.Stream;
 import org.json.JSONObject;
@@ -22,27 +21,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class TlvRegistryTest {
-  @Test
-  void sqliteDatabasesContainNoTlvSchemaObjects() throws Exception {
-    for (String database : List.of("res/dictionary.sqlite", "db/dictionary.sqlite")) {
-      Path path = Path.of(database).toAbsolutePath();
-      assertTrue(Files.isRegularFile(path), database);
-      try (var connection =
-              DriverManager.getConnection("jdbc:sqlite:" + path.toUri() + "?mode=ro");
-          var statement = connection.createStatement()) {
-        try (var objects =
-            statement.executeQuery(
-                "SELECT name FROM sqlite_master WHERE lower(name) LIKE '%tlv%'")) {
-          assertFalse(objects.next(), database + " contains legacy TLV schema objects");
-        }
-        try (var integrity = statement.executeQuery("PRAGMA integrity_check")) {
-          assertTrue(integrity.next(), database);
-          assertEquals("ok", integrity.getString(1), database);
-        }
-      }
-    }
-  }
-
   @Test
   void loadsAllFamiliesAndReturnsIndependentTemplates() {
     for (String family : List.of("docsis", "packetcable", "dpoe")) {

@@ -37,24 +37,41 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-m2-
 
-      - name: Build oscar.jar
+      - name: Build thin and all JARs
         run: |
-          mvn -B -DskipTests package
-          source_jar="$(find dist target -maxdepth 1 -type f -name '*-all.jar' | head -n1 || true)"
-          if [ -z "${source_jar}" ]; then
-            echo "Shaded jar was not found in dist/ or target/." >&2
+          mvn -B -DskipTests clean package
+          all_jar="$(find target -maxdepth 1 -type f -name 'oscar-*-all.jar')"
+          thin_jar="$(find target -maxdepth 1 -type f -name 'oscar-*.jar' ! -name '*-all.jar')"
+          if [[ ! -f "${all_jar}" || ! -f "${thin_jar}" ]]; then
+            echo "Expected exactly one thin JAR and one all JAR in target/." >&2
             exit 1
           fi
-          cp "${source_jar}" oscar.jar
+          for source_jar in "${thin_jar}" "${all_jar}"; do
+            if jar tf "${source_jar}" | grep -E '^com/comcast/oscar/(examples|test)/|^test/'; then
+              echo "Release JAR contains Oscar examples or tests: ${source_jar}" >&2
+              exit 1
+            fi
+          done
+          cp "${thin_jar}" oscar-thin.jar
+          cp "${all_jar}" oscar-all.jar
+          cp oscar-all.jar oscar.jar
 
-      - name: Generate checksum
-        run: sha256sum oscar.jar > oscar.jar.sha256
+      - name: Generate checksums
+        run: |
+          for artifact in oscar.jar oscar-all.jar oscar-thin.jar; do
+            sha256sum "${artifact}" > "${artifact}.sha256"
+          done
 
       - name: Upload release assets
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.event.release.tag_name }}
           make_latest: true
+          fail_on_unmatched_files: true
           files: |
             oscar.jar
             oscar.jar.sha256
+            oscar-all.jar
+            oscar-all.jar.sha256
+            oscar-thin.jar
+            oscar-thin.jar.sha256

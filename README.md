@@ -41,6 +41,45 @@ The installer command below is for Linux.
   [Windows Java check and installation steps](docs/wiki/Installation.md#check-and-install-java).
 - Java 21 JDK (not just the JRE) to build from source. `javac` must be on your PATH for the build to succeed.
 
+## Release JARs
+
+The [release workflow](.github/workflows/release.yml) publishes both variants
+with individual SHA-256 checksum files:
+
+| Asset | Contents | Use |
+| --- | --- | --- |
+| `oscar-all.jar` | Oscar and runtime dependencies | Standalone CLI: `java -jar oscar-all.jar --help` |
+| `oscar-thin.jar` | Oscar classes and required resources, without dependencies | Existing applications or an explicit dependency classpath |
+| `oscar.jar` | Identical to `oscar-all.jar` | Compatible with existing download links and commands |
+
+Neither variant includes Oscar examples or test classes. The all JAR bundles
+runtime dependencies; the thin JAR omits them. Sizes vary between builds.
+The thin JAR is not a standalone
+replacement for `oscar.jar`: its runtime dependencies must be supplied separately.
+
+SQLite is not required to build, test, or run 3.0.0, including bulk conversion
+and template merging. SQLite databases and the JDBC driver are no longer
+supplied. Applications using the retained legacy SQL API must supply their own
+driver and legacy database; dictionary export is no longer supported.
+
+The bundled SNMP OID map lives in `res/DottedTextualNetSNMPMap.json`; see the
+[resource maintenance guide](res/README.md) for refresh commands and runtime
+cache behavior. There is no bundled `db/` directory.
+
+From a source checkout, build and run the thin variant on Linux or macOS:
+
+```bash
+mvn package
+mvn dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=target/lib
+java -cp "target/oscar-3.0.0.jar:target/lib/*" com.comcast.oscar.cli.Main --help
+```
+
+For a downloaded thin release, replace `target/oscar-3.0.0.jar` with its path,
+such as `oscar-thin.jar`. On Windows, use `;` instead of `:` between classpath
+entries and keep the classpath quoted. New asset names become available when
+the updated workflow builds a release; existing releases are not changed
+automatically.
+
 ## DOCSIS Examples
 
 | Version | Editable Text | Compiled Binary | Lab Profile |

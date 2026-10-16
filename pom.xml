@@ -38,11 +38,6 @@
       <version>20251224</version>
     </dependency>
     <dependency>
-      <groupId>org.xerial</groupId>
-      <artifactId>sqlite-jdbc</artifactId>
-      <version>3.51.1.0</version>
-    </dependency>
-    <dependency>
       <groupId>net.lingala.zip4j</groupId>
       <artifactId>zip4j</artifactId>
       <version>2.11.5</version>
@@ -119,6 +114,11 @@
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.4.2</version>
         <configuration>
+          <excludes>
+            <exclude>com/comcast/oscar/examples/**</exclude>
+            <exclude>com/comcast/oscar/test/**</exclude>
+            <exclude>test/**</exclude>
+          </excludes>
           <archive>
             <manifest>
               <mainClass>com.comcast.oscar.cli.Main</mainClass>

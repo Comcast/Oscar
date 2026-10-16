@@ -1,10 +1,7 @@
 package com.comcast.oscar.utilities;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * @author Allen Flickinger (allen.flickinger@gmail.com)
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
+ * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
  *     ___________________________________________________________________<br>
  *     Licensed under the Apache License, Version 2.0 (the "License")<br>
  *     you may not use this file except in compliance with the License.<br>
@@ -105,6 +102,13 @@ public class DirectoryStructure {
   }
 
   /**
+   * @return runtime resources subdirectory
+   */
+  public static File fResourcesDir() {
+    return new File(sBasePath() + File.separator + "res");
+  }
+
+  /**
    * @return return test directory (used only for testing code)
    */
   public static File fTestDir() {
@@ -171,28 +175,10 @@ public class DirectoryStructure {
     return new File(File.separator + getDate());
   }
 
-  /** Export the dictionary.sqlite file from the jar */
+  /** Legacy SQLite dictionary export is no longer supported. */
   public void exportDictionary() {
-    InputStream is = this.getClass().getResourceAsStream("/dictionary.sqlite");
-    OutputStream os = null;
-
-    try {
-      os = new FileOutputStream(fDictionaryFile());
-      byte[] buffer = new byte[1024];
-      int length;
-
-      // copy the file content in bytes
-      while ((length = is.read(buffer)) > 0) {
-        os.write(buffer, 0, length);
-      }
-
-      is.close();
-      os.close();
-
-      System.out.println("/* Dictionary export successful! */");
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    throw new UnsupportedOperationException(
+        "SQLite dictionaries are no longer bundled; use the JSON TLV registry.");
   }
 
   /**
@@ -210,10 +196,6 @@ public class DirectoryStructure {
   public static void createDirectories() {
     if (!fCertificatesDir().exists()) {
       fCertificatesDir().mkdir();
-    }
-
-    if (!fDbDir().exists()) {
-      fDbDir().mkdir();
     }
 
     if (!fMibsDir().exists()) {

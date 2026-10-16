@@ -12,7 +12,6 @@
         <pathelement location="bin"/>
         <pathelement location="lib/commons-cli-1.2.jar"/>
         <pathelement location="lib/json-2.1.jar"/>
-        <pathelement location="lib/sqlite-jdbc-3.7.15-M1.jar"/>
         <pathelement location="lib/zip4j_1.3.2.jar"/>
         <pathelement location="lib/antlr-4.1-complete.jar"/>
         <pathelement location="lib/snmp4j-2.3.0.jar"/>

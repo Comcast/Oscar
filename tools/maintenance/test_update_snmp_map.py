@@ -139,8 +139,8 @@ class UpdateSnmpMapTest(unittest.TestCase):
         for write in (False, True):
             with self.subTest(write=write), tempfile.TemporaryDirectory() as temporary:
                 root = Path(temporary)
-                (root / 'db').mkdir()
-                path = root / 'db/DottedTextualNetSNMPMap.json'
+                (root / 'res').mkdir()
+                path = root / 'res/DottedTextualNetSNMPMap.json'
                 original = b'{"docsObject.0": ".1.3.6.1.2.0"}\n'
                 path.write_bytes(original)
                 arguments = ['update-snmp-map.py', '--generate'] + (['--write'] if write else [])

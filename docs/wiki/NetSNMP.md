@@ -6,7 +6,13 @@ OSCAR works without Net-SNMP, but installing `snmptranslate` improves dotted/tex
 
 ## Cache Mapping File
 When translations are performed, OSCAR caches mappings here:
-- `db/DottedTextualNetSNMPMap.json`
+- `res/DottedTextualNetSNMPMap.json`
+
+Both release JARs include the source map. When using `java -jar`, a missing or
+empty cache is initialized under `res/` beside the JAR; existing nonempty
+caches are preserved. No SQLite database or `db/` directory is needed.
+See the [resource maintenance guide](../../res/README.md) for preview, refresh,
+and generation commands. Rebuild JARs after updating the source map.
 
 ## Example OID Forms
 Dotted:
