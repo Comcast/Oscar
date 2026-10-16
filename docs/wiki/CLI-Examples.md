@@ -3,7 +3,7 @@
 ## Versioned Lab Examples
 
 Run commands from the repository root after `mvn package`. The executable JAR is
-`target/oscar-3.0.0-all.jar`; an installed `oscar.jar` from the same build can be
+`target/oscar-3.1.0-all.jar`; an installed `oscar.jar` from the same build can be
 used instead.
 
 | Version | Text Input | Binary Output |
@@ -36,10 +36,10 @@ private keys and hardware interoperability testing.
 
 ```bash
 mkdir -p output
-java -jar target/oscar-3.0.0-all.jar -c -s d 3.1 -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
+java -jar target/oscar-3.1.0-all.jar -c -s d 3.1 -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
   -i src/com/comcast/oscar/examples/testfiles/DOCSIS-3.1-LAB.txt \
   -o output/DOCSIS-3.1-LAB.bin
-java -jar target/oscar-3.0.0-all.jar -c -s d4 4.0 -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
+java -jar target/oscar-3.1.0-all.jar -c -s d4 4.0 -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
   -i src/com/comcast/oscar/examples/testfiles/DOCSIS-4.0-LAB.txt \
   -o output/DOCSIS-4.0-LAB.bin
 ```
@@ -49,14 +49,14 @@ java -jar target/oscar-3.0.0-all.jar -c -s d4 4.0 -k src/com/comcast/oscar/examp
 Always select the matching family; the binary does not carry Oscar's text wrapper.
 
 ```bash
-java -jar target/oscar-3.0.0-all.jar -d -s d 3.1 \
+java -jar target/oscar-3.1.0-all.jar -d -s d 3.1 \
   -i output/DOCSIS-3.1-LAB.bin > output/DOCSIS-3.1-roundtrip.txt
-java -jar target/oscar-3.0.0-all.jar -d -s d4 4.0 \
+java -jar target/oscar-3.1.0-all.jar -d -s d4 4.0 \
   -i output/DOCSIS-4.0-LAB.bin > output/DOCSIS-4.0-roundtrip.txt
 
-java -jar target/oscar-3.0.0-all.jar -c -s d 3.1 -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
+java -jar target/oscar-3.1.0-all.jar -c -s d 3.1 -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
   -i output/DOCSIS-3.1-roundtrip.txt -o output/DOCSIS-3.1-rebuilt.bin
-java -jar target/oscar-3.0.0-all.jar -c -s d4 4.0 -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
+java -jar target/oscar-3.1.0-all.jar -c -s d4 4.0 -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
   -i output/DOCSIS-4.0-roundtrip.txt -o output/DOCSIS-4.0-rebuilt.bin
 
 cmp output/DOCSIS-3.1-LAB.bin output/DOCSIS-3.1-rebuilt.bin

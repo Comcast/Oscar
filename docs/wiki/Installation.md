@@ -51,14 +51,14 @@ Use a writable folder under your user profile, not `C:\Windows\system32`:
 ```powershell
 New-Item -ItemType Directory -Force "$HOME\Oscar" | Out-Null
 Set-Location "$HOME\Oscar"
-Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/Comcast/Oscar/releases/download/v3.0.0/oscar.jar" -OutFile ".\oscar.jar"
+Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/Comcast/Oscar/releases/download/v3.1.0/oscar.jar" -OutFile ".\oscar.jar"
 java -jar .\oscar.jar -v
 java -jar .\oscar.jar --help
 ```
 
-The version command should report `3.0.0`. You can also download `oscar.jar`
-manually from the [v3.0.0 release](https://github.com/Comcast/Oscar/releases/tag/v3.0.0)
-and place it in this folder. The `target/oscar-3.0.0-all.jar` path used in
+The version command should report `3.1.0`. You can also download `oscar.jar`
+manually from the [v3.1.0 release](https://github.com/Comcast/Oscar/releases/tag/v3.1.0)
+and place it in this folder. The `target/oscar-3.1.0-all.jar` path used in
 source-build examples does not apply to the downloaded release.
 
 ### Compile and Decompile Lab Examples
@@ -67,7 +67,7 @@ Continue in the same folder. Download the version-matched examples and their
 public lab key without editing or adding a newline to the key file:
 
 ```powershell
-$base = "https://raw.githubusercontent.com/Comcast/Oscar/v3.0.0/src/com/comcast/oscar/examples/testfiles"
+$base = "https://raw.githubusercontent.com/Comcast/Oscar/v3.1.0/src/com/comcast/oscar/examples/testfiles"
 foreach ($name in @("DOCSIS-3.1-LAB.txt", "DOCSIS-4.0-LAB.txt", "DOCSIS-LAB.key")) {
     Invoke-WebRequest -UseBasicParsing -Uri "$base/$name" -OutFile ".\$name"
 }
