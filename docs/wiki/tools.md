@@ -22,6 +22,8 @@ Top-level wrapper scripts in `tools/` are kept for backward compatibility.
   - Cleans generated artifacts
 - `tools/bump-version.sh`
   - Updates Maven, CLI, and documented versions without build or Git actions
+- `tools/update-tag.sh`
+  - Ensures a validated release tag exists, with optional publishing to origin
 - `tools/release/release.py`
   - Release automation (version bump, checks/build, commit/tag/push)
 
@@ -69,4 +71,37 @@ Run the bump-helper regression tests with:
 
 ```bash
 python3 -m unittest discover -s tools/release -p 'test_release.py' -v
+```
+
+## Release Tags
+
+After verifying and committing the release version, create a missing local tag:
+
+```bash
+tools/update-tag.sh --tag v3.1.0
+```
+
+The `-t` alias is equivalent. Tags must match `vMAJOR.MINOR.PATCH`, such as
+`v3.1.0`; a missing prefix, missing component, suffix, or extra component is
+rejected. New tags are annotated and point to the current commit. Existing
+tags are left unchanged, even if the current commit has advanced.
+
+Explicitly ensure the tag is also available to GitHub Actions:
+
+```bash
+tools/update-tag.sh -t v3.1.0 --push
+```
+
+Without `--push`, the script only checks local tags. With `--push`, it checks
+`origin` first, fetches a remote-only tag rather than recreating it on the
+current commit, and pushes a missing remote tag. Different local and remote
+tag objects cause an error; neither is overwritten. Remote-check failures
+stop the operation before creating a new local tag. No versions, commits,
+branches, or GitHub releases are changed. Both wrappers work from another
+directory when invoked by their path.
+
+Run the isolated Git-repository tests with:
+
+```bash
+python3 -m unittest discover -s tools/git -p 'test_update_tag.py' -v
 ```

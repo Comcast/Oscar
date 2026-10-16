@@ -98,6 +98,20 @@ from any directory when invoked by its path. It does not build, commit, tag,
 or push, and dry runs leave files unchanged. Review the diff and run
 `tools/run-all.sh` before committing and tagging the release.
 
+After committing, ensure a release tag exists locally, or explicitly publish it
+to `origin`:
+
+```bash
+tools/update-tag.sh --tag v3.1.0
+tools/update-tag.sh -t v3.1.0 --push
+```
+
+Tags must start with `v` and have three numeric components. Missing local tags
+are annotated on the current commit; existing tags are never moved. `--push`
+also checks `origin`, fetches remote-only tags, publishes missing remote tags,
+and rejects conflicts. Without `--push`, no remote is contacted. The helper
+does not bump versions, commit changes, or publish a GitHub release.
+
 ## DOCSIS Examples
 
 | Version | Editable Text | Compiled Binary | Lab Profile |
