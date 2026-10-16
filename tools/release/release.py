@@ -12,9 +12,15 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 
 VERSION_PATTERN = re.compile(r"^(?P<major>\d+)\.(?P<minor>\d+)\.(?P<maintenance>\d+)$")
-BUMP_CHOICES = ("major", "minor", "maintenance")
+BUMP_CHOICES = ("major", "minor", "patch", "maintenance")
 ALLOWED_RELEASE_BRANCHES = ("main", "master")
 CONSTANTS_FILE_PATH = Path("src/com/comcast/oscar/constants/Constants.java")
+VERSION_DOCUMENTATION_PATHS = (
+    Path("README.md"),
+    Path("docs/wiki/CLI-Examples.md"),
+    Path("docs/wiki/Installation.md"),
+    Path("development/docsis40-implementation.md"),
+)
 
 
 def run(cmd: list[str], dry_run: bool = False, capture: bool = False) -> str:
@@ -100,6 +106,36 @@ def write_constants_version(
         print(f"+ update Constants.java version: {old_version} -> {new_version}")
         return
     constants_path.write_text(updated, encoding="utf-8")
+
+
+def bump_project_version(repo_root: Path, new_version: str, dry_run: bool = False) -> None:
+    pom_path = repo_root / "pom.xml"
+    current_version = read_version(pom_path)
+    if not VERSION_PATTERN.fullmatch(current_version) or not VERSION_PATTERN.fullmatch(new_version):
+        raise RuntimeError("Versions must use MAJOR.MINOR.PATCH numeric format")
+    if tuple(map(int, new_version.split("."))) <= tuple(map(int, current_version.split("."))):
+        raise RuntimeError("New version must be greater than the current version")
+
+    constants_path = repo_root / CONSTANTS_FILE_PATH
+    write_version(pom_path, current_version, new_version, dry_run=True)
+    write_constants_version(constants_path, current_version, new_version, dry_run=True)
+    pattern = re.compile(r"(?<![\d.])" + re.escape(current_version) + r"(?![\d.])")
+    documentation = {}
+    for relative_path in VERSION_DOCUMENTATION_PATHS:
+        path = repo_root / relative_path
+        original = path.read_bytes()
+        updated = pattern.sub(new_version, original.decode("utf-8")).encode("utf-8")
+        if updated != original:
+            documentation[path] = updated
+            print(f"+ update {relative_path}: {current_version} -> {new_version}")
+
+    if not dry_run:
+        write_version(pom_path, current_version, new_version)
+        write_constants_version(constants_path, current_version, new_version)
+        for path, contents in documentation.items():
+            path.write_bytes(contents)
+    print(f"{'Preview' if dry_run else 'Updated'}: {current_version} -> {new_version}")
+    print("No build, commit, tag, or push performed.")
 
 
 def sha256_file(path: Path) -> str:
@@ -275,6 +311,15 @@ def build_release(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build release artifacts for Oscar")
     parser.add_argument(
+        "--bump-only",
+        action="store_true",
+        help="update version files and documentation without building or changing Git refs",
+    )
+    parser.add_argument(
+        "--set-version",
+        help="explicit MAJOR.MINOR.PATCH target (requires --bump-only)",
+    )
+    parser.add_argument(
         "-v",
         "--next-version",
         dest="show_version",
@@ -312,7 +357,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="print release/tag commands without changing files or git refs",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.set_version and not args.bump_only:
+        parser.error("--set-version requires --bump-only")
+    if args.set_version and args.show_version:
+        parser.error("--set-version cannot be combined with --next-version")
+    return args
 
 
 def find_repo_root(start: Path) -> Path:
@@ -327,6 +377,12 @@ def main() -> int:
     repo_root = find_repo_root(Path(__file__).resolve().parent)
 
     try:
+        if args.bump_only and not args.show_version:
+            current = read_version(repo_root / "pom.xml")
+            target = args.set_version or bump_version(current, args.bump)
+            bump_project_version(repo_root, target, dry_run=args.dry_run)
+            return 0
+
         if args.show_version:
             current = read_version(repo_root / "pom.xml")
             next_version = bump_version(current, args.bump)

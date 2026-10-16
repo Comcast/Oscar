@@ -80,6 +80,24 @@ entries and keep the classpath quoted. New asset names become available when
 the updated workflow builds a release; existing releases are not changed
 automatically.
 
+## Version Bumps
+
+Use Python 3 and the bump-only helper to keep the Maven version, CLI banner,
+and current documentation references synchronized:
+
+```bash
+tools/bump-version.sh --bump minor --dry-run
+tools/bump-version.sh --bump minor
+```
+
+The default is a patch bump; `--bump major`, `--bump minor`, and `--bump patch`
+are supported (`maintenance` is an alias for patch). Alternatively, select a
+higher numeric version with `--set-version 4.0.0`. The script validates all
+input files before writing, preserves unrelated documentation edits, and works
+from any directory when invoked by its path. It does not build, commit, tag,
+or push, and dry runs leave files unchanged. Review the diff and run
+`tools/run-all.sh` before committing and tagging the release.
+
 ## DOCSIS Examples
 
 | Version | Editable Text | Compiled Binary | Lab Profile |
