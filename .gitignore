@@ -30,6 +30,7 @@ test/
 assessment/
 /development/*
 !/development/docsis40-implementation.md
+!/development/snmp-map-refresh/
 output/*
 !output/.gitkeep
 dist/*

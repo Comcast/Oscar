@@ -1,0 +1,621 @@
+DOCS-LEAK-DETECT-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Unsigned32,
+    Counter32,
+    Counter64
+             FROM SNMPv2-SMI         -- RFC 2578
+    TruthValue,
+    MacAddress,
+    DateAndTime
+             FROM SNMPv2-TC          -- RFC 2579
+    OBJECT-GROUP,
+    MODULE-COMPLIANCE
+             FROM SNMPv2-CONF        -- RFC 2580
+    SnmpAdminString
+             FROM SNMP-FRAMEWORK-MIB -- RFC 3411
+    clabProjDocsis
+             FROM CLAB-DEF-MIB;
+
+
+docsLeakDetectMib MODULE-IDENTITY
+    LAST-UPDATED    "202209150000Z" -- September 15, 2022
+    ORGANIZATION    "Cable Television Laboratories, Inc."
+    CONTACT-INFO
+       "Postal: Cable Television Laboratories, Inc.
+        858 Coal Creek Circle
+        Louisville, Colorado 80027-9750
+        U.S.A.
+        Phone: +1 303-661-9100
+        Fax:   +1 303-661-9199
+        E-mail: mibs@cablelabs.com"
+    DESCRIPTION
+       "This MIB module contains management objects for the
+        management of DOCSIS 3.1 Leakeage Detection.
+        Copyright 2021-2022 Cable Television Laboratories, Inc.
+        All rights reserved."
+
+    REVISION    "202209150000Z" -- September 15, 2022
+    DESCRIPTION
+        "Revised version, per ECN DOCS-LEAK-DETECT-MIB-N-22.2278-1"
+    REVISION    "202205120000Z" -- May 12, 2022
+    DESCRIPTION
+        "Revised version, per ECN DOCS-LEAK-DETECT-MIB-N-22.2254-1"
+    REVISION    "202112020000Z" -- December 2, 2021
+    DESCRIPTION
+        "Revised version, per ECN DOCS-LEAK-DETECT-MIB-N-21.2209-1"
+    REVISION    "202107190000Z" -- July 19, 2021
+    DESCRIPTION
+        "Initial version, per ECN CM-OSSIv3.1-N-21.2181-1"
+    ::= {  clabProjDocsis 37 }
+
+-- ---------------------------------------------------------------------
+-- Textual Conventions
+-- ---------------------------------------------------------------------
+
+-- Administrative assignments
+docsLeakDetNotifications   OBJECT IDENTIFIER ::= { docsLeakDetectMib 0 }
+docsLeakDetObjects         OBJECT IDENTIFIER ::= { docsLeakDetectMib 1 }
+docsLeakDetConformance     OBJECT IDENTIFIER ::= { docsLeakDetectMib 2 }
+
+docsLeakDetCompliances     OBJECT IDENTIFIER ::= { docsLeakDetConformance 1 }
+docsLeakDetGroups          OBJECT IDENTIFIER ::= { docsLeakDetConformance 2 }
+
+-- No Notifications are defined for this MIB
+
+docsLeakDetTestObjects     OBJECT IDENTIFIER ::= { docsLeakDetObjects  1 }
+
+-- ---------------------------------------------------------------------
+-- Leakage Detection Test Objects
+-- ---------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------
+-- Leakage Detection Test Capabilities
+-- ---------------------------------------------------------------------
+
+docsLeakDetTestCapabilities  OBJECT IDENTIFIER ::= { docsLeakDetTestObjects  1 }
+
+docsLeakDetTestSupportsNumBurstsNotReceived OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute reports the CCAP capability to report a count
+          of Leakage Detection Testing Bursts it does not receive during
+         a Leakage Detection Test Session. The value 'true' for this 
+         attribute indicates the CCAP can report a valid value for the 
+         count of Leakage Detection Testing Bursts it did not receive 
+         during a Leakage Detection Test Session. The value 'false' for 
+         this attribute indicates the CCAP does not support reporting 
+         a count of Leakage Detection Testing Bursts not received."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestCapabilities::SupportsNumBurstsNotReceived"
+    ::= { docsLeakDetTestCapabilities 1 }
+    
+-- ---------------------------------------------------------------------
+-- Leakage Detection Test Session Status Table
+-- ---------------------------------------------------------------------
+
+docsLeakDetTestSessionStatusTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsLeakDetTestSessionStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The LeakageDetectionTestSessionStatus table reports the
+        status of a specified Leakage Detection Test Session.
+        Rows in this tabled are created and maintained by the CCAP.
+        Leakage Detection Test Session status is reported for all session 
+        types, including master(2)."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestSessionStatus"
+     ::= { docsLeakDetTestObjects 2}
+
+docsLeakDetTestSessionStatusEntry OBJECT-TYPE
+     SYNTAX      DocsLeakDetTestSessionStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The conceptual row of docsLeakDetTestSessionStatusTable."
+     INDEX { 
+             docsLeakDetTestSessionStatusSessionId
+           }
+     ::= { docsLeakDetTestSessionStatusTable 1 }
+
+DocsLeakDetTestSessionStatusEntry ::= SEQUENCE {
+     docsLeakDetTestSessionStatusSessionId      Unsigned32,
+     docsLeakDetTestSessionStatusSessionType    INTEGER,
+     docsLeakDetTestSessionStatusStatus         INTEGER,
+     docsLeakDetTestSessionStatusStartTime      DateAndTime,
+     docsLeakDetTestSessionStatusStopTime       DateAndTime     
+
+    }
+    
+docsLeakDetTestSessionStatusSessionId OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..4294967295)
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This key attribute uniquely identifies the Leakage Detection
+          Test Session within the MAC domain."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestSessionStatus::SessionId"
+    ::= { docsLeakDetTestSessionStatusEntry 1 }    
+    
+docsLeakDetTestSessionStatusSessionType OBJECT-TYPE
+     SYNTAX      INTEGER {
+                        single(0),
+                        component(1),
+                        master(2)
+                      }
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute reports which type of Leakage Detection Test 
+          Session this instance was created as.
+          - single(0) indicates the Session is comprised only of Test Modems
+                      in a single CCAP upstream RF port and is not one of 
+                      multiple Sessions created when the CCAP-selected 
+                      Test Modem list spans multiple upstream RF ports.
+          - component(1) indicates the Session is one of multiple Sessions 
+                      created each for a different CCAP upstream RF port 
+                      when the CCAP-selected Test Modem list spans multiple
+                      upstream RF ports.
+          - master(2) is the 'parent' Session for multiple sessions created for 
+                      multiple CCAP upstream RF ports when the CCAP-selected
+                      Test Modem list spans multiple upstream RF ports."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestSessionStatus::SessionType"
+      ::= { docsLeakDetTestSessionStatusEntry 2 }
+      
+docsLeakDetTestSessionStatusStatus OBJECT-TYPE
+     SYNTAX      INTEGER {
+                        pending(0),
+                        active(1),
+                        cancelled(2),
+                        completed(3)
+                      }
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute reports the status of the Leakage Detection Test Session 
+          identified by the corresponding Session Id.
+          - pending(0) indicates the Leakage Detection Test Session has been
+                       configured but has not started because the configured 
+                       StartTime has not occurred yet or the CCAP is in the 
+                       process of scheduling Leakage Detection Testing Bursts
+                       for the configured set of Test Cable Modems.
+          - active(1)  indicate the Leakage Detection Test Session has started,
+                       i.e., the CCAP is issuing grants to Test Modems, and the
+                       Session has not completed yet. Once a session becomes active 
+                       and until the session is explicitly cancelled or completes 
+                       i.e., reaches StopTime, it will remain active. This is true
+                       even if there are no modems currently being granted bursts.
+          - cancelled(2) indicates the Leakage Detection Test Session had been
+                       initiated but was stopped by the Leakage Detection Test
+                       Interface Application.
+          - completed(3) indicates the Leakage Detection Test Session ran and 
+                       stopped at the configured StopTime."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestSessionStatus::Status"
+     ::= { docsLeakDetTestSessionStatusEntry 3 }
+      
+docsLeakDetTestSessionStatusStartTime OBJECT-TYPE
+    SYNTAX     DateAndTime
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the date and time when the Session
+        was configured to start. It is the same value as 
+        LeakageDetectionTestSessionCfg::StartTime for the 
+        specified SessionId."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestSessionStatus::StartTime"
+    ::= { docsLeakDetTestSessionStatusEntry 4 }
+    
+docsLeakDetTestSessionStatusStopTime OBJECT-TYPE
+    SYNTAX     DateAndTime
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the date and time when the Session
+        was configured to end. It is the same value as 
+        LeakageDetectionTestSessionCfg::StopTime for the 
+        specified SessionId.
+        If LeakageDetectionTestSessionCfg::StartTime was not configured, 
+        this value reports the date and time when the Leakage Detection 
+        Test Session started."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestSessionStatus::StopTime"
+    ::= { docsLeakDetTestSessionStatusEntry 5 }
+    
+-- ---------------------------------------------------------------------
+-- Leakage Detection Test Session Stats Table
+-- ---------------------------------------------------------------------
+    
+docsLeakDetTestSessionStatsTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsLeakDetTestSessionStatsEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The LeakageDetectionTestSessionStats table reports Leakage 
+         Detection Testing Session statistics for a specified Test Modem
+         and Session. Rows in this table are created and maintained by the CCAP.
+         
+         The CCAP rejects the request with an error if a Master Session ID is used 
+         as a key into this table since session statistics and channel status are not 
+         reported for Master Session. This is a construct representing a set of 
+         individual sessions. Session statistics and channel status are reported 
+         for the individual sessions.
+         
+         Leakage Detection Test Session statistics are not reported for sessions 
+         of type master(2).
+         
+         The CCAP may retain instances of LeakageDetectionTestSessionStats after
+         the Session ends."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestSessionStats"
+     ::= { docsLeakDetTestObjects 3}
+
+docsLeakDetTestSessionStatsEntry OBJECT-TYPE
+     SYNTAX      DocsLeakDetTestSessionStatsEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The conceptual row of docsLeakDetTestSessionStatsTable."
+     INDEX { 
+             docsLeakDetTestSessionStatusSessionId,
+             docsLeakDetTestSessionStatsCmMacAddress
+           }
+     ::= { docsLeakDetTestSessionStatsTable 1 }
+
+DocsLeakDetTestSessionStatsEntry ::= SEQUENCE {
+     docsLeakDetTestSessionStatsCmMacAddress           MacAddress,
+     docsLeakDetTestSessionStatsNumBurstsGranted       Counter32,
+     docsLeakDetTestSessionStatsNumBurstsNotReceived   Counter32,
+     docsLeakDetTestSessionStatsNumTestBytesReceived   Counter64
+    }
+    
+docsLeakDetTestSessionStatsCmMacAddress OBJECT-TYPE
+     SYNTAX      MacAddress
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This key attribute identifies the Test Modem 
+          for which the Leakage Detection Test statistics are being 
+          requested."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestSessionStats::CmMacAddress"
+    ::= { docsLeakDetTestSessionStatsEntry 1 }
+
+docsLeakDetTestSessionStatsNumBurstsGranted OBJECT-TYPE
+     SYNTAX      Counter32
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the count of total Leakage Detection 
+          Testing Burst grants the CCAP provided to the specified
+          Test Modem during a specified Session."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestSessionStats::NumBurstsGranted"
+    ::= { docsLeakDetTestSessionStatsEntry 2 }
+
+docsLeakDetTestSessionStatsNumBurstsNotReceived OBJECT-TYPE
+     SYNTAX      Counter32
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the count of granted Leakage 
+          Detection Testing Bursts the CCAP failed to receive 
+          from the specified Test Modem during a specified Session."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestSessionStats::NumBurstsNotReceived"
+    ::= { docsLeakDetTestSessionStatsEntry 3 }
+    
+docsLeakDetTestSessionStatsNumTestBytesReceived OBJECT-TYPE
+     SYNTAX      Counter64
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the count of total bytes the CCAP received 
+          from the specified Test Modem on the OUDP Testing SID during Leakage
+          Detection Testing Bursts, during a specified Session."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestSessionStats::NumTestBytesReceived"
+    ::= { docsLeakDetTestSessionStatsEntry 4 }
+
+-- ---------------------------------------------------------------------
+-- Leakage Detection Test Channel Status Table
+-- ---------------------------------------------------------------------
+    
+docsLeakDetTestChannelStatusTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsLeakDetTestChannelStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The LeakageDetectionTestChannelStatus table reports the 
+         configuration of a specified upstream OFDMA channel. 
+         Rows in this table are created and maintained by the CCAP.
+         
+         The CCAP rejects the request with an error if a Master Session ID is used 
+         as a key into this table since session statistics and channel status are not 
+         reported for Master Session. This is a construct representing a set of 
+         individual sessions. Session statistics and channel status are reported 
+         for the individual sessions.
+         
+         Leakage Detection Test Channel status is not reported for 
+         session of type master(2)."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestChannelStatus"
+     ::= { docsLeakDetTestObjects 4}
+
+docsLeakDetTestChannelStatusEntry OBJECT-TYPE
+     SYNTAX      DocsLeakDetTestChannelStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The conceptual row of docsLeakDetTestChannelStatusTable."
+     INDEX { 
+             docsLeakDetTestSessionStatusSessionId,
+             docsLeakDetTestChannelStatusInterfaceName
+           }
+     ::= { docsLeakDetTestChannelStatusTable 1 }
+
+DocsLeakDetTestChannelStatusEntry ::= SEQUENCE {
+     docsLeakDetTestChannelStatusInterfaceName         SnmpAdminString,
+     docsLeakDetTestChannelStatusTestStartFreq         Unsigned32,
+     docsLeakDetTestChannelStatusTestEndFreq           Unsigned32,
+     docsLeakDetTestChannelStatusNumModemsCfg          Unsigned32,
+     docsLeakDetTestChannelStatusNumModemsActive       Unsigned32,
+     docsLeakDetTestChannelStatusFirstSubcarrierId     Unsigned32,
+     docsLeakDetTestChannelStatusLastSubcarrierId      Unsigned32,
+     docsLeakDetTestChannelStatusBurstIuc              Unsigned32,
+     docsLeakDetTestChannelStatusCurrCycleTime         Unsigned32,
+     docsLeakDetTestChannelStatusNumBurstPositions     Unsigned32
+    }
+
+docsLeakDetTestChannelStatusInterfaceName OBJECT-TYPE
+     SYNTAX      SnmpAdminString  (SIZE (0..100))
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This key attribute is the interface name 
+          specifying an upstream OFDMA channel."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestChannelStatus::InterfaceName"
+    ::= { docsLeakDetTestChannelStatusEntry 1 }
+
+docsLeakDetTestChannelStatusTestStartFreq OBJECT-TYPE
+     SYNTAX      Unsigned32
+     UNITS       "Hertz"
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute reports the lower boundary of the upstream
+          OFDMA channel frequency spectrum over which Test Modems
+          will transmit Leakage Detection Testing Bursts."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestChannelStatus::TestStartFreq"
+    ::= { docsLeakDetTestChannelStatusEntry 2 }    
+    
+docsLeakDetTestChannelStatusTestEndFreq OBJECT-TYPE
+     SYNTAX      Unsigned32
+     UNITS       "Hertz"
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute reports the upper boundary of the 
+          upstream OFDMA channel frequency spectrum over which
+          Test Modems will transmit Leakage Detection 
+          Testing Bursts."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestChannelStatus::TestEndFreq"
+    ::= { docsLeakDetTestChannelStatusEntry 3 } 
+
+docsLeakDetTestChannelStatusNumModemsCfg OBJECT-TYPE
+     SYNTAX      Unsigned32
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute provides the count of the number of modems that are 
+          configured for this session. When the modems are explicitly configured 
+          via the management interface, this value remains static throughout the test. 
+          When the CCAP determines and manages the list of modems, this value can change 
+          over time as additional modems are assigned the OFDMA channel used for testing 
+          in their TCS at registration or via DBC, or as modems are administratively deleted
+          from the system. 
+          
+          In the case where additional modems are configured into a session by the CCAP, 
+          the modems are added to the end of the grant cycle as soon as is practical. 
+          Modems can be configured in a list but could be offline or in a state that does not 
+          allow them to be scheduled for OUDP Leakage Bursts. In these cases, the NumModemsCfg 
+          will be larger than NumModemsActive. 
+          Explicit modem MAC Address lists that are written via the management interface and modem 
+          MAC Address lists generated by CCAP are each a 'configured list'. 
+          
+          Criteria for selecting the list of modems to configure is outside the scope of the specification.
+          Explicit modem MAC Address lists can be specified in which a given modem appears multiple times. 
+          However, in all cases NumModemsCfg only counts each configured modem once."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestChannelStatus::NumModemsCfg"
+    ::= { docsLeakDetTestChannelStatusEntry 4 } 
+
+docsLeakDetTestChannelStatusNumModemsActive OBJECT-TYPE
+     SYNTAX      Unsigned32
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute provides the count of the number of modems that are 
+          actively being scheduled by the CCAP for OUDP bursts for this session. 
+          This value may differ from the NumModemsCfg when modems are offline, 
+          in partial service on the test channel, or have the test channel removed 
+          from their TCS (e.g., operating in an energy management mode).
+          
+          Explicit modem MAC Address lists can be specified in which a given modem 
+          appears multiple times. However, in all cases, NumModemsActive only counts 
+          each active modem once."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestChannelStatus::NumModemsActive"
+    ::= { docsLeakDetTestChannelStatusEntry 5 } 
+
+docsLeakDetTestChannelStatusFirstSubcarrierId OBJECT-TYPE
+     SYNTAX      Unsigned32
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute reports the lowest subcarrierId that 
+          is on the lowest edge of the first minislot that the CCAP 
+          has selected for the testing of Leakage.  This subcarrierId 
+          is established based on the value of the LeakageDetectionTestSessionCfg
+          attribute FrequencyStart and is the first subcarrier of the first full
+          minislot used for the testing that is closest to FrequencyStart."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestChannelStatus::FirstSubcarrierId"
+    ::= { docsLeakDetTestChannelStatusEntry 6 } 
+
+docsLeakDetTestChannelStatusLastSubcarrierId OBJECT-TYPE
+     SYNTAX      Unsigned32
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute reports the highest subcarrierId that
+          is on the highest edge of the last minislot that the CCAP 
+          has selected for the testing of Leakage.  This subcarrierId 
+          is established based on the value of the LeakageDetectionTestSessionCfg 
+          attribute FrequencyEnd and is the first subcarrier of the first full
+          minislot used for the testing that is closest to FrequencyEnd."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestChannelStatus::LastSubcarrierId"
+    ::= { docsLeakDetTestChannelStatusEntry 7 } 
+
+docsLeakDetTestChannelStatusBurstIuc OBJECT-TYPE
+     SYNTAX      Unsigned32  (5|6|9|10|11|12|13)
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute provides the information regarding which 
+          BurstIuc is being used on this OFDMA channel for Leakage 
+          Detection Bursts and is used primarily for troubleshooting
+          purposes."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestChannelStatus::BurstIuc"
+    ::= { docsLeakDetTestChannelStatusEntry 8 } 
+
+docsLeakDetTestChannelStatusCurrCycleTime OBJECT-TYPE
+     SYNTAX      Unsigned32
+     UNITS       "Milliseconds"
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute communicates the current time that a single cycle takes to 
+          complete. This calculation takes into account the configured test parameters
+          (TransmitBurstGap, TransmitDuration, and TransmitCycleGap), the channel 
+          configuration (OFDMA Frame Duration in milliseconds) and the NumBurstPositions 
+          currently being used for the test. When the CmMacAddressList is explicitly configured,
+          this value is static for the duration of the test. In the case where the CCAP determines
+          and manages the list, this value can vary based on the number of modems that have been 
+          configured and is updated each time modems are added to or deleted from the list. 
+          The calculation in milliseconds is defined as
+         
+          CurrCycleTime = [<TransmitDuration> x NumBurstPositions + 
+          <TransmitBurstGap> x (NumBurstPositions-1) + 
+          TransmitCycleGap] x  OFDMA Frame Duration in milliseconds.
+          
+          Note that TransmitDuration, TransmitBurstGap, and TransmitCycleGap are defined in terms of
+          OFDMA frames,  To get a value in terms of milliseconds, it is necessary to multiply the 
+          number of OFDMA frames by the OFDMA frame duration in milliseconds. 
+          The value of N is either the value of NumModems when the list of modems is configured, 
+          or the number of modems that the CMTS has added to NumModemsActive when the CMTS manages 
+          the list of modems."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestChannelStatus::CurrCycleTime"
+    ::= { docsLeakDetTestChannelStatusEntry 9 }  
+
+docsLeakDetTestChannelStatusNumBurstPositions OBJECT-TYPE
+     SYNTAX      Unsigned32   
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute provides the count of the number of burst positions in a 
+          Leakage Detection Test Session whether they are scheduled or not. 
+          Unscheduled burst positions are created when modems go offline, are in 
+          partial service on the test channel, or have the test channel removed 
+          from the modem's TCS. The CCAP uses unscheduled burst positions to preserve
+          the position of the modem in the cycle should the modem come back online, 
+          recover from partial service on the test channel, or have the test channel 
+          restored to the modem's TCS."
+     REFERENCE      
+        "Information Model Mapping: CM-SP-CCAP-OSSI 
+         LeakageDetectionTestChannelStatus::NumBurstPositions"
+    ::= { docsLeakDetTestChannelStatusEntry 10 }     
+    
+--
+-- Compliance Groups
+--
+
+docsLeakDetCompliance MODULE-COMPLIANCE
+STATUS      current
+DESCRIPTION
+        "The compliance statement of managed objects for Leakage Detection"
+
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+     docsLeakDetTestGroup
+     }
+::= { docsLeakDetCompliances 1 }
+
+docsLeakDetTestGroup OBJECT-GROUP
+    OBJECTS {
+        docsLeakDetTestSupportsNumBurstsNotReceived,
+        
+        docsLeakDetTestSessionStatusSessionType,
+        docsLeakDetTestSessionStatusStatus,
+        docsLeakDetTestSessionStatusStartTime,
+        docsLeakDetTestSessionStatusStopTime,
+
+        docsLeakDetTestSessionStatsNumBurstsGranted,
+        docsLeakDetTestSessionStatsNumBurstsNotReceived,
+        docsLeakDetTestSessionStatsNumTestBytesReceived,
+
+        docsLeakDetTestChannelStatusTestStartFreq,
+        docsLeakDetTestChannelStatusTestEndFreq,
+        docsLeakDetTestChannelStatusNumModemsCfg,
+        docsLeakDetTestChannelStatusNumModemsActive,
+        docsLeakDetTestChannelStatusFirstSubcarrierId,
+        docsLeakDetTestChannelStatusLastSubcarrierId,
+        docsLeakDetTestChannelStatusBurstIuc,
+        docsLeakDetTestChannelStatusCurrCycleTime,
+        docsLeakDetTestChannelStatusNumBurstPositions        
+     }
+    STATUS      current
+    DESCRIPTION
+         "Group of objects implemented for Leakage Detection Test"
+    ::= { docsLeakDetGroups   1 }
+
+END
+
+    
+

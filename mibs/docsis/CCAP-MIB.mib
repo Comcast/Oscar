@@ -1,0 +1,529 @@
+CCAP-MIB DEFINITIONS ::= BEGIN
+IMPORTS 
+    MODULE-IDENTITY, 
+    OBJECT-TYPE, 
+    Unsigned32,
+    Gauge32,
+    Counter64
+                       FROM SNMPv2-SMI
+    TruthValue 
+                       FROM SNMPv2-TC                        
+    OBJECT-GROUP, 
+    MODULE-COMPLIANCE 
+                       FROM SNMPv2-CONF 
+    SnmpAdminString 
+                       FROM SNMP-FRAMEWORK-MIB 
+     
+    PhysicalIndexOrZero
+                       FROM ENTITY-MIB
+    mpegInputTSIndex,
+    mpegInputProgIndex,
+    mpegOutputTSIndex,
+    mpegOutputProgIndex,
+    mpegInputProgEntry,
+    mpegOutputProgEntry,
+    mpegVideoSessionIndex
+                       FROM SCTE-HMS-MPEG-MIB
+    ifIndex
+                       FROM IF-MIB
+    clabProjDocsis
+                       FROM CLAB-DEF-MIB;
+
+ccapMib MODULE-IDENTITY
+    LAST-UPDATED "201304040000Z" -- April 04, 2013
+
+    ORGANIZATION "Cable Television Laboratories, Inc." 
+    CONTACT-INFO 
+        "Postal: Cable Television Laboratories
+         858 Coal Creek Circle
+         Louisville, CO 80027-9750
+         U.S.A.
+         Phone: +1 303-661-9100
+         Fax:   +1 303-661-9199
+         E-mail:  mibs@cablelabs.com"
+     DESCRIPTION 
+         "This MIB module contains additional management objects
+         needed for the management of CCAP devices.
+         Copyright 2011 Cable Television Laboratories, Inc.
+         All rights reserved."
+     REVISION "201304040000Z" -- April 04, 2013
+     DESCRIPTION 
+         "Editorial correction of the letter case in the term XPath. Revised per
+         ECN CCAP-OSSI-N-13.1095-2 and published as part of CM-SP-CCAP-OSSI-I04."
+     REVISION "201208090000Z" -- August 9, 2012
+     DESCRIPTION 
+         "Added an example of XPath expression containing interface name.
+         Published as part of CM-SP-CCAP-OSSI-I03."   
+     REVISION "201108050000Z" -- August 5, 2011
+     DESCRIPTION 
+         "Redefined ccapMpegDecryptSessionTable to allow it to compile properly.
+          Removed ccapChassisMgmtObjects.
+         Published as part of CM-SP-CCAP-OSSI-D03."   
+     REVISION "201105170000Z" -- May 17, 2011
+     DESCRIPTION 
+         "Initial version, published as part of
+          CM-SP-CCAP-OSSI-D01."   
+    ::= { clabProjDocsis 24 }
+	
+-- Textual Conventions
+
+-- Object Definitions
+ccapNotifications OBJECT IDENTIFIER ::= { ccapMib 0 }
+ccapObjects OBJECT IDENTIFIER ::= { ccapMib 1 }
+
+ccapInterfacesObjects OBJECT IDENTIFIER ::= { ccapObjects 1 }
+
+ccapInterfaceIndexMapTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CcapInterfaceIndexMapEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This object reports the correspondent device path for the
+        Interface index defined by an object instance."
+    ::= { ccapInterfacesObjects 1 }
+
+ccapInterfaceIndexMapEntry    OBJECT-TYPE
+    SYNTAX      CcapInterfaceIndexMapEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The conceptual row of ccapInterfaceIndexMapTable.
+        The index of this object corresponds to the Interface MIB index
+        for interfaces of IANA interface types:
+         'docsCableMaclayer' -- '127'
+         'docsCableDownstream' -- '128' 
+         'docsCableUpstream' -- '129'
+         'docsCableUpstreamChannel' -- '205' 
+         'docsCableUpstreamRfPort' -- '256'
+         'cableDownstreamRfPort' -- '257'"
+    INDEX {
+            ifIndex
+          }
+    ::= { ccapInterfaceIndexMapTable 1 }
+
+CcapInterfaceIndexMapEntry ::= SEQUENCE {
+    ccapInterfaceIndexMapPath
+                 SnmpAdminString,
+    ccapInterfaceIndexMapEntPhysicalIndex
+                 PhysicalIndexOrZero
+                 
+      }
+
+ccapInterfaceIndexMapPath    OBJECT-TYPE
+    SYNTAX      SnmpAdminString 
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute indicates the CCAP node XPath expression that
+         identifies the resource associated with the interface index.
+
+         For example,
+         The path value of the resource associated with an 
+         upstream logical channel with index =  5, 
+         in upstream physical channel index = 7, 
+         in an Upstream  RF port number = 15, 
+         from an US RF Line Card, 
+         in slot number = 3, 
+         chassis id = 1 is represented as:
+
+         /ccap/chassis[id=1]
+         /slot[number=3]
+         /rf-line-card
+         /us-rf-port[number=15]
+         /upstream-physical-channel[index=7]
+         /upstream-logical-channel[index=5]
+
+         In another example, the path value of the resource associated with a
+         DOCSIS MAC domain with name = 'ca5/1/0'is represented as:
+
+         /ccap/docsis/docs-mac-domain/mac-domain[mac-domain-name='ca5/1/0']
+         Note: Line breaks in the examples above were added for clarity."
+
+    ::= { ccapInterfaceIndexMapEntry 1 }
+
+
+ccapInterfaceIndexMapEntPhysicalIndex    OBJECT-TYPE
+    SYNTAX      PhysicalIndexOrZero  
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This Attribute corresponds to the entPhysical Index associated with 
+        the resource. Zero if undefined"
+    ::= { ccapInterfaceIndexMapEntry 2 }
+
+ccapMpegObjects OBJECT IDENTIFIER ::= { ccapObjects 2 }
+
+ccapMpegInputProgTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CcapMpegInputProgEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This object extends the SCTE-HMS-MPEG-MIB
+         mpegInputProgTable for the CCAP system."
+    ::= { ccapMpegObjects 1 }
+
+ccapMpegInputProgEntry    OBJECT-TYPE
+    SYNTAX      CcapMpegInputProgEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The Conceptual row of ccapMpegInputProgTable."
+    AUGMENTS { mpegInputProgEntry }
+    ::= { ccapMpegInputProgTable 1 }
+
+CcapMpegInputProgEntry ::= SEQUENCE {
+    ccapMpegInputProgBitRate
+                 Gauge32,
+    ccapMpegInputProgRequestedBandwidth
+                 Unsigned32
+      }
+
+ccapMpegInputProgBitRate    OBJECT-TYPE
+    SYNTAX      Gauge32
+    UNITS       "bps" 
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Indicates the measured MPEG input program bitrate in bps."
+    ::= { ccapMpegInputProgEntry 1 }
+
+ccapMpegInputProgRequestedBandwidth    OBJECT-TYPE
+    SYNTAX      Unsigned32
+    UNITS       "bps"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Requested bandwidth for this MPEG input program.
+        This value is used to validate the total QAM  bandwidth before 
+        allowing the creation of a new  session. 
+
+        It is also used to validate the input program  bandwidth 
+        overflow situation during the transmission.
+
+        In the case of special stream without PCR, it is  used to limit 
+        the output bandwidth of that special program.
+
+        A zero (0) value is returned if no bandwidth  validation is done 
+        on this program."
+    ::= { ccapMpegInputProgEntry 2 }
+
+ccapMpegOutputProgTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CcapMpegOutputProgEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This object extends the SCTE-HMS-MPEG-MIB
+        mpegOutputProgTable for the CCAP video
+        down channel."
+    ::= { ccapMpegObjects 2 }
+
+ccapMpegOutputProgEntry    OBJECT-TYPE
+    SYNTAX      CcapMpegOutputProgEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The Conceptual row of ccapMpegOutputProgTable."
+    AUGMENTS { mpegOutputProgEntry }
+    ::= { ccapMpegOutputProgTable 1 }
+
+CcapMpegOutputProgEntry ::= SEQUENCE {
+    ccapMpegOutputProgBitRate
+                 Gauge32
+      }
+
+ccapMpegOutputProgBitRate    OBJECT-TYPE
+    SYNTAX      Gauge32
+    UNITS       "bps" 
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "Indicates the output program bitrate in bps."
+    ::= { ccapMpegOutputProgEntry 1 }
+
+ccapMpegInputProgVideoSessionTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CcapMpegInputProgVideoSessionEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This object specifies the list of video sessions 
+        that the MPEG input program are feeding."
+    ::= { ccapMpegObjects 3 }
+
+ccapMpegInputProgVideoSessionEntry    OBJECT-TYPE
+    SYNTAX      CcapMpegInputProgVideoSessionEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The conceptual row of 
+        ccapMpegInputProgVideoSessionTable."
+    INDEX {
+            mpegInputTSIndex,
+            mpegInputProgIndex,
+            mpegVideoSessionIndex
+          }
+    ::= { ccapMpegInputProgVideoSessionTable 1 }
+
+CcapMpegInputProgVideoSessionEntry ::= SEQUENCE {
+    ccapMpegInputProgVideoSessionStatus
+                 INTEGER
+      }
+
+ccapMpegInputProgVideoSessionStatus    OBJECT-TYPE
+    SYNTAX      INTEGER {
+                          active(1),
+                          closed(2)
+                        }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute indicates the status of the session.   
+        Only active sessions need to be reported."
+    ::= { ccapMpegInputProgVideoSessionEntry 1 }
+
+
+ccapMpegOutputProgVideoSessionTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CcapMpegOutputProgVideoSessionEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This object specifies the video sessions that are used
+        to feed the video down channel program."
+    ::= { ccapMpegObjects 4 }
+
+ccapMpegOutputProgVideoSessionEntry    OBJECT-TYPE
+    SYNTAX      CcapMpegOutputProgVideoSessionEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The conceptual row of ccapMpegOutputProgVideoSessionTable."
+    INDEX {
+            mpegOutputTSIndex,
+            mpegOutputProgIndex,
+            mpegVideoSessionIndex
+          }
+    ::= { ccapMpegOutputProgVideoSessionTable 1 }
+
+CcapMpegOutputProgVideoSessionEntry ::= SEQUENCE {
+    ccapMpegOutputProgVideoSessionStatus
+                 INTEGER
+      }
+
+ccapMpegOutputProgVideoSessionStatus    OBJECT-TYPE
+    SYNTAX      INTEGER {
+                          active(1),
+                          closed(2)
+                        } 
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute indicates the status of the session.   
+        Only active sessions need to be reported."
+    ::= { ccapMpegOutputProgVideoSessionEntry 4 }
+
+
+ccapCryptoObjects OBJECT IDENTIFIER ::= { ccapObjects 3 }
+
+ccapEcmgStatusTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CcapEcmgStatusEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This object reports status information for each instance
+        of an Entitlement Control Message Generator (ECMG)."
+    ::= { ccapCryptoObjects 1 }
+
+ccapEcmgStatusEntry    OBJECT-TYPE
+    SYNTAX      CcapEcmgStatusEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The conceptual row of ccapEcmgStatusTable."
+    INDEX {
+            ccapEcmgIndex
+          }
+    ::= { ccapEcmgStatusTable 1 }
+
+CcapEcmgStatusEntry ::= SEQUENCE {
+    ccapEcmgIndex
+                 Unsigned32,
+    ccapEcmgNumActiveSessions
+                 Gauge32,
+    ccapEcmgCwMessageCount
+                 Counter64
+    }
+
+ccapEcmgIndex    OBJECT-TYPE
+    SYNTAX      Unsigned32  
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This Attribute identifies an instance of an ECMG."
+    ::= { ccapEcmgStatusEntry 1 }
+
+ccapEcmgNumActiveSessions OBJECT-TYPE
+    SYNTAX      Gauge32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "The current number of encryption sessions managed by this ECMG."
+    ::= { ccapEcmgStatusEntry 2 }
+
+ccapEcmgCwMessageCount OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "The number of Control World (CW) messages received from this ECMG."
+    ::= { ccapEcmgStatusEntry 3 }
+
+
+ccapEcmdStatusTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CcapEcmdStatusEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This object reports status information for each instance
+        Entitlement Control Message Decoder (ECMD)."
+    ::= { ccapCryptoObjects 2 }
+
+ccapEcmdStatusEntry    OBJECT-TYPE
+    SYNTAX      CcapEcmdStatusEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The conceptual row of ccapEcmdStatusTable."
+    INDEX {
+            ccapEcmdIndex
+          }
+    ::= { ccapEcmdStatusTable 1 }
+
+CcapEcmdStatusEntry ::= SEQUENCE {
+    ccapEcmdIndex
+                 Unsigned32,
+    ccapEcmdNumActiveSessions
+                 Gauge32,
+    ccapEcmdCwMessageCount
+                 Counter64
+      }
+
+ccapEcmdIndex    OBJECT-TYPE
+    SYNTAX      Unsigned32  
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This Attribute identifies an instance of ECMD."
+    ::= { ccapEcmdStatusEntry 1 }
+
+ccapEcmdNumActiveSessions OBJECT-TYPE
+    SYNTAX      Gauge32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "The current number of encryption sessions managed by this ECMD."
+    ::= { ccapEcmdStatusEntry 2 }
+
+ccapEcmdCwMessageCount OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "The number of Control World (CW) messages received from this ECMD."
+    ::= { ccapEcmdStatusEntry 3 }
+
+ccapMpegDecryptSessionTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF CcapMpegDecryptSessionEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The (conceptual) table of those video sessions defined in the 
+        mpegVideoSessionTable, from the SCTE-HMS-MPEG-MIB, which require
+        decryption. 
+
+        Note that this table is potentially sparse: a (conceptual) entry 
+        exists only if the video session requires decryption."
+    ::= { ccapCryptoObjects 3 }
+
+ccapMpegDecryptSessionEntry    OBJECT-TYPE
+    SYNTAX      CcapMpegDecryptSessionEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "A (conceptual) entry for a decrypted video session.  
+        The mpegVideoSessionIndex represents the entry in the 
+        mpegVideoSessionTable that corresponds to the 
+        ccapMpegDecryptSessionEntry."
+    INDEX {
+            mpegVideoSessionIndex
+          }
+    ::= { ccapMpegDecryptSessionTable 1 }
+
+CcapMpegDecryptSessionEntry ::= SEQUENCE {
+    ccapMpegDecryptSessionDecrypted
+        TruthValue
+    }
+
+ccapMpegDecryptSessionDecrypted    OBJECT-TYPE
+    SYNTAX     TruthValue
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "Denotes whether or not the video session was decrypted.
+        This object should always be set to 'true'."
+    DEFVAL     { true }
+    ::= { ccapMpegDecryptSessionEntry 1 }
+
+
+-- Conformance Definitions
+ccapMibConformance OBJECT IDENTIFIER ::= { ccapMib 2 }
+ccapMibCompliances OBJECT IDENTIFIER ::= { ccapMibConformance 1 }
+ccapMibGroups      OBJECT IDENTIFIER ::= { ccapMibConformance 2 }
+
+ccapCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+         "The compliance statement for the."
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+            ccapInterfacesGroup, 
+            ccapMpegGroup,
+            ccapCryptoGroup
+            }
+    ::= { ccapMibCompliances 1 }
+
+ccapInterfacesGroup OBJECT-GROUP
+    OBJECTS {
+              ccapInterfaceIndexMapPath,
+              ccapInterfaceIndexMapEntPhysicalIndex
+    }
+    STATUS      current
+    DESCRIPTION
+             "Objects implemented in the ccapInterfacesGroup."
+    ::= { ccapMibGroups 1 }
+    
+ccapMpegGroup OBJECT-GROUP
+    OBJECTS {
+              ccapMpegInputProgBitRate,
+              ccapMpegInputProgRequestedBandwidth,
+              ccapMpegInputProgBitRate,
+              ccapMpegInputProgVideoSessionStatus,
+              ccapMpegOutputProgVideoSessionStatus,
+              ccapMpegOutputProgBitRate
+    }
+    STATUS      current
+    DESCRIPTION
+             "Objects implemented in the ccapMpegGroup."
+    ::= { ccapMibGroups 2 }
+
+ccapCryptoGroup OBJECT-GROUP
+    OBJECTS {
+              ccapEcmgNumActiveSessions,
+              ccapEcmgCwMessageCount,
+              ccapEcmdNumActiveSessions,
+              ccapEcmdCwMessageCount,
+              ccapMpegDecryptSessionDecrypted
+    }
+    STATUS      current
+    DESCRIPTION
+             "Objects implemented in the ccapCryptoGroup."
+    ::= { ccapMibGroups 3 }
+END

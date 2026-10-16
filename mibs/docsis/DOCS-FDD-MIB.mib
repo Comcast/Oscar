@@ -1,0 +1,426 @@
+DOCS-FDD-MIB DEFINITIONS ::= BEGIN
+  IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Unsigned32,
+    Integer32
+             FROM SNMPv2-SMI         -- RFC 2578
+    OBJECT-GROUP,
+    MODULE-COMPLIANCE
+             FROM SNMPv2-CONF        -- RFC 2580
+    TruthValue
+             FROM SNMPv2-TC          -- RFC 2579
+    docsIf31CmUsOfdmaChanEntry
+              FROM DOCS-IF31-MIB
+    clabProjDocsis
+              FROM CLAB-DEF-MIB;
+
+docsFddMib MODULE-IDENTITY
+     LAST-UPDATED    "202604230000Z" -- April 23, 2026
+     ORGANIZATION    "Cable Television Laboratories, Inc."
+     CONTACT-INFO
+         "
+         Postal: Cable Television Laboratories, Inc.
+         858 Coal Creek Circle
+         Louisville, Colorado 80027-9750
+         U.S.A.
+         Phone: +1 303-661-9100
+         Fax:   +1 303-661-9199
+         E-mail: mibs@cablelabs.com"
+     DESCRIPTION
+        "This MIB module contains the management objects for the
+        management of DOCSIS 4.0 Frequency Division Duplex (FDD)
+        features.
+        Copyright 2025-2026 Cable Television Laboratories, Inc.
+        All rights reserved."
+    REVISION "202604230000Z" -- April 23, 2026
+    DESCRIPTION
+        "Revised per ECN DOCS-FDD-MIB-N-26.2432-1"
+    REVISION "202502200000Z" -- February 20, 2025
+    DESCRIPTION
+        "Initial version, per ECN CM-OSSIv4.0-25.2398-1" 
+    REVISION "202412200000Z" -- December 20, 2024
+    DESCRIPTION
+        "Initial version, per CM-SP-CM-OSSIv4.0-I11"
+     ::= { clabProjDocsis 39 }
+
+-- Textual Conventions
+
+
+-- Object Definitions
+docsFddMibObjects  OBJECT IDENTIFIER ::= { docsFddMib 0 }
+
+-- DOCS-FDD-MIB Elements
+--
+
+--
+-- CM Objects
+--
+
+--
+-- The CmFddSystemCfgState object reports the current configuration
+-- properties of FDD Extended Upstream Channel attributes for the FDD
+-- CM.
+--
+docsFddCmFddSystemCfgState OBJECT IDENTIFIER ::= { docsFddMibObjects 1 }
+
+docsFddCmFddSystemCfgStateDiplexerDsLowerBandEdgeCfg OBJECT-TYPE
+     SYNTAX      Unsigned32 (0 | 5..65535)
+     UNITS       "MHz"
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute specifies the starting (lowest) frequency for
+          which the downstream band is currently configured in the FDD
+          cable modem. This corresponds to the Advanced Diplexer
+          Downstream Lower Band Edge Configuration sent by the CM in
+          the Registration Request as TLV type 5.79. The two-byte
+          unsigned integer represents the frequency in MHz. The value
+          zero indicates the CM is currently not configured with a
+          channel in the extended spectrum."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+         CmFddSystemCfgState::DiplexerDsLowerBandEdgeCfg
+         DOCSIS 4.0 MAC and Upper Layer Protocols Interface
+         Specification CM-SP-MULPIv4.0-I08-231211, 
+         Common TLV Encodings annex, Advanced Diplexer Downstream Lower
+         Band Edge Configuration section.
+         DOCSIS 4.0 Physical Layer Specification, CM-SP-PHYv4.0-I06-221019,
+         Upstream and Downstream Frequency Plan for FDD Operation."
+     ::= { docsFddCmFddSystemCfgState 1 }
+
+docsFddCmFddSystemCfgStateDiplexerDsUpperBandEdgeCfg OBJECT-TYPE
+     SYNTAX      Unsigned32 (0 | 5..65535)
+     UNITS       "MHz"
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute specifies the ending (highest) frequency for which
+         the downstream band is currently configured in the FDD cable modem.
+         This corresponds to the Advanced Diplexer Downstream Upper Band
+         Edge Configuration sent by the CM in the Registration Request as
+         TLV type 5.80. The two-byte unsigned integer represents the
+         frequency in MHz. The value zero indicates the CM is currently
+         not configured with a channel in the extended spectrum."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+         CmFddSystemCfgState::DiplexerDsUpperBandEdgeCfg
+         DOCSIS 4.0 MAC and Upper Layer Protocols Interface
+         Specification CM-SP-MULPIv4.0-I08-231211,
+         Common TLV Encodings annex, Advanced Downstream Upper Band Edge
+         Configuration section.
+         DOCSIS 4.0 Physical Layer Specification, CM-SP-PHYv4.0-I06-221019,
+         Upstream and Downstream Frequency Plan for FDD Operation."
+     ::= { docsFddCmFddSystemCfgState 2 }
+
+docsFddCmFddSystemCfgStateDiplexerUsUpperBandEdgeCfg OBJECT-TYPE
+     SYNTAX      Unsigned32 (0 | 5..65535)
+     UNITS       "MHz"
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute specifies the ending (highest) frequency for which
+         the upstream band is currently configured in the FDD cable modem.
+         This corresponds to the Advanced Diplexer Upstream Upper Band Edge
+         Configuration sent by the CM in the Registration Request as TLV
+         type 5.81. The two-byte unsigned integer represents the frequency
+         in MHz. The value zero indicates the CM is currently not
+         configured with a channel in the extended spectrum."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+         CmFddSystemCfgState::DiplexerDsUpperBandEdgeCfg
+         DOCSIS 4.0 MAC and Upper Layer Protocols Interface
+         Specification CM-SP-MULPIv4.0-I08-231211,
+         Common TLV Encodings annex, Advanced Diplexer Upstream Upper Band
+         Edge Configuration section.
+         DOCSIS 4.0 Physical Layer Specification, CM-SP-PHYv4.0-I06-221019,
+         Upstream and Downstream Frequency Plan for FDD Operation."
+     ::= { docsFddCmFddSystemCfgState 3 }
+
+--
+-- The CmFddCapabilities object defines capability attributes for the FDD CM.
+--
+docsFddCmFddCapabilities OBJECT IDENTIFIER ::= { docsFddMibObjects 2 }
+
+--
+-- DiplexerUsUpperBandEdgeCapability Table
+--
+docsFddDiplexerUsUpperBandEdgeCapabilityTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsFddDiplexerUsUpperBandEdgeCapabilityEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This table specifies all of the advanced diplexer upstream upper
+          band edge configurations supported by the FDD CM. This corresponds
+          to the Advanced Diplexer Upstream Upper Band Edge Options List modem
+          capability TLV 5.84 sent by the FDD CM in the Registration Request.
+          The table of UnsignedShort values represents the list of supported
+          frequencies specified in MHz and sent in the Registration Request."
+     ::= { docsFddCmFddCapabilities 1 }
+
+docsFddDiplexerUsUpperBandEdgeCapabilityEntry OBJECT-TYPE
+     SYNTAX      DocsFddDiplexerUsUpperBandEdgeCapabilityEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsFddDiplexerUsUpperBandEdgeCapabilityTable."
+     INDEX { docsFddDiplexerUsUpperBandEdgeCapabilityIndex
+           }
+     ::= { docsFddDiplexerUsUpperBandEdgeCapabilityTable 1 }
+
+DocsFddDiplexerUsUpperBandEdgeCapabilityEntry ::= SEQUENCE 
+     {
+     docsFddDiplexerUsUpperBandEdgeCapabilityIndex          Unsigned32,
+     docsFddDiplexerUsUpperBandEdgeCapability               Unsigned32
+     }
+
+docsFddDiplexerUsUpperBandEdgeCapabilityIndex OBJECT-TYPE
+     SYNTAX      Unsigned32
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This index identifies one of the advanced diplexer upstream upper
+          band edge configurations supported by the FDD CM."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSIv4.0
+         CmFddCapabilities::DiplexerUsUpperBandEdgeCapability"
+     ::= { docsFddDiplexerUsUpperBandEdgeCapabilityEntry 1 }
+
+docsFddDiplexerUsUpperBandEdgeCapability OBJECT-TYPE
+     SYNTAX      Unsigned32 (0..65535)
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute specifies one of the advanced diplexer upstream upper
+          band edge configurations supported by the FDD CM. The unsigned short
+          value specifies one of the supported frequencies specified in MHz."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+         CmFddCapabilities::DiplexerUsUpperBandEdgeCapability
+         DOCSIS 4.0 MAC and Upper Layer Protocols Interface
+         Specification CM-SP-MULPIv4.0-I08-231211,
+         Common TLV Encodings annex, Advanced Diplexer Upstream Upper
+         Band Edge Options List"
+     ::= { docsFddDiplexerUsUpperBandEdgeCapabilityEntry 2 }
+
+--
+-- DiplexerDsLowerBandEdgeCapability Table
+--
+docsFddDiplexerDsLowerBandEdgeCapabilityTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsFddDiplexerDsLowerBandEdgeCapabilityEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This table specifies all of the advanced diplexer downstream lower
+          band edge configurations supported by the FDD CM. This corresponds
+          to the Advanced Diplexer Downstream Lower Band Edge Options List modem
+          capability TLV 5.82 sent by the FDD CM in the Registration Request.
+          The table of UnsignedShort values represents the list of supported
+          frequencies specified in MHz and sent in the Registration Request."
+     ::= { docsFddCmFddCapabilities 2 }
+
+docsFddDiplexerDsLowerBandEdgeCapabilityEntry OBJECT-TYPE
+     SYNTAX      DocsFddDiplexerDsLowerBandEdgeCapabilityEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsFddDiplexerDsLowerBandEdgeCapabilityTable."
+     INDEX { docsFddDiplexerDsLowerBandEdgeCapabilityIndex
+           }
+     ::= { docsFddDiplexerDsLowerBandEdgeCapabilityTable 1 }
+
+DocsFddDiplexerDsLowerBandEdgeCapabilityEntry ::= SEQUENCE 
+     {
+     docsFddDiplexerDsLowerBandEdgeCapabilityIndex          Unsigned32,
+     docsFddDiplexerDsLowerBandEdgeCapability               Unsigned32
+     }
+
+docsFddDiplexerDsLowerBandEdgeCapabilityIndex OBJECT-TYPE
+     SYNTAX      Unsigned32
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This index identifies one of the advanced diplexer downstream
+          lower band edge configurations supported by the FDD CM."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSIv4.0
+         CmFddCapabilities::DiplexerDsLowerBandEdgeCapability"
+     ::= { docsFddDiplexerDsLowerBandEdgeCapabilityEntry 1 }
+
+docsFddDiplexerDsLowerBandEdgeCapability OBJECT-TYPE
+     SYNTAX      Unsigned32 (0..65535)
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute specifies one of the advanced diplexer downstream lower
+          band edge configurations supported by the FDD CM. The unsigned short
+          value specifies one of the supported frequencies specified in MHz."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+         CmFddCapabilities::DiplexerDsLowerBandEdgeCapability
+         DOCSIS 4.0 MAC and Upper Layer Protocols Interface
+         Specification CM-SP-MULPIv4.0-I08-231211,
+         Common TLV Encodings annex, Advanced Diplexer Downstream
+         Lower Band Edge Options List"
+     ::= { docsFddDiplexerDsLowerBandEdgeCapabilityEntry 2 }
+
+
+--
+-- DiplexerDsUpperBandEdgeCapability Table
+--
+docsFddDiplexerDsUpperBandEdgeCapabilityTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsFddDiplexerDsUpperBandEdgeCapabilityEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This table specifies all of the advanced diplexer downstream upper
+          band edge configurations supported by the FDD CM. This corresponds
+          to the Advanced Diplexer Downstream Upper Band Edge Options List modem
+          capability TLV 5.83 sent by the FDD CM in the Registration Request.
+          The table of UnsignedShort values represents the list of supported
+          frequencies specified in MHz and sent in the Registration Request."
+     ::= { docsFddCmFddCapabilities 3 }
+
+docsFddDiplexerDsUpperBandEdgeCapabilityEntry OBJECT-TYPE
+     SYNTAX      DocsFddDiplexerDsUpperBandEdgeCapabilityEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsFddDiplexerDsUpperBandEdgeCapabilityTable."
+     INDEX { docsFddDiplexerDsUpperBandEdgeCapabilityIndex
+           }
+     ::= { docsFddDiplexerDsUpperBandEdgeCapabilityTable 1 }
+
+DocsFddDiplexerDsUpperBandEdgeCapabilityEntry ::= SEQUENCE 
+     {
+     docsFddDiplexerDsUpperBandEdgeCapabilityIndex          Unsigned32,
+     docsFddDiplexerDsUpperBandEdgeCapability               Unsigned32
+     }
+
+docsFddDiplexerDsUpperBandEdgeCapabilityIndex OBJECT-TYPE
+     SYNTAX      Unsigned32
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This index identifies one of the advanced diplexer downstream
+          upper band edge configurations supported by the FDD CM."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSIv4.0
+         CmFddCapabilities::DiplexerDsUpperBandEdgeCapability"
+     ::= { docsFddDiplexerDsUpperBandEdgeCapabilityEntry 1 }
+
+docsFddDiplexerDsUpperBandEdgeCapability OBJECT-TYPE
+     SYNTAX      Unsigned32 (0..65535)
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute specifies one of the advanced diplexer downstream upper
+          band edge configurations supported by the FDD CM. The unsigned short
+          value specifies one of the supported frequencies specified in MHz."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+         CmFddCapabilities::DiplexerDsUpperBandEdgeCapability
+         DOCSIS 4.0 MAC and Upper Layer Protocols Interface
+         Specification CM-SP-MULPIv4.0-I08-231211,
+         Common TLV Encodings annex, Advanced Diplexer Downstream
+         Upper Band Edge Options List"
+     ::= { docsFddDiplexerDsUpperBandEdgeCapabilityEntry 2 }
+
+     
+--
+-- Extensions to the DOCS-IF31-MIB docsIf31CmUsOfdmaChanTable
+--
+docsFddCmUsOfdmaChannelTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsFddCmUsOfdmaChannelEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The UsOfdmaChannel object reports the configuration properties of
+         an OFDMA upstream channel, whether it is a non-extended upstream
+         channel or an extended upstream channel.
+         An FDD CM instantiates a row in this table for each FDD Extended
+         Upstream Channel, in addition to the non-extended upstream
+         channels"
+     ::= { docsFddMibObjects 3 }
+
+docsFddCmUsOfdmaChannelEntry OBJECT-TYPE
+     SYNTAX      DocsFddCmUsOfdmaChannelEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The conceptual row of docsFddCmUsOfdmaChannelTable."
+     AUGMENTS {
+               docsIf31CmUsOfdmaChanEntry
+              }
+     ::= { docsFddCmUsOfdmaChannelTable 1 }
+
+DocsFddCmUsOfdmaChannelEntry ::= SEQUENCE 
+     {
+     docsFddCmUsOfdmaChannelIsExtendedUsChannel      TruthValue,
+     docsFddCmUsOfdmaChannelExtendedUsChannelTxPower Integer32
+     }
+
+docsFddCmUsOfdmaChannelIsExtendedUsChannel OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute reports whether the CM's OFDMA upstream channel is
+         an Extended Upstream Channel.
+         A value of 'true' indicates the OFDMA upstream channel is an
+         FDD Extended Upstream Channel.
+         A value of 'false' indicates the OFDMA upstream channel is a
+         non-extended upstream channel."
+     ::= { docsFddCmUsOfdmaChannelEntry 1 }
+
+docsFddCmUsOfdmaChannelExtendedUsChannelTxPower OBJECT-TYPE
+    SYNTAX      Integer32
+    UNITS       "QuarterdBmV"
+    MAX-ACCESS  read-only
+    STATUS      current
+     DESCRIPTION
+        "This attribute reports the power for an Extended Upstream Channel.
+         For an FDD Extended Upstream Channel, this attribute reports the
+         reported transmit power, P1.6r_n-FDD as described in 'DOCSIS 4.0
+         Physical Layer Specification'."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CM-OSSIv4.0
+         UsOfdmaChannel::TransmitPower"
+     ::= { docsFddCmUsOfdmaChannelEntry 2 }
+
+
+-- Conformance Definitions
+docsFddMibConformance OBJECT IDENTIFIER ::= { docsFddMib 1 }
+docsFddMibCompliances OBJECT IDENTIFIER ::= { docsFddMibConformance 1 }
+docsFddMibGroups      OBJECT IDENTIFIER ::= { docsFddMibConformance 2 }
+
+
+docsFddCmCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+        "The compliance statement for the DOCSIS 4.0 FDD CM."
+
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+     docsFddCmFddGroup
+     }
+
+    ::= { docsFddMibCompliances 1 }
+
+docsFddCmFddGroup OBJECT-GROUP
+    OBJECTS {
+        docsFddCmFddSystemCfgStateDiplexerDsLowerBandEdgeCfg,
+        docsFddCmFddSystemCfgStateDiplexerDsUpperBandEdgeCfg,
+        docsFddCmFddSystemCfgStateDiplexerUsUpperBandEdgeCfg,
+        docsFddDiplexerUsUpperBandEdgeCapability,
+        docsFddDiplexerDsLowerBandEdgeCapability,
+        docsFddDiplexerDsUpperBandEdgeCapability,
+        docsFddCmUsOfdmaChannelIsExtendedUsChannel,
+        docsFddCmUsOfdmaChannelExtendedUsChannelTxPower
+    }
+    STATUS      current
+    DESCRIPTION
+         "Group of objects implemented for DOCSIS 4.0 CM FDD support."
+    ::= { docsFddMibGroups 1 }
+
+END

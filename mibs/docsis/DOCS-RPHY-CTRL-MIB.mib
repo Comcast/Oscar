@@ -1,0 +1,810 @@
+DOCS-RPHY-CTRL-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, 
+    OBJECT-TYPE, 
+    Unsigned32
+        FROM SNMPv2-SMI         -- RFC 2578
+    TEXTUAL-CONVENTION
+        FROM SNMPv2-TC 
+    OBJECT-GROUP, 
+    MODULE-COMPLIANCE 
+        FROM SNMPv2-CONF
+    SnmpAdminString
+        FROM SNMP-FRAMEWORK-MIB -- RFC 3411
+    InetAddressType,
+    InetAddress
+        FROM INET-ADDRESS-MIB   -- RFC 4001
+    docsRphyRpdDevInfoUniqueId    
+        FROM DOCS-RPHY-MIB
+    clabProjDocsis
+        FROM CLAB-DEF-MIB;
+
+
+docsRphyCtrlMib MODULE-IDENTITY 
+LAST-UPDATED    "202309140000Z" -- September 14, 2023
+    ORGANIZATION    "Cable Television Laboratories, Inc" 
+    CONTACT-INFO 
+         "
+         Postal: Cable Television Laboratories, Inc. 
+         400 Centennial Parkway 
+         Louisville, Colorado 80027-1266 
+         U.S.A. 
+         Phone: +1 303-661-9100 
+         Fax: +1 303-661-9199 
+         E-mail: mibs@cablelabs.com" 
+    DESCRIPTION 
+        "This MIB module contains the control management objects for
+         the Remote PHY Device (RPD) management.
+         Copyright 2017-2023 Cable Television Laboratories, Inc.
+         All rights reserved."
+         
+    REVISION "202309140000Z" -- September 14, 2023
+    DESCRIPTION
+        "Revised Version includes ECN DOCS-RPHY-CTRL-MIB-N-23.2331-1."
+    REVISION "202206300000Z" -- June 30, 2022
+    DESCRIPTION
+        "Revised Version includes ECN DOCS-RPHY-CTRL-MIB-N-22.2262-1."
+    REVISION "202110210000Z" -- October 21, 2021
+    DESCRIPTION
+        "Revised Version includes ECN DOCS-RPHY-CTRL-MIB-N-21.2195-1."
+    REVISION "202005210000Z" -- May 21, 2020
+    DESCRIPTION
+        "Revised Version includes ECN DOCS-RPHY-CTRL-MIB-N-20.2095-1."
+    REVISION "201906130000Z" -- June 13, 2019
+    DESCRIPTION
+        "Revised Version includes ECN DOCS-RPHY-CTRL-MIB-N-19.2024-1."
+    REVISION "201901240000Z" -- January 24, 2019
+    DESCRIPTION
+        "Revised Version includes ECN DOCS-RPHY-CTRL-MIB-N-18.1985-1."
+    REVISION "201810180000Z" -- October 18, 2018
+    DESCRIPTION
+        "Revised Version includes ECN DOCS-RPHY-CTRL-MIB-N-18.1958-2."
+    REVISION "201804120000Z" -- April 12, 2018
+    DESCRIPTION
+        "Revised Version includes ECN DOCS-RPHY-CTRL-MIB-N-18.1893-2."
+    REVISION "201708030000Z" -- August 3, 2017
+    DESCRIPTION
+        "Revised Version includes ECN DOCS-RPHY-CTRL-MIB-N-17.1752-2."
+    REVISION "201704130000Z" -- April 13, 2017
+    DESCRIPTION 
+        "Initial version, created by R-OSSI-N-17.1707-2."
+::= { clabProjDocsis 31 }
+
+
+-- ---------------------------------------------------------
+-- Textual Conventions
+-- ---------------------------------------------------------
+ RphyResetCtrlType ::= TEXTUAL-CONVENTION
+     STATUS      current
+     DESCRIPTION
+         "This data type indicates the type of reset to be performed by the RPD."
+     SYNTAX  INTEGER {
+                     softReset(1),
+                     hardReset(2),
+                     nvReset(3),
+                     factoryReset(4)                                                                                  
+                     }
+ 
+ RphySsdTransportType ::= TEXTUAL-CONVENTION
+     STATUS      current
+     DESCRIPTION
+         "This data type indicates the type of transport for the RPD download
+          of the software file."
+     SYNTAX  INTEGER {
+                     tftp(1),
+                     http(2)                                                                                    
+                     }   
+
+ RphySsdAdminControlType ::= TEXTUAL-CONVENTION
+     STATUS      current
+     DESCRIPTION
+         "This data type describes values for the CCAP Core to maintain
+          control over the SSD process."
+     SYNTAX  INTEGER {
+                     other(1),
+                     startSsd(2),
+                     abortSsd(3),
+                     activateImage(4)                     
+                     }                    
+ 
+  RphySsdStatusType ::= TEXTUAL-CONVENTION
+     STATUS      current
+     DESCRIPTION
+         "This data type describes the status of the SSD process in the RPD."
+     SYNTAX  INTEGER {
+                     other(1),
+                     idle(2),
+                     inProgress(3),
+                     cvcVerified(4),
+                     cvcRejected(5),
+                     codeFileVerified(6),
+                     codeFileRejected(7),
+                     activateRejected(8)                     
+                     }                    
+ 
+   RphyCrashDataFileControlType ::= TEXTUAL-CONVENTION
+     STATUS      current
+     DESCRIPTION
+         "This data type describes the action taken by the device regarding 
+          the file selected "
+     SYNTAX  INTEGER {
+                     other(1),
+                     upload(2),
+                     cancelUpload(3),
+                     deleteFile(4),
+                     uploadAndDelete(5)                                                                                    
+                     }                    
+
+   RphyCrashDataServerControlProtocolType ::= TEXTUAL-CONVENTION
+     STATUS      current
+     DESCRIPTION
+         "This data type describes the protocol used during the upload."
+     SYNTAX  INTEGER {
+                     other(1),
+                     tftp(2),
+                     http(3)                                                                                    
+                     }   
+               
+-- ---------------------------------------------------------------------
+-- Main Groups
+-- ---------------------------------------------------------------------
+docsRphyCtrlNotifications        OBJECT IDENTIFIER ::= { docsRphyCtrlMib 0}
+docsRphyCtrlObjects              OBJECT IDENTIFIER ::= { docsRphyCtrlMib 1}
+docsRphyCtrlConformance          OBJECT IDENTIFIER ::= { docsRphyCtrlMib 2}
+
+docsRphyCtrlRpdMibObjects        OBJECT IDENTIFIER ::= { docsRphyCtrlObjects 1}
+
+docsRphyCtrlCompliances          OBJECT IDENTIFIER ::= { docsRphyCtrlConformance 1 } 
+docsRphyCtrlGroups               OBJECT IDENTIFIER ::= { docsRphyCtrlConformance 2 } 
+
+
+
+-- ---------------------------------------------------------------------
+-- Notification Objects
+-- ---------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------
+-- CCAP Core RPD Group Objects
+-- ---------------------------------------------------------------------
+
+
+-- ---------------------------------------------------------------------
+-- RPD Reset Control Table
+-- ---------------------------------------------------------------------
+docsRphyCtrlRpdResetCtrlTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyCtrlRpdResetCtrlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table allows an RPD to be reset remotely via GCP 
+         from the Principal CCAP Core.
+         The RpdResetCtrl TLV is 40.1"
+    ::= { docsRphyCtrlRpdMibObjects 1 }
+
+
+docsRphyCtrlRpdResetCtrlEntry OBJECT-TYPE
+    SYNTAX     DocsRphyCtrlRpdResetCtrlEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyCtrlRpdResetCtrlTable."
+    INDEX { docsRphyRpdDevInfoUniqueId }
+    ::= { docsRphyCtrlRpdResetCtrlTable 1 }
+
+
+DocsRphyCtrlRpdResetCtrlEntry ::= SEQUENCE
+       {
+       docsRphyCtrlRpdResetCtrlReset          RphyResetCtrlType
+       }
+        
+docsRphyCtrlRpdResetCtrlReset OBJECT-TYPE
+    SYNTAX      RphyResetCtrlType
+    MAX-ACCESS  read-write 
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute allows a reset of the RPD to be commanded. 
+         Reading this attribute always returns a value of softReset.
+         The following reset states are supported:
+		 
+         softReset(1) The device performs a soft reset and
+         clears the volatile downloaded configuration. The RPD
+         that does not support softReset will perform a 
+         hard reset when commanded to do a soft reset.
+		 
+         hardReset(2) The device performs a power-on reset and
+         clears the volatile downloaded configuration.
+		 
+         nvReset(3) The device clears most non-volatile 
+         configuration and performs a hard reset. 
+         Refer to [R-PHY] for details on which 
+         configuration attributes are cleared.
+		 
+         factoryReset(4) The device restores the factory 
+         configuration and performs a hard reset."
+    DEFVAL { softReset }
+    ::= { docsRphyCtrlRpdResetCtrlEntry 1 }
+
+-- ---------------------------------------------------------------------
+-- RPD Log Control Table
+-- ---------------------------------------------------------------------
+docsRphyCtrlRpdLogCtrlTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyCtrlRpdLogCtrlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table provides RPD log management functions.
+         The RpdLogCtrl TLV is 40.2."
+    ::= { docsRphyCtrlRpdMibObjects 2 }
+
+
+docsRphyCtrlRpdLogCtrlEntry OBJECT-TYPE
+    SYNTAX     DocsRphyCtrlRpdLogCtrlEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyRpdLogCtrlTable."
+    INDEX { docsRphyRpdDevInfoUniqueId }
+    ::= { docsRphyCtrlRpdLogCtrlTable 1 }
+
+
+DocsRphyCtrlRpdLogCtrlEntry ::= SEQUENCE
+       {
+       docsRphyCtrlRpdResetLog          BITS
+       }
+        
+docsRphyCtrlRpdResetLog OBJECT-TYPE
+    SYNTAX      BITS {
+                     localEventLog(0),
+                     eventPendingQueue(1) 
+                     }
+    MAX-ACCESS  read-write 
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute controls resetting an RPD's local event log 
+         and/or the pending event queue.
+         When this attribute is read, if it had been written, the RPD returns
+         the last value written. The RPD returns the value zero for this attribute
+         if it was not written. Setting an individual bit to 1 resets the corresponding
+         RPD log or queue."
+    ::= { docsRphyCtrlRpdLogCtrlEntry 1 }
+ 
+-- ---------------------------------------------------------------------
+-- RPD SSD Control Table
+-- ---------------------------------------------------------------------
+docsRphyCtrlRpdSsdCtrlTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyCtrlRpdSsdCtrlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table describes secure software downloads of software 
+         running on RPDs.
+         The RpdSsdCtrl TLV Type is 90."
+    ::= { docsRphyCtrlRpdMibObjects 3 }
+
+
+docsRphyCtrlRpdSsdCtrlEntry OBJECT-TYPE
+    SYNTAX     DocsRphyCtrlRpdSsdCtrlEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyCtrlRpdSsdCtrlTable."
+    INDEX { docsRphyRpdDevInfoUniqueId }
+    ::= { docsRphyCtrlRpdSsdCtrlTable 1 }
+
+
+DocsRphyCtrlRpdSsdCtrlEntry ::= SEQUENCE
+       {
+       docsRphyCtrlRpdSsdCtrlServerAddressType      InetAddressType,
+       docsRphyCtrlRpdSsdCtrlServerAddress          InetAddress,
+       docsRphyCtrlRpdSsdCtrlTransport              RphySsdTransportType,
+       docsRphyCtrlRpdSsdCtrlFilename               SnmpAdminString,
+       docsRphyCtrlRpdSsdCtrlManufCvcChain          OCTET STRING,
+       docsRphyCtrlRpdSsdCtrlCosignerCvcChain       OCTET STRING,
+       docsRphyCtrlRpdSsdCtrlAdminControl           RphySsdAdminControlType,
+       docsRphyCtrlRpdSsdCtrlStatus                 RphySsdStatusType,
+       docsRphyCtrlRpdSsdCtrlSwImageIndex           Unsigned32,
+       docsRphyCtrlRpdSsdCtrlSsdStatusInfo          SnmpAdminString,
+       docsRphyCtrlRpdSsdCtrlNextBootImage          Unsigned32
+       }
+        
+docsRphyCtrlRpdSsdCtrlServerAddressType OBJECT-TYPE
+    SYNTAX      InetAddressType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "This attribute represents the IP address type of the server. 
+         This value is of type InetAddressType, which is 
+         defined by [RFC 4001]."
+    ::= { docsRphyCtrlRpdSsdCtrlEntry 1 }
+   
+docsRphyCtrlRpdSsdCtrlServerAddress OBJECT-TYPE
+    SYNTAX      InetAddress  (SIZE(4|16))     
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "This attribute identifies the SSD server in the form of 
+         IPv4 or IPv6 address."
+    ::= { docsRphyCtrlRpdSsdCtrlEntry 2 }
+   
+ docsRphyCtrlRpdSsdCtrlTransport OBJECT-TYPE
+    SYNTAX      RphySsdTransportType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "This attribute communicates the type of transport for
+         the RPD download of the software file. The supported 
+         transports are TFTP and HTTP."
+    ::= { docsRphyCtrlRpdSsdCtrlEntry 3 }  
+        
+docsRphyCtrlRpdSsdCtrlFilename OBJECT-TYPE
+    SYNTAX      SnmpAdminString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This attribute is used to communicate the name of the software
+         file that the RPD needs to download."
+    ::= { docsRphyCtrlRpdSsdCtrlEntry 4 }
+        
+docsRphyCtrlRpdSsdCtrlManufCvcChain OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This attribute is used to communicate the certificate chain
+         from the new PKI that contains both the Manufacturer Code
+         Verification Certificate and the certification authority (CA)
+         certificate that issued the Manufacturer Code Verification 
+         Certificate for Secure Software Download. The Manufacturer 
+         CVC Chain TLV (M-CVC-C) is used to enable the RPD to download 
+         the code file from the download server."
+    ::= { docsRphyCtrlRpdSsdCtrlEntry 5 }
+
+docsRphyCtrlRpdSsdCtrlCosignerCvcChain OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This attribute is used to communicate the certificate chain from 
+         the new PKI that contains both the Co-signer Code Verification 
+         Certificate and the certification authority (CA) certificate that 
+         issued the Co-signer Code Verification Certificate for Secure 
+         Software Download. The Co-signer CVC Chain TLV (C-CVC-C) is used 
+         to enable the RPD to download the code file from the download server."
+    ::= { docsRphyCtrlRpdSsdCtrlEntry 6 }
+        
+docsRphyCtrlRpdSsdCtrlAdminControl OBJECT-TYPE
+    SYNTAX      RphySsdAdminControlType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "This attribute allows the CCAP Core to maintain control over
+         the SSD process. When read, this attribute returns other.
+         Valid values are listed and defined below:
+		 
+         other(1) SSD Administrative Control other than the following defined values.
+		 
+         startSsd(2) initiate the secure software download process.
+		 
+         abortSsd(3) stop the current secure software download process.
+		 
+         activateImage(4) activate the software image."
+    DEFVAL { other }
+    ::= { docsRphyCtrlRpdSsdCtrlEntry 7 }  
+        
+docsRphyCtrlRpdSsdCtrlStatus OBJECT-TYPE
+    SYNTAX      RphySsdStatusType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION 
+        "This attribute reports the status of the SSD process in the RPD.
+         This includes software image download and activation.
+         Upon successful completion of the SSD operation, depending on the
+         software image which has been updated, the RPD could reboot and
+         become operational with the new software image. 
+         After reboot, the RPD always reports a value of idle for this
+         attribute. The Identification and ExtendedSwSupport objects 
+         provide status information on the last successful SSD operation.
+         If enabled, RPD events are generated to report the status of
+         SSD operations. This applies to software image download and activation.
+         Valid values are listed and defined below:
+         
+         other(1) Secure Software Download status is other than the following defined values.
+         
+         idle(2)  SSD is not active.
+         
+         inProgress(3) a software image is being downloaded following the defined SSD process.
+         
+         cvcVerified(4) the co-signer and manufacturer code verification certificate chains were verified.
+         
+         cvcRejected(5) the co-signer and/or manufacturer code verification certificate(s) was/were rejected.
+         
+         codeFileVerified(6) the downloaded software image was verified.
+         
+         codeFileRejected(7) the downloaded software image was rejected.
+         
+         activateRejected(8) the attempt to activate the software image was rejected."
+    ::= { docsRphyCtrlRpdSsdCtrlEntry 8 } 
+
+docsRphyCtrlRpdSsdCtrlSwImageIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..3)
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "This attribute identifies the software image that is the target
+         of secure software download or software image activation. 
+         The CCAP Core can select the Main Software Image (MSI) or any 
+         other image that the RPD reports as upgradeable by SSD."
+    ::= { docsRphyCtrlRpdSsdCtrlEntry 9 }
+
+docsRphyCtrlRpdSsdCtrlSsdStatusInfo OBJECT-TYPE
+    SYNTAX      SnmpAdminString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute contains a human readable text string 
+         containing helpful information to describe the current
+         status of SSD process. This applies to software image
+         download and activation."
+    ::= { docsRphyCtrlRpdSsdCtrlEntry 10 } 
+
+docsRphyCtrlRpdSsdCtrlNextBootImage OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..3) 
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "This communicates to the RPD which software image to boot from
+        the next time it reboots."
+    DEFVAL { 0 }        
+    ::= { docsRphyCtrlRpdSsdCtrlEntry 11 }    
+
+-- ---------------------------------------------------------------------
+-- RPD Crash Data File Control Table
+-- ---------------------------------------------------------------------
+docsRphyCtrlRpdCrashDataFileCtrlTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyCtrlRpdCrashDataFileCtrlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table provides CCAP Core control attributes needed to 
+         initiate an RPD upload of a crash analysis file to the Server.
+         The RpdCrashDataFileCtrl TLV is 40.3."
+    ::= { docsRphyCtrlRpdMibObjects 4 }
+
+
+docsRphyCtrlRpdCrashDataFileCtrlEntry OBJECT-TYPE
+    SYNTAX     DocsRphyCtrlRpdCrashDataFileCtrlEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyCtrlRpdCrashDataFileCtrlTable."
+    INDEX { docsRphyRpdDevInfoUniqueId,
+            docsRphyCtrlRpdCrashDataFileCtrlIndex }
+    ::= { docsRphyCtrlRpdCrashDataFileCtrlTable 1 }
+
+
+DocsRphyCtrlRpdCrashDataFileCtrlEntry ::= SEQUENCE
+       {
+       docsRphyCtrlRpdCrashDataFileCtrlIndex           Unsigned32,
+       docsRphyCtrlRpdCrashDataFileCtrlFileControl     RphyCrashDataFileControlType
+       }
+        
+docsRphyCtrlRpdCrashDataFileCtrlIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION 
+        "This key attribute uniquely identifies a particular 
+         device crash analysis file."
+    ::= { docsRphyCtrlRpdCrashDataFileCtrlEntry 1 }
+
+docsRphyCtrlRpdCrashDataFileCtrlFileControl OBJECT-TYPE
+    SYNTAX      RphyCrashDataFileControlType
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+        "This attribute controls the action taken by the device regarding
+         the file selected by Index attribute. When a value is written to
+         this attribute for a given instance of the RpdCrashDataFileCtrl 
+         object, the device is required to take that action on the associated 
+         crash data file.
+
+         Possible actions are:
+
+         other(1) This value is returned when the attribute is read. 
+         This value is not writeable.
+
+         upload(2) If the FileControl attribute of the 
+         RpdCrashDataFileCtrl object is set to 'upload', 
+         the CCAP Core MUST signal the RPD to initiate an upload 
+         to the server with the parameters specified in the 
+         'DestIpAddr', 'DestIpAddrType','Protocol', 
+         'HttpFilenameKeyword', and 'DestPath' 
+         attributes of the RpdCrashDataServerCtrl object.  
+
+         cancelUpload(3) If the FileControl attribute of the 
+         RpdCrashDataFileCtrl object is set to 'cancelUpload', 
+         the CCAP Core MUST signal the RPD to cancel a 
+         pending upload. 
+
+         deleteFile(4) If the FileControl attribute of the 
+         RpdCrashDataFileCtrl object is set to 'deleteFile', 
+         the CCAP Core MUST signal the RPD to delete the file 
+         from its memory.
+ 
+         uploadAndDelete(5) If the FileControl attribute of the 
+         RpdCrashDataFileCtrl object is set to 'uploadAndDelete', 
+         the CCAP Core MUST signal the RPD to upload the 
+         selected file and upon successful completion of the 
+         upload, delete the file from its memory."
+        
+    ::= { docsRphyCtrlRpdCrashDataFileCtrlEntry 2 }
+        
+-- ---------------------------------------------------------------------
+-- RPD Crash Data Server Control Table
+-- ---------------------------------------------------------------------
+docsRphyCtrlRpdCrashDataServerCtrlTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyCtrlRpdCrashDataServerCtrlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table provides the CCAP Core control attributes needed 
+         by the RPD to describe the upload server for crash analysis files.
+         The RpdCrashDataServerCtrl TLV is 40.4."
+    ::= { docsRphyCtrlRpdMibObjects 5 }
+
+
+docsRphyCtrlRpdCrashDataServerCtrlEntry OBJECT-TYPE
+    SYNTAX     DocsRphyCtrlRpdCrashDataServerCtrlEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyCtrlRpdCrashDataServerCtrlTable."
+    INDEX { docsRphyRpdDevInfoUniqueId }
+    ::= { docsRphyCtrlRpdCrashDataServerCtrlTable 1 }
+
+
+DocsRphyCtrlRpdCrashDataServerCtrlEntry ::= SEQUENCE
+       {
+       docsRphyCtrlRpdCrashDataServerCtrlDestIpAddrType         InetAddressType,
+       docsRphyCtrlRpdCrashDataServerCtrlDestIpAddr             InetAddress,
+       docsRphyCtrlRpdCrashDataServerCtrlDestPath               SnmpAdminString,
+       docsRphyCtrlRpdCrashDataServerCtrlProtocol               RphyCrashDataServerControlProtocolType,
+       docsRphyCtrlRpdCrashDataServerCtrlHttpFilenameKeyword    SnmpAdminString
+       }
+        
+docsRphyCtrlRpdCrashDataServerCtrlDestIpAddrType OBJECT-TYPE
+    SYNTAX     InetAddressType
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+       "This attribute represents the IP address type of the server. 
+        This value is of type InetAddressType, which is defined by [RFC 4001].
+        A successful connection depends on the value of this attribute being 
+        set to an IP version provisioned on the device. For example, if this 
+        value is set to IPv6 and the device is provisioned for IPv4-only operation, 
+        a successful upload will not be possible. In this case the FileStatus 
+        attribute in the RpdCrashDataFileStatus object would reflect the error."
+    ::= { docsRphyCtrlRpdCrashDataServerCtrlEntry 1 }
+
+docsRphyCtrlRpdCrashDataServerCtrlDestIpAddr OBJECT-TYPE
+    SYNTAX     InetAddress (SIZE(4|16))
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+       "This attribute represents the IP address of the server to which 
+        the crash analysis file is to be sent."
+    ::= { docsRphyCtrlRpdCrashDataServerCtrlEntry 2 }
+        
+docsRphyCtrlRpdCrashDataServerCtrlDestPath OBJECT-TYPE
+    SYNTAX      SnmpAdminString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "This attribute represents the path, excluding the filename, 
+        at the server to which the crash analysis file is to be sent via TFTP. 
+        This attribute is not used when uploading files via HTTP.  
+        By default, the value of this attribute is an empty string. 
+        If used, this value includes all expected delimiters."
+    DEFVAL { ''H }  
+    ::= { docsRphyCtrlRpdCrashDataServerCtrlEntry 3 }
+
+docsRphyCtrlRpdCrashDataServerCtrlProtocol OBJECT-TYPE
+    SYNTAX     RphyCrashDataServerControlProtocolType
+    MAX-ACCESS read-write
+    STATUS     current
+    DESCRIPTION
+       "Represents the protocol used for transferring the crash
+        data file from the RPD to the file server."
+    DEFVAL  { tftp }
+    ::= { docsRphyCtrlRpdCrashDataServerCtrlEntry 4 }
+
+docsRphyCtrlRpdCrashDataServerCtrlHttpFilenameKeyword OBJECT-TYPE
+    SYNTAX      SnmpAdminString
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION
+       "This attribute represents HTTP POST keyword which 
+        is used by the HTTP server to convey the crash data filename."
+    ::= { docsRphyCtrlRpdCrashDataServerCtrlEntry 5 }
+
+-- ---------------------------------------------------------------------
+-- RPD Init Provisioning Control Table
+-- ---------------------------------------------------------------------
+docsRphyCtrlRpdInitProvCtrlTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyCtrlRpdInitProvCtrlEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table allows the asset ID, device alias, and 
+        location of the RPD to be updated by the operator once 
+        an RPD is authenticated to the CCAP Core. Generally, 
+        the values of these attributes are provisioned on the RPD 
+        as part of the staging or installation process. However, 
+        there could be occasions when an operator needs to update 
+        these values on an RPD that is already in service."
+    ::= { docsRphyCtrlRpdMibObjects 6 }
+
+
+docsRphyCtrlRpdInitProvCtrlEntry OBJECT-TYPE
+    SYNTAX     DocsRphyCtrlRpdInitProvCtrlEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyCtrlRpdInitProvCtrlTable."
+    INDEX { docsRphyRpdDevInfoUniqueId }
+    ::= { docsRphyCtrlRpdInitProvCtrlTable 1 }
+
+
+DocsRphyCtrlRpdInitProvCtrlEntry ::= SEQUENCE
+       {
+       docsRphyCtrlRpdInitProvCtrlAssetId                 SnmpAdminString,
+       docsRphyCtrlRpdInitProvCtrlDeviceAlias             SnmpAdminString,
+       docsRphyCtrlRpdInitProvCtrlLocationDescription     SnmpAdminString,
+       docsRphyCtrlRpdInitProvCtrlGeoLocationLatitude     SnmpAdminString, 
+       docsRphyCtrlRpdInitProvCtrlGeoLocationLongitude    SnmpAdminString      
+       }
+        
+docsRphyCtrlRpdInitProvCtrlAssetId OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE(0..32))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "This attribute is used to communicate the asset tracking
+         identifier as assigned by a network manager. When this 
+         attribute is written, the RPD stores its value in its 
+         non-volatile configuration."
+    ::= { docsRphyCtrlRpdInitProvCtrlEntry 1 }
+        
+docsRphyCtrlRpdInitProvCtrlDeviceAlias OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE(0..255))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "This attribute communicates a device name assigned by the 
+         operator via management interface. This attribute is an 'alias' 
+         name for the device as specified by a network manager, and 
+         provides a non-volatile 'handle' for the RPD. When this 
+         attribute is written, the RPD stores its value in its 
+         non-volatile configuration."
+    ::= { docsRphyCtrlRpdInitProvCtrlEntry 2 }
+        
+docsRphyCtrlRpdInitProvCtrlLocationDescription OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE(0..255))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "This attribute allows a short text description to be written 
+         to the RPD describing where the RPD has been installed, such 
+         as a street address. The format is specific to the operator. 
+         When this attribute is written, the RPD stores its value in 
+         its non-volatile configuration."
+    ::= { docsRphyCtrlRpdInitProvCtrlEntry 3 }
+        
+docsRphyCtrlRpdInitProvCtrlGeoLocationLatitude OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE(9))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "This attribute allows the latitude portion of the RPD's 
+         geographic location to be written to the RPD. It consists 
+         of a 9-byte string formatted as specified in ISO 6709-2008. 
+         The RPD uses '6-digit notation' in the format: 
+         deg, min, sec, +/-DDMMSS.S (for example: '-750015.1'). 
+         A value of +000000.0 indicates that the latitude is not set.
+         When this attribute is written, the RPD stores its value in its 
+         non-volatile configuration."
+    ::= { docsRphyCtrlRpdInitProvCtrlEntry 4 }
+        
+docsRphyCtrlRpdInitProvCtrlGeoLocationLongitude OBJECT-TYPE
+    SYNTAX      SnmpAdminString (SIZE(10))
+    MAX-ACCESS  read-write
+    STATUS      current
+    DESCRIPTION 
+        "This attribute allows the longitude portion of the RPD's 
+         geographic location to be written to the RPD. It consists 
+         of a 10-byte long string formatted as specified in ISO 6709-2008. 
+         The RPD uses '7-digit notation' in the format: 
+         deg, min, sec, +/-DDDMMSS.S (for example: '-0100015.1'). 
+         A value of +0000000.0 indicates that the longitude is not set.
+         When this attribute is written, the RPD stores its value in its 
+         non-volatile configuration."
+    ::= { docsRphyCtrlRpdInitProvCtrlEntry 5 }
+        
+-- ---------------------------------------------------------
+-- Conformance definitions 
+-- ---------------------------------------------------------
+
+docsRphyCtrlCompliance MODULE-COMPLIANCE 
+     STATUS current 
+     DESCRIPTION 
+         "The compliance statement for RPD control features."
+
+
+MODULE -- docsRphyCtrlMib
+          
+-- conditionally mandatory groups
+
+
+GROUP docsRphyCtrlRpdGroup 
+    DESCRIPTION
+        "Group of objects applicable to RPDs only.
+         These objects are implemented on the CCAP Core
+         but are managed on the RPD via the GCP protocol."
+         
+OBJECT docsRphyCtrlRpdCrashDataServerCtrlDestIpAddrType
+    SYNTAX InetAddressType { ipv4(1), ipv6(2) }
+    DESCRIPTION
+      "An implementation is only required to support IPv4
+       and IPv6 addresses."
+       
+OBJECT docsRphyCtrlRpdSsdCtrlServerAddressType
+    SYNTAX InetAddressType { ipv4(1), ipv6(2) }
+    DESCRIPTION
+      "An implementation is only required to support IPv4
+       and IPv6 addresses."
+        
+-- conditionally optional groups
+
+
+::= { docsRphyCtrlCompliances 1}
+
+
+docsRphyCtrlRpdGroup OBJECT-GROUP
+        OBJECTS {
+               docsRphyCtrlRpdResetCtrlReset,
+               docsRphyCtrlRpdResetLog,
+           
+               docsRphyCtrlRpdSsdCtrlServerAddressType,
+               docsRphyCtrlRpdSsdCtrlServerAddress,
+               docsRphyCtrlRpdSsdCtrlTransport,
+               docsRphyCtrlRpdSsdCtrlFilename,
+               docsRphyCtrlRpdSsdCtrlManufCvcChain,
+               docsRphyCtrlRpdSsdCtrlCosignerCvcChain,
+               docsRphyCtrlRpdSsdCtrlAdminControl,
+               docsRphyCtrlRpdSsdCtrlStatus,
+               docsRphyCtrlRpdSsdCtrlSwImageIndex,
+               docsRphyCtrlRpdSsdCtrlSsdStatusInfo,
+               docsRphyCtrlRpdSsdCtrlSsdStatusInfo,
+               docsRphyCtrlRpdSsdCtrlNextBootImage,
+               
+               docsRphyCtrlRpdCrashDataFileCtrlFileControl,
+               
+               docsRphyCtrlRpdCrashDataServerCtrlDestIpAddrType,
+               docsRphyCtrlRpdCrashDataServerCtrlDestIpAddr,
+               docsRphyCtrlRpdCrashDataServerCtrlDestPath,
+               docsRphyCtrlRpdCrashDataServerCtrlProtocol,
+               docsRphyCtrlRpdCrashDataServerCtrlHttpFilenameKeyword,
+               
+               docsRphyCtrlRpdInitProvCtrlAssetId,
+               docsRphyCtrlRpdInitProvCtrlDeviceAlias,
+               docsRphyCtrlRpdInitProvCtrlLocationDescription,
+               docsRphyCtrlRpdInitProvCtrlGeoLocationLatitude, 
+               docsRphyCtrlRpdInitProvCtrlGeoLocationLongitude                             
+        }
+    STATUS      current
+    DESCRIPTION
+        "Group of control objects implemented in CCAP Cores which
+         represent RPD control objects managed via the GCP 
+         protocol."
+    ::= { docsRphyCtrlGroups 1 }
+        END

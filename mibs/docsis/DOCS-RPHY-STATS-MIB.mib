@@ -1,0 +1,2345 @@
+
+DOCS-RPHY-STATS-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, 
+    OBJECT-TYPE, 
+    Unsigned32,
+    Counter64
+        FROM SNMPv2-SMI         -- RFC 2578
+    DateAndTime,
+    TruthValue
+        FROM SNMPv2-TC 
+    OBJECT-GROUP, 
+    MODULE-COMPLIANCE 
+        FROM SNMPv2-CONF
+    InterfaceIndex
+        FROM IF-MIB
+    docsRphyRpdDevInfoUniqueId,
+    OperStatusType
+        FROM DOCS-RPHY-MIB
+    clabProjDocsis
+        FROM CLAB-DEF-MIB;
+
+
+docsRphyStatsMib MODULE-IDENTITY 
+    LAST-UPDATED    "202401180000Z"  -- January 18, 2024
+    ORGANIZATION    "Cable Television Laboratories, Inc" 
+    CONTACT-INFO 
+         "
+         Postal: Cable Television Laboratories, Inc. 
+         400 Centennial Parkway 
+         Louisville, Colorado 80027-1266 
+         U.S.A. 
+         Phone: +1 303-661-9100 
+         Fax: +1 303-661-9199 
+         E-mail: mibs@cablelabs.com" 
+    DESCRIPTION 
+        "This MIB module contains the statistics reporting objects
+         for the Remote PHY CCAP Core and RPD monitoring.
+         Copyright 2017-2024 Cable Television Laboratories, Inc.
+         All rights reserved."
+    REVISION "202401180000Z"  -- January 18, 2024
+    DESCRIPTION 
+        "Revised version includes ECN 
+         DOCS-RPHY-STATS-MIB-N-23.2360-1."
+    REVISION "202110210000Z"  -- October 21, 2021
+    DESCRIPTION 
+        "Revised version includes ECN 
+         DOCS-RPHY-STATS-MIB-N-21.2198-1."
+    REVISION "202103040000Z"  -- March 4, 2021
+    DESCRIPTION 
+        "Revised version includes ECN 
+         DOCS-RPHY-STATS-MIB-N-21.2151-1."
+    REVISION "202005210000Z"  -- May 21, 2020
+    DESCRIPTION 
+        "Revised version includes ECN 
+         DOCS-RPHY-STATS-MIB-N-20.2093-1."
+    REVISION "201909260000Z"  -- September 26, 2019
+    DESCRIPTION 
+        "Revised version includes ECN
+         DOCS-RPHY-STATS-MIB-N-19.2052-2."
+    REVISION "201906130000Z"  -- June 13, 2019
+    DESCRIPTION 
+        "Revised version includes ECN
+         DOCS-RPHY-STATS-MIB-N-19.2026-1."
+    REVISION "201807260000Z"  -- July 26, 2018
+    DESCRIPTION 
+        "Revised version includes ECN
+         DOCS-RPHY-STATS-MIB-N-18.1936-2."
+    REVISION "201804120000Z"  -- April 12, 2018
+    DESCRIPTION 
+        "Revised version includes ECN
+         DOCS-RPHY-STATS-MIB-N-18.1895-1."
+    REVISION "201711160000Z"  -- November 16, 2017
+    DESCRIPTION 
+        "Initial version, created by R-OSSI-N-17.1848-5."
+::= { clabProjDocsis 33 }
+
+
+-- ---------------------------------------------------------
+-- Textual Conventions
+-- ---------------------------------------------------------
+
+                         
+-- ---------------------------------------------------------------------
+-- Main Groups
+-- ---------------------------------------------------------------------
+docsRphyStatsNotifications        OBJECT IDENTIFIER ::= { docsRphyStatsMib 0}
+docsRphyStatsObjects              OBJECT IDENTIFIER ::= { docsRphyStatsMib 1}
+docsRphyStatsConformance          OBJECT IDENTIFIER ::= { docsRphyStatsMib 2}
+
+docsRphyStatsRpdMibObjects        OBJECT IDENTIFIER ::= { docsRphyStatsObjects 1}
+docsRphyStatsRpdDsMibObjects      OBJECT IDENTIFIER ::= { docsRphyStatsRpdMibObjects 1}
+docsRphyStatsRpdUsMibObjects      OBJECT IDENTIFIER ::= { docsRphyStatsRpdMibObjects 2}
+docsRphyStatsCcapMibObjects       OBJECT IDENTIFIER ::= { docsRphyStatsObjects 2}
+
+docsRphyStatsCompliances          OBJECT IDENTIFIER ::= { docsRphyStatsConformance 1 } 
+docsRphyStatsGroups               OBJECT IDENTIFIER ::= { docsRphyStatsConformance 2 }
+
+
+-- ---------------------------------------------------------------------
+-- Notification Objects
+-- ---------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------
+-- CCAP Core RPD Group Objects
+-- ---------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------
+-- Downstream SC-QAM Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdDsScQamPerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdDsScQamPerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports statistical counters for a 
+         downstream SC-QAM channel."
+    ::= { docsRphyStatsRpdDsMibObjects 1 }
+
+
+docsRphyStatsRpdDsScQamPerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdDsScQamPerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdDsScQamPerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdDsScQamPerfStatsCoreIfIndex, 
+            docsRphyStatsRpdDsScQamPerfStatsDsRfPortIndex }
+    ::= { docsRphyStatsRpdDsScQamPerfStatsTable 1 }
+
+
+DocsRphyStatsRpdDsScQamPerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdDsScQamPerfStatsCoreIfIndex            InterfaceIndex,
+    docsRphyStatsRpdDsScQamPerfStatsDsRfPortIndex          Unsigned32,
+    docsRphyStatsRpdDsScQamPerfStatsOutDiscards            Counter64,
+    docsRphyStatsRpdDsScQamPerfStatsOutErrors              Counter64,
+    docsRphyStatsRpdDsScQamPerfStatsOutPackets             Counter64,
+    docsRphyStatsRpdDsScQamPerfStatsRpdDsCounterDiscTime   DateAndTime,
+    docsRphyStatsRpdDsScQamPerfStatsOperStatus             OperStatusType
+    }
+
+docsRphyStatsRpdDsScQamPerfStatsCoreIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies
+         the selected SC-QAM channel on the 
+         reporting core."
+    ::= { docsRphyStatsRpdDsScQamPerfStatsEntry 1 }
+
+docsRphyStatsRpdDsScQamPerfStatsDsRfPortIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..253)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies a 
+         downstream RF port of the RPD on which 
+         the channel is being transmitted. 
+         Values 254 and 255 are reserved for future use."
+    ::= { docsRphyStatsRpdDsScQamPerfStatsEntry 2 }
+
+docsRphyStatsRpdDsScQamPerfStatsOutDiscards OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound packets
+         which were internally discarded before transmission 
+         (e.g. due to lack of buffering) for the downstream
+         SC-QAM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutDiscards"
+    ::= { docsRphyStatsRpdDsScQamPerfStatsEntry 3 }
+
+docsRphyStatsRpdDsScQamPerfStatsOutErrors OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound packets
+         that could not be transmitted because of errors for 
+         the downstream SC-QAM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutErrors"
+    ::= { docsRphyStatsRpdDsScQamPerfStatsEntry 4 }
+
+docsRphyStatsRpdDsScQamPerfStatsOutPackets OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound 
+         packets successfully transmitted for 
+         the downstream SC-QAM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutPackets"
+    ::= { docsRphyStatsRpdDsScQamPerfStatsEntry 5 }
+
+docsRphyStatsRpdDsScQamPerfStatsRpdDsCounterDiscTime OBJECT-TYPE
+    SYNTAX     DateAndTime
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the date and time at which any one or more 
+         of the counters in this group were created or last reset to zero. 
+         If the RPD does not acquire time of day it can report an initial 
+         CounterDiscontinuityTime of Jan 1 1970."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::RpdDsCounterDiscontinuityTime"
+    ::= { docsRphyStatsRpdDsScQamPerfStatsEntry 6 }
+    
+docsRphyStatsRpdDsScQamPerfStatsOperStatus OBJECT-TYPE
+    SYNTAX     OperStatusType
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the operational 
+         status of the channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OperStatus"
+    ::= { docsRphyStatsRpdDsScQamPerfStatsEntry 7 }
+
+-- ---------------------------------------------------------------------
+-- Downstream OFDM Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdDsOfdmPerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdDsOfdmPerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports statistical counters for a 
+         downstream OFDM channel."
+    ::= { docsRphyStatsRpdDsMibObjects 2 }
+
+
+docsRphyStatsRpdDsOfdmPerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdDsOfdmPerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdDsOfdmPerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdDsOfdmPerfStatsCoreIfIndex,
+            docsRphyStatsRpdDsOfdmPerfStatsDsRfPortIndex}
+    ::= { docsRphyStatsRpdDsOfdmPerfStatsTable 1 }
+
+
+DocsRphyStatsRpdDsOfdmPerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdDsOfdmPerfStatsCoreIfIndex            InterfaceIndex,
+    docsRphyStatsRpdDsOfdmPerfStatsDsRfPortIndex          Unsigned32,
+    docsRphyStatsRpdDsOfdmPerfStatsOutDiscards            Counter64,
+    docsRphyStatsRpdDsOfdmPerfStatsOutErrors              Counter64,
+    docsRphyStatsRpdDsOfdmPerfStatsOutPackets             Counter64,
+    docsRphyStatsRpdDsOfdmPerfStatsRpdDsCounterDiscTime   DateAndTime,
+    docsRphyStatsRpdDsOfdmPerfStatsOperStatus             OperStatusType           
+    }
+
+docsRphyStatsRpdDsOfdmPerfStatsCoreIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies
+         the selected OFDM channel
+         on the reporting core."
+    ::= { docsRphyStatsRpdDsOfdmPerfStatsEntry 1 }
+
+docsRphyStatsRpdDsOfdmPerfStatsDsRfPortIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..253)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies a 
+         downstream RF port of the RPD on which the 
+         channel is being transmitted.
+         Values 254 and 255 are reserved for future use."
+    ::= { docsRphyStatsRpdDsOfdmPerfStatsEntry 2 }
+
+docsRphyStatsRpdDsOfdmPerfStatsOutDiscards OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound packets
+         which were internally discarded before transmission 
+         (e.g. due to lack of buffering) for the downstream
+         OFDM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutDiscards"
+    ::= { docsRphyStatsRpdDsOfdmPerfStatsEntry 3 }
+
+docsRphyStatsRpdDsOfdmPerfStatsOutErrors OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound packets
+         that could not be transmitted because of errors for 
+         the downstream OFDM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutErrors"
+    ::= { docsRphyStatsRpdDsOfdmPerfStatsEntry 4 }
+
+docsRphyStatsRpdDsOfdmPerfStatsOutPackets OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound 
+         packets successfully transmitted for 
+         the downstream OFDM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutPackets"
+    ::= { docsRphyStatsRpdDsOfdmPerfStatsEntry 5 }
+
+docsRphyStatsRpdDsOfdmPerfStatsRpdDsCounterDiscTime OBJECT-TYPE
+    SYNTAX     DateAndTime
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the date and time at which any one or more 
+         of the counters in this group were created or last reset to zero. 
+         If the RPD does not acquire time of day it can report an initial 
+         CounterDiscontinuityTime of Jan 1 1970."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::RpdDsCounterDiscontinuityTime"
+    ::= { docsRphyStatsRpdDsOfdmPerfStatsEntry 6 }
+    
+docsRphyStatsRpdDsOfdmPerfStatsOperStatus OBJECT-TYPE
+    SYNTAX     OperStatusType
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the operational 
+        status of the channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OperStatus"
+    ::= { docsRphyStatsRpdDsOfdmPerfStatsEntry 7 }
+
+-- ---------------------------------------------------------------------
+-- Downstream OOB551 Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdDsOob551PerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdDsOob551PerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports statistical counters for a 
+         downstream channel with DEPI channel type 
+         SCTE-55-1-FWD."
+    ::= { docsRphyStatsRpdDsMibObjects 3 }
+
+
+docsRphyStatsRpdDsOob551PerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdDsOob551PerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdDsOob551PerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdDsOob551PerfStatsCoreIfIndex, 
+            docsRphyStatsRpdDsOob551PerfStatsDsRfPortIndex, 
+            docsRphyStatsRpdDsOob551PerfStatsFreqIndex}
+    ::= { docsRphyStatsRpdDsOob551PerfStatsTable 1 }
+
+
+DocsRphyStatsRpdDsOob551PerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdDsOob551PerfStatsCoreIfIndex            InterfaceIndex,
+    docsRphyStatsRpdDsOob551PerfStatsDsRfPortIndex          Unsigned32,
+    docsRphyStatsRpdDsOob551PerfStatsFreqIndex              Unsigned32,
+    docsRphyStatsRpdDsOob551PerfStatsOutDiscards            Counter64,
+    docsRphyStatsRpdDsOob551PerfStatsOutErrors              Counter64,
+    docsRphyStatsRpdDsOob551PerfStatsOutPackets             Counter64,
+    docsRphyStatsRpdDsOob551PerfStatsRpdDsCounterDiscTime   DateAndTime,
+    docsRphyStatsRpdDsOob551PerfStatsOperStatus             OperStatusType
+    }
+
+docsRphyStatsRpdDsOob551PerfStatsCoreIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies the 
+         selected SCTE-55-1 forward channel on 
+         the reporting core."
+    ::= { docsRphyStatsRpdDsOob551PerfStatsEntry 1 }
+
+docsRphyStatsRpdDsOob551PerfStatsDsRfPortIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..253)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies a 
+         downstream RF port of the RPD on which 
+         the channel is being transmitted.
+         Values 254 and 255 are reserved for future use."
+    ::= { docsRphyStatsRpdDsOob551PerfStatsEntry 2 }
+
+docsRphyStatsRpdDsOob551PerfStatsFreqIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0|1)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies the 
+         selected SCTE-55-1 FWD channel. A value of 0 
+         identifies the first SCTE 55-1 downstream channel. 
+         A value of 1 identifies the second SCTE 55-1 
+         downstream channel"
+    ::= { docsRphyStatsRpdDsOob551PerfStatsEntry 3 }
+
+docsRphyStatsRpdDsOob551PerfStatsOutDiscards OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound packets
+         which were internally discarded before transmission 
+         (e.g. due to lack of buffering) for the downstream
+         selected DEPI channel type SCTE-55-1-FWD."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutDiscards"
+    ::= { docsRphyStatsRpdDsOob551PerfStatsEntry 4 }
+
+docsRphyStatsRpdDsOob551PerfStatsOutErrors OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound packets
+         that could not be transmitted because of errors for 
+         the downstream selected DEPI channel type SCTE-55-1-FWD."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutErrors"
+    ::= { docsRphyStatsRpdDsOob551PerfStatsEntry 5 }
+
+docsRphyStatsRpdDsOob551PerfStatsOutPackets OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound 
+         packets successfully transmitted for 
+         the downstream selected DEPI channel type SCTE-55-1-FWD."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutPackets"
+    ::= { docsRphyStatsRpdDsOob551PerfStatsEntry 6 }
+
+docsRphyStatsRpdDsOob551PerfStatsRpdDsCounterDiscTime OBJECT-TYPE
+    SYNTAX     DateAndTime
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the date and time at which any one or more 
+         of the counters in this group were created or last reset to zero. 
+         If the RPD does not acquire time of day it can report an initial 
+         CounterDiscontinuityTime of Jan 1 1970."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::RpdDsCounterDiscontinuityTime"
+    ::= { docsRphyStatsRpdDsOob551PerfStatsEntry 7 }
+    
+docsRphyStatsRpdDsOob551PerfStatsOperStatus OBJECT-TYPE
+    SYNTAX     OperStatusType
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the operational 
+        status of the channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OperStatus"
+    ::= { docsRphyStatsRpdDsOob551PerfStatsEntry 8 }
+
+-- ---------------------------------------------------------------------
+-- Downstream OOB552 Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdDsOob552PerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdDsOob552PerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports statistical counters for a 
+         downstream channel with DEPI channel type 
+         SCTE-55-2-FWD. Note, that all three defined counters
+         i.e. OutDiscards, OutErrors and OutPackets, account 
+         for non-idle ATM cells."
+    ::= { docsRphyStatsRpdDsMibObjects 4 }
+
+
+docsRphyStatsRpdDsOob552PerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdDsOob552PerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdDsOob552PerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdDsOob552PerfStatsCoreIfIndex,
+            docsRphyStatsRpdDsOob552PerfStatsModuleIndex, 
+            docsRphyStatsRpdDsOob552PerfStatsDsRfPortIndex}
+    ::= { docsRphyStatsRpdDsOob552PerfStatsTable 1 }
+
+
+DocsRphyStatsRpdDsOob552PerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdDsOob552PerfStatsCoreIfIndex            InterfaceIndex,
+    docsRphyStatsRpdDsOob552PerfStatsModuleIndex            Unsigned32,
+    docsRphyStatsRpdDsOob552PerfStatsDsRfPortIndex          Unsigned32,
+    docsRphyStatsRpdDsOob552PerfStatsOutDiscards            Counter64,
+    docsRphyStatsRpdDsOob552PerfStatsOutErrors              Counter64,
+    docsRphyStatsRpdDsOob552PerfStatsOutPackets             Counter64,
+    docsRphyStatsRpdDsOob552PerfStatsRpdDsCounterDiscTime   DateAndTime,
+    docsRphyStatsRpdDsOob552PerfStatsOperStatus             OperStatusType
+    }
+
+docsRphyStatsRpdDsOob552PerfStatsCoreIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies the 
+         selected SCTE 55-2 forward channel on the 
+         reporting core."
+    ::= { docsRphyStatsRpdDsOob552PerfStatsEntry 1 }
+
+docsRphyStatsRpdDsOob552PerfStatsModuleIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies the 
+         selected SCTE 55-2 module."
+    ::= { docsRphyStatsRpdDsOob552PerfStatsEntry 2 }
+
+docsRphyStatsRpdDsOob552PerfStatsDsRfPortIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..253)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies a 
+         downstream RF port of the RPD on which the 
+         channel is being transmitted.
+         Values 254 and 255 are reserved for future use."
+    ::= { docsRphyStatsRpdDsOob552PerfStatsEntry 3 }
+
+docsRphyStatsRpdDsOob552PerfStatsOutDiscards OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound packets
+         which were internally discarded before transmission 
+         (e.g. due to lack of buffering) for the downstream
+         selected DEPI channel type SCTE-55-2-FWD." 
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutDiscards"
+    ::= { docsRphyStatsRpdDsOob552PerfStatsEntry 4 }
+
+docsRphyStatsRpdDsOob552PerfStatsOutErrors OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound packets
+         that could not be transmitted because of errors for 
+         the downstream selected DEPI channel type SCTE-55-2-FWD."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutErrors"
+    ::= { docsRphyStatsRpdDsOob552PerfStatsEntry 5 }
+
+docsRphyStatsRpdDsOob552PerfStatsOutPackets OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound 
+         packets successfully transmitted for 
+         the downstream selected DEPI channel type SCTE-55-2-FWD."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutPackets"
+    ::= { docsRphyStatsRpdDsOob552PerfStatsEntry 6 }
+
+docsRphyStatsRpdDsOob552PerfStatsRpdDsCounterDiscTime OBJECT-TYPE
+    SYNTAX     DateAndTime
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the date and time at which any one or more 
+         of the counters in this group were created or last reset to zero. 
+         If the RPD does not acquire time of day it can report an initial 
+         CounterDiscontinuityTime of Jan 1 1970."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::RpdDsCounterDiscontinuityTime"
+    ::= { docsRphyStatsRpdDsOob552PerfStatsEntry 7 }
+    
+docsRphyStatsRpdDsOob552PerfStatsOperStatus OBJECT-TYPE
+    SYNTAX     OperStatusType
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the operational 
+        status of the channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OperStatus"
+    ::= { docsRphyStatsRpdDsOob552PerfStatsEntry 8 }
+
+-- ---------------------------------------------------------------------
+-- Downstream NDF Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdDsNdfPerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdDsNdfPerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The DsNdfPerfStats table, which is a specialization of the 
+         RpdDsInterfaceStats object, reports statistical counters for a 
+         downstream channel with DEPI channel type 'NDF' per the RPD 
+         Channel Selector table in [R-DEPI].
+         The DsNdfPerfStats TLV Type is 76."
+    ::= { docsRphyStatsRpdDsMibObjects 5 }
+
+
+docsRphyStatsRpdDsNdfPerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdDsNdfPerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdDsNdfPerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdDsNdfPerfStatsCoreIfIndex, 
+            docsRphyStatsRpdDsNdfPerfStatsDsRfPortIndex}
+    ::= { docsRphyStatsRpdDsNdfPerfStatsTable 1 }
+
+
+DocsRphyStatsRpdDsNdfPerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdDsNdfPerfStatsCoreIfIndex            InterfaceIndex,
+    docsRphyStatsRpdDsNdfPerfStatsDsRfPortIndex          Unsigned32,
+    docsRphyStatsRpdDsNdfPerfStatsOutDiscards            Counter64,
+    docsRphyStatsRpdDsNdfPerfStatsOutErrors              Counter64,
+    docsRphyStatsRpdDsNdfPerfStatsOutPackets             Counter64,
+    docsRphyStatsRpdDsNdfPerfStatsRpdDsCounterDiscTime   DateAndTime,
+    docsRphyStatsRpdDsNdfPerfStatsOperStatus             OperStatusType
+    }
+
+docsRphyStatsRpdDsNdfPerfStatsCoreIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies the 
+         selected NDF channel on the reporting core."
+    ::= { docsRphyStatsRpdDsNdfPerfStatsEntry 1 }
+
+docsRphyStatsRpdDsNdfPerfStatsDsRfPortIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..253)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies a 
+         downstream RF port of the RPD on which 
+         the channel is being transmitted.
+         Values 254 and 255 are reserved for future use."
+    ::= { docsRphyStatsRpdDsNdfPerfStatsEntry 2 }
+
+docsRphyStatsRpdDsNdfPerfStatsOutDiscards OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound packets
+         which were internally discarded before transmission 
+         (e.g. due to lack of buffering) for the downstream
+         selected DEPI channel type NDF."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutDiscards"
+    ::= { docsRphyStatsRpdDsNdfPerfStatsEntry 3 }
+
+docsRphyStatsRpdDsNdfPerfStatsOutErrors OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound packets
+         that could not be transmitted because of errors for 
+         the downstream selected DEPI channel type NDF."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutErrors"
+    ::= { docsRphyStatsRpdDsNdfPerfStatsEntry 4 }
+
+docsRphyStatsRpdDsNdfPerfStatsOutPackets OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound 
+         packets successfully transmitted for 
+         the downstream selected DEPI channel type NDF."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutPackets"
+    ::= { docsRphyStatsRpdDsNdfPerfStatsEntry 5 }
+
+docsRphyStatsRpdDsNdfPerfStatsRpdDsCounterDiscTime OBJECT-TYPE
+    SYNTAX     DateAndTime
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the date and time at which any one or more 
+         of the counters in this group were created or last reset to zero. 
+         If the RPD does not acquire time of day it can report an initial 
+         CounterDiscontinuityTime of Jan 1 1970."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::RpdDsCounterDiscontinuityTime"
+    ::= { docsRphyStatsRpdDsNdfPerfStatsEntry 6 }
+    
+docsRphyStatsRpdDsNdfPerfStatsOperStatus OBJECT-TYPE
+    SYNTAX     OperStatusType
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the operational 
+        status of the channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OperStatus"
+    ::= { docsRphyStatsRpdDsNdfPerfStatsEntry 7 }
+
+-- ---------------------------------------------------------------------
+-- Downstream OFDM PLC Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdDsOfdmPlcPerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdDsOfdmPlcPerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports statistical counters for
+         the PLC sub-channel of a downstream OFDM channel."
+    ::= { docsRphyStatsRpdDsMibObjects 6 }
+
+
+docsRphyStatsRpdDsOfdmPlcPerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdDsOfdmPlcPerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdDsOfdmPlcPerfStatsTable."
+    AUGMENTS { docsRphyStatsRpdDsOfdmPerfStatsEntry }
+    ::= { docsRphyStatsRpdDsOfdmPlcPerfStatsTable 1 }
+
+
+DocsRphyStatsRpdDsOfdmPlcPerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdDsOfdmPlcPerfStatsOutDiscards            Counter64,
+    docsRphyStatsRpdDsOfdmPlcPerfStatsOutErrors              Counter64,
+    docsRphyStatsRpdDsOfdmPlcPerfStatsOutPackets             Counter64,
+    docsRphyStatsRpdDsOfdmPlcPerfStatsRpdDsCounterDiscTime   DateAndTime,
+    docsRphyStatsRpdDsOfdmPlcPerfStatsOperStatus             OperStatusType
+    }
+
+docsRphyStatsRpdDsOfdmPlcPerfStatsOutDiscards OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound packets
+         which were internally discarded before transmission 
+         (e.g. due to lack of buffering) for the PLC sub-channel 
+         of a downstream OFDM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutDiscards"
+    ::= { docsRphyStatsRpdDsOfdmPlcPerfStatsEntry 1 }
+
+docsRphyStatsRpdDsOfdmPlcPerfStatsOutErrors OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound packets
+         that could not be transmitted because of errors for
+         the PLC sub-channel of a downstream OFDM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutErrors"
+    ::= { docsRphyStatsRpdDsOfdmPlcPerfStatsEntry 2 }
+
+docsRphyStatsRpdDsOfdmPlcPerfStatsOutPackets OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of outbound 
+         packets successfully transmitted for 
+         the PLC sub-channel of a downstream OFDM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OutPackets"
+    ::= { docsRphyStatsRpdDsOfdmPlcPerfStatsEntry 3 }
+
+docsRphyStatsRpdDsOfdmPlcPerfStatsRpdDsCounterDiscTime OBJECT-TYPE
+    SYNTAX     DateAndTime
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the date and time at which any one or more 
+         of the counters in this group were created or last reset to zero. 
+         If the RPD does not acquire time of day it can report an initial 
+         CounterDiscontinuityTime of Jan 1 1970."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::RpdDsCounterDiscontinuityTime"
+    ::= { docsRphyStatsRpdDsOfdmPlcPerfStatsEntry 4 }
+    
+docsRphyStatsRpdDsOfdmPlcPerfStatsOperStatus OBJECT-TYPE
+    SYNTAX     OperStatusType
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the operational 
+        status of the channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdDsInterfaceStats::OperStatus"
+    ::= { docsRphyStatsRpdDsOfdmPlcPerfStatsEntry 7 }
+
+-- ---------------------------------------------------------------------
+-- Downstream OFDM Profile Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdDsOfdmProfilePerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdDsOfdmProfilePerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports statistical counters for profiles
+         for a downstream OFDM channel."
+    ::= { docsRphyStatsRpdDsMibObjects 7 }
+
+
+docsRphyStatsRpdDsOfdmProfilePerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdDsOfdmProfilePerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdDsOfdmProfilePerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdDsOfdmPerfStatsCoreIfIndex,
+            docsRphyStatsRpdDsOfdmPerfStatsDsRfPortIndex, 
+            docsRphyStatsRpdDsOfdmProfilePerfStatsProfileIndex }
+    ::= { docsRphyStatsRpdDsOfdmProfilePerfStatsTable 1 }
+
+
+DocsRphyStatsRpdDsOfdmProfilePerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdDsOfdmProfilePerfStatsProfileIndex    Unsigned32,
+    docsRphyStatsRpdDsOfdmProfilePerfStatsOutCodewords    Counter64
+    }
+
+docsRphyStatsRpdDsOfdmProfilePerfStatsProfileIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..15)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies a
+         profile on the selected OFDM channel."
+    ::= { docsRphyStatsRpdDsOfdmProfilePerfStatsEntry 1 }
+
+docsRphyStatsRpdDsOfdmProfilePerfStatsOutCodewords OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of 
+         transmitted LDPC codewords for the profile."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         DsOfdmProfilePerfStats::OutCodewords"
+    ::= { docsRphyStatsRpdDsOfdmProfilePerfStatsEntry 2 }
+
+-- ---------------------------------------------------------------------
+-- Upstream OFDMA Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdUsOfdmaChanPerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdUsOfdmaChanPerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports statistical counters for an
+         upstream OFDMA channel."
+    ::= { docsRphyStatsRpdUsMibObjects 1 }
+
+
+docsRphyStatsRpdUsOfdmaChanPerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdUsOfdmaChanPerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdUsOfdmaChanPerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdUsOfdmaChanPerfStatsCoreIfIndex,
+            docsRphyStatsRpdUsOfdmaChanPerfStatsUsRfPortIndex}
+    ::= { docsRphyStatsRpdUsOfdmaChanPerfStatsTable 1 }
+
+
+DocsRphyStatsRpdUsOfdmaChanPerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdUsOfdmaChanPerfStatsCoreIfIndex            InterfaceIndex,
+    docsRphyStatsRpdUsOfdmaChanPerfStatsUsRfPortIndex          Unsigned32,
+    docsRphyStatsRpdUsOfdmaChanPerfStatsProbeGrants            Counter64,
+    docsRphyStatsRpdUsOfdmaChanPerfStatsHcsErrors              Counter64,
+    docsRphyStatsRpdUsOfdmaChanPerfStatsLateMaps               Counter64,
+    docsRphyStatsRpdUsOfdmaChanPerfStatsIllegalMaps            Counter64,
+    docsRphyStatsRpdUsOfdmaChanPerfStatsDiscardedRequests      Counter64,
+    docsRphyStatsRpdUsOfdmaChanPerfStatsRpdUsCounterDiscTime   DateAndTime,
+    docsRphyStatsRpdUsOfdmaChanPerfStatsOperStatus             OperStatusType,
+    docsRphyStatsRpdUsOfdmaChanPerfStatsLateMinislots          Counter64,
+    docsRphyStatsRpdUsOfdmaChanPerfStatsIllegalMinislots       Counter64
+    }
+
+docsRphyStatsRpdUsOfdmaChanPerfStatsCoreIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies 
+         the selected OFDMA channel of the reporting core."
+    ::= { docsRphyStatsRpdUsOfdmaChanPerfStatsEntry 1 }
+
+docsRphyStatsRpdUsOfdmaChanPerfStatsUsRfPortIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..253)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies an upstream
+         RF port of the RPD on which the channel is being 
+         received.
+         Values 254 and 255 are reserved for future use."
+    ::= { docsRphyStatsRpdUsOfdmaChanPerfStatsEntry 2 }
+
+docsRphyStatsRpdUsOfdmaChanPerfStatsProbeGrants OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of
+         Probe Grants on the upstream OFDMA channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         UsOfdmaChanPerfStats::ProbeGrants"
+    ::= { docsRphyStatsRpdUsOfdmaChanPerfStatsEntry 3 }
+
+docsRphyStatsRpdUsOfdmaChanPerfStatsHcsErrors OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of bursts with detected HCS error 
+         in the DOCSIS header for the upstream OFDMA channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::HcsErrors"
+    ::= { docsRphyStatsRpdUsOfdmaChanPerfStatsEntry 4 }
+
+docsRphyStatsRpdUsOfdmaChanPerfStatsLateMaps OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of late MAP messages
+         for the upstream OFDMA channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::LateMaps"
+    ::= { docsRphyStatsRpdUsOfdmaChanPerfStatsEntry 5 }
+
+docsRphyStatsRpdUsOfdmaChanPerfStatsIllegalMaps OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number MAP messages 
+         with detected errors, other than late error,
+         for the upstream OFDMA channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::IllegalMaps"
+    ::= { docsRphyStatsRpdUsOfdmaChanPerfStatsEntry 6 }
+
+docsRphyStatsRpdUsOfdmaChanPerfStatsDiscardedRequests OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of bandwidth requests
+         that were discarded by the RPD
+         for the upstream OFDMA channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::DiscardedRequests"
+    ::= { docsRphyStatsRpdUsOfdmaChanPerfStatsEntry 7 }
+
+
+docsRphyStatsRpdUsOfdmaChanPerfStatsRpdUsCounterDiscTime OBJECT-TYPE
+    SYNTAX     DateAndTime
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the date and time at which any one or more 
+         of the counters in this group were created or last reset to zero. 
+         If the RPD does not acquire time of day it can report an initial 
+         CounterDiscontinuityTime of Jan 1 1970."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::RpdUsCounterDiscontinuityTime"
+    ::= { docsRphyStatsRpdUsOfdmaChanPerfStatsEntry 8 }
+    
+docsRphyStatsRpdUsOfdmaChanPerfStatsOperStatus OBJECT-TYPE
+    SYNTAX     OperStatusType
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the operational 
+        status of the channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::OperStatus"
+    ::= { docsRphyStatsRpdUsOfdmaChanPerfStatsEntry 9 }
+    
+docsRphyStatsRpdUsOfdmaChanPerfStatsLateMinislots OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of late 
+         MAP minislots for the selected channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::LateMinislots"
+    ::= { docsRphyStatsRpdUsOfdmaChanPerfStatsEntry 10 }
+    
+docsRphyStatsRpdUsOfdmaChanPerfStatsIllegalMinislots OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The attribute reports the number minislots in MAP 
+         grants that the RPD discarded due to detected errors,
+         other than being late error. The CCAP Core can also 
+         report through this attribute the count of minislots
+         in MAP grants discarded by the RPD due to internal
+         processing errors."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::IllegalMinislots"
+    ::= { docsRphyStatsRpdUsOfdmaChanPerfStatsEntry 11 }
+
+-- ---------------------------------------------------------------------
+-- Upstream SC-QAM Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdUsScQamChanPerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdUsScQamChanPerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports statistical counters for an
+         upstream SC-QAM channel."
+    ::= { docsRphyStatsRpdUsMibObjects 2 }
+
+
+docsRphyStatsRpdUsScQamChanPerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdUsScQamChanPerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdUsScQamChanPerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdUsScQamChanPerfStatsCoreIfIndex,
+            docsRphyStatsRpdUsScQamChanPerfStatsUsRfPortIndex }
+    ::= { docsRphyStatsRpdUsScQamChanPerfStatsTable 1 }
+
+
+DocsRphyStatsRpdUsScQamChanPerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdUsScQamChanPerfStatsCoreIfIndex            InterfaceIndex,
+    docsRphyStatsRpdUsScQamChanPerfStatsUsRfPortIndex          Unsigned32,
+    docsRphyStatsRpdUsScQamChanPerfStatsChanSnr                Unsigned32,
+    docsRphyStatsRpdUsScQamChanPerfStatsHcsErrors              Counter64,
+    docsRphyStatsRpdUsScQamChanPerfStatsLateMaps               Counter64,
+    docsRphyStatsRpdUsScQamChanPerfStatsIllegalMaps            Counter64,
+    docsRphyStatsRpdUsScQamChanPerfStatsDiscardedRequests      Counter64,
+    docsRphyStatsRpdUsScQamChanPerfStatsRpdUsCounterDiscTime   DateAndTime,
+    docsRphyStatsRpdUsScQamChanPerfStatsOperStatus             OperStatusType,
+    docsRphyStatsRpdUsScQamChanPerfStatsLateMinislots          Counter64,
+    docsRphyStatsRpdUsScQamChanPerfStatsIllegalMinislots       Counter64
+    }
+
+docsRphyStatsRpdUsScQamChanPerfStatsCoreIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies 
+         the selected SC-QAM channel on the reporting core."
+    ::= { docsRphyStatsRpdUsScQamChanPerfStatsEntry 1 }
+
+docsRphyStatsRpdUsScQamChanPerfStatsUsRfPortIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..253)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies an 
+         upstream RF port of the RPD on which the 
+         channel is being received.
+         Values 254 and 255 are reserved for future use."
+    ::= { docsRphyStatsRpdUsScQamChanPerfStatsEntry 2 }
+
+docsRphyStatsRpdUsScQamChanPerfStatsChanSnr OBJECT-TYPE
+    SYNTAX     Unsigned32 (0..65535)
+    UNITS      "TenthdB"
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the average SNR for
+         the selected SC-QAM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         UsScQamChanPerfStats::ChanSnr"
+    ::= { docsRphyStatsRpdUsScQamChanPerfStatsEntry 3 }
+
+docsRphyStatsRpdUsScQamChanPerfStatsHcsErrors OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of bursts with detected HCS error 
+         in the DOCSIS header for the upstream SC-QAM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::HcsErrors"
+    ::= { docsRphyStatsRpdUsScQamChanPerfStatsEntry 4 }
+
+docsRphyStatsRpdUsScQamChanPerfStatsLateMaps OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of late MAP messages
+         for the upstream SC-QAM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::LateMaps"
+    ::= { docsRphyStatsRpdUsScQamChanPerfStatsEntry 5 }
+
+docsRphyStatsRpdUsScQamChanPerfStatsIllegalMaps OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number MAP messages 
+         with detected errors, other than late error,
+         for the upstream SC-QAM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::IllegalMaps"
+    ::= { docsRphyStatsRpdUsScQamChanPerfStatsEntry 6 }
+
+docsRphyStatsRpdUsScQamChanPerfStatsDiscardedRequests OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of bandwidth requests
+         that were discarded by the RPD
+         for the upstream SC-QAM channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::DiscardedRequests"
+    ::= { docsRphyStatsRpdUsScQamChanPerfStatsEntry 7 }
+
+
+docsRphyStatsRpdUsScQamChanPerfStatsRpdUsCounterDiscTime OBJECT-TYPE
+    SYNTAX     DateAndTime
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the date and time at which any one or more 
+         of the counters in this group were created or last reset to zero. 
+         If the RPD does not acquire time of day it can report an initial 
+         CounterDiscontinuityTime of Jan 1 1970."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::RpdUsCounterDiscontinuityTime"
+    ::= { docsRphyStatsRpdUsScQamChanPerfStatsEntry 8 }
+    
+docsRphyStatsRpdUsScQamChanPerfStatsOperStatus OBJECT-TYPE
+    SYNTAX     OperStatusType
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the operational 
+        status of the channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::OperStatus"
+    ::= { docsRphyStatsRpdUsScQamChanPerfStatsEntry 9 }
+    
+docsRphyStatsRpdUsScQamChanPerfStatsLateMinislots OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of late 
+         MAP minislots for the selected channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::LateMinislots"
+    ::= { docsRphyStatsRpdUsScQamChanPerfStatsEntry 10 }
+    
+docsRphyStatsRpdUsScQamChanPerfStatsIllegalMinislots OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "The attribute reports the number minislots in MAP 
+         grants that the RPD discarded due to detected errors,
+         other than being late error. The CCAP Core can also 
+         report through this attribute the count of minislots
+         in MAP grants discarded by the RPD due to internal
+         processing errors."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceStats::IllegalMinislots"
+    ::= { docsRphyStatsRpdUsScQamChanPerfStatsEntry 11 }
+
+-- ---------------------------------------------------------------------
+-- Upstream OFDMA LOW IUC Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports statistical counters for IUCs 1, 2 and 3
+         of an upstream OFDMA channel."
+    ::= { docsRphyStatsRpdUsMibObjects 3 }
+
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdUsOfdmaLowIucPerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdUsOfdmaChanPerfStatsCoreIfIndex,
+            docsRphyStatsRpdUsOfdmaChanPerfStatsUsRfPortIndex,
+            docsRphyStatsRpdUsOfdmaLowIucPerfStatsUsIuc}
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsTable 1 }
+
+
+DocsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdUsOfdmaLowIucPerfStatsUsIuc                    Unsigned32,
+    docsRphyStatsRpdUsOfdmaLowIucPerfStatsNumPredecodePass         Counter64,
+    docsRphyStatsRpdUsOfdmaLowIucPerfStatsNumPostdecodePass        Counter64,
+    docsRphyStatsRpdUsOfdmaLowIucPerfStatsNumPostdecodeFail        Counter64,
+    docsRphyStatsRpdUsOfdmaLowIucPerfStatsUnicastOpportunities     Counter64,
+    docsRphyStatsRpdUsOfdmaLowIucPerfStatsUnicastOpCollisions      Counter64,    
+    docsRphyStatsRpdUsOfdmaLowIucPerfStatsUnicastOpNoEnergy        Counter64,
+    docsRphyStatsRpdUsOfdmaLowIucPerfStatsUnicastOpErrors          Counter64,
+    docsRphyStatsRpdUsOfdmaLowIucPerfStatsMulticastOpportunities   Counter64,
+    docsRphyStatsRpdUsOfdmaLowIucPerfStatsMulticastOpCollisions    Counter64,
+    docsRphyStatsRpdUsOfdmaLowIucPerfStatsMulticastOpNoEnergy      Counter64,
+    docsRphyStatsRpdUsOfdmaLowIucPerfStatsMulticastOpErrors        Counter64
+    }
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsUsIuc OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute provides an index in the form of 
+         the IUC for which the statistical counters will 
+         be stored."
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry 1 }
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsNumPredecodePass OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of LDPC codewords
+         for the selected IUC that passed pre-decode syndrome check."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsOfdmaIucStats::NumPredecodePass"
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry 2 }
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsNumPostdecodePass OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of LDPC codewords 
+         for the selected IUC that passed post-decode syndrome check."
+     REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsOfdmaIucStats::NumPostdecodePass"
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry 3 }
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsNumPostdecodeFail OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of received LDPC codewords
+         for the selected IUC that failed post-decode syndrome check."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsOfdmaIucStats::NumPostdecodeFail"
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry 4 }
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsUnicastOpportunities OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the total number of unicast transmission
+         opportunities for the selected IUC. Unicast opportunities are 
+         counted for SIDs in range 0x0001-0x3dff."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::UnicastOpportunities"
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry 5 }
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsUnicastOpCollisions OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the total number of detected collisions
+         on unicast transmission opportunities for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::UnicastOpCollisions"
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry 6 }
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsUnicastOpNoEnergy OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of unicast transmission
+         opportunities with no energy for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::UnicastOpNoEnergy"
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry 7 }
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsUnicastOpErrors OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of unicast transmission
+         opportunities with detected PHY errors for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::UnicastOpErrors"
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry 8 }
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsMulticastOpportunities OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the total number of multicast transmission
+         opportunities for the selected IUC. Multicast opportunities are 
+         counted for SIDs in range 00x3e00 - 0x3fff."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::MulticastOpportunities"
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry 9 }
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsMulticastOpCollisions OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the total number of detected collisions
+         on multicast transmission opportunities for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::MulticastOpCollisions"
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry 10 }
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsMulticastOpNoEnergy OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of multicast transmission
+         opportunities with no energy for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::MulticastOpNoEnergy"
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry 11 }
+
+docsRphyStatsRpdUsOfdmaLowIucPerfStatsMulticastOpErrors OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of multicast transmission
+         opportunities with detected PHY errors for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::MulticastOpErrors"
+    ::= { docsRphyStatsRpdUsOfdmaLowIucPerfStatsEntry 12 }
+
+-- ---------------------------------------------------------------------
+-- Upstream OFDMA HIGH IUC Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdUsOfdmaHighIucPerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports reports the statistical counters for
+         IUCs 4, 5, 6, 9, 10, 11, 12 and 13 of an OFDMA channel."
+    ::= { docsRphyStatsRpdUsMibObjects 4 }
+
+
+docsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdUsOfdmaHighIucPerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdUsOfdmaChanPerfStatsCoreIfIndex,
+            docsRphyStatsRpdUsOfdmaChanPerfStatsUsRfPortIndex,   
+            docsRphyStatsRpdUsOfdmaHighIucPerfStatsUsIuc}
+    ::= { docsRphyStatsRpdUsOfdmaHighIucPerfStatsTable 1 }
+
+
+DocsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdUsOfdmaHighIucPerfStatsUsIuc                Unsigned32,
+    docsRphyStatsRpdUsOfdmaHighIucPerfStatsAverageMer           Unsigned32,
+    docsRphyStatsRpdUsOfdmaHighIucPerfStatsNumPredecodePass     Counter64,
+    docsRphyStatsRpdUsOfdmaHighIucPerfStatsNumPostdecodePass    Counter64,
+    docsRphyStatsRpdUsOfdmaHighIucPerfStatsNumPostdecodeFail    Counter64,
+    docsRphyStatsRpdUsOfdmaHighIucPerfStatsScheduledGrants      Counter64,
+    docsRphyStatsRpdUsOfdmaHighIucPerfStatsNoEnergyBursts       Counter64,
+    docsRphyStatsRpdUsOfdmaHighIucPerfStatsNoPreambleBursts     Counter64,
+    docsRphyStatsRpdUsOfdmaHighIucPerfStatsErrorBursts          Counter64
+    }
+
+docsRphyStatsRpdUsOfdmaHighIucPerfStatsUsIuc OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute provides an index in the form of 
+         the IUC for which the statistical counters will 
+         be stored."
+    ::= { docsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry 1 }
+
+docsRphyStatsRpdUsOfdmaHighIucPerfStatsAverageMer OBJECT-TYPE
+    SYNTAX     Unsigned32  (0..65535)
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the average MER value 
+         for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         UsOfdmaHighIucPerfStats::AverageMer"
+    ::= { docsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry 2 }
+
+docsRphyStatsRpdUsOfdmaHighIucPerfStatsNumPredecodePass OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of LDPC codewords
+         for the selected IUC that passed pre-decode syndrome check."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsOfdmaIucStats::NumPredecodePass"
+    ::= { docsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry 3 }
+
+docsRphyStatsRpdUsOfdmaHighIucPerfStatsNumPostdecodePass OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of LDPC codewords 
+         for the selected IUC that passed post-decode syndrome check."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsOfdmaIucStats::NumPostdecodePass"
+    ::= { docsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry 4 }
+
+docsRphyStatsRpdUsOfdmaHighIucPerfStatsNumPostdecodeFail OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of received LDPC codewords
+         for the selected IUC that failed post-decode syndrome check."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsOfdmaIucStats::NumPostdecodeFail"
+    ::= { docsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry 5 }
+
+docsRphyStatsRpdUsOfdmaHighIucPerfStatsScheduledGrants OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of scheduled
+         grants for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceHighIucStats::ScheduledGrants"
+    ::= { docsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry 6 }
+
+docsRphyStatsRpdUsOfdmaHighIucPerfStatsNoEnergyBursts OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of bursts
+         with no energy detected for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceHighIucStats::NoEnergyBursts"
+    ::= { docsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry 7 }
+
+docsRphyStatsRpdUsOfdmaHighIucPerfStatsNoPreambleBursts OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of bursts 
+         no preamble detected for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceHighIucStats::NoPreambleBursts"
+    ::= { docsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry 8 }
+
+docsRphyStatsRpdUsOfdmaHighIucPerfStatsErrorBursts OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of bursts received
+         with errors other than 'no energy' or 'no preamble' 
+         for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceHighIucStats::ErrorBursts"
+    ::= { docsRphyStatsRpdUsOfdmaHighIucPerfStatsEntry 9 }
+
+-- ---------------------------------------------------------------------
+-- Upstream SC-QAM LOW IUC Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdUsScQamLowIucPerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports statistical counters for IUCs 1, 2 and 3
+         of an upstream SC-QAM channel."
+    ::= { docsRphyStatsRpdUsMibObjects 5 }
+
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdUsScQamLowIucPerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdUsScQamLowIucPerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdUsScQamChanPerfStatsCoreIfIndex,
+            docsRphyStatsRpdUsScQamChanPerfStatsUsRfPortIndex,
+            docsRphyStatsRpdUsScQamLowIucPerfStatsUsIuc}
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsTable 1 }
+
+
+DocsRphyStatsRpdUsScQamLowIucPerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdUsScQamLowIucPerfStatsUsIuc                  Unsigned32,
+    docsRphyStatsRpdUsScQamLowIucPerfStatsGoodFecCw              Counter64,
+    docsRphyStatsRpdUsScQamLowIucPerfStatsCorrectedFecCw         Counter64,
+    docsRphyStatsRpdUsScQamLowIucPerfStatsUncorrectedFecCw       Counter64,
+    docsRphyStatsRpdUsScQamLowIucPerfStatsUnicastOpportunities   Counter64,
+    docsRphyStatsRpdUsScQamLowIucPerfStatsUnicastOpCollisions    Counter64,    
+    docsRphyStatsRpdUsScQamLowIucPerfStatsUnicastOpNoEnergy      Counter64,
+    docsRphyStatsRpdUsScQamLowIucPerfStatsUnicastOpErrors        Counter64,
+    docsRphyStatsRpdUsScQamLowIucPerfStatsMulticastOpportunities Counter64,
+    docsRphyStatsRpdUsScQamLowIucPerfStatsMulticastOpCollisions  Counter64,
+    docsRphyStatsRpdUsScQamLowIucPerfStatsMulticastOpNoEnergy    Counter64,
+    docsRphyStatsRpdUsScQamLowIucPerfStatsMulticastOpErrors      Counter64
+    }
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsUsIuc OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute provides an index in the form of 
+         the IUC for which the statistical counters will 
+         be stored."
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsEntry 1 }
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsGoodFecCw OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of good FEC 
+         codewords for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsScQamIucStats::GoodFecCw"
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsEntry 2 }
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsCorrectedFecCw OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of corrected
+         FEC codewords for the selected IUC. "
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsScQamIucStats::CorrectedFecCw"
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsEntry 3 }
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsUncorrectedFecCw OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of uncorrected
+         FEC codewords for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsScQamIucStats::UncorrectedFecCw"
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsEntry 4 }
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsUnicastOpportunities OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the total number of unicast transmission
+         opportunities for the selected IUC. Unicast opportunities are 
+         counted for SIDs in range 0x0001-0x3dff."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::UnicastOpportunities"
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsEntry 5 }
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsUnicastOpCollisions OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the total number of detected collisions
+         on unicast transmission opportunities for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::UnicastOpCollisions"
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsEntry 6 }
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsUnicastOpNoEnergy OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of unicast transmission
+         opportunities with no energy for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::UnicastOpNoEnergy"
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsEntry 7 }
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsUnicastOpErrors OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of unicast transmission
+         opportunities with detected PHY errors for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::UnicastOpErrors"
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsEntry 8 }
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsMulticastOpportunities OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the total number of multicast transmission
+         opportunities for the selected IUC. Multicast opportunities are 
+         counted for SIDs in range 00x3e00 - 0x3fff."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::MulticastOpportunities"
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsEntry 9 }
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsMulticastOpCollisions OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the total number of detected collisions
+         on multicast transmission opportunities for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::MulticastOpCollisions"
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsEntry 10 }
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsMulticastOpNoEnergy OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of multicast transmission
+         opportunities with no energy for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::MulticastOpNoEnergy"
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsEntry 11 }
+
+docsRphyStatsRpdUsScQamLowIucPerfStatsMulticastOpErrors OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of multicast transmission
+         opportunities with detected PHY errors for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceLowIucStats::MulticastOpErrors"
+    ::= { docsRphyStatsRpdUsScQamLowIucPerfStatsEntry 12 }
+
+-- ---------------------------------------------------------------------
+-- Upstream SC-QAM HIGH IUC Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdUsScQamHighIucPerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdUsScQamHighIucPerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports reports the statistical counters for
+         IUCs 4, 5, 6, 9, 10, 11, 12 and 13 of an upstream 
+         SC-QAM channel."
+    ::= { docsRphyStatsRpdUsMibObjects 6 }
+
+
+docsRphyStatsRpdUsScQamHighIucPerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdUsScQamHighIucPerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdUsScQamHighIucPerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdUsScQamChanPerfStatsCoreIfIndex,
+            docsRphyStatsRpdUsScQamChanPerfStatsUsRfPortIndex,
+            docsRphyStatsRpdUsScQamHighIucPerfStatsUsIuc}
+    ::= { docsRphyStatsRpdUsScQamHighIucPerfStatsTable 1 }
+
+
+DocsRphyStatsRpdUsScQamHighIucPerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdUsScQamHighIucPerfStatsUsIuc               Unsigned32,
+    docsRphyStatsRpdUsScQamHighIucPerfStatsGoodFecCw           Counter64,
+    docsRphyStatsRpdUsScQamHighIucPerfStatsCorrectedFecCw      Counter64,
+    docsRphyStatsRpdUsScQamHighIucPerfStatsUncorrectedFecCw    Counter64,
+    docsRphyStatsRpdUsScQamHighIucPerfStatsScheduledGrants     Counter64,
+    docsRphyStatsRpdUsScQamHighIucPerfStatsNoEnergyBursts      Counter64,
+    docsRphyStatsRpdUsScQamHighIucPerfStatsNoPreambleBursts    Counter64,
+    docsRphyStatsRpdUsScQamHighIucPerfStatsErrorBursts         Counter64
+    }
+
+docsRphyStatsRpdUsScQamHighIucPerfStatsUsIuc OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute provides an index in the form of 
+         the IUC for which the statistical counters will 
+         be stored."
+    ::= { docsRphyStatsRpdUsScQamHighIucPerfStatsEntry 1 }
+
+docsRphyStatsRpdUsScQamHighIucPerfStatsGoodFecCw OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of good FEC 
+         codewords for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsScQamIucStats::GoodFecCw"
+    ::= { docsRphyStatsRpdUsScQamHighIucPerfStatsEntry 2 }
+
+docsRphyStatsRpdUsScQamHighIucPerfStatsCorrectedFecCw OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of corrected
+         FEC codewords for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsScQamIucStats::CorrectedFecCw"
+    ::= { docsRphyStatsRpdUsScQamHighIucPerfStatsEntry 3 }
+
+docsRphyStatsRpdUsScQamHighIucPerfStatsUncorrectedFecCw OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of uncorrected
+         FEC codewords for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsScQamIucStats::UncorrectedFecCw"
+    ::= { docsRphyStatsRpdUsScQamHighIucPerfStatsEntry 4 }
+
+docsRphyStatsRpdUsScQamHighIucPerfStatsScheduledGrants OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of scheduled
+         grants for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceHighIucStats::ScheduledGrants"
+    ::= { docsRphyStatsRpdUsScQamHighIucPerfStatsEntry 5 }
+
+docsRphyStatsRpdUsScQamHighIucPerfStatsNoEnergyBursts OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of bursts
+         with no energy detected for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceHighIucStats::NoEnergyBursts"
+    ::= { docsRphyStatsRpdUsScQamHighIucPerfStatsEntry 6 }
+
+docsRphyStatsRpdUsScQamHighIucPerfStatsNoPreambleBursts OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of bursts 
+         no preamble detected for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceHighIucStats::NoPreambleBursts"
+    ::= { docsRphyStatsRpdUsScQamHighIucPerfStatsEntry 7 }
+
+docsRphyStatsRpdUsScQamHighIucPerfStatsErrorBursts OBJECT-TYPE
+    SYNTAX     Counter64
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the number of bursts received
+         with errors other than 'no energy' or 'no preamble' 
+         for the selected IUC."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         RpdUsInterfaceHighIucStats::ErrorBursts"
+    ::= { docsRphyStatsRpdUsScQamHighIucPerfStatsEntry 8 }
+    
+-- ---------------------------------------------------------------------
+-- Upstream OOB552 Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdUsOob552PerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdUsOob552PerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports statistical counters for an SCTE 55-2 
+         OOB upstream channel."
+    ::= { docsRphyStatsRpdUsMibObjects 7 }
+
+
+docsRphyStatsRpdUsOob552PerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdUsOob552PerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdUsOob552PerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdUsOob552PerfStatsCoreIfIndex,
+            docsRphyStatsRpdUsOob552PerfStatsModuleIndex,
+            docsRphyStatsRpdUsOob552PerfStatsUsRfPortIndex}
+    ::= { docsRphyStatsRpdUsOob552PerfStatsTable 1 }
+
+
+DocsRphyStatsRpdUsOob552PerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdUsOob552PerfStatsCoreIfIndex     InterfaceIndex,
+    docsRphyStatsRpdUsOob552PerfStatsModuleIndex     Unsigned32,
+    docsRphyStatsRpdUsOob552PerfStatsUsRfPortIndex   Unsigned32,
+    docsRphyStatsRpdUsOob552PerfStatsRcvdCells       Counter64,
+    docsRphyStatsRpdUsOob552PerfStatsRcvdBytes       Counter64,
+    docsRphyStatsRpdUsOob552PerfStatsUncorrectables  Counter64,
+    docsRphyStatsRpdUsOob552PerfStatsCounterDiscTime DateAndTime,
+    docsRphyStatsRpdUsOob552PerfStatsDemodIndex      Unsigned32,
+    docsRphyStatsRpdUsOob552PerfStatsOperStatus      OperStatusType
+    }
+       
+docsRphyStatsRpdUsOob552PerfStatsCoreIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies the 
+         selected SCTE 55-2 return channel on the 
+         reporting core."
+    ::= { docsRphyStatsRpdUsOob552PerfStatsEntry 1 }
+    
+docsRphyStatsRpdUsOob552PerfStatsModuleIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies the 
+         selected SCTE 55-2 module. 
+         This is part of a channel selector."
+    ::= { docsRphyStatsRpdUsOob552PerfStatsEntry 2 }
+
+docsRphyStatsRpdUsOob552PerfStatsUsRfPortIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..253)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies an 
+         upstream RF port of the RPD on which the 
+         channel is being received.
+         Values 254 and 255 are reserved for future use. 
+         This is part of a channel selector."
+    ::= { docsRphyStatsRpdUsOob552PerfStatsEntry 3 }  
+
+docsRphyStatsRpdUsOob552PerfStatsRcvdCells OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute reports the total number of 
+         received ATM cells on the selected channel. 
+         The value of this attribute accounts for good,
+         corrected and uncorrectable ATM cells."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         UsOob552PerfStats::RcvdCells"
+    ::= { docsRphyStatsRpdUsOob552PerfStatsEntry 4 } 
+
+docsRphyStatsRpdUsOob552PerfStatsRcvdBytes OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute reports the total number of 
+        received bytes on the selected channel. It 
+        accounts for the payload of 53-byte long 
+        ATM cells. Under normal circumstance, the 
+        value reported by this attribute is a multiple
+        of 53-bytes. The value of this attribute accounts
+        for bytes from good, corrected and uncorrectable 
+        ATM cells."
+     REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         UsOob552PerfStats::RcvdBytes"
+    ::= { docsRphyStatsRpdUsOob552PerfStatsEntry 5 }
+
+docsRphyStatsRpdUsOob552PerfStatsUncorrectables OBJECT-TYPE
+    SYNTAX      Counter64
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute allows the CCAP Core to read the 
+        total number of received slots with uncorrectable
+        FEC errors on the selected channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         UsOob552PerfStats::Uncorrectables"
+    ::= { docsRphyStatsRpdUsOob552PerfStatsEntry 6 } 
+    
+docsRphyStatsRpdUsOob552PerfStatsCounterDiscTime OBJECT-TYPE
+    SYNTAX     DateAndTime
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the date and time at which any one or more 
+         of the counters in this group were created or last reset to zero. 
+         If the RPD does not acquire time of day it can report an initial 
+         CounterDiscontinuityTime of Jan 1 1970."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         UsOob552PerfStats::DiscontinuityTime"
+    ::= { docsRphyStatsRpdUsOob552PerfStatsEntry 7 }
+    
+docsRphyStatsRpdUsOob552PerfStatsDemodIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..255)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute uniquely identifies the 
+         SCTE 55-2 demodulator in the module." 
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         UsOob552PerfStats::DemodIndex"
+    ::= { docsRphyStatsRpdUsOob552PerfStatsEntry 8 }
+    
+docsRphyStatsRpdUsOob552PerfStatsOperStatus OBJECT-TYPE
+    SYNTAX      OperStatusType
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+        "This attribute reports the operational 
+         status of the selected channel." 
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         UsOob552PerfStats::OperStatus"
+    ::= { docsRphyStatsRpdUsOob552PerfStatsEntry 9 }
+
+-- ---------------------------------------------------------------------
+-- Upstream OFDMA Echo Canceler (EC) Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdUsOfdmaEcStatusTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdUsOfdmaEcStatusEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table is used to report FDX echo canceler statistics
+         and status information obtained from the RPD. It is instantiated 
+         for an FDX OFDMA channel on FDX RPDs."
+    ::= { docsRphyStatsRpdUsMibObjects 8 }
+
+
+docsRphyStatsRpdUsOfdmaEcStatusEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdUsOfdmaEcStatusEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdUsOfdmaEcStatusTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdUsOfdmaChanPerfStatsCoreIfIndex,
+            docsRphyStatsRpdUsOfdmaChanPerfStatsUsRfPortIndex }
+    ::= { docsRphyStatsRpdUsOfdmaEcStatusTable 1 }
+
+
+DocsRphyStatsRpdUsOfdmaEcStatusEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdUsOfdmaEcStatusFdxEcConverged                TruthValue
+    }   
+
+docsRphyStatsRpdUsOfdmaEcStatusFdxEcConverged  OBJECT-TYPE
+    SYNTAX     TruthValue
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the echo canceler convergence status
+         for an operational FDX US OFDMA channel. A value of 'true'
+         indicates echo canceller converged. A value of 'false'
+         indicates echo canceller not converged."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         UsOfdmaEcStatus::FdxEcConverged"
+    ::= { docsRphyStatsRpdUsOfdmaEcStatusEntry 1 }
+    
+-- ---------------------------------------------------------------------
+-- NDR Performance Statistics
+-- ---------------------------------------------------------------------
+
+docsRphyStatsRpdUsNdrPerfStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsRphyStatsRpdUsNdrPerfStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table reports statistical counters for an upstream
+         Narrowband Digital Return (NDR) OOB Channel. 
+         The UsNdrPerfStats TLV Type is 82."
+    ::= { docsRphyStatsRpdUsMibObjects 9 }
+
+
+docsRphyStatsRpdUsNdrPerfStatsEntry OBJECT-TYPE
+    SYNTAX     DocsRphyStatsRpdUsNdrPerfStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsRphyStatsRpdUsNdrPerfStatsTable."
+    INDEX { docsRphyRpdDevInfoUniqueId, 
+            docsRphyStatsRpdUsNdrPerfStatsCoreIfIndex, 
+            docsRphyStatsRpdUsNdrPerfStatsUsRfPortIndex}
+    ::= { docsRphyStatsRpdUsNdrPerfStatsTable 1 }
+
+
+DocsRphyStatsRpdUsNdrPerfStatsEntry ::= SEQUENCE
+    {
+    docsRphyStatsRpdUsNdrPerfStatsCoreIfIndex            InterfaceIndex,
+    docsRphyStatsRpdUsNdrPerfStatsUsRfPortIndex          Unsigned32,
+    docsRphyStatsRpdUsNdrPerfStatsOperStatus             OperStatusType
+    }
+
+docsRphyStatsRpdUsNdrPerfStatsCoreIfIndex OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies the 
+         selected NDR channel on the reporting core."
+    ::= { docsRphyStatsRpdUsNdrPerfStatsEntry 1 }
+
+docsRphyStatsRpdUsNdrPerfStatsUsRfPortIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..253)
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This key attribute uniquely identifies a 
+         upstream RF port of the RPD on which 
+         the channel is being received.
+         Values 254 and 255 are reserved for future use."
+    ::= { docsRphyStatsRpdUsNdrPerfStatsEntry 2 }
+    
+docsRphyStatsRpdUsNdrPerfStatsOperStatus OBJECT-TYPE
+    SYNTAX     OperStatusType
+    MAX-ACCESS read-only
+    STATUS     current
+    DESCRIPTION
+        "This attribute reports the operational 
+        status of the selected channel."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-R-OSSI 
+         UsNdrPerfStats::OperStatus"
+    ::= { docsRphyStatsRpdUsNdrPerfStatsEntry 3 }
+    
+-- ---------------------------------------------------------------------
+-- CCAP Core Group Objects
+-- ---------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------
+-- TBD Table
+-- ---------------------------------------------------------------------
+
+    
+-- ---------------------------------------------------------
+-- Conformance definitions 
+-- ---------------------------------------------------------
+
+docsRphyStatsCompliance MODULE-COMPLIANCE 
+     STATUS current 
+     DESCRIPTION 
+         "The compliance statement for CCAP Core and
+          RPD Statistical monitoring features."
+
+MODULE -- docsRphyStatsMib
+        
+-- conditionally mandatory groups
+
+GROUP docsRphyStatsRpdGroup 
+    DESCRIPTION
+        "Group of objects applicable to RPDs only.
+         These objects are implemented on the CCAP Core
+         but are derived from the RPD via the GCP protocol."
+            
+-- conditionally optional groups
+
+
+::= { docsRphyStatsCompliances 1}
+
+docsRphyStatsRpdGroup OBJECT-GROUP
+        OBJECTS {
+                 docsRphyStatsRpdDsScQamPerfStatsOutDiscards,
+                 docsRphyStatsRpdDsScQamPerfStatsOutErrors,
+                 docsRphyStatsRpdDsScQamPerfStatsOutPackets,
+                 docsRphyStatsRpdDsScQamPerfStatsRpdDsCounterDiscTime,
+                 docsRphyStatsRpdDsScQamPerfStatsOperStatus,
+
+                 docsRphyStatsRpdDsOfdmPerfStatsOutDiscards,
+                 docsRphyStatsRpdDsOfdmPerfStatsOutErrors,
+                 docsRphyStatsRpdDsOfdmPerfStatsOutPackets,
+                 docsRphyStatsRpdDsOfdmPerfStatsRpdDsCounterDiscTime,
+                 docsRphyStatsRpdDsOfdmPerfStatsOperStatus,
+
+                 docsRphyStatsRpdDsOob551PerfStatsOutDiscards,
+                 docsRphyStatsRpdDsOob551PerfStatsOutErrors,
+                 docsRphyStatsRpdDsOob551PerfStatsOutPackets,
+                 docsRphyStatsRpdDsOob551PerfStatsRpdDsCounterDiscTime,
+                 docsRphyStatsRpdDsOob551PerfStatsOperStatus,
+
+                 docsRphyStatsRpdDsOob552PerfStatsOutDiscards,
+                 docsRphyStatsRpdDsOob552PerfStatsOutErrors,
+                 docsRphyStatsRpdDsOob552PerfStatsOutPackets,
+                 docsRphyStatsRpdDsOob552PerfStatsRpdDsCounterDiscTime,
+                 docsRphyStatsRpdDsOob552PerfStatsOperStatus,
+
+                 docsRphyStatsRpdDsNdfPerfStatsOutDiscards,
+                 docsRphyStatsRpdDsNdfPerfStatsOutErrors,
+                 docsRphyStatsRpdDsNdfPerfStatsOutPackets,
+                 docsRphyStatsRpdDsNdfPerfStatsRpdDsCounterDiscTime,
+                 docsRphyStatsRpdDsNdfPerfStatsOperStatus,
+
+                 docsRphyStatsRpdDsOfdmPlcPerfStatsOutDiscards,
+                 docsRphyStatsRpdDsOfdmPlcPerfStatsOutErrors,
+                 docsRphyStatsRpdDsOfdmPlcPerfStatsOutPackets,
+                 docsRphyStatsRpdDsOfdmPlcPerfStatsRpdDsCounterDiscTime,
+                 docsRphyStatsRpdDsOfdmPlcPerfStatsOperStatus,
+
+                 docsRphyStatsRpdDsOfdmProfilePerfStatsOutCodewords,
+
+                 docsRphyStatsRpdUsOfdmaChanPerfStatsProbeGrants,
+                 docsRphyStatsRpdUsOfdmaChanPerfStatsHcsErrors,
+                 docsRphyStatsRpdUsOfdmaChanPerfStatsLateMaps,
+                 docsRphyStatsRpdUsOfdmaChanPerfStatsIllegalMaps,
+                 docsRphyStatsRpdUsOfdmaChanPerfStatsDiscardedRequests,
+                 docsRphyStatsRpdUsOfdmaChanPerfStatsRpdUsCounterDiscTime,
+                 docsRphyStatsRpdUsOfdmaChanPerfStatsOperStatus,
+                 docsRphyStatsRpdUsOfdmaChanPerfStatsLateMinislots,
+                 docsRphyStatsRpdUsOfdmaChanPerfStatsIllegalMinislots,
+
+                 docsRphyStatsRpdUsScQamChanPerfStatsChanSnr,
+                 docsRphyStatsRpdUsScQamChanPerfStatsHcsErrors,
+                 docsRphyStatsRpdUsScQamChanPerfStatsLateMaps,
+                 docsRphyStatsRpdUsScQamChanPerfStatsIllegalMaps,
+                 docsRphyStatsRpdUsScQamChanPerfStatsDiscardedRequests,
+                 docsRphyStatsRpdUsScQamChanPerfStatsRpdUsCounterDiscTime,
+                 docsRphyStatsRpdUsScQamChanPerfStatsOperStatus,
+                 docsRphyStatsRpdUsScQamChanPerfStatsLateMinislots,
+                 docsRphyStatsRpdUsScQamChanPerfStatsIllegalMinislots,
+
+                 docsRphyStatsRpdUsOfdmaLowIucPerfStatsNumPredecodePass,
+                 docsRphyStatsRpdUsOfdmaLowIucPerfStatsNumPostdecodePass,
+                 docsRphyStatsRpdUsOfdmaLowIucPerfStatsNumPostdecodeFail,
+                 docsRphyStatsRpdUsOfdmaLowIucPerfStatsUnicastOpportunities,
+                 docsRphyStatsRpdUsOfdmaLowIucPerfStatsUnicastOpCollisions,    
+                 docsRphyStatsRpdUsOfdmaLowIucPerfStatsUnicastOpNoEnergy,
+                 docsRphyStatsRpdUsOfdmaLowIucPerfStatsUnicastOpErrors,
+                 docsRphyStatsRpdUsOfdmaLowIucPerfStatsMulticastOpportunities,
+                 docsRphyStatsRpdUsOfdmaLowIucPerfStatsMulticastOpCollisions,
+                 docsRphyStatsRpdUsOfdmaLowIucPerfStatsMulticastOpNoEnergy,
+                 docsRphyStatsRpdUsOfdmaLowIucPerfStatsMulticastOpErrors,
+
+                 docsRphyStatsRpdUsOfdmaHighIucPerfStatsAverageMer,                    
+                 docsRphyStatsRpdUsOfdmaHighIucPerfStatsNumPredecodePass,
+                 docsRphyStatsRpdUsOfdmaHighIucPerfStatsNumPostdecodePass,
+                 docsRphyStatsRpdUsOfdmaHighIucPerfStatsNumPostdecodeFail,
+                 docsRphyStatsRpdUsOfdmaHighIucPerfStatsScheduledGrants,
+                 docsRphyStatsRpdUsOfdmaHighIucPerfStatsNoEnergyBursts,
+                 docsRphyStatsRpdUsOfdmaHighIucPerfStatsNoPreambleBursts,
+                 docsRphyStatsRpdUsOfdmaHighIucPerfStatsErrorBursts,
+                    
+                 docsRphyStatsRpdUsOob552PerfStatsRcvdCells,
+                 docsRphyStatsRpdUsOob552PerfStatsRcvdBytes,
+                 docsRphyStatsRpdUsOob552PerfStatsUncorrectables,
+                 docsRphyStatsRpdUsOob552PerfStatsCounterDiscTime,
+                 docsRphyStatsRpdUsOob552PerfStatsDemodIndex,
+                 docsRphyStatsRpdUsOob552PerfStatsOperStatus,
+                 
+                 docsRphyStatsRpdUsOfdmaEcStatusFdxEcConverged,
+                 
+                 docsRphyStatsRpdUsNdrPerfStatsOperStatus,
+                 
+                 docsRphyStatsRpdUsScQamLowIucPerfStatsGoodFecCw,
+                 docsRphyStatsRpdUsScQamLowIucPerfStatsCorrectedFecCw,
+                 docsRphyStatsRpdUsScQamLowIucPerfStatsUncorrectedFecCw,
+                 docsRphyStatsRpdUsScQamLowIucPerfStatsUnicastOpportunities,
+                 docsRphyStatsRpdUsScQamLowIucPerfStatsUnicastOpCollisions,    
+                 docsRphyStatsRpdUsScQamLowIucPerfStatsUnicastOpNoEnergy,
+                 docsRphyStatsRpdUsScQamLowIucPerfStatsUnicastOpErrors,
+                 docsRphyStatsRpdUsScQamLowIucPerfStatsMulticastOpportunities,
+                 docsRphyStatsRpdUsScQamLowIucPerfStatsMulticastOpCollisions,
+                 docsRphyStatsRpdUsScQamLowIucPerfStatsMulticastOpNoEnergy,
+                 docsRphyStatsRpdUsScQamLowIucPerfStatsMulticastOpErrors, 
+
+                 docsRphyStatsRpdUsScQamHighIucPerfStatsGoodFecCw,
+                 docsRphyStatsRpdUsScQamHighIucPerfStatsCorrectedFecCw,
+                 docsRphyStatsRpdUsScQamHighIucPerfStatsUncorrectedFecCw,
+                 docsRphyStatsRpdUsScQamHighIucPerfStatsScheduledGrants,
+                 docsRphyStatsRpdUsScQamHighIucPerfStatsNoEnergyBursts,
+                 docsRphyStatsRpdUsScQamHighIucPerfStatsNoPreambleBursts,
+                 docsRphyStatsRpdUsScQamHighIucPerfStatsErrorBursts
+     }
+    STATUS      current
+    DESCRIPTION
+        "Group of objects implemented in CCAP Cores which
+         represent RPD managed objects derived via the GCP 
+         protocol."
+    ::= { docsRphyStatsGroups 1 }
+
+        END

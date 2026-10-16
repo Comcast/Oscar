@@ -1,0 +1,1245 @@
+DOCS-FMA-LI-MIB  DEFINITIONS ::= BEGIN
+IMPORTS
+    NOTIFICATION-TYPE,
+    MODULE-IDENTITY, 
+    OBJECT-TYPE, 
+    Unsigned32,
+    Integer32,
+    Counter64
+        FROM SNMPv2-SMI         -- RFC 2578
+    OBJECT-GROUP,
+    NOTIFICATION-GROUP,	
+    MODULE-COMPLIANCE 
+        FROM SNMPv2-CONF
+    SnmpAdminString
+        FROM SNMP-FRAMEWORK-MIB -- RFC 3411
+    DateAndTime,
+    TruthValue,
+    MacAddress,
+    RowStatus,
+    TEXTUAL-CONVENTION
+        FROM SNMPv2-TC          -- RFC 2579
+    sysName
+        FROM SNMPv2-MIB         -- RFC 3418
+    InetAddressType,
+    InetAddress,
+    InetPortNumber,
+    InetAddressPrefixLength
+        FROM INET-ADDRESS-MIB   -- RFC 4001
+    DscpOrAny	
+        FROM DIFFSERV-DSCP-TC   -- RFC 3289
+    docsDevEvLevel,
+    docsDevEvId,
+    docsDevEvText,
+    docsDevEvLastTime
+        FROM DOCS-CABLE-DEVICE-MIB -- RFC 4639
+    clabProjDocsis
+        FROM CLAB-DEF-MIB;
+
+
+docsFmaLiMib MODULE-IDENTITY 
+LAST-UPDATED    "202202100000Z" -- February 10, 2022
+    ORGANIZATION    "Cable Television Laboratories, Inc" 
+    CONTACT-INFO 
+         "
+         Postal: Cable Television Laboratories, Inc. 
+         858 Coal Creek Circle 
+         Louisville, Colorado 80027
+         U.S.A. 
+         Phone: +1 303-661-9100 
+         Fax: +1 303-661-9199 
+         E-mail: mibs@cablelabs.com" 
+    DESCRIPTION 
+        "This MIB module contains the lawful intercept objects for
+         the DOCSIS Flexible MAC Architecture. 
+         Copyright 2021-2022 Cable Television Laboratories, Inc.
+         All rights reserved."
+    REVISION "202202100000Z" -- February 10, 2022
+    DESCRIPTION
+        "Initial version, created by CableLabs ECN FMA-OSSI-N-22.2230-1 
+         to implement Lawful Intercept information models described in
+         CableLabs FMA OSSI specifications."
+::= { clabProjDocsis 36 }
+
+
+-- ---------------------------------------------------------
+-- Textual Conventions
+-- ---------------------------------------------------------
+     
+IPv6FlowLabelOrAny ::= TEXTUAL-CONVENTION
+       DISPLAY-HINT  "d"
+       STATUS         current
+       DESCRIPTION   
+         "The flow identifier or Flow Label in an IPv6
+          packet header that may be used to discriminate
+          traffic flows.  The value of -1 is used to
+          indicate a wildcard, i.e. any value."
+    SYNTAX  Integer32 (-1 | 0..1048575)
+                         
+
+-- ---------------------------------------------------------------------
+-- Main Groups
+-- ---------------------------------------------------------------------
+docsFmaLiNotifications           OBJECT IDENTIFIER ::= { docsFmaLiMib 0}
+docsFmaLiObjects                 OBJECT IDENTIFIER ::= { docsFmaLiMib 1}
+docsFmaLiConformance             OBJECT IDENTIFIER ::= { docsFmaLiMib 2}
+
+docsFmaLiStatusObjects           OBJECT IDENTIFIER ::= { docsFmaLiObjects 1}
+docsFmaLiConfigObjects           OBJECT IDENTIFIER ::= { docsFmaLiObjects 2}
+
+docsFmaLiCompliances             OBJECT IDENTIFIER ::= { docsFmaLiConformance 1 } 
+docsFmaLiGroups                  OBJECT IDENTIFIER ::= { docsFmaLiConformance 2 } 
+
+
+
+-- ---------------------------------------------------------------------
+--  FMA Lawful Intercept Configuration Objects
+-- ---------------------------------------------------------------------
+-- ---------------------------------------------------------------------
+-- FMA Lawful Intercept Mediation Device Configuration
+-- ---------------------------------------------------------------------
+docsFmaLiMedDevCfgTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsFmaLiMedDevCfgEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The Mediation Device Configuration table is used to configure 
+         the Mediation device with which the intercepting device communicates.
+         Rows in this table are created and maintained by the Mediation Device. 
+         The attribute IapSourceAddress is auto-populated by the Mac Manager /
+         management entity once the MAC-NE associated with the Target Address
+         (TargetMacAddress) in the TapStreamCfg object has been identified.
+         The attribute ContentId is used as a Key and ties back directly
+         to the warrant that created the reason for the T-tap.
+         The MAC Manager must support the creation and deletion of rows in 
+         this table."
+    ::= { docsFmaLiConfigObjects 1 }
+
+docsFmaLiMedDevCfgEntry OBJECT-TYPE
+    SYNTAX     DocsFmaLiMedDevCfgEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsFmaLiMedDevCfgTable"
+    INDEX { docsFmaLiMedDevCfgContentId }
+    ::= { docsFmaLiMedDevCfgTable 1 }
+
+DocsFmaLiMedDevCfgEntry ::= SEQUENCE
+       {
+       docsFmaLiMedDevCfgContentId              Unsigned32,
+       docsFmaLiMedDevCfgDestAddrType           InetAddressType,
+       docsFmaLiMedDevCfgDestAddress            InetAddress,
+       docsFmaLiMedDevCfgDestPort               InetPortNumber,
+       docsFmaLiMedDevCfgIapSourceAddrType      InetAddressType,
+       docsFmaLiMedDevCfgIapSourceAddress       InetAddress,
+       docsFmaLiMedDevCfgDscp                   DscpOrAny,
+       docsFmaLiMedDevCfgVlanId                 Unsigned32,
+       docsFmaLiMedDevCfgTimeout                DateAndTime,
+       docsFmaLiMedDevCfgTransport              INTEGER,
+       docsFmaLiMedDevCfgNotifEnabled           TruthValue,
+       docsFmaLiMedDevCfgStatus                 RowStatus
+       }
+        
+docsFmaLiMedDevCfgContentId   OBJECT-TYPE
+    SYNTAX      Unsigned32 (1..2147483647) 
+    MAX-ACCESS  not-accessible 
+    STATUS      current 
+    DESCRIPTION 
+        "The Content key attribute is a session identifier from 
+         the intercept application's perspective, and a content identifier
+         from the Mediation Device's perspective. The Mediation Device 
+         is responsible for making sure these are unique."
+     REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         MediationDeviceCfg::ContentIdentifier"
+    ::= { docsFmaLiMedDevCfgEntry 1 }
+
+docsFmaLiMedDevCfgDestAddrType OBJECT-TYPE
+    SYNTAX      InetAddressType 
+    MAX-ACCESS  read-create
+    STATUS      current 
+    DESCRIPTION 
+        "This indicates whether the IP address
+         provided in the MedDevCfgDestAddress  
+         is IPv4 or IPv6."
+    ::= { docsFmaLiMedDevCfgEntry 2 }
+
+docsFmaLiMedDevCfgDestAddress OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-create
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute is the IP Address of the Mediation Device."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         MediationDeviceCfg::DestinationAddress"
+    ::= { docsFmaLiMedDevCfgEntry 3 }
+
+docsFmaLiMedDevCfgDestPort  OBJECT-TYPE
+    SYNTAX      InetPortNumber
+    MAX-ACCESS  read-create
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute is the port number on the Mediation Device's network
+         interface to which to direct intercepted traffic."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         MediationDeviceCfg::DestinationPort"
+    ::= { docsFmaLiMedDevCfgEntry 4 }
+
+docsFmaLiMedDevCfgIapSourceAddrType OBJECT-TYPE
+    SYNTAX      InetAddressType 
+    MAX-ACCESS  read-only
+    STATUS      current 
+    DESCRIPTION 
+        "This indicates whether the IP address
+         provided in the MedDevCfgSourceAddress  
+         is IPv4 or IPv6."
+    ::= { docsFmaLiMedDevCfgEntry 5 }
+
+docsFmaLiMedDevCfgIapSourceAddress OBJECT-TYPE
+    SYNTAX      InetAddress
+    MAX-ACCESS  read-only
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute is the IP address of the MAC-NE that will be sending 
+         the intercepted packet stream to the configured Mediation Device. 
+         This value is auto-populated by the MAC Manager once the correct MAC-NE 
+         has been determined.  The IapSourceAddress and DestAddress
+         must be of the same IP address family (IPv4 or IPv6)."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         MediationDeviceCfg::IapSourceAddress"
+    ::= { docsFmaLiMedDevCfgEntry 6 }
+
+docsFmaLiMedDevCfgDscp  OBJECT-TYPE
+    SYNTAX      DscpOrAny
+    MAX-ACCESS  read-create
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute is the Differentiated Services Code Point (DSCP) the intercepting 
+         device applies to the IP packets encapsulating the intercepted traffic. 
+         This attribute is optional and may not be specified by the Mediation Device."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         MediationDeviceCfg::Dscp"
+    ::= { docsFmaLiMedDevCfgEntry 7 }
+
+docsFmaLiMedDevCfgVlanId  OBJECT-TYPE
+    SYNTAX      Unsigned32  (1..4094)
+    MAX-ACCESS  read-create
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute allows for the configuration of an optional VLAN ID to
+         be associated with the intercepted packet stream traffic exiting 
+         the MAC-NE toward the Mediation Device.  
+
+         This attribute refers to the Q-TAG value in the L2 header of the 
+         intercepted packet stream."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         MediationDeviceCfg::VlanId"
+    ::= { docsFmaLiMedDevCfgEntry 8 }
+
+docsFmaLiMedDevCfgTimeout   OBJECT-TYPE
+    SYNTAX      DateAndTime
+    MAX-ACCESS  read-create
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute is the time from the point in which the Tap was provisioned
+         after which the MedDevCfg table row, and all related TapStreamCfg 
+         table rows should be automatically removed, and the intercept function
+         should cease. Since the initiating MAC Manager may be the only device able
+         to manage a specific intercept or know of its existence, this acts as a
+         fail-safe for the failure or removal of the MAC Manager."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         MediationDeviceCfg::Timeout"
+    ::= { docsFmaLiMedDevCfgEntry 9 }
+
+docsFmaLiMedDevCfgTransport  OBJECT-TYPE
+    SYNTAX       INTEGER {
+          udp(1), 
+          rtpNack(2), 
+          tcp(3), 
+          sctp(4), 
+          rtp(5)
+    }             
+    MAX-ACCESS  read-create
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute is the protocol used in transferring intercepted data to the
+         Mediation Device. The UDP protocol is the only mandated protocol
+         for the MAC NE."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         MediationDeviceCfg::Transport"
+    DEFVAL { udp }
+    ::= { docsFmaLiMedDevCfgEntry 10 }
+
+docsFmaLiMedDevCfgNotifEnabled  OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS  read-create
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute controls the generation of any notifications or 
+         informs by the MIB agent for the device. When this attribute is set
+         to 'true', the device will generate notifications or informs. 
+         When this attribute is set to 'false', the device will not generate
+         notifications or informs."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         MediationDeviceCfg::NotificationEnabled"
+    DEFVAL { false }
+    ::= { docsFmaLiMedDevCfgEntry 11 }
+
+docsFmaLiMedDevCfgStatus OBJECT-TYPE
+     SYNTAX      RowStatus
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "The status of this row in the table."
+     ::= { docsFmaLiMedDevCfgEntry 12 }
+
+-- ---------------------------------------------------------------------
+-- FMA Lawful Intercept Tap Stream Configuration
+-- ---------------------------------------------------------------------
+docsFmaLiTapStreamCfgTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsFmaLiTapStreamCfgEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "The TapStreamCfg table is used to configure the list of traffic streams
+         to be intercepted. The TapStreamCfg table has two keys, the ContentId
+         and an Index. Each stream has an associated Type to identify the packets
+         to be intercepted. If the attribute Type is configured as 'ip', the associated
+         filters are located in the TapIpInterceptCfg object.  When the Type attribute
+         is configured as 'mac', the associated parameters are located in the 
+         Tap802InterceptCfg table.
+          
+        Note that when provisioning a Tap, the Mediation Device needs to make sure there
+        is only one filter created with a given index.
+          
+        The MAC Manager must support creation and deletion of multiple rows in
+        the TapStreamCfg table."
+    ::= { docsFmaLiConfigObjects 2 }
+
+docsFmaLiTapStreamCfgEntry OBJECT-TYPE
+    SYNTAX     DocsFmaLiTapStreamCfgEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsFmaLiTapStreamCfgTable"
+    INDEX {  docsFmaLiMedDevCfgContentId,
+             docsFmaLiTapStreamCfgIndex }
+    ::= { docsFmaLiTapStreamCfgTable 1 }
+
+
+DocsFmaLiTapStreamCfgEntry ::= SEQUENCE
+       {
+        docsFmaLiTapStreamCfgIndex                  Unsigned32,
+        docsFmaLiTapStreamCfgType                   INTEGER,
+        docsFmaLiTapStreamCfgInterceptEnabled       TruthValue,
+        docsFmaLiTapStreamCfgTargetMacAddress       MacAddress,
+        docsFmaLiTapStreamCfgStatus                 RowStatus
+       }
+
+docsFmaLiTapStreamCfgIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..65535) 
+    MAX-ACCESS  not-accessible 
+    STATUS      current 
+    DESCRIPTION 
+        "This key attribute configures the index of the stream itself."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapStreamCfg::Index"
+    ::= { docsFmaLiTapStreamCfgEntry 1 }
+
+docsFmaLiTapStreamCfgType  OBJECT-TYPE
+    SYNTAX       INTEGER {
+          ip(1),
+          mac(2)
+    }             
+    MAX-ACCESS  read-create
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute configures the type of intercept filter associated to
+         this generic stream. The following types of streams are supported:
+
+         ip - The specific filter is defined using IP and TCP/UDP port values. 
+         The exact filter is a row in the TapIpInterceptCfg table. 
+
+         mac - The specific filter criteria is defined using mac (L2) layer values.
+         The exact filter is a row in the Tap802InterceptCfg table. "
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapStreamCfg::Type"
+    ::= { docsFmaLiTapStreamCfgEntry 2 }
+
+docsFmaLiTapStreamCfgInterceptEnabled   OBJECT-TYPE
+    SYNTAX      TruthValue 
+    MAX-ACCESS  read-create
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute configures whether the MAC Manager intercepts matching 
+         traffic. If this column in the table is set to 'true', the tap should 
+         intercept matching traffic. The value for this column should be set to
+         'true' only after an additional filter specification 
+         (rows in the TapIpInterceptCfg table or Tap802InterceptCfg table) 
+         have been created."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapStreamCfg::InterceptEnabled"
+    DEFVAL { false }
+    ::= { docsFmaLiTapStreamCfgEntry 3 }
+
+docsFmaLiTapStreamCfgTargetMacAddress  OBJECT-TYPE
+    SYNTAX      MacAddress 
+    MAX-ACCESS  read-create
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute configures the MAC address of the device to be intercepted.
+          
+         If the TargetMacAddress identifies a cable modem and the Type is configured 
+         for 'ip', rules for this intercept will be found in the TapIpInterceptCfg
+         table. For intercepts that are designed for 'all IP traffic behind the 
+         TagetMacAddress', the TapIpInterceptCfg rule can use wildcarded addresses
+         for the SourceAddress and DestinationAddress attributes. If traffic to or from
+         a specific CPE IP address is to be intercepted, these IP addresses can be 
+         configured in the SourceAddress and DestinationAddress attributes. 
+
+         If the TargetMacAddress identifies a cable modem and the Type attribute is
+         configured for 'mac', rules for this intercept will be found in the 
+         Tap802InterceptCfg table. For intercepts that are designed for 'all traffic 
+         behind the TargetMacAddress', the Tap802InterceptCfg rule can use wildcarded 
+         addresses for the SourceAddress and DestinationAddress attributes. 
+         If traffic to or from a specific CPE IP address is to be intercepted, 
+         these MAC addresses can be configured in the SourceAddress and DestinationAddress 
+         attributes.
+
+         If the TargetMacAddress identifies a CPE device and the Type attribute is configured
+         for 'ip', rules for this intercept will be found in the TapIpInterceptCfg table. 
+         For intercepts that are designed for 'all IP traffic for this CPE device', 
+         the TapIpInterceptCfg rule can use wildcarded addresses for the SourceAddress
+         and DestinationAddress attributes.
+           
+         If the TargetMacAddress identifies a CPE device and the Type attribute is configured
+         for 'mac', rules for this intercept will be found in the Tap802InterceptCfg table. 
+         For intercepts that are designed for 'all IP traffic behind the TargetMacAddress', 
+         the Tap802InterceptCfg rule can use wildcarded addresses for the SourceAddress
+         and DestinationAddress attributes."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapStreamCfg::TargetMacAddress"
+    DEFVAL { '000000000000'H }
+    ::= { docsFmaLiTapStreamCfgEntry 4 }
+
+docsFmaLiTapStreamCfgStatus OBJECT-TYPE
+     SYNTAX      RowStatus
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "The status of this row in the table."
+     ::= { docsFmaLiTapStreamCfgEntry 5 }
+
+-- ---------------------------------------------------------------------
+-- FMA Lawful Intercept Tap 802 Intercept Configuration
+-- ---------------------------------------------------------------------
+docsFmaLiTap802InterceptCfgTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsFmaLiTap802InterceptCfgEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table configures the Layer2 parameters related to a specific stream that
+         are sent to a specific Mediation Device as defined by the Content Identifier.
+         This table is only created when the TapStreamCfg:Type='mac'.
+           
+         If all traffic to or from a given MAC Address is to be intercepted, the 
+         DestinationAddress and the SourceAddress can be left as the default values.  
+           
+         Each Tap802InterceptCfg row has as a key the ContentId and Index of a TapStreamCfg 
+         table, and a simple index to allow multiple Tap802Intercept filter definitions to be
+         configured for a single row in the TapStreamCfg table.
+         The MAC Manager must support creation and deletion of rows in the 
+         Tap802InterceptCfg table."
+    ::= { docsFmaLiConfigObjects 3 }
+
+
+docsFmaLiTap802InterceptCfgEntry OBJECT-TYPE
+    SYNTAX     DocsFmaLiTap802InterceptCfgEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsFmaLiTap802InterceptCfgTable"
+    INDEX {  docsFmaLiMedDevCfgContentId,
+             docsFmaLiTapStreamCfgIndex,
+             docsFmaLiTap802InterceptCfgIndex }
+    ::= { docsFmaLiTap802InterceptCfgTable 1 }
+
+
+DocsFmaLiTap802InterceptCfgEntry ::= SEQUENCE
+       {
+        docsFmaLiTap802InterceptCfgIndex            Unsigned32,
+        docsFmaLiTap802InterceptCfgDestAddress      MacAddress,
+        docsFmaLiTap802InterceptCfgSourceAddress    MacAddress,
+        docsFmaLiTap802InterceptCfgEthernetPid      Unsigned32,
+        docsFmaLiTap802InterceptCfgDestLlcSap       Unsigned32,
+        docsFmaLiTap802InterceptCfgSourceLlcSap     Unsigned32,
+        docsFmaLiTap802InterceptCfgStatus           RowStatus
+       }
+
+docsFmaLiTap802InterceptCfgIndex OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..65535) 
+    MAX-ACCESS  not-accessible 
+    STATUS      current 
+    DESCRIPTION 
+        "This key attribute allows for multiple Layer 2 (MAC) filter 
+         definitions to be defined for a specific row in the TapStreamCfg 
+         table."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         Tap802InterceptCfg::Index"
+    ::= { docsFmaLiTap802InterceptCfgEntry 1 }
+
+docsFmaLiTap802InterceptCfgDestAddress OBJECT-TYPE
+     SYNTAX      MacAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the Destination MAC address
+         used in packet selection."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         Tap802InterceptCfg::DestinationAddress"
+    DEFVAL { '000000000000'H }
+     ::= { docsFmaLiTap802InterceptCfgEntry 2 }
+    
+docsFmaLiTap802InterceptCfgSourceAddress OBJECT-TYPE
+     SYNTAX      MacAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the Source MAC address
+         used in packet selection."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         Tap802InterceptCfg::SourceAddress"
+    DEFVAL { '000000000000'H }
+     ::= { docsFmaLiTap802InterceptCfgEntry 3 }
+
+docsFmaLiTap802InterceptCfgEthernetPid OBJECT-TYPE
+     SYNTAX      Unsigned32  (1..65535)
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the value of the 
+         Ethernet Protocol Identifier, which may be found
+         on Ethernet traffic or IEEE 802.2 SNAP traffic. 
+         The value of this attribute is the integer equivalent
+         to the hexadecimal value in the Ethernet header.  
+           
+         For instance, when IPv4 traffic is desired, the value
+         of this attribute will be 2048 which is equivalent to 
+         the hex value 0x0800."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         Tap802InterceptCfg::EthernetPid"
+     ::= { docsFmaLiTap802InterceptCfgEntry 4 }
+    
+docsFmaLiTap802InterceptCfgDestLlcSap  OBJECT-TYPE
+     SYNTAX      Unsigned32  (0..65535)
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This optional attribute configures the value of the IEEE
+         802.2 Destination SAP."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         Tap802InterceptCfg::DestinationLlcSap"
+     ::= { docsFmaLiTap802InterceptCfgEntry 5 }
+
+docsFmaLiTap802InterceptCfgSourceLlcSap  OBJECT-TYPE
+     SYNTAX      Unsigned32  (0..65535)
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This optional attribute configures the value of the IEEE
+         802.2 Source SAP."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         Tap802InterceptCfg::SourceLlcSap"
+     ::= { docsFmaLiTap802InterceptCfgEntry 6 }
+
+docsFmaLiTap802InterceptCfgStatus  OBJECT-TYPE
+     SYNTAX      RowStatus
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "The status of this row in the table."
+     ::= { docsFmaLiTap802InterceptCfgEntry 7 }
+
+-- ---------------------------------------------------------------------
+-- FMA Lawful Intercept Tap IP Intercept Configuration
+-- ---------------------------------------------------------------------
+docsFmaLiTapIpInterceptCfgTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsFmaLiTapIpInterceptCfgEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table configures the IP Layer 3 and Layer 4 filter criteria related to
+         a specific stream that is sent to a specific Mediation Device as
+         defined by the Content Identifier. A row in this table is only created when 
+         the TapStreamCfg::Type='ip'.  
+         
+         If all traffic to or from a given IP Address is to be intercepted,
+         one would configure two such entries listing the IP Address as source and destination 
+         respectively, and wildcard everything else. 
+
+         If a particular voice call is to be intercepted, one would extract the destination 
+         IP address, the source IP Address, the protocol (UDP), and the source and destination
+         ports from the call control exchange.
+
+         The MAC Manager must support creation and deletion of rows in the TapIpInterceptCfg table."
+    ::= { docsFmaLiConfigObjects 4 }
+
+docsFmaLiTapIpInterceptCfgEntry OBJECT-TYPE
+    SYNTAX     DocsFmaLiTapIpInterceptCfgEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of docsFmaLiTapIpInterceptCfgTable"
+    INDEX {  docsFmaLiMedDevCfgContentId,
+             docsFmaLiTapStreamCfgIndex,
+             docsFmaLiTapIpInterceptCfgIndex  }
+    ::= { docsFmaLiTapIpInterceptCfgTable 1 }
+
+
+DocsFmaLiTapIpInterceptCfgEntry ::= SEQUENCE
+       {
+        docsFmaLiTapIpInterceptCfgIndex             Unsigned32,
+        docsFmaLiTapIpInterceptCfgDestAddrType      InetAddressType,
+        docsFmaLiTapIpInterceptCfgDestAddress       InetAddress,
+        docsFmaLiTapIpInterceptCfgDestLength        InetAddressPrefixLength,
+        docsFmaLiTapIpInterceptCfgSourceAddrType    InetAddressType,
+        docsFmaLiTapIpInterceptCfgSourceAddress     InetAddress,
+        docsFmaLiTapIpInterceptCfgSourceLength      InetAddressPrefixLength,
+        docsFmaLiTapIpInterceptCfgTosByte           Unsigned32,
+        docsFmaLiTapIpInterceptCfgTosByteMask       Unsigned32,
+        docsFmaLiTapIpInterceptCfgFlowId            IPv6FlowLabelOrAny,
+        docsFmaLiTapIpInterceptCfgProtocol          Integer32,
+        docsFmaLiTapIpInterceptCfgDestL4PortMin     InetPortNumber,
+        docsFmaLiTapIpInterceptCfgDestL4PortMax     InetPortNumber,
+        docsFmaLiTapIpInterceptCfgSourceL4PortMin   InetPortNumber,
+        docsFmaLiTapIpInterceptCfgSourceL4PortMax   InetPortNumber,
+        docsFmaLiTapIpInterceptCfgStatus            RowStatus
+       }
+
+docsFmaLiTapIpInterceptCfgIndex    OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..65535) 
+    MAX-ACCESS  not-accessible 
+    STATUS      current 
+    DESCRIPTION 
+        "This key attribute allows for multiple Layer 3 (IP)
+         filter definitions to be defined for a specific 
+         TapStreamCfg instance."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::Index"
+    ::= { docsFmaLiTapIpInterceptCfgEntry 1 }   
+
+docsFmaLiTapIpInterceptCfgDestAddrType  OBJECT-TYPE
+     SYNTAX      InetAddressType
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This indicates whether the IP address
+         provided in the TapIpInterceptCfgDestAddr  
+         is IPv4 or IPv6."
+     ::= { docsFmaLiTapIpInterceptCfgEntry 2 }
+
+docsFmaLiTapIpInterceptCfgDestAddress  OBJECT-TYPE
+     SYNTAX      InetAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the Destination IP address
+         or prefix used in packet selection."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::DestinationAddress"
+    DEFVAL { '00000000'H }
+     ::= { docsFmaLiTapIpInterceptCfgEntry 3 }
+
+docsFmaLiTapIpInterceptCfgDestLength  OBJECT-TYPE
+     SYNTAX      InetAddressPrefixLength
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the length of the Destination IP Address
+         Prefix. A value of zero causes all addresses to match."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::DestinationLength"
+    DEFVAL { 0 }
+     ::= { docsFmaLiTapIpInterceptCfgEntry 4 }
+
+docsFmaLiTapIpInterceptCfgSourceAddrType  OBJECT-TYPE
+     SYNTAX      InetAddressType
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This indicates whether the IP address
+         provided in the TapIpInterceptCfgSourceAddr  
+         is IPv4 or IPv6."
+     ::= { docsFmaLiTapIpInterceptCfgEntry 5 }
+
+docsFmaLiTapIpInterceptCfgSourceAddress  OBJECT-TYPE
+     SYNTAX      InetAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the Source IP Address
+         or prefix used in packet selection."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::SourceAddress"
+    DEFVAL { '00000000'H }
+     ::= { docsFmaLiTapIpInterceptCfgEntry 6 }
+
+docsFmaLiTapIpInterceptCfgSourceLength  OBJECT-TYPE
+     SYNTAX      InetAddressPrefixLength
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the length of the Source IP Address
+         Prefix. A value of zero causes all addresses to match."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::SourceLength"
+    DEFVAL { 0 }
+     ::= { docsFmaLiTapIpInterceptCfgEntry 7 }
+
+docsFmaLiTapIpInterceptCfgTosByte  OBJECT-TYPE
+     SYNTAX      Unsigned32  (0..255)
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the value of the TOS byte, when masked 
+         with TosByteMask, of traffic to be intercepted. If TosByte&(~TosByteMask)!=0, 
+         configuration is rejected."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::TosByte"
+    DEFVAL { 0 }
+    ::= { docsFmaLiTapIpInterceptCfgEntry 8 }
+
+docsFmaLiTapIpInterceptCfgTosByteMask  OBJECT-TYPE
+     SYNTAX      Unsigned32  (0..255)
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the value of the TOS byte in an IPv4 or IPv6
+         header is ANDed with TosByteMask and compared with TosByte. If the
+         values are equal, the comparison is equal. If the mask is zero and 
+         the TosByte value is zero, the result is to always accept."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::TosByteMask"
+    DEFVAL { 0 }
+    ::= { docsFmaLiTapIpInterceptCfgEntry 9 }
+
+docsFmaLiTapIpInterceptCfgFlowId  OBJECT-TYPE
+     SYNTAX      IPv6FlowLabelOrAny 
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute provides configuration of the flow label (id) in the
+         IPv6 header. This attribute is optional.
+         The value -1 configures any value of FlowId."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::FlowId"
+    DEFVAL { -1 }
+    ::= { docsFmaLiTapIpInterceptCfgEntry 10 }
+
+docsFmaLiTapIpInterceptCfgProtocol OBJECT-TYPE
+     SYNTAX      Integer32 (-1|0..255) 
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the IP protocol 
+         to match against the IPv4 protocol number or 
+         the IPv6 Next-Header number in the packet.
+         The value -1 means 'any IP protocol'."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::Protocol"
+    DEFVAL { -1 }
+    ::= { docsFmaLiTapIpInterceptCfgEntry 11 }
+
+docsFmaLiTapIpInterceptCfgDestL4PortMin OBJECT-TYPE
+     SYNTAX      InetPortNumber
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the minimum value that the Layer-4 destination 
+        port number in the packet is required to have in order to match. The MAC Manager
+        MUST reject any attempt to set this attribute to a value that is not equal to or
+        less than the value specified for this entry in DestL4PortMax. If both 
+        DestL4PortMin and DestL4PortMax are at their default values, the port number
+        is effectively unused."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::DestinationL4PortMin"
+    DEFVAL { 0 }
+    ::= { docsFmaLiTapIpInterceptCfgEntry 12 }
+
+docsFmaLiTapIpInterceptCfgDestL4PortMax OBJECT-TYPE
+     SYNTAX      InetPortNumber
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the maximum value that the Layer-4 destination 
+        port number in the packet is required to have in order to match. The MAC Manager
+        MUST reject any attempt to set this attribute to a value that is not equal to or
+        greater than the value specified for this entry in DestL4PortMin. If both 
+        DestL4PortMin and DestL4PortMax are at their default values, the port number
+        is effectively unused."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::DestinationL4PortMax"
+    DEFVAL { 65535 }
+    ::= { docsFmaLiTapIpInterceptCfgEntry 13 }
+
+docsFmaLiTapIpInterceptCfgSourceL4PortMin OBJECT-TYPE
+     SYNTAX      InetPortNumber
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the minimum value that the Layer-4 source 
+        port number in the packet is required to have in order to match. The MAC Manager
+        MUST reject any attempt to set this attribute to a value that is not equal to or
+        less than the value specified for this entry in SourceL4PortMax. If both 
+        SourceL4PortMin and SourceL4PortMax are at their default values, the port number
+        is effectively unused."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::SourceL4PortMin"
+    DEFVAL { 0 }
+    ::= { docsFmaLiTapIpInterceptCfgEntry 14 }
+
+docsFmaLiTapIpInterceptCfgSourceL4PortMax OBJECT-TYPE
+     SYNTAX      InetPortNumber
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the maximum value that the Layer-4 source 
+        port number in the packet is required to have in order to match. The MAC Manager
+        MUST reject any attempt to set this attribute to a value that is not equal to or
+        greater than the value specified for this entry in SourceL4PortMin. If both 
+        SourceL4PortMin and SourceL4PortMax are at their default values, the port number
+        is effectively unused."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapIpInterceptCfg::SourceL4PortMax"
+    DEFVAL { 65535 }
+    ::= { docsFmaLiTapIpInterceptCfgEntry 15 }
+
+docsFmaLiTapIpInterceptCfgStatus  OBJECT-TYPE
+     SYNTAX      RowStatus
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "The status of this row in the table."
+     ::= { docsFmaLiTapIpInterceptCfgEntry 16 }                  
+        
+-- ---------------------------------------------------------------------
+--  FMA Lawful Intercept Status Objects
+-- ---------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------
+-- FMA Lawful Intercept Tap Stream Stats
+-- ---------------------------------------------------------------------
+docsFmaLiTapStreamStatsTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsFmaLiTapStreamStatsEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table provides basic statistics in terms of counts of 
+         intercepted packets and intercepted packets that have been 
+         dropped by the MAC NE for the traffic streams.
+           
+         The first index into this table, the ContentId, comes from 
+         the MediationDeviceCfg table, and indicates to which 
+         Mediation Device the intercepted traffic will be diverted. 
+           
+         The second index, the Index, comes from the TapStreamCfg table,
+         and provides the association between the TapStream and this 
+         set of statistics."
+    ::= { docsFmaLiStatusObjects 1 }
+
+
+docsFmaLiTapStreamStatsEntry OBJECT-TYPE
+    SYNTAX     DocsFmaLiTapStreamStatsEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of the docsFmaLiTapStreamStatsTable"
+    INDEX { docsFmaLiMedDevCfgContentId, 
+            docsFmaLiTapStreamCfgIndex }
+    ::= { docsFmaLiTapStreamStatsTable 1 }
+
+
+DocsFmaLiTapStreamStatsEntry ::= SEQUENCE
+       {
+       docsFmaLiTapStreamStatsInterceptedPkts          Counter64,
+       docsFmaLiTapStreamStatsInterceptedDroppedPkts   Counter64
+       }
+
+        
+docsFmaLiTapStreamStatsInterceptedPkts  OBJECT-TYPE
+    SYNTAX      Counter64 
+    MAX-ACCESS  read-only
+    STATUS      current 
+    DESCRIPTION 
+        "The number of packets matching this data stream specification
+         that have been intercepted."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapStreamStats::InterceptedPackets"
+    ::= { docsFmaLiTapStreamStatsEntry 1 }
+
+docsFmaLiTapStreamStatsInterceptedDroppedPkts  OBJECT-TYPE
+    SYNTAX      Counter64 
+    MAX-ACCESS  read-only
+    STATUS      current 
+    DESCRIPTION 
+        "The number of packets matching this data stream specification
+         that, having been intercepted, were dropped in the lawful 
+         intercept process."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapStreamStats::InterceptedDroppedPackets"    
+    ::= { docsFmaLiTapStreamStatsEntry 2 }
+
+-- ---------------------------------------------------------------------
+-- FMA Lawful Intercept Tap Debug
+-- ---------------------------------------------------------------------
+docsFmaLiTapDebugTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF DocsFmaLiTapDebugEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+        "This table provides access to Lawful Intercept debug messages
+         generated by the MAC NE. A row in this table contains a debug message
+         which is created when either a Mediation Device or an intercept stream
+         created by a Mediation Device has an error. The Mediation device is identified
+         by the ContentId, which comes from the MediationDevCfg table, and the          
+         The TapStreamCfgIndex provides the needed linkage back to the TapStreamCfg table 
+         entry that is in error.      
+         This table can also be used to map an error code to a text message for
+         further information.      
+                   
+         Note that the TapStreamCfgIndex may not be present, in which case the debug 
+         message is regarding a mediation device.
+           
+         Rows are created in this table when a debug message has been generated by the MAC-NE
+         related to a specific Tap."
+    ::= { docsFmaLiStatusObjects 2 }
+
+
+docsFmaLiTapDebugEntry OBJECT-TYPE
+    SYNTAX     DocsFmaLiTapDebugEntry
+    MAX-ACCESS not-accessible
+    STATUS     current
+    DESCRIPTION
+        "The conceptual row of the docsFmaLiTapDebugTable."
+    INDEX { docsFmaLiMedDevCfgContentId, 
+            docsFmaLiTapStreamCfgIndex,
+            docsFmaLiTapDebugIndex }
+    ::= { docsFmaLiTapDebugTable 1 }
+
+
+DocsFmaLiTapDebugEntry ::= SEQUENCE
+       {
+       docsFmaLiTapDebugIndex              Unsigned32,
+       docsFmaLiTapDebugMessage            SnmpAdminString
+       }
+
+      
+docsFmaLiTapDebugIndex   OBJECT-TYPE
+    SYNTAX      Unsigned32  (1..65535)
+    MAX-ACCESS  not-accessible
+    STATUS      current 
+    DESCRIPTION 
+        "This key attribute is a simple index used in cases where
+         there are multiple errors that are reported for a single 
+         TapStream."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapDebug::Index"
+    ::= { docsFmaLiTapDebugEntry 1 }
+
+docsFmaLiTapDebugMessage   OBJECT-TYPE
+    SYNTAX      SnmpAdminString 
+    MAX-ACCESS  read-only 
+    STATUS      current 
+    DESCRIPTION 
+        "This attribute is a text string containing the debug message
+         about the referenced tap that was generated by the MAC-NE. The
+         format and content of this string are vendor specific."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         TapDebug::Message"
+    ::= { docsFmaLiTapDebugEntry 2 }
+     
+-- ---------------------------------------------------------------------
+-- FMA Lawful Intercept Capabilities
+-- 
+-- The Mediation Device that is establishing Lawful Intercept taps needs
+-- to have access to information relating to the capabilities of the MAC Manager
+-- to configure specific tap parameters.  The two scalars MediationDeviceCapab and 
+-- StreamCapab are implemented on the MAC Manager to allow the Mediation Device 
+-- to see what parameters can be provisioned. Note that an individual parameter 
+-- may be unsupported on a MAC-NE in which case, an error is generated.
+--
+-- ---------------------------------------------------------------------
+
+docsFmaLiMedDevCapab OBJECT-TYPE
+    SYNTAX      BITS {
+                      ipv4SrcInterface(0),
+                      ipv6SrcInterface(1),
+                      udp(2),
+                      rtpNak(3),
+                      tcp(4),
+                      sctp(5),
+                      rtp(6)
+                     }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION 
+        "This attribute reports the MAC Manager's capabilities with 
+           respect to certain fields in MediationDeviceCfg that can be 
+           configured for a TAP. It is possible that a specific MAC-NE
+           will not support a specific value. When the MAC Manager determines
+           that the Mediation Device has configured a value for a 
+           MediationDeviceCfg object that is unsupported by the MAC-NE,
+           the MAC Manager MUST send the Mediation Device Config Error
+           event with the EventId 70080302. 
+           
+         The supported bit positions are defined below:
+           
+           ipv4SrcInterface(0)- Asserting this bit means that docsFmaLiMedDevCfgIapSourceAddress
+           can be an IPv4 address configured on the intercepting device which will transmit 
+           intercepted data to an IPv4 address Mediation Device.
+           
+         ipv6SrcInterface(1)- Asserting this bit means that docsFmaLiMedDevCfgIapSourceAddress 
+           can be an IPv6 address configured on the intercepting device which will transmit 
+           intercepted data to an IPv6 address Mediation Device.
+           
+         udp(2)- UDP can be configured as the transport protocol (denoted by docsFmaLiMedDevCfgTransport)
+           for transferring intercepted data to the Mediation Device. This is the only supported value in FMA.
+           
+         rtpNak(3)- This bit is defaulted to off to indicate that RTP with Nack transport 
+           is unsupported in FMA.
+           
+         tcp(4)- This bit is defaulted to off to indicate that TCP transport is unsupported in FMA.
+           
+         sctp(5)- This bit is defaulted to off to indicate that SCTP transport is unsupported in FMA.
+           
+         rtp(6)- This bit is defaulted to off to indicate that RTP transport is unsupported in FMA."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         LawfulInterceptCapabilities::MediationDeviceCapab"
+    ::= { docsFmaLiStatusObjects 3 }
+
+docsFmaLiStreamCapab OBJECT-TYPE
+    SYNTAX      BITS {
+                      tapEnable(0),
+                      interface(1),
+                      ipv4(2),
+                      ipv6(3),
+                      l4Port(4),
+                      tos(5),
+                      dstMacAddr(6),
+                      srcMacAddr(7),
+                      ethernetPid(8),
+                      dstLlcSap(9),
+                      srcLlcSap(10)  
+                     }
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION 
+        "This attribute reports the supported Lawful Intercept Stream 
+           parameters that can be configured on the MAC Manager.  
+           The inclusion of a specific parameter in the list below 
+           does not mean that a MAC-NE can support a specific parameter 
+           being configured. When the MAC Manager determines that the 
+           Mediation Device has configured any parameters related to 
+           a row of the TapStreamCfg table that are unsupported by the MAC-NE,
+           the MAC Manager MUST send the Stream Configuration Error event 
+           with the EventId 70080303. 
+           
+         The supported bit positions are defined below:
+           
+           tapEnable(0)- This value indicates that a row in the TapStreamCfg table can be enabled via 
+           TapStreamCfgInterceptEnabled attribute.
+           
+         interface(1)- This value is unsupported in FMA and defaulted to off. It is included for 
+           compatibility with existing deployments.
+           
+         ipv4(2)-  IPv4 Address or prefix may be configured to select traffic to be intercepted.
+           
+         ipv6(3)-  IPv6Address or prefix may be configured to select traffic to be intercepted.
+           
+         l4Port(4)- TCP/UDP Ports may be configured to select traffic to be intercepted.
+           
+         tos(5)-  ToS values may be configured to select traffic to be intercepted.
+           
+         dstMacAddr(6)- Destination MAC Address may be configured to select traffic to be intercepted.
+           
+         srcMacAddr(7)- Source MAC Address may be configured to select traffic to be intercepted.
+           
+         ethernetPid(8)- Ethernet Protocol Identifier may be configured to select traffic to be intercepted.
+           
+         dstLlcSap(9)- IEEE 802.2 Destination LLC SAP is optional in FMA. This bit value is defaulted to off.
+           
+         srcLlcSap(10)- IEEE 802.2 Source LLC SAP is optional in FMA. This bit value is defaulted to off."
+    REFERENCE 
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         LawfulInterceptCapabilities::StreamCapab"
+    ::= { docsFmaLiStatusObjects 4 }
+	
+-- ---------------------------------------------------------------------
+-- Notification Objects
+-- ---------------------------------------------------------------------
+-- ---------------------------------------------------------
+-- Lawful Intercept Notifications
+-- ---------------------------------------------------------
+	
+docsFmaLiEventNotif NOTIFICATION-TYPE
+    OBJECTS {
+        docsDevEvLevel,
+        docsDevEvId,
+        docsDevEvText,
+        docsDevEvLastTime,
+        sysName
+    }
+    STATUS current
+    DESCRIPTION
+        "A notification to report a Lawful Intercept event sent from the MAC Manager
+         to a provisioned notification receiver. It represents an implementation of the
+		 DOCSIS event notification specified in the CCAP Fault Management Information Model
+		 [CCAP-OSSIv4.0], specific for Lawful Intercept event definitions. The Lawful Intercept
+		 event notification attributes mirror those of the DOCSIS event notification.
+		 
+         This notification includes the following information:
+         - docsDevEvLevel: the DOCSIS priority level associated with
+           the event.
+         - docsDevEvId: the numeric identifier of the event.
+         - docsDevEvText: The text description of the event.
+         - docsDevEvLastTime: The local date and time when this event
+           was generated.
+         - sysName: the administratively-assigned name of the MAC-NE or PAG.
+           e.g., The fully-qualified domain name as indicated in RFC 3418
+           or in the absence the IP address of the CMTS administrative
+           interface in dot '.' notation for IPv4 and colon ':' notation
+           for and IPv6 Address as indicated in  RFC 3164"
+     REFERENCE
+        "Information Model Mapping: CM-SP-FMA-OSSI 
+         LawfulInterceptEventNotif"
+    ::= { docsFmaLiNotifications 1 }
+        
+-- ---------------------------------------------------------
+-- Conformance definitions 
+-- ---------------------------------------------------------
+
+docsFmaLiCompliance MODULE-COMPLIANCE 
+     STATUS current 
+     DESCRIPTION 
+         "The compliance statement for FMA Lawful Intercept."
+
+
+MODULE --  docsFmaLiMib
+
+MANDATORY-GROUPS {
+     docsFmaLiStatusGroup,
+     docsFmaLiConfigGroup,
+     docsFmaLiNotificationGroup
+     }
+          
+::= { docsFmaLiCompliances 1}
+
+docsFmaLiConfigGroup OBJECT-GROUP
+        OBJECTS {
+                docsFmaLiMedDevCfgDestAddrType,
+                docsFmaLiMedDevCfgDestAddress,
+                docsFmaLiMedDevCfgDestPort,
+                docsFmaLiMedDevCfgIapSourceAddrType,
+                docsFmaLiMedDevCfgIapSourceAddress,
+                docsFmaLiMedDevCfgDscp,
+                docsFmaLiMedDevCfgVlanId,
+                docsFmaLiMedDevCfgTimeout,
+                docsFmaLiMedDevCfgTransport,
+                docsFmaLiMedDevCfgNotifEnabled,
+                docsFmaLiMedDevCfgStatus,
+
+                docsFmaLiTapStreamCfgType,
+                docsFmaLiTapStreamCfgInterceptEnabled,
+                docsFmaLiTapStreamCfgTargetMacAddress,
+                docsFmaLiTapStreamCfgStatus, 
+
+                docsFmaLiTap802InterceptCfgDestAddress,
+                docsFmaLiTap802InterceptCfgSourceAddress,
+                docsFmaLiTap802InterceptCfgEthernetPid,
+                docsFmaLiTap802InterceptCfgDestLlcSap,
+                docsFmaLiTap802InterceptCfgSourceLlcSap,
+                docsFmaLiTap802InterceptCfgStatus,
+
+                docsFmaLiTapIpInterceptCfgDestAddrType,
+                docsFmaLiTapIpInterceptCfgDestAddress,
+                docsFmaLiTapIpInterceptCfgDestLength,
+                docsFmaLiTapIpInterceptCfgSourceAddrType,
+                docsFmaLiTapIpInterceptCfgSourceAddress,
+                docsFmaLiTapIpInterceptCfgSourceLength,
+                docsFmaLiTapIpInterceptCfgTosByte,
+                docsFmaLiTapIpInterceptCfgTosByteMask,
+                docsFmaLiTapIpInterceptCfgFlowId,
+                docsFmaLiTapIpInterceptCfgProtocol,
+                docsFmaLiTapIpInterceptCfgDestL4PortMin,
+                docsFmaLiTapIpInterceptCfgDestL4PortMax,
+                docsFmaLiTapIpInterceptCfgSourceL4PortMin,
+                docsFmaLiTapIpInterceptCfgSourceL4PortMax,
+                docsFmaLiTapIpInterceptCfgStatus                
+                }
+    STATUS      current
+    DESCRIPTION
+        "Group of lawful intercept configuration tables"
+    ::= { docsFmaLiGroups 1 } 
+
+    docsFmaLiStatusGroup OBJECT-GROUP
+        OBJECTS {
+
+                docsFmaLiTapStreamStatsInterceptedPkts,
+                docsFmaLiTapStreamStatsInterceptedDroppedPkts,
+                
+                docsFmaLiTapDebugMessage,
+
+                docsFmaLiMedDevCapab,
+                docsFmaLiStreamCapab                          
+                }
+    STATUS      current
+    DESCRIPTION
+        "Group of lawful intercept status tables and scalars"
+    ::= { docsFmaLiGroups 2 } 
+
+    docsFmaLiNotificationGroup NOTIFICATION-GROUP
+        NOTIFICATIONS {
+            docsFmaLiEventNotif
+            }
+        STATUS    current
+        DESCRIPTION
+            "MAC Manager is required to support notifications in this group"
+    ::= { docsFmaLiGroups 3 }
+
+END

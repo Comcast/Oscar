@@ -1,0 +1,177 @@
+{
+  "CCAP-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/CCAP-MIB.mib",
+    "sha256": "ab6509353e2568303165a429ea790de266abfca0d45bb7f8719b9b9917e3b592",
+    "role": "docsis"
+  },
+  "CLAB-DEF-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/common/CLAB-DEF-MIB.mib",
+    "sha256": "cfe36ff5e2f77cc70fcb41acca29f1b92b89a58b1565caa70f0279d0f6f91449",
+    "role": "dependency"
+  },
+  "DOCS-BPI2EXT-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-BPI2EXT-MIB.mib",
+    "sha256": "20f5e69a0a0a50f0f1732d38b3e2b7ecafa3f3aceab85e3376fae515121e83b2",
+    "role": "docsis"
+  },
+  "DOCS-DIAG-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-DIAG-MIB.mib",
+    "sha256": "531072b6b52596692c204cb1a5dcfbbf218a78b86119202e749c828ef1b9db53",
+    "role": "docsis"
+  },
+  "DOCS-DRF-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-DRF-MIB.mib",
+    "sha256": "504d0a123582193366ae5812d4336802b210b292a1b7964099b3adf4531dc755",
+    "role": "docsis"
+  },
+  "DOCS-FDD-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-FDD-MIB.mib",
+    "sha256": "64ceb0dadb6fccb8da66e7c76055cdca780029fb2e3b2f57b5f0e4d71f44ba05",
+    "role": "docsis"
+  },
+  "DOCS-FDX-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-FDX-MIB.mib",
+    "sha256": "eaf60a9cfd569f73a224725056338c637413357cf07fce369aa3dbbad2a6be12",
+    "role": "docsis"
+  },
+  "DOCS-FMA-LI-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-FMA-LI-MIB.mib",
+    "sha256": "f17263548a8f75cf24b3e4996deb6b74f4ac8b6ba3052f661d84df678175e655",
+    "role": "docsis"
+  },
+  "DOCS-IF3-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-IF3-MIB.mib",
+    "sha256": "ef575f544a53618202c6f4a3742bcdf9e8e7485e343613d2b3ce357121009c58",
+    "role": "docsis"
+  },
+  "DOCS-IF31-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-IF31-MIB.mib",
+    "sha256": "9807d38e5554b061b73b85e878175c583b7707065d682cdee74d95c48b8a930f",
+    "role": "docsis"
+  },
+  "DOCS-IF40-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-IF40-MIB.mib",
+    "sha256": "58268ad5a91d00d211ce041100f4800a84bd41c4a2841d383e6dd12e2916f69c",
+    "role": "docsis"
+  },
+  "DOCS-IFEXT2-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-IFEXT2-MIB.mib",
+    "sha256": "e04dfa83db90e6f70cf967816e88e269c91d99bf818b772244186f71b3da4e69",
+    "role": "docsis"
+  },
+  "DOCS-L2VPN-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-L2VPN-MIB.mib",
+    "sha256": "5a678bd6f79079d6ad60c70112a9239ce55c8eff656cfecc0f7924878538ea86",
+    "role": "docsis"
+  },
+  "DOCS-LEAK-DETECT-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-LEAK-DETECT-MIB.mib",
+    "sha256": "6bb63e9f4a17bfa96712fea507c961a06f919199f10dc2796c8f5c3987c9405a",
+    "role": "docsis"
+  },
+  "DOCS-LOADBAL3-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-LOADBAL3-MIB.mib",
+    "sha256": "de007524adb65a3f523618d42400492ed38cc1cd46a1198dbfd2288e6fe6b46e",
+    "role": "docsis"
+  },
+  "DOCS-MCAST-AUTH-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-MCAST-AUTH-MIB.mib",
+    "sha256": "afbc7df5f7414d0071bb842a50cab0bc4dc2433f1cc4cb969e647ff89cfce362",
+    "role": "docsis"
+  },
+  "DOCS-MCAST-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-MCAST-MIB.mib",
+    "sha256": "646211a19208053dd3b1ff9440b3419e0da19ee56de4257620766a6f6e7444a2",
+    "role": "docsis"
+  },
+  "DOCS-PNM-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-PNM-MIB.mib",
+    "sha256": "0ae6a83466ec81a7a4b36e1d35bd7f70877e71f38fcdd4fb861a48a79715a604",
+    "role": "docsis"
+  },
+  "DOCS-QOS3-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-QOS3-MIB.mib",
+    "sha256": "28fe10c90dd671ab8415ed7b45c9af0c6cfc9a62c0c9a67c998fe6277c200d6d",
+    "role": "docsis"
+  },
+  "DOCS-RPHY-CTRL-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-RPHY-CTRL-MIB.mib",
+    "sha256": "3881566e759cf4139a6a076946373ebbfcb1cfb2962b601bf2ae0a3b063c20d1",
+    "role": "docsis"
+  },
+  "DOCS-RPHY-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-RPHY-MIB.mib",
+    "sha256": "46b994f12bb76fcd36a1f1bcf59fce09a6c1f7880ef18e9adc5ce1f87e11ff0b",
+    "role": "docsis"
+  },
+  "DOCS-RPHY-PTP-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-RPHY-PTP-MIB.mib",
+    "sha256": "fdf812af0a9d00621b6a90d2af861051d639b5e2ef6bc1b1f3c66603934f86fc",
+    "role": "docsis"
+  },
+  "DOCS-RPHY-SEC-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-RPHY-SEC-MIB.mib",
+    "sha256": "1e5b2a326ae50c9f28a9832e09f9fd19f2b3e6fc29ebb62f63c691190e128531",
+    "role": "docsis"
+  },
+  "DOCS-RPHY-STATS-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-RPHY-STATS-MIB.mib",
+    "sha256": "c1e713bcdaca78b28dd130cce3d81bd5f67b9db170b0832e95a3abeb48fe28dd",
+    "role": "docsis"
+  },
+  "DOCS-SEC-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-SEC-MIB.mib",
+    "sha256": "f7b9fc8866f9c391b8feda3b244d3afe7a86350e1d8a60cf9c3f644f513522a0",
+    "role": "docsis"
+  },
+  "DOCS-SUBMGT3-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DOCS-SUBMGT3-MIB.mib",
+    "sha256": "814b5949d4823eea233984d4e402a65d3e21743554cfab64d2645ddbb6520e5c",
+    "role": "docsis"
+  },
+  "DSG-IF-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DSG-IF-MIB.mib",
+    "sha256": "9013671326ecc1ad0b17a1fe2da95d0f8d11b82ca4a39d90e0b72409c723359c",
+    "role": "docsis"
+  },
+  "DSG-IF-STD-MIB.mib": {
+    "url": "https://mibs.cablelabs.com/MIBs/DOCSIS/DSG-IF-STD-MIB.mib",
+    "sha256": "6de4b461a01e8a761defe98272fa3fef5fbcb61a490c5db6e0de6bdd9f3c1317",
+    "role": "docsis"
+  },
+  "ENTITY-SENSOR-MIB.mib": {
+    "url": "https://raw.githubusercontent.com/PyPNMApps/PyPNM/82bbf79fe04a0b5e766dc3eb4d5ca2004008bca9/mibs/ENTITY-SENSOR-MIB-rfc3433.txt",
+    "sha256": "92daae87487a2be6f15d69f3e106b1f7947efc27064c3807289e3344bfa04a7c",
+    "role": "dependency"
+  },
+  "IANA-ENTITY-MIB.mib": {
+    "url": "https://raw.githubusercontent.com/PyPNMApps/PyPNM/82bbf79fe04a0b5e766dc3eb4d5ca2004008bca9/mibs/IANA-ENTITY-MIB.mib",
+    "sha256": "34bb43406e661f3ca852bc80861b75cf57fd463e2279d3dbded1900fee0ec12a",
+    "role": "dependency"
+  },
+  "RFC1271-MIB.mib": {
+    "url": "https://raw.githubusercontent.com/librenms/librenms/c42d6d3d82e5c4ef2a2452bf6655c61af57cba41/mibs/RFC1271-MIB",
+    "sha256": "ba04a5788aa04670e976d84d2e4ffc95b017bafdb10fee8646c57d97f0b2e483",
+    "role": "dependency"
+  },
+  "SCTE-HMS-HEADENDIDENT-TC-MIB.mib": {
+    "url": "https://raw.githubusercontent.com/PyPNMApps/PyPNM/82bbf79fe04a0b5e766dc3eb4d5ca2004008bca9/mibs/scte-hms-headendident-tc-071208-br.txt",
+    "sha256": "3c14bde2b9be3256ec36ecd264082d4fe7e7a3e7e19ddc4a9206500ed141a411",
+    "role": "dependency"
+  },
+  "SCTE-HMS-MPEG-MIB.mib": {
+    "url": "https://raw.githubusercontent.com/PyPNMApps/PyPNM/82bbf79fe04a0b5e766dc3eb4d5ca2004008bca9/mibs/scte-hms-mpeg-100308.txt",
+    "sha256": "254fb14f700201e07d9f65e65b9b039aa0a30d28f8364ec820363d3fc0e9ee34",
+    "role": "dependency"
+  },
+  "URI-TC-MIB.mib": {
+    "url": "https://raw.githubusercontent.com/PyPNMApps/PyPNM/82bbf79fe04a0b5e766dc3eb4d5ca2004008bca9/mibs/URI-TC-MIB-rfc5017.txt",
+    "sha256": "112fe91d3ee1a93840c68eaf1d1c5a6b93b79d4eeb7b390a6e4fd84d5ea12ee1",
+    "role": "dependency"
+  },
+  "UUID-TC-MIB.mib": {
+    "url": "https://raw.githubusercontent.com/PyPNMApps/PyPNM/82bbf79fe04a0b5e766dc3eb4d5ca2004008bca9/mibs/UUID-TC-MIB.txt",
+    "sha256": "7c30999e1e38066e5f909b19422c74b03d06f8110409c2fcd8b3d9faa5061e20",
+    "role": "dependency"
+  }
+}

@@ -1,0 +1,2264 @@
+DOCS-SEC-MIB DEFINITIONS ::= BEGIN
+  IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE,
+    Unsigned32,
+    Counter32
+             FROM SNMPv2-SMI          -- RFC 2578
+    TEXTUAL-CONVENTION,
+    TruthValue,
+    MacAddress,
+    RowStatus,
+    DateAndTime
+             FROM SNMPv2-TC           -- RFC 2579
+    OBJECT-GROUP,
+    MODULE-COMPLIANCE
+             FROM SNMPv2-CONF         -- RFC 2580
+    SnmpAdminString
+             FROM SNMP-FRAMEWORK-MIB  -- RFC 3411
+    SnmpTagList
+             FROM SNMP-TARGET-MIB     -- RFC 3411
+    InetAddressType,
+    InetAddress,
+    InetAddressPrefixLength
+             FROM INET-ADDRESS-MIB    -- RFC 4001
+    docsIf3CmtsCmRegStatusEntry,
+    docsIf3CmtsCmRegStatusId
+             FROM DOCS-IF3-MIB
+    clabProjDocsis
+             FROM CLAB-DEF-MIB
+   DocsX509ASN1DEREncodedCertificate,
+   docsBpi2CodeDownloadControl,
+   docsBpi2CmBaseEntry
+             FROM DOCS-IETF-BPI2-MIB;
+
+docsSecMib MODULE-IDENTITY
+     LAST-UPDATED    "202608060000Z" -- August 6, 2026
+     ORGANIZATION    "Cable Television Laboratories, Inc."
+     CONTACT-INFO
+         "
+         Postal: Cable Television Laboratories, Inc.
+         858 Coal Creek Circle
+         Louisville, Colorado 80027-9750
+         U.S.A.
+         Phone: +1 303-661-9100
+         Fax:   +1 303-661-9199
+         E-mail: mibs@cablelabs.com"
+     DESCRIPTION
+        "This MIB module contains the management objects for the
+        management of the security requirements in the DOCSIS
+        Security Specification.
+        Copyright 2006-2026 Cable Television Laboratories, Inc.
+        All rights reserved."  
+     REVISION    "202608060000Z" -- August 6, 2026
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-26.2444-1"
+     REVISION    "202606250000Z" -- June 25, 2026
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-26.2439-1" 
+     REVISION    "202604300000Z" -- April 30, 2026
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-26.2435-3"
+     REVISION    "202502200000Z" -- February 20, 2025
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-24.2394-1"
+     REVISION    "202407050000Z" -- July 5, 2024
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-24.2381-1"
+     REVISION    "202306010000Z" -- June 1, 2023
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-23.2309-1"
+     REVISION    "202203310000Z" -- March 31, 2022
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-22.2246-1"
+     REVISION    "202106170000Z" -- June 17, 2021
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-21.2172-1"
+     REVISION    "202102040000Z" -- February 4, 2021
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-21.2148-1"
+     REVISION    "202003190000Z" -- March 19, 2020
+     DESCRIPTION
+             "Modified per DOCS-SEC-MIB-N-20.2087-1"
+     REVISION    "201601130000Z" -- January 13, 2016
+     DESCRIPTION
+             "Modified per CM-OSSIv3.1-N-15.1393-6. 
+             Deprecate docsBpi2CodeUpdateCvcChain for DOCSIS 3.1 
+             that was added earlier ECN CM-OSSIv3.1-N-15.1243-1.  
+             3.1 PKI MIBs moved to DOCS-BPI2EXT-MIB"
+     REVISION    "201503260000Z" -- March 26, 2015
+     DESCRIPTION
+            "Revised Version includes ECN CM-OSSIv3.1-N-15.1243-1
+            and published as CM-OSSIv3.1-I03, to support
+            docsBpi2CodeUpdateCvcChain for DOCSIS 3.1."
+     REVISION    "201001150000Z" -- January 15, 2010
+     DESCRIPTION
+            "Revised Version includes ECN
+            OSSIv3.0-N-09.0872-4
+            and published as I11"
+     REVISION    "200905290000Z" -- May 29, 2009
+     DESCRIPTION
+            "Revised Version includes ECNs
+            OSSIv3.0-N-09.0773-1
+            OSSIv3.0-N-09.0775-3
+            OSSIv3.0-N-09.0777-2
+            and published as I09"
+     REVISION "200702230000Z" -- February 23, 2007
+     DESCRIPTION
+            "Revised Version includes ECN OSSIv3.0-N-06.0357-1
+            and published as IO2"
+     REVISION        "200612071700Z" -- December 7, 2006
+     DESCRIPTION
+        "Initial version, published as part of the CableLabs
+        OSSIv3.0 specification CM-SP-OSSIv3.0-I01-061207
+        Copyright 1999-2006 Cable Television Laboratories, Inc.
+        All rights reserved."
+     ::= {  clabProjDocsis 11}
+
+-- Textual Conventions
+DocsCvcCaCertificateChain ::= TEXTUAL-CONVENTION
+     DISPLAY-HINT "*"
+     STATUS      current
+     DESCRIPTION
+            "A degenerate PKCS7 signedData structure that contains the
+            CVC and the CVC CA certificate chain in the certificates
+            field."
+     SYNTAX      OCTET STRING (SIZE (0..8192))
+
+BpiPlusVer ::= TEXTUAL-CONVENTION
+    STATUS          current
+    DESCRIPTION
+       "Identifies the BPI+ version used by the CM for authentication.
+          'none' = BPI+ is not used by the CM
+          'v1'   = BPI+V1
+          'v2'   = BPI+V2"
+    SYNTAX      INTEGER {
+                         none(1),
+                         v1(2),
+                         v2(3)
+    }
+
+CmtsBpiVer ::= TEXTUAL-CONVENTION
+    STATUS          current
+    DESCRIPTION
+       "Bitmask indicating which BPI+ versions are enabled on the Cmts."
+    SYNTAX      BITS {
+                         v1(0),
+                         v2(1)
+    }
+
+CmAuthKeyEcCurve ::= TEXTUAL-CONVENTION
+    STATUS          current
+    DESCRIPTION
+       "Supported Elliptic-Curve Groups (ECDHE) 
+          'secp256r1' = also known as NIST P-256 curve
+          'secp384r1'  = also known as NIST P-384 curve
+          'secp521r1'= also known as NIST P-521 curve
+          'x25519' = curve25519 with Diffie-Hellman key agreement 
+          'x448' = curve448 with Diffie-Hellman key agreement"
+    SYNTAX      INTEGER {
+                         secp256r1(1),
+                         secp384r1(2),
+                         secp521r1(3),
+                         x25519(4),
+                         x448(5)
+    }
+
+CmtsDesignationType ::= TEXTUAL-CONVENTION
+    STATUS          current
+    DESCRIPTION
+       "CMTS Device Certificate Data Types 
+          'fingerprint' = this data type is the fingerprint of CMTS Device Certificate.
+          'cn' = this data type is the Common Name of CMTS Device Certificate.
+          'ou' = this data type is the Organizational Unit of CMTS Device Certificate.
+          'on' = this data type is the Organization Name of CMTS Device Certificate.
+          'serialNum' = this data type is the serial number of CMTS Device Certificate.
+          'caFingerprint' = this data type is the fingerprint of CMTS Device CA Certificate.
+          'caCN' = this data type is the Common Name of CMTS Device CA Certificate.
+          'caOU' = this data type is the Organizational Unit of CMTS Device CA Certificate.
+          'caON' = this data type is the Organization Name of CMTS Device CA Certificate.
+          'caSerialNum' = this data type is the serial number of CMTS Device CA Certificate."
+    SYNTAX      INTEGER {
+                         fingerprint(1),
+                         cn(2),
+                         ou(3),
+                         on(4),
+                         serialNum(5),
+                         caFingerprint(6),
+                         caCN(7),
+                         caOU(8),
+                         caON(9),
+                         caSerialNum(10)
+    }
+
+-- Object Definitions
+docsSecMibObjects  OBJECT IDENTIFIER ::= { docsSecMib 1 }
+
+docsSecCmtsServerCfg OBJECT IDENTIFIER ::= { docsSecMibObjects 1 }
+
+docsSecCmtsServerCfgTftpOptions OBJECT-TYPE
+     SYNTAX      BITS {
+                        hwAddr(0),
+                        netAddr(1)
+                      }
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute instructs the CMTS to insert the source
+        IP address and/or MAC address of received TFTP packets
+        into the TFTP option fields before forwarding
+        the packets to the Config File server.
+        This attribute is only applicable when the TftpProxyEnabled
+        attribute of the MdCfg object is 'true'."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsServerCfg::TftpOptions
+         DOCSIS 3.0 Operations Support System Interface
+         Specification CM-SP-OSSIv3.0-I01-061207,
+         MdCfg Object Section in the Media Access Control (MAC)
+         Requirements Annex."
+     DEFVAL { {  } }
+     ::= { docsSecCmtsServerCfg 1 }
+
+docsSecCmtsServerCfgConfigFileLearningEnable OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute enables and disables Configuration
+        File Learning functionality.
+        If this attribute is set to 'true' the CMTS will respond
+        with Authentication Failure in the REG-RSP message
+        when there is a mismatch between learned config file
+        parameters and REG-REQ parameters. If this attribute
+        is set to 'false', the CMTS will not execute config
+        file learning and mismatch check.
+        This attribute is only applicable when the TftpProxyEnabled
+        attribute of the MdCfg object is 'true'."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsServerCfg::ConfigFileLearningEnable
+         DOCSIS 3.0 Operations Support System Interface
+         Specification CM-SP-OSSIv3.0-I01-061207,
+         MdCfg Object Section in the Media Access Control (MAC)
+         Requirements Annex.
+         DOCSIS 3.0 Security Specification
+         CM-SP-SECv3.0-I01-060804, Secure Provisioning Section.
+         DOCSIS 3.0 MAC and Upper Layer Protocols Interface
+         Specification CM-SP-MULPIv3.0-I01-060804."
+     DEFVAL { true }
+     ::= { docsSecCmtsServerCfg 2 }
+
+docsSecCmtsEncrypt OBJECT IDENTIFIER ::= { docsSecMibObjects 2 }
+
+docsSecCmtsEncryptEncryptAlgPriority OBJECT-TYPE
+     SYNTAX      SnmpTagList
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute allows for configuration of a prioritized
+        list of encryption algorithms the CMTS will
+        use when selecting the primary SAID encryption algorithm
+        for a given CM. The CMTS selects the encryption algorithm
+        with the highest security level from this ordered list that
+        the CM and the CMTS supports. The support of AES-256 is
+        optional.
+        If the CMTS supports AES-256, by default, the following
+        encryption algorithms are listed: 
+          256-bit AES, 128-bit AES, 56-bit DES, 40-bit DES 
+        If the CMTS does not support AES-256, by default, the
+        following encryption algorithms are listed:
+          128-bit AES, 56-bit DES, 40-bit DES"
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsEncrypt::EncryptAlgPriority"
+     DEFVAL { "aes256CbcMode aes128CbcMode des56CbcMode des40CbcMode" }
+     ::= { docsSecCmtsEncrypt 1 }
+
+docsSecCmtsCmEaeExclusionTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsSecCmtsCmEaeExclusionEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This object defines a list of CMs or CM groups to exclude
+        from Early Authentication and Encryption (EAE).
+        This object allows overrides to the value of EAE Control
+        for individual CMs or group of CMs for purposes
+        such as debugging. The CMTS supports a minimum of
+        30 instances of the CmtsCmEaeExclusion object.
+        This object is only applicable when the EarlyAuthEncryptCtrl
+        attribute of the MdCfg object is enabled.
+
+        This object supports the creation and deletion of multiple
+        instances."
+     REFERENCE
+         "DOCSIS 3.0 Operations Support System Interface
+         Specification CM-SP-OSSIv3.0-I01-061207,
+         MdCfg Object Section in the Media Access Control (MAC)
+         Requirements Annex.
+         DOCSIS 3.0 Security Specification
+         CM-SP-SECv3.0-I01-060804, Early Authentication And
+         Encryption (EAE) Section."
+     ::= { docsSecMibObjects 3}
+
+docsSecCmtsCmEaeExclusionEntry OBJECT-TYPE
+     SYNTAX      DocsSecCmtsCmEaeExclusionEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsSecCmtsCmEaeExclusion.
+          The CMTS persists all instances of CmtsCmEaeExclusion
+          across reinitializations."
+     INDEX { 
+             docsSecCmtsCmEaeExclusionId
+           }
+     ::= { docsSecCmtsCmEaeExclusionTable 1 }
+
+DocsSecCmtsCmEaeExclusionEntry ::= SEQUENCE {
+     docsSecCmtsCmEaeExclusionId
+                  Unsigned32,
+     docsSecCmtsCmEaeExclusionMacAddr
+                  MacAddress,
+     docsSecCmtsCmEaeExclusionMacAddrMask
+                  MacAddress,
+     docsSecCmtsCmEaeExclusionRowStatus
+                  RowStatus
+     }
+
+docsSecCmtsCmEaeExclusionId OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..4294967295)
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This key uniquely identifies the exclusion MAC address
+        rule."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsCmEaeExclusion::Id"
+     ::= { docsSecCmtsCmEaeExclusionEntry 1 }
+
+docsSecCmtsCmEaeExclusionMacAddr OBJECT-TYPE
+     SYNTAX      MacAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute identifies the CM MAC address. A match
+        is made when a CM MAC address bitwise ANDed with the
+        MacAddrMask attribute equals the value of this attribute."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsCmEaeExclusion::MacAddr"
+     DEFVAL { '000000000000'H }
+     ::= { docsSecCmtsCmEaeExclusionEntry 2 }
+
+docsSecCmtsCmEaeExclusionMacAddrMask OBJECT-TYPE
+     SYNTAX      MacAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute identifies the CM MAC address mask
+        and is used with the MacAddr attribute."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsCmEaeExclusion::MacAddrMask"
+     DEFVAL { 'FFFFFFFFFFFF'H }
+     ::= { docsSecCmtsCmEaeExclusionEntry 3 }
+
+docsSecCmtsCmEaeExclusionRowStatus OBJECT-TYPE
+     SYNTAX      RowStatus
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "Controls and reflects the status of rows in this
+        table. There is no restriction on changing values in
+        a row of this table while the row is active."
+     ::= { docsSecCmtsCmEaeExclusionEntry 4 }
+
+docsSecCmtsSavControl OBJECT IDENTIFIER ::= { docsSecMibObjects 4 }
+
+docsSecCmtsSavControlCmAuthEnable OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute enables or disables Source Address
+        Verification (SAV) for CM configured policies in the
+        SavCmAuth object. If this attribute is set to 'false',
+        the CM configured policies in the SavCmAuth object
+        are ignored.
+        This attribute is only applicable when the
+        SrcAddrVerificationEnabled attribute of the MdCfg object is
+        'true'."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsSavControl::CmAuthEnable
+         DOCSIS 3.0 Operations Support System Interface
+         Specification CM-SP-OSSIv3.0-I01-061207,
+         MdCfg Object Section in the Media Access Control (MAC)
+         Requirements Annex."
+     DEFVAL { true }
+     ::= { docsSecCmtsSavControl 1 }
+
+docsSecSavCmAuthTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsSecSavCmAuthEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This object defines a read-only set of SAV policies
+        associated with a CM that the CMTS will use in addition
+        to the CMTS verification of an operator assigned IP
+        Address being associated with a CM. When the CMTS has
+        not resolved a source address of a CM CPE, the CMTS verifies
+        if the CM CPE is authorized to pass traffic based
+        on this object. These object policies include a list
+        of subnet prefixes (defined in the SavStaticList
+        object) or a SAV Group Name that could reference a CMTS
+        configured list of subnet prefixes (defined in SavCfgList
+        object) or vendor-specific policies. The CMTS
+        populates the attributes of this object for a CM from
+        that CM's config file.
+        This object is only applicable when the
+        SrcAddrVerificationEnabled attribute of the MdCfg object is
+        'true' and the CmAuthEnable attribute of the CmtsSavCtrl
+        object is 'true'.
+        The CMTS is not required to persist instances of this
+        object across reinitializations."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         SavCmAuth
+         DOCSIS 3.1 Security Specification CM-SP-SECv3.1-I11-230419,
+         Secure Provisioning Section.
+         DOCSIS 3.0 MAC and Upper Layer Protocols Interface
+         Specification CM-SP-MULPIv3.0-I01-060804,
+         Encodings for Configuration and MAC-Layer Messaging
+         Annex."
+     ::= { docsSecMibObjects 5}
+
+docsSecSavCmAuthEntry OBJECT-TYPE
+     SYNTAX      DocsSecSavCmAuthEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsSecSavCmAuth."
+     INDEX {
+             docsIf3CmtsCmRegStatusId
+           }
+     ::= { docsSecSavCmAuthTable 1 }
+
+DocsSecSavCmAuthEntry ::= SEQUENCE {
+     docsSecSavCmAuthGrpName
+                  SnmpAdminString,
+     docsSecSavCmAuthStaticPrefixListId
+                  Unsigned32
+     }
+
+docsSecSavCmAuthGrpName OBJECT-TYPE
+     SYNTAX      SnmpAdminString
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute references the Name attribute of the
+        SavCfgList object of a CM. If the CM signaled group
+        name is not configured in the CMTS, the CMTS ignores this
+        attribute value for the purpose of Source Address
+        Verification. The CMTS must allow the modification
+        of the GrpName object and use the updated SAV rules for
+        newly discovered CPEs from CMs. When a source IP address
+        is claimed by two CMs (e.g., detected as duplicated),
+        the CMTS must use the current SAV rules defined
+        for both CMs in case the SAV GrpName rules may have been
+        updated. In the case of a persisting conflict, it is
+        up to vendor-implementation to decide what CM should
+        hold the SAV authorization.
+        The zero-length string indicates that no SAV Group was
+        signaled by the CM. The zero-length value or a non-existing
+        reference in the SavCfgList object means the
+        SavCfgListName is ignored for the purpose of SAV."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        SavCmAuth::GrpName
+        DOCSIS 3.0 MAC and Upper Layer Protocols Interface
+        Specification CM-SP-MULPIv3.0-I01-060804,
+        Encodings for Configuration and MAC-Layer Messaging Annex."
+     ::= { docsSecSavCmAuthEntry 1 }
+
+docsSecSavCmAuthStaticPrefixListId OBJECT-TYPE
+     SYNTAX      Unsigned32
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute identifies the reference to a CMTS
+        created subnet prefix list based on the CM signaled static
+        prefix list TLV elements. The CMTS may reuse this
+        attribute value to reference more than one CM when
+        those CMs have signaled the same subnet prefix list to
+        the CMTS.
+        The value zero indicates that no SAV static prefix encodings
+        were signaled by the CM."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        SavCmAuth::StaticPrefixListId
+        Operations Support System Interface Specification,
+        CM-SP-OSSIv3.0-C01-171207,
+        Annex N, CmtsCmRegStatus section"
+     ::= { docsSecSavCmAuthEntry 2 }
+
+docsSecSavCfgListTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsSecSavCfgListEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This object defines the CMTS configured subnet prefix
+        extension to the SavCmAuth object.
+        This object supports the creation and deletion of multiple
+        instances.
+        Creation of a new instance of this object requires the
+        PrefixAddrType and PrefixAddr attributes to be set."
+     ::= { docsSecMibObjects 6}
+
+docsSecSavCfgListEntry OBJECT-TYPE
+     SYNTAX      DocsSecSavCfgListEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsSecSavCfgList.
+          The CMTS persists all instances of SavCfgList
+          across reinitializations."
+     INDEX { 
+             docsSecSavCfgListName, 
+             docsSecSavCfgListRuleId
+           }
+     ::= { docsSecSavCfgListTable 1 }
+
+DocsSecSavCfgListEntry ::= SEQUENCE {
+     docsSecSavCfgListName
+                  SnmpAdminString,
+     docsSecSavCfgListRuleId
+                  Unsigned32,
+     docsSecSavCfgListPrefixAddrType
+                  InetAddressType,
+     docsSecSavCfgListPrefixAddr
+                  InetAddress,
+     docsSecSavCfgListPrefixLen
+                  InetAddressPrefixLength,
+     docsSecSavCfgListRowStatus
+                  RowStatus
+     }
+
+docsSecSavCfgListName OBJECT-TYPE
+     SYNTAX      SnmpAdminString (SIZE (1..16))
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This attribute is the key that identifies the instance
+        of the SavCmAuth object to which this object extension
+        belongs."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        SavCfgList::Name"
+     ::= { docsSecSavCfgListEntry 1 }
+
+docsSecSavCfgListRuleId OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..4294967295)
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This attribute is the key that identifies a particular
+        subnet prefix rule of an instance of this object."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        SavRule::RuleId"
+     ::= { docsSecSavCfgListEntry 2 }
+
+docsSecSavCfgListPrefixAddrType OBJECT-TYPE
+     SYNTAX      InetAddressType
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute identifies the IP address type of this
+        subnet prefix rule."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        SavRule::PrefixAddrType"
+     ::= { docsSecSavCfgListEntry 3 }
+
+docsSecSavCfgListPrefixAddr OBJECT-TYPE
+     SYNTAX      InetAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute corresponds to the IP address of this
+        subnet prefix rule in accordance to the PrefixAddrType
+        attribute."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        SavRule::PrefixAddr"
+     ::= { docsSecSavCfgListEntry 4 }
+
+docsSecSavCfgListPrefixLen OBJECT-TYPE
+     SYNTAX      InetAddressPrefixLength
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute defines the length of the subnet prefix
+        to be matched by this rule."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        SavRule::PrefixLen"
+     ::= { docsSecSavCfgListEntry 5 }
+
+docsSecSavCfgListRowStatus OBJECT-TYPE
+     SYNTAX      RowStatus
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "The row creation control of this conceptual row.
+        An entry in this table can be set to active
+        only when the following attributes are correctly
+        assigned:
+           PrefixAddrType
+           PrefixAddress
+        There are no restrictions to modify or delete
+        entries in this table."
+     ::= { docsSecSavCfgListEntry 6 }
+
+docsSecSavStaticListTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsSecSavStaticListEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This object defines a subnet prefix extension to the
+        SavCmAuth object based on CM statically signaled
+        subnet prefixes to the CMTS.
+        When a CM signals to the CMTS static subnet prefixes,
+        the CMTS must create a List Id to be referenced by the CM
+        in the SavCmAuth StaticPrefixListId attribute, or
+        the CMTS may reference an existing List Id associated
+        to previously registered CMs in case of those subnet
+        prefixes associated with the List Id match the ones
+        signaled by the CM."
+     REFERENCE
+        "DOCSIS 3.0 MAC and Upper Layer Protocols Interface
+        Specification CM-SP-MULPIv3.0-I01-060804,
+        Encodings for Configuration and MAC-Layer Messaging
+        Annex."
+     ::= { docsSecMibObjects 7}
+
+docsSecSavStaticListEntry OBJECT-TYPE
+     SYNTAX      DocsSecSavStaticListEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsSecSavStaticList.
+          The CMTS may persist instances of this object
+          across reinitializations."
+     INDEX { 
+             docsSecSavStaticListId,
+             docsSecSavStaticListRuleId
+           }
+     ::= { docsSecSavStaticListTable 1 }
+
+DocsSecSavStaticListEntry ::= SEQUENCE {
+     docsSecSavStaticListId
+                  Unsigned32,
+     docsSecSavStaticListRuleId
+                  Unsigned32,
+     docsSecSavStaticListPrefixAddrType
+                  InetAddressType,
+     docsSecSavStaticListPrefixAddr
+                  InetAddress,
+     docsSecSavStaticListPrefixLen
+                  InetAddressPrefixLength
+     }
+
+docsSecSavStaticListId OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..4294967295)
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This key uniquely identifies the index that groups
+        multiple subnet prefix rules. The CMTS assigns this
+        value per CM or may reuse it among multiple CMs that share
+        the same list of subnet prefixes."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        SavStaticList::Id"
+     ::= { docsSecSavStaticListEntry 1 }
+
+docsSecSavStaticListRuleId OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..4294967295)
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This key identifies a particular static subnet prefix
+        rule of an instance of this object."
+     ::= { docsSecSavStaticListEntry 2 }
+
+docsSecSavStaticListPrefixAddrType OBJECT-TYPE
+     SYNTAX      InetAddressType
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute identifies the IP address type of this
+        subnet prefix rule."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        SavStaticList::PrefixAddr"
+     ::= { docsSecSavStaticListEntry 3 }
+
+docsSecSavStaticListPrefixAddr OBJECT-TYPE
+     SYNTAX      InetAddress
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute corresponds to the IP address of this
+        subnet prefix rule in accordance to the PrefixAddrType
+        attribute."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        SavStaticList::PrefixAddr"
+     ::= { docsSecSavStaticListEntry 4 }
+
+docsSecSavStaticListPrefixLen OBJECT-TYPE
+     SYNTAX      InetAddressPrefixLength
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute defines the length of the subnet prefix
+        to be matched by this rule."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        SavStaticList::PrefixLen"
+     ::= { docsSecSavStaticListEntry 5 }
+
+docsSecCmtsCmSavStatsTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsSecCmtsCmSavStatsEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This object provides a read-only list of SAV counters
+        for different service theft indications."
+     ::= { docsSecMibObjects 8}
+
+docsSecCmtsCmSavStatsEntry OBJECT-TYPE
+     SYNTAX      DocsSecCmtsCmSavStatsEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsSecCmtsCmSavStats."
+     AUGMENTS { docsIf3CmtsCmRegStatusEntry }
+     ::= { docsSecCmtsCmSavStatsTable 1 }
+
+DocsSecCmtsCmSavStatsEntry ::= SEQUENCE {
+     docsSecCmtsCmSavStatsSavDiscards
+                  Counter32
+     }
+
+docsSecCmtsCmSavStatsSavDiscards OBJECT-TYPE
+     SYNTAX      Counter32
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute provides the information about number
+        of dropped upstream packets due to SAV failure."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        CmtsCmSavStats::SavDiscards"
+     ::= { docsSecCmtsCmSavStatsEntry 1 }
+
+docsSecCmtsCertificate OBJECT IDENTIFIER ::= { docsSecMibObjects 9 }
+
+-- This object name has changed in the Information Model Mapping from
+-- CmtsCertificate to CmtsCertRevocationCfg (see updated REFERENCE below)
+-- The object identifier remains the same for backward compatibility.
+-- (docsSecCertificateCertRevocationMethod)
+
+docsSecCmtsCertificateCertRevocationMethod OBJECT-TYPE
+     SYNTAX      INTEGER {
+                           none(1),
+                           crl(2),
+                           ocsp(3),
+                           crlAndOcsp(4)
+                         }
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute identifies which certificate revocation
+        method is to be used by the CMTS to verify the cable
+        modem certificate validity. The certificate revocation
+        methods include Certification Revocation
+        List (CRL) and Online Certificate Status Protocol
+        (OCSP).
+        The following options are available:
+        The option 'none' indicates that the CMTS does not attempt
+        to determine the revocation status of a certificate.
+
+        The option 'crl' indicates the CMTS uses a Certificate
+        Revocation List (CRL) as defined by the Url attribute
+        of the CmtsCertRevocationList object. When the
+        value of this attribute is changed to 'crl', it triggers
+        the CMTS to retrieve the CRL from the URL specified
+        by the Url attribute. If the value of this attribute
+        is 'crl' when the CMTS starts up, it triggers the CMTS
+        to retrieve the CRL from the URL specified by the Url attribute.
+
+        The option 'ocsp' indicates the CMTS uses the Online
+        Certificate Status Protocol (OCSP) as defined by the
+        Url attribute of the CmtsOnlineCertStatusProtocol
+        object.
+
+        The option 'crlAndOcsp' indicates the CMTS uses both
+        the CRL as defined by the Url attribute in the
+        CmtsCertRevocationList object and OCSP as defined by the Url
+        attribute in the CmtsOnlineCertStatusProtocol
+        object.
+        The CMTS persists the values of the CertRevocationMethod
+        attribute across reinitializations."
+     REFERENCE
+       "Information Model Mapping: CM-SP-CCAP-OSSI
+        CmtsCertRevocationCfg::CertRevocationMethod"
+     DEFVAL { none }
+     ::= { docsSecCmtsCertificate 1 }
+
+docsSecCmtsCertRevocationList OBJECT IDENTIFIER
+                                            ::= { docsSecMibObjects 10 }
+
+docsSecCmtsCertRevocationListUrl OBJECT-TYPE
+     SYNTAX      SnmpAdminString
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute contains the URL from where the CMTS
+        will retrieve the CRL. When this attribute is set to
+        a URL value different from the current value, it triggers
+        the CMTS to retrieve the CRL from that URL. If the
+        value of this attribute is a zero-length string, the
+        CMTS does not attempt to retrieve the CRL.
+        The CMTS persists the value of Url across
+        reinitializations."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsCertRevocationList::Url
+         DOCSIS 3.0 Security Specification
+         CM-SP-SECv3.0-I01-060804, BPI+ X.509 Certificate Profile
+         and Management Section."
+     DEFVAL { "" }
+     ::= { docsSecCmtsCertRevocationList 1 }
+
+docsSecCmtsCertRevocationListRefreshInterval OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..524160)
+     UNITS       "minutes"
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute contains the refresh interval for
+        the CMTS to retrieve the CRL (referred to in the Url attribute)
+        with the purpose of updating its Certificate
+        Revocation List. This attribute is meaningful if
+        the tbsCertList.nextUpdate attribute does not exist
+        in the last retrieved CRL, otherwise the value 0 is
+        returned.
+        The CMTS persists the value of RefreshInterval across
+        reinitializations."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsCertRevocationList::RefreshInterval
+         DOCSIS 3.0 Security Specification
+         CM-SP-SECv3.0-I01-060804, BPI+ X.509 Certificate Profile
+         and Management Section."
+     DEFVAL { 10080 }
+     ::= { docsSecCmtsCertRevocationList 2 }
+
+docsSecCmtsCertRevocationListLastUpdate OBJECT-TYPE
+     SYNTAX      DateAndTime
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute contains the last date and time when
+        the CRL was retrieved by the CMTS.  
+        If the CRL has not been updated, then this variable
+        shall have the value corresponding to January 1, year
+        0000, 00:00:00.0, which is encoded as
+        (hex)'00 00 01 01 00 00 00 00'."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsCertRevocationListStatus::LastUpdate"
+     ::= { docsSecCmtsCertRevocationList 3 }
+
+docsSecCmtsOnlineCertStatusProtocol OBJECT IDENTIFIER ::= { docsSecMibObjects 11 }
+
+docsSecCmtsOnlineCertStatusProtocolUrl OBJECT-TYPE
+     SYNTAX      SnmpAdminString
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute contains the URL string to retrieve
+        OCSP information. If the value of this attribute is
+        a zero-length string, the CMTS does not attempt to request
+        the status of a CM certificate.
+        The CMTS persists the value of Url across
+        reinitializations."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsOnlineCertStatusProtocol::Url
+         DOCSIS 3.0 Security Specification
+         CM-SP-SECv3.0-I01-060804, BPI+ X.509 Certificate Profile
+         and Management Section.
+         RFC 2560."
+     DEFVAL { "" }
+     ::= { docsSecCmtsOnlineCertStatusProtocol 1 }
+
+docsSecCmtsOnlineCertStatusProtocolSignatureBypass OBJECT-TYPE
+     SYNTAX      TruthValue
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute enables or disables signature checking
+        on OCSP response messages.
+        The CMTS persists the value of SignatureBypass across
+        reinitializations."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsOnlineCertStatusProtocol::SignatureBypass
+         DOCSIS 3.0 Security Specification
+         CM-SP-SECv3.0-I01-060804, BPI+ X.509 Certificate Profile
+         and Management Section.
+         RFC 2560."
+     DEFVAL { false }
+     ::= { docsSecCmtsOnlineCertStatusProtocol 2 }
+
+docsSecCmtsCmBpi2EnforceExclusionTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsSecCmtsCmBpi2EnforceExclusionEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This object defines a list of CMs or CM groups to exclude from
+        BPI+ enforcement policies configured within the CMTS. This 
+        object allows overrides to the value of BPI+ enforcement 
+        control for individual CMs or group of CMs for purposes such as 
+        debugging. The CMTS supports a minimum of 30 instances of the
+        CmtsCmBpi2EnforceExclusion object.
+        This object supports the creation and deletion of multiple
+        instances."
+     REFERENCE
+         "DOCSIS 3.0 Operations Support System Interface
+         Specification CM-SP-OSSIv3.0-I11-100115,
+         MdCfg Object Section in the Media Access Control (MAC)
+         Requirements Annex.
+         DOCSIS 3.0 Security Specification
+         CM-SP-SECv3.0-I12-100115, BPI+ Enforce Section."
+     ::= { docsSecMibObjects 12}
+
+docsSecCmtsCmBpi2EnforceExclusionEntry OBJECT-TYPE
+     SYNTAX      DocsSecCmtsCmBpi2EnforceExclusionEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsSecCmtsCmBpi2EnforceExclusion.
+          The CMTS persists all instances of CmtsCmBpi2EnforceExclusion
+          across reinitializations."
+     INDEX { 
+             docsSecCmtsCmBpi2EnforceExclusionId
+           }
+     ::= { docsSecCmtsCmBpi2EnforceExclusionTable 1 }
+
+DocsSecCmtsCmBpi2EnforceExclusionEntry ::= SEQUENCE {
+     docsSecCmtsCmBpi2EnforceExclusionId
+                  Unsigned32,
+     docsSecCmtsCmBpi2EnforceExclusionMacAddr
+                  MacAddress,
+     docsSecCmtsCmBpi2EnforceExclusionMacAddrMask
+                  MacAddress,
+     docsSecCmtsCmBpi2EnforceExclusionRowStatus
+                  RowStatus
+     }
+
+docsSecCmtsCmBpi2EnforceExclusionId OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..4294967295)
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This key uniquely identifies the exclusion MAC address
+        rule."
+     ::= { docsSecCmtsCmBpi2EnforceExclusionEntry 1 }
+
+docsSecCmtsCmBpi2EnforceExclusionMacAddr OBJECT-TYPE
+     SYNTAX      MacAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute identifies the CM MAC address. A match
+        is made when a CM MAC address bitwise ANDed with the
+        MacAddrMask attribute equals the value of this attribute."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsCmBpi2EnforceExclusion::MacAddr"
+     DEFVAL { '000000000000'H }
+     ::= { docsSecCmtsCmBpi2EnforceExclusionEntry 2 }
+
+docsSecCmtsCmBpi2EnforceExclusionMacAddrMask OBJECT-TYPE
+     SYNTAX      MacAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute identifies the CM MAC address mask
+        and is used with the MacAddr attribute."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSI
+         CmtsCmBpi2EnforceExclusion::MacAddrMask"
+     DEFVAL { 'FFFFFFFFFFFF'H }
+     ::= { docsSecCmtsCmBpi2EnforceExclusionEntry 3 }
+
+docsSecCmtsCmBpi2EnforceExclusionRowStatus OBJECT-TYPE
+     SYNTAX      RowStatus
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "Controls and reflects the status of rows in this
+        table. There is no restriction on changing values in
+        a row of this table while the row is active."
+     ::= { docsSecCmtsCmBpi2EnforceExclusionEntry 4 }
+     
+--
+-- CM SSH Key Management Objects
+--
+--
+     
+docsSecCmSshKeyManagement OBJECT IDENTIFIER::= { docsSecMibObjects 13 }
+
+docsSecCmSshServer OBJECT IDENTIFIER::= { docsSecCmSshKeyManagement 1 }
+
+docsSecCmSshServerEnabledInterfaces OBJECT-TYPE
+     SYNTAX      BITS {
+                       operatorFacing(0)
+                       }
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This attribute reports whether SSH server function is enabled in the CM. 
+          The CM is required to disable SSH server function by default. 
+          The possible values for this attribute are listed below:
+            
+          Bit 0 'operatorFacing'  CM allows access only from all network private
+          interfaces,addresses (i.e., operator's network)."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          SshServer::EnabledInterfaces"
+     DEFVAL { { operatorFacing } }
+     ::= { docsSecCmSshServer 1 }
+     
+docsSecCmSshServerStatus OBJECT-TYPE
+     SYNTAX      INTEGER {
+                           disconnectedNotAllowed(1),
+                           disconnectedProtocolError(2),
+                           disconnectedKeyExchangeFailed(3),
+                           disconnectedReserved(4),
+                           disconnectedMacError(5),
+                           disconnectedCompressionError(6),
+                           disconnectedServiceNotAvailable(7),
+                           disconnectedProtocolVersionNotSupported(8),
+                           disconnectedHostKeyNotVerifiable(9),
+                           disconnectedConnectionLost(10),
+                           disconnectedByApplication(11),
+                           disconnectedTooManyConnections(12),
+                           disconnectedAuthCancelledByUser(13),
+                           disconnectedNoMoreAuthMethods(14),
+                           disconnectedIllegalUserName(15),
+                           connected(16),
+                           disconnectedUnknown(17)
+                         }
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+        "This attribute reports the status of the connection 
+         between the CM SSH server and the SSH client.
+         The possible values for this attribute are defined in RFC 4253
+         and are listed below:
+           
+           'disconnectedNotAllowed' SSH client is not allowed to connect to the host
+           
+           'disconnectedProtocolError' SSH client disconnected because of SSH protocol error
+           
+           'disconnectedKeyExchangeFailed' SSH client disconnected because the SSH key exchange 
+            failed at the SSH transport layer
+            
+           'disconnectedReserved' Value reserved for future use
+           
+           'disconnectedMacError' SSH client disconnected due to the incompatibility of the 
+            Message Authentication code algorithm or value
+            
+           'disconnectedCompressionError' SSH client disconnected due to the failure of compression
+            on the packet payload when it is required or the incompatibility
+            of the compression algorithm exists
+            
+           'disconnectedServiceNotAvailable' SSH client disconnected because SSH service is not 
+            available on the server
+            
+           'disconnectedProtocolVersionNotSupported' SSH client disconnected because the SSH protocol
+            version is not supported by the server
+            
+           'disconnectedHostKeyNotVerifiable' SSH client disconnected because of using an unverifiable host key.
+           'disconnectedConnectionLost' SSH client disconnected because of inactivity
+           
+           'disconnectedByApplication'  SSH server disconnected by the SCCA application when performing 
+            the TLS-based Authentication 
+            
+           'disconnectedTooManyConnections'  SSH client disconnected because the connections limitation has been exceeded
+           
+           'disconnectedAuthCancelledByUser' SSH client disconnected because the authentication is cancelled by the user
+           
+           'disconnectedNoMoreAuthMethods'   SSH client disconnected because no more authentication methods are available
+           
+           'disconnectedIllegalUserName'     SSH client disconnected because of an illegal username
+           
+           'connected'  Connection between the CM SSH server and the SSH client is active
+           
+           'disconnectedUnknown' SSH client disconnected for unknown or other reason"
+     REFERENCE
+       "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+        SshServer::Status"
+     ::= { docsSecCmSshServer 2 }
+     
+docsSecCmSshServerPublicKey  OBJECT-TYPE
+     SYNTAX      OCTET STRING
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the authorized SSH client public key
+          used by the CM to authenticate the client when the client
+          attempts to set up a CLI SSH connection. "
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          SshServer::PublicKey"
+     ::= { docsSecCmSshServer 3 }
+     
+docsSecCmSshServerNewConnectionTimeout OBJECT-TYPE
+     SYNTAX      Unsigned32 (0..28800)
+     UNITS       "Seconds"
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the new SSH connection timeout 
+          provisioned on the CM. When this timeout value is reached,
+          the CM sets the Enabled attribute to 'false' and stops 
+          accepting new SSH connections. Established connections
+          remain active."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+         SshServer::NewConnectionTimeout"
+      DEFVAL { 0 }
+     ::= { docsSecCmSshServer 4 }
+     
+docsSecCmSshServerInactivityTimeout OBJECT-TYPE
+     SYNTAX      Unsigned32 (0..65535)
+     UNITS       "Seconds"
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the SSH inactivity timeout provisioned
+          on the CM. This attribute represents the time at which an
+          established connection is terminated if there is no activity.
+          Inactivity is defined as the remote side of the connection 
+          timing out and disconnecting. If this attribute is set to 
+          zero, the inactivity timeout will be implementation specific."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0
+          SshServer::InactivityTimeout"
+     DEFVAL { 1800 }
+     ::= { docsSecCmSshServer 5 }
+     
+docsSecCmSshServerSshSourceAddrRestrictionType OBJECT-TYPE
+     SYNTAX      InetAddressType
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "The type of internet address associated to the
+          SSH source address restriction."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0
+          SshServer::SshSourceAddrRestriction"
+     ::= { docsSecCmSshServer 6 }
+     
+docsSecCmSshServerSshSourceAddrRestriction OBJECT-TYPE
+     SYNTAX      InetAddress
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This optional attribute is the SSH source address 
+         restriction provisioned on the CM. When this attribute
+         is not present, the CM enables unrestricted access to
+         the SSH server."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          SshServer::SshSourceAddrRestriction"
+     ::= { docsSecCmSshServer 7 }
+     
+docsSecCmSshServerSshSourcePrefixRestriction OBJECT-TYPE
+     SYNTAX      InetAddressPrefixLength
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This optional attribute is the SSH source address prefix 
+          restriction provisioned on the CM. This attribute is a 
+          network, address specifier in CIDR notation that limits 
+          the IP addresses where SSH connections can originate. "
+    REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          SshServer::SshSourcePrefixRestriction"
+     ::= { docsSecCmSshServer 8 }
+     
+docsSecCmCdsFileServer OBJECT IDENTIFIER::= { docsSecCmSshKeyManagement 2 }
+     
+docsSecCmCdsFileServerIpAddrType OBJECT-TYPE
+     SYNTAX      InetAddressType
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This attribute indicates the type of the
+          Internet address for IpAddr."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CdsFileServer::IpAddr"
+     ::= { docsSecCmCdsFileServer 1 }
+     
+docsSecCmCdsFileServerIpAddr OBJECT-TYPE
+     SYNTAX      InetAddress
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the Internet address of the 
+          CDS server in the operator's network."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CdsFileServer::IpAddr"
+     ::= { docsSecCmCdsFileServer 2 }
+     
+docsSecCmCdsFileServerSshCmCdsDownloadUrl OBJECT-TYPE
+     SYNTAX      OCTET STRING (SIZE(0..2048))
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+         "This attribute is the URL of the CDS 
+         server in the operator's network."
+    REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CdsFileServer::SshCmCdsDownloadUrl"
+     ::= { docsSecCmCdsFileServer 3 }
+     
+docsSecCmCdsFileServerRevocationStatusAction OBJECT-TYPE
+     SYNTAX      INTEGER {
+                         continue(0),
+                         reject(1)
+                         }
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute is the action taken by the CM if it 
+        does not receive revocation status from the provisioning
+        system server. The possible values for this object are
+        listed below:
+        'continue'     Continue operation with the CDS server
+        'reject'       Reject the connection with the CDS server"
+      REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CdsFileServer::RevocationStatusAction"
+     DEFVAL { 1 }
+     ::= { docsSecCmCdsFileServer 4 }
+     
+docsSecCmSshCmCds OBJECT IDENTIFIER::= { docsSecCmSshKeyManagement 3 }
+     
+docsSecCmPasswordCredentialTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsSecCmPasswordCredentialEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The PasswordCredential  table contains authorized password
+         credential information for the CM to authenticate SSH Client 
+         CLI connections.
+         The CM supports creation of new instances of the
+         PasswordCredential object and deletion of existing 
+         PasswordCredential object instances."
+      REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PasswordCredential"
+     ::= { docsSecCmSshCmCds 1 }
+
+docsSecCmPasswordCredentialEntry OBJECT-TYPE
+     SYNTAX      DocsSecCmPasswordCredentialEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsSecCmPasswordCredentialTable."
+     INDEX { 
+             docsSecCmPasswordCredentialIndex
+           }
+     ::= { docsSecCmPasswordCredentialTable 1 }
+
+DocsSecCmPasswordCredentialEntry ::= SEQUENCE {
+     docsSecCmPasswordCredentialIndex
+                  Unsigned32,
+     docsSecCmPasswordCredentialUserId
+                  SnmpAdminString,
+     docsSecCmPasswordCredentialPassword
+                  OCTET STRING,                        
+     docsSecCmPasswordCredentialMacAddr
+                  MacAddress,
+     docsSecCmPasswordCredentialRowStatus
+                  RowStatus
+     }
+
+docsSecCmPasswordCredentialIndex OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..4294967295)
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This key attribute represents the unique
+         identifier of an instance of this object."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PasswordCredential::Index"
+     ::= { docsSecCmPasswordCredentialEntry 1 }
+     
+docsSecCmPasswordCredentialUserId OBJECT-TYPE
+     SYNTAX      SnmpAdminString 
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute is the identifier of the user for
+        which the password credential is to be evaluated."
+      REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PasswordCredential::UserId"
+     ::= { docsSecCmPasswordCredentialEntry 2 }
+     
+docsSecCmPasswordCredentialPassword OBJECT-TYPE
+     SYNTAX      OCTET STRING (SIZE (8..128)) 
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute is a string encoded in the [ISO 8859-1] 
+         character-set and using characters in the range from 
+         0x21 to 0x7E serving as the credential to be evaluated
+         for the user."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PasswordCredential::Password"
+     ::= { docsSecCmPasswordCredentialEntry 3 }
+
+docsSecCmPasswordCredentialMacAddr OBJECT-TYPE
+     SYNTAX      MacAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This optional attribute is the MAC address 
+         assigned to the CM."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PasswordCredential::MacAddr"
+     DEFVAL { '000000000000'H }
+     ::= { docsSecCmPasswordCredentialEntry 4 }
+
+docsSecCmPasswordCredentialRowStatus OBJECT-TYPE
+     SYNTAX      RowStatus
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "Controls and reflects the status of rows in this
+         table. There is no restriction on changing values in
+         a row of this table while the row is active."
+     ::= { docsSecCmPasswordCredentialEntry 5 }
+     
+docsSecCmPublicKeyCredentialTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsSecCmPublicKeyCredentialEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The PublicKeyCredential table contains authorized RSA Public
+         Key credential information for the CM to authenticate SSH Client 
+         CLI connections.
+         The CM supports creation of new instances of the 
+         PublicKeyCredential object and deletion of existing
+         PublicKeyCredential object instances."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PublicKeyCredential"
+     ::= { docsSecCmSshCmCds 2 }
+
+docsSecCmPublicKeyCredentialEntry OBJECT-TYPE
+     SYNTAX      DocsSecCmPublicKeyCredentialEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsSecCmPublicKeyCredentialTable."
+     INDEX { 
+             docsSecCmPublicKeyCredentialIndex
+           }
+     ::= { docsSecCmPublicKeyCredentialTable 1 }
+
+DocsSecCmPublicKeyCredentialEntry ::= SEQUENCE {
+     docsSecCmPublicKeyCredentialIndex
+                  Unsigned32,
+     docsSecCmPublicKeyCredentialUserId
+                  SnmpAdminString,
+     docsSecCmPublicKeyCredentialSshPublicKey
+                  OCTET STRING,
+     docsSecCmPublicKeyCredentialMacAddr
+                  MacAddress,
+     docsSecCmPublicKeyCredentialRowStatus
+                  RowStatus
+     }
+
+docsSecCmPublicKeyCredentialIndex OBJECT-TYPE
+     SYNTAX      Unsigned32 (1..4294967295)
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "This key attribute represents the unique
+         identifier of an instance of this object."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PublicKeyCredential::Index"
+     ::= { docsSecCmPublicKeyCredentialEntry 1 }
+
+docsSecCmPublicKeyCredentialUserId OBJECT-TYPE
+     SYNTAX      SnmpAdminString
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute is the identifier of the user for
+        which the PublicKey credential is to be evaluated."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0
+          PublicKeyCredential::UserId"
+     ::= { docsSecCmPublicKeyCredentialEntry 2 }
+
+docsSecCmPublicKeyCredentialSshPublicKey OBJECT-TYPE
+     SYNTAX      OCTET STRING (SIZE (256..512)) 
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This attribute is a string containing a DER-encoded
+        RSA PublicKey or ECDSA public keys in ASN.1 type, 
+        as defined in [X.509] and serving as the credential to be
+        evaluated for the user."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PublicKeyCredential::SshPublicKey"
+     ::= { docsSecCmPublicKeyCredentialEntry 3 }
+
+docsSecCmPublicKeyCredentialMacAddr OBJECT-TYPE
+     SYNTAX      MacAddress
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "This optional attribute is the MAC address 
+        assigned to the CM."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          PublicKeyCredential::MacAddr"
+     DEFVAL { '000000000000'H }
+     ::= { docsSecCmPublicKeyCredentialEntry 4 }
+
+docsSecCmPublicKeyCredentialRowStatus OBJECT-TYPE
+     SYNTAX      RowStatus
+     MAX-ACCESS  read-create
+     STATUS      current
+     DESCRIPTION
+        "Controls and reflects the status of rows in this
+        table. There is no restriction on changing values in
+        a row of this table while the row is active."
+     ::= { docsSecCmPublicKeyCredentialEntry 5 }
+
+docsSecCmSccaServerCfg  OBJECT IDENTIFIER::= { docsSecCmSshKeyManagement 4 }
+
+docsSecCmSccaServerCfgIpAddrType  OBJECT-TYPE
+     SYNTAX      InetAddressType
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute indicates the type of the 
+         Internet address for IpAddr."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM OSSIv4.0 
+          SccaServerCfg::IpAddr"
+     ::= { docsSecCmSccaServerCfg 1 }
+     
+docsSecCmSccaServerCfgIpAddr OBJECT-TYPE
+     SYNTAX      InetAddress 
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute is the Internet address of the 
+         CDS server in the operator's network."
+      REFERENCE
+        "Information Model Mapping: CM-SP-CM OSSIv4.0 
+         SccaServerCfg::IpAddr"
+     ::= {  docsSecCmSccaServerCfg 2 }
+
+docsSecCmSccaServerCfgRestApiUrl  OBJECT-TYPE
+     SYNTAX      OCTET STRING  (SIZE(0..2048))
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute is the URL of the SCCA 
+         REST API to validate the user credentials."
+      REFERENCE
+        "Information Model Mapping: CM-SP-CM OSSIv4.0 
+         SccaServerCfg::RestApiUrl"
+     ::= {  docsSecCmSccaServerCfg 3 }
+
+docsSecCmSccaServerCfgRevocationStatusAction  OBJECT-TYPE
+     SYNTAX      INTEGER {
+                         continue(0),
+                         reject(1)
+                         }
+     MAX-ACCESS  read-write
+     STATUS      current
+     DESCRIPTION
+        "This attribute configures the action taken by 
+         the CM if it does not receive revocation status 
+         from the HTTPS server. The possible values for 
+         this object are listed below:
+          'continue' Continue operation with the HTTPS server
+          'reject'   Reject the connection with the HTTPS server"
+      REFERENCE
+        "Information Model Mapping: CM-SP-CM OSSIv4.0 
+         SccaServerCfg::RevocationStatusAction"
+      DEFVAL { 0 }
+     ::= {  docsSecCmSccaServerCfg 4 }
+
+--
+-- DOCS-IETF-BPI2-MIB extension (deprecated)
+--
+--
+docsBpi2CodeUpdateCvcChain    OBJECT-TYPE
+     SYNTAX         DocsCvcCaCertificateChain
+     MAX-ACCESS     read-write
+     STATUS         deprecated
+     DESCRIPTION
+         "The value of this object is a degenerate PKCS7 signedData
+         structure that contains the CVC and the CVC CA
+         certificate chain in the certificates field. Setting
+         this object triggers the device to verify the CVC and
+         update the cvcAccessStart values. The content of this
+         object is then discarded. If the device is not enabled
+         to upgrade codefiles, or if the CVC verification fails,
+         the CVC will be rejected. Reading this object always
+         returns the zero-length OCTET STRING."
+     REFERENCE
+         "DOCSIS 3.1 Security Specification, CM-SP-SECv3.1-I02-150326, 
+         Secure Software Download Section"
+ ::= { docsBpi2CodeDownloadControl 10 }
+
+--
+-- The BpiPlusManagement object describes the control of the BPI+V1
+-- and V2 functions.
+--
+docsSecBpiPlusBaseManagement OBJECT IDENTIFIER ::= { docsSecMibObjects 14 }
+
+--
+--   Extension to the docsBpi2CmBase table
+--
+docsSecBpiPlusBaseTable        OBJECT-TYPE
+    SYNTAX      SEQUENCE OF BpiPlusBaseEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The BpiPlusBase object describes the basic and
+             authorization-related BPI+ attributes."
+    REFERENCE
+            "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+             BpiPlusBase
+             [RFC 4131] docsBpi2CmBaseTable"
+    ::= { docsSecBpiPlusBaseManagement 1 }
+
+docsSecBpiPlusBaseEntry        OBJECT-TYPE
+    SYNTAX      BpiPlusBaseEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+            "The conceptual row of docsSecBpiPlusBase."
+    AUGMENTS    { docsBpi2CmBaseEntry }
+    ::= { docsSecBpiPlusBaseTable 1 }
+
+BpiPlusBaseEntry ::=
+    SEQUENCE {
+        docsSecBpiPlusBaseCmAuthStatusInfo              Unsigned32,
+        docsSecBpiPlusBaseCmBpiPlusVer                  BpiPlusVer
+    }
+
+docsSecBpiPlusBaseCmAuthStatusInfo    OBJECT-TYPE
+     SYNTAX         Unsigned32 (0..255)
+     MAX-ACCESS     read-only
+     STATUS         current
+     DESCRIPTION
+         "The value of this attribute is the number of times the
+          CM has transmitted an Authentication Status Info message.
+          This attribute is for BPI+V2 mode only.
+          For a non-BPI+V2 CM, the value of this attribute needs to
+          be '0'. If this is a BPI+V2 CM, this attribute needs to
+          be a non-zero value.
+          The value of this attribute is not preserved after the CM
+          power-cycles or resets."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          BpiPlusBase::CmAuthStatusInfo
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          Baseline Privacy Key Management (BPKM) Protocol"
+ ::= { docsSecBpiPlusBaseEntry 1 }
+
+docsSecBpiPlusBaseCmBpiPlusVer    OBJECT-TYPE
+     SYNTAX         BpiPlusVer
+     MAX-ACCESS     read-only
+     STATUS         current
+     DESCRIPTION
+         "The value of this attribute shows the BPI+ version used
+          by the CM for authentication."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          BpiPlusBase::CmBpiPlusVer
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          Baseline Privacy Key Management (BPKM) Protocol"
+ ::= { docsSecBpiPlusBaseEntry 2 }
+
+--
+--   The BpiPlusV2Cfg object describes the control of BPI+V2 on the CM.
+--
+docsSecBpiPlusV2Cfg OBJECT IDENTIFIER ::= { docsSecBpiPlusBaseManagement 2 }
+
+docsSecBpiPlusV2CfgCmAuthKeyEcCurve    OBJECT-TYPE
+     SYNTAX         CmAuthKeyEcCurve
+     MAX-ACCESS     read-only
+     STATUS         current
+     DESCRIPTION
+         "The value of this attribute is the supported Elliptic-Curve Groups
+          (ECDHE) for CM to generate an EC Auth Key while in BPI+V2 mode."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          BpiPlusV2Cfg::CmAuthKeyEcCurve
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          Baseline Privacy Key Management (BPKM) Protocol"
+ ::= { docsSecBpiPlusV2Cfg 1 }
+
+--
+--   CmtsDesignationCfg table.
+--
+docsSecCmtsDesignationCfgTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsSecCmtsDesignationCfgEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+        "The CmtsDesignationCfg table contains information the CM uses to
+         provide rules to bind a CM to a CMTS. Multiple rules can be added
+         to provide the level of granularity desired."
+     REFERENCE
+        "DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+         Authorization Messages Authentication Overview"
+     ::= { docsSecBpiPlusV2Cfg 2 }
+
+docsSecCmtsDesignationCfgEntry OBJECT-TYPE
+     SYNTAX      DocsSecCmtsDesignationCfgEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsSecCmtsDesignationCfg."
+     INDEX {
+             docsSecCmtsDesignationCfgIndex
+           }
+     ::= { docsSecCmtsDesignationCfgTable 1 }
+
+DocsSecCmtsDesignationCfgEntry ::= SEQUENCE {
+     docsSecCmtsDesignationCfgIndex               Unsigned32,
+     docsSecCmtsDesignationCfgCmtsDesignationType CmtsDesignationType,
+     docsSecCmtsDesignationCfgCmtsDesignationAttr OCTET STRING
+}
+
+docsSecCmtsDesignationCfgIndex    OBJECT-TYPE
+     SYNTAX         Unsigned32 (0..255)
+     MAX-ACCESS     not-accessible
+     STATUS         current
+     DESCRIPTION
+         "This index attribute represents the unique identifier of an
+          instance of this object."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CmtsDesignationCfg::CmtsDesignationType
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          CMTS-Designation"
+ ::= { docsSecCmtsDesignationCfgEntry 1 }
+
+docsSecCmtsDesignationCfgCmtsDesignationType    OBJECT-TYPE
+     SYNTAX         CmtsDesignationType
+     MAX-ACCESS     read-write
+     STATUS         current
+     DESCRIPTION
+         "The value of this attribute indicates the type of data in the
+          certificates to be checked for CM at the next authorization session."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CmtsDesignationCfg::CmtsDesignationType
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          CMTS-Designation"
+ ::= { docsSecCmtsDesignationCfgEntry 2 }
+
+docsSecCmtsDesignationCfgCmtsDesignationAttr    OBJECT-TYPE
+     SYNTAX         OCTET STRING (SIZE (0..128))
+     MAX-ACCESS     read-write
+     STATUS         current
+     DESCRIPTION
+         "The value of this attribute is used when checking the value of
+          specified data type for CM at the next authorization session."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CmtsDesignationCfg::CmtsDesignationAttr
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          CMTS-Designation"
+ ::= { docsSecCmtsDesignationCfgEntry 3 }
+
+--
+--   The TrustOnFirstUseCfg object contains information for CM to prevent the
+--   unauthorized downgrades. This object records the successful authentication
+--   configuration used during the first connection to a CMTS and is checked and
+--   used in subsequent connections.
+--
+docsSecTrustOnFirstUseCfg OBJECT IDENTIFIER ::= { docsSecBpiPlusV2Cfg 3 }
+
+docsSecTrustOnFirstUseCfgAllowedBpiVers    OBJECT-TYPE
+     SYNTAX         BITS {
+                           bpiPlusV1(0),
+                           bpiPlusV2(1)
+                         }
+     MAX-ACCESS     read-write
+     STATUS         current
+     DESCRIPTION
+         "This attribute configures which BPI+ version the CM supported in
+          subsequent connections.
+          If the 'bpiPlusV1' bit (bit 0) is set to '1', the CM only uses BPI+V1
+          to connect to a CMTS.
+          If the 'bpiPlusV2' bit (bit 1) is set to '1', the CM only uses BPI+V2
+          to connect to a CMTS.
+          If both Bit 0 and Bit 1 are set, the CM allows access from both BPI+V1
+          and BPI+V2 to connect to a CMTS."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0
+          TrustOnFirstUseCfg::AllowedBpiVers
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          Trust On First Use (TOFU)"
+ ::= { docsSecTrustOnFirstUseCfg 1 }
+
+--
+--   The CertificateManagement object describes the set of known Certificate Authority
+--   certificates, Device certificates as well as revocation control and certs status
+--   acquired by the CM.
+--
+docsSecCertificateManagement OBJECT IDENTIFIER ::= { docsSecMibObjects 15 }
+
+--
+--   The CmIntermediateCaCert object describes the set of known CM Intermediate CA
+--   certificates: the Device CA certificates from the new PKI, and the Manufacturer
+--   CA certificate from the legacy PKI.
+--
+docsSecCmIntermediateCaCert OBJECT IDENTIFIER ::= { docsSecCertificateManagement 1 }
+
+docsSecCmIntermediateCaCertDocs30IntCaCert    OBJECT-TYPE
+     SYNTAX         DocsX509ASN1DEREncodedCertificate
+     MAX-ACCESS     read-only
+     STATUS         current
+     DESCRIPTION
+         "This attribute represents the X509 DER-encoded Manufacturer
+          CA certificate that signed the DOCSIS 3.0 CM Device
+          Certificate."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CmIntermediateCaCert::Docs30IntCaCert
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          Cable Modem Certificate Storage and Management in the CM"
+ ::= { docsSecCmIntermediateCaCert 1 }
+
+docsSecCmIntermediateCaCertIntCaCert    OBJECT-TYPE
+     SYNTAX         DocsX509ASN1DEREncodedCertificate
+     MAX-ACCESS     read-only
+     STATUS         current
+     DESCRIPTION
+         "This attribute represents the X509 DER-encoded Device CA
+          Certificate that signed the DOCSIS 3.1/4.0 CM Device
+          Certificate."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CmIntermediateCaCert::IntCaCert
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          Cable Modem Certificate Storage and Management in the CM"
+ ::= { docsSecCmIntermediateCaCert 2 }
+
+--
+--   The CmtsTrustAnchorCert object describes the set of learned CMTS
+--   Root CA certificates during the BPI+V2 process.
+--
+docsSecCmtsTrustAnchorCert OBJECT IDENTIFIER ::= { docsSecCertificateManagement 2 }
+
+docsSecCmtsTrustAnchorCertDeviceId    OBJECT-TYPE
+     SYNTAX         OCTET STRING
+     MAX-ACCESS     read-only
+     STATUS         current
+     DESCRIPTION
+         "This attribute represents the unique device identifier of an
+          instance of this object. It should match the value presented
+          in the CN field of the CMTS Device Certificate (e.g., FQDN or
+          the Device MAC address)."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CmtsTrustAnchorCert::DeviceId
+          Trust Infrastructure Document (Certificate Templates),
+          C-PKI-TI-V1.5,
+          DOCSIS 4.0 Certificates"
+ ::= { docsSecCmtsTrustAnchorCert 1 }
+
+docsSecCmtsTrustAnchorCertCaCert    OBJECT-TYPE
+     SYNTAX         DocsX509ASN1DEREncodedCertificate
+     MAX-ACCESS     read-only
+     STATUS         current
+     DESCRIPTION
+         "This attribute represents the X509 DER-encoded Root CA
+          certificate that signed the CMTS Device CA Certificate."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CmtsTrustAnchorCert::CaCert
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          Cable Modem Certificate Storage and Management in the CM"
+ ::= { docsSecCmtsTrustAnchorCert 2 }
+
+--
+--   The LearnedCmtsCert object describes the DOCSIS 4.0 CMTS Device
+--   Certificates learned by the CM during the BPI+V2 process.
+--
+docsSecLearnedCmtsCert OBJECT IDENTIFIER ::= { docsSecCertificateManagement 3 }
+
+docsSecLearnedCmtsCertDeviceId    OBJECT-TYPE
+     SYNTAX         OCTET STRING
+     MAX-ACCESS     read-only
+     STATUS         current
+     DESCRIPTION
+         "This attribute represents the unique device identifier of
+          an instance of this object. It should match the value
+          presented in the CN field of the CMTS Device Certificate
+          (e.g., FQDN or the Device MAC address)."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0
+          LearnedCmtsCert::DeviceId
+          Trust Infrastructure Document (Certificate Templates),
+          C-PKI-TI-V1.5 - DOCSIS 4.0 Certificates"
+ ::= { docsSecLearnedCmtsCert 1 }
+
+docsSecLearnedCmtsCertDeviceCert    OBJECT-TYPE
+     SYNTAX         DocsX509ASN1DEREncodedCertificate
+     MAX-ACCESS     read-only
+     STATUS         current
+     DESCRIPTION
+         "This attribute represents the X509 DER-encoded DOCSIS 4.0
+          CMTS Device Certificate."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          LearnedCmtsCert::DeviceCert
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          Baseline Privacy Key Management (BPKM) Protocol"
+ ::= { docsSecLearnedCmtsCert 2 }
+
+--
+--   The CmCertRevocationCfg object describes the revocation control on
+--   the CM.
+--
+docsSecCmCertRevocationCfg OBJECT IDENTIFIER ::= { docsSecCertificateManagement 4 }
+
+docsSecCmCertRevocationCfgMethod    OBJECT-TYPE
+     SYNTAX         INTEGER {
+                         none(1),
+                         ocsp(2)
+     }
+     MAX-ACCESS     read-write
+     STATUS         current
+     DESCRIPTION
+         "This attribute indicates the used method for performing the
+          revocation checking. 
+          'none' = Revocation checking is disabled on the CM.
+          'ocsp' = Use OCSP for revocation checking."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CmCertRevocationCfg::Method
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          Authorization Messages Authentication Overview"
+     DEFVAL { none }
+ ::= { docsSecCmCertRevocationCfg 1 }
+
+--
+--   The CmOnlineCertStatusProtocolCfg object provides the configuration
+--   information for CM to perform revocation checking using Online Cert
+--   Status Protocol.
+--
+docsSecCmOnlineCertStatusProtocolCfg OBJECT IDENTIFIER ::= { docsSecCmCertRevocationCfg 2 }
+
+docsSecCmOnlineCertStatusProtocolCfgCache    OBJECT-TYPE
+     SYNTAX         INTEGER {
+                         none(1),
+                         good(2),
+                         revoked(3),
+                         unknown(4)
+     }
+     MAX-ACCESS     read-write
+     STATUS         current
+     DESCRIPTION
+         "This attribute indicates the cached OCSP status used by CM.
+          If the value of CmCertRevocationCfg::Method is 'none', the
+          CM does not need to check this attribute.
+          'none' = No OCSP cache.
+          'good' = Certificates in received CMTS certificate chain is not revoked.
+          'revoked' = At least one certificate in received CMTS certificate chain is revoked.
+          'unknown' = unknown revocation status."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CmOnlineCertStatusProtocolCfg::Cache
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          Authorization Messages Authentication Overview"
+     DEFVAL { none }
+ ::= { docsSecCmOnlineCertStatusProtocolCfg 1 }
+
+docsSecCmOnlineCertStatusProtocolCfgRefreshInterval    OBJECT-TYPE
+     SYNTAX         Unsigned32 (1..524160)
+     MAX-ACCESS     read-write
+     STATUS         current
+     DESCRIPTION
+         "This attribute indicates the refresh interval (minutes) for
+          the cached OCSP status used by the CM. If the value of
+          CmCertRevocationCfg::Method is 'none', the CM does not need
+          to check this attribute"
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CmOnlineCertStatusProtocolCfg::RefreshInterval
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          Authorization Messages Authentication Overview"
+ ::= { docsSecCmOnlineCertStatusProtocolCfg 2 }
+
+docsSecCmOnlineCertStatusProtocolCfgUrl    OBJECT-TYPE
+     SYNTAX         OCTET STRING (SIZE (0..2048))
+     MAX-ACCESS     read-write
+     STATUS         current
+     DESCRIPTION
+         "This attribute is the URL for OCSP communications in checking
+          a certificate's revocation status. This attribute configures
+          the CM with a URL string to retrieve OCSP information. If the
+          value of this attribute is a zero-length string, the CM does
+          not need to check the revocation status of a CMTS Device
+          Certificate. If the value of CmCertRevocationCfg::Method is
+          'none', the CM does not need to check this attribute."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+          CmOnlineCertStatusProtocolCfg::Url
+          DOCSIS Security Specification, CM-SP-SECv4.0-I07-240729,
+          Authorization Messages Authentication Overview"
+ ::= { docsSecCmOnlineCertStatusProtocolCfg 3 }
+
+--
+--   The CmtsCert object describes the X.509 certificates installed on the
+--   CMTS and used for DOCSIS security operations.
+--
+--   This object represents a singleton set of certificates; exactly one
+--   certificate of each type is present on the CMTS at any given time.
+--
+--   All certificates represented by this object are read-only and are
+--   provisioned and managed by the CMTS implementation.
+--
+docsSecCmtsCert OBJECT IDENTIFIER ::= { docsSecMibObjects 16 }
+
+--   The CmtsCert object describes the set of known CMTS certificates:
+--   the DOCSIS 3.0 Root CA certificate, the Device Root CA certificate,
+--   the Device Intermediate CA certificate, and the DOCSIS 4.0 CMTS
+--   Device certificate.
+--
+
+docsSecCmtsCertD30RootCaCert    OBJECT-TYPE
+     SYNTAX         DocsX509ASN1DEREncodedCertificate
+     MAX-ACCESS     read-only
+     STATUS         current
+     DESCRIPTION
+         "This attribute represents the X509 DER-encoded DOCSIS 3.0 Root CA
+          certificate that signed the Manufacturer CA certificates (1st GEN
+          DOCSIS (R) PKI or legacy PKI)."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CMTS-OSSIv4.0
+          CmtsCert::D30RootCaCert
+          DOCSIS Security Specification, CM-SP-SECv4.0-I11-240605,
+          Baseline Privacy Key Management (BPKM) Protocol [SECv4.0]"
+ ::= { docsSecCmtsCert 1 }
+
+docsSecCmtsCertRootCaCert    OBJECT-TYPE
+      SYNTAX         DocsX509ASN1DEREncodedCertificate
+      MAX-ACCESS     read-only
+      STATUS         current
+      DESCRIPTION
+          "This attribute represents the X509 DER-encoded DOCSIS 3.1/DOCSIS 4.0
+           Root CA certificate that signed the Device CA certificates (2nd GEN
+           DOCSIS (R) PKI or new PKI)."
+      REFERENCE
+          "Information Model Mapping: CM-SP-CMTS-OSSIv4.0
+           CmtsCert::RootCaCert
+           DOCSIS Security Specification, CM-SP-SECv4.0-I11-240605,
+           Baseline Privacy Key Management (BPKM) Protocol [SECv4.0]"
+  ::= { docsSecCmtsCert 2 }
+
+docsSecCmtsCertDeviceCaCert    OBJECT-TYPE
+      SYNTAX         DocsX509ASN1DEREncodedCertificate
+      MAX-ACCESS     read-only
+      STATUS         current
+      DESCRIPTION
+          "This attribute represents the X509 DER-encoded Device CA Certificate.
+           This is an Intermediate Certificate issued by the Root CA that signs
+           the DOCSIS 4.0 Device Certificate that goes on a CMTS."
+      REFERENCE
+          "Information Model Mapping: CM-SP-CMTS-OSSIv4.0
+           CmtsCert::IntCaCert
+           DOCSIS Security Specification, CM-SP-SECv4.0-I11-240605,
+           Baseline Privacy Key Management (BPKM) Protocol [SECv4.0]"
+  ::= { docsSecCmtsCert 3 }
+
+docsSecCmtsCertCmtsCert    OBJECT-TYPE
+      SYNTAX         DocsX509ASN1DEREncodedCertificate
+      MAX-ACCESS     read-only
+      STATUS         current
+      DESCRIPTION
+          "This attribute represents the X509 DER-encoded DOCSIS 4.0 CMTS
+           Device Certificate."
+      REFERENCE
+          "Information Model Mapping: CM-SP-CMTS-OSSIv4.0
+           CmtsCert::CmtsCert
+           DOCSIS Security Specification, CM-SP-SECv4.0-I11-240605,
+           Baseline Privacy Key Management (BPKM) Protocol [SECv4.0]"
+  ::= { docsSecCmtsCert 4 }
+
+--
+-- The CmtsBpiVersionCfg object describes the BPI+ version configuration on the CMTS.
+--
+
+docsSecCmtsBpiVersionCfg OBJECT IDENTIFIER ::= { docsSecMibObjects 17 }
+
+docsSecCmtsBpiVersionCfgBpiVersion     OBJECT-TYPE
+     SYNTAX       CmtsBpiVer
+     MAX-ACCESS   read-write
+     STATUS       current
+     DESCRIPTION
+         "This attribute configures the BPI+ version that is enabled on the CMTS.
+          If the 'v1' bit (bit 0) is set to '1', the CMTS enables BPI+V1.
+          If the 'v2' bit (bit 1) is set to '1', the CMTS enables BPI+V2. 
+          If both bits are set to '0', the CMTS disables BPI+.
+          If both bits are set to '1', the CMTS enables both BPI+V1 and BPI+V2.
+          The CMTS MUST use a default value of 0x02 for BPI+ version
+          (i.e., enable BPI+V2 for CMs)."
+     REFERENCE
+         "Information Model Mapping: CM-SP-CMTS-OSSIv4.0
+          CmtsBpiVersionCfg::BpiVersion
+          DOCSIS Security Specification, CM-SP-SECv4.0-I11-240605,
+          Baseline Privacy Key Management (BPKM) Protocol [SECv4.0]"
+     DEFVAL { { v2 } }
+ ::= { docsSecCmtsBpiVersionCfg 1 }
+
+
+-- Conformance Definitions
+docsSecMibConformance OBJECT IDENTIFIER ::= { docsSecMib 2 }
+docsSecMibCompliances OBJECT IDENTIFIER ::= { docsSecMibConformance 1 }
+docsSecMibGroups      OBJECT IDENTIFIER ::= { docsSecMibConformance 2 }
+
+docsSecCompliance MODULE-COMPLIANCE
+STATUS      current
+DESCRIPTION
+        "The compliance statement for CMTSs that implement the DOCSIS
+         Security MIB."
+
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+     docsSecGroup
+     }
+
+::= { docsSecMibCompliances 1 }
+
+docsSecCmCompliance MODULE-COMPLIANCE
+STATUS      deprecated
+DESCRIPTION
+        "The compliance statement for CMs that implement the DOCSIS
+         Security MIB."
+
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+     docsSecCmGroup
+     }
+
+::= { docsSecMibCompliances 2 }
+
+docsSecCmSshCompliance MODULE-COMPLIANCE
+STATUS      current
+DESCRIPTION
+        "The compliance statement for CMs that implement SSH Key Management in the DOCSIS
+         Security MIB."
+
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+     docsSecCmSshGroup
+     }
+
+::= { docsSecMibCompliances 3 }
+
+docsSecBpiPlusCompliance MODULE-COMPLIANCE
+STATUS      current
+DESCRIPTION
+        "The compliance statement for BPI Plus in the DOCSIS Security MIB."
+
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+     docsSecBpiPlusGroup
+     }
+
+::= { docsSecMibCompliances 4 }
+
+docsSecCertificateManagementCompliance MODULE-COMPLIANCE
+STATUS      current
+DESCRIPTION
+        "The compliance statement for CM Certificate Management in the DOCSIS Security MIB."
+
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+     docsSecCertificateManagementGroup
+     }
+
+::= { docsSecMibCompliances 5 }
+
+docsSecCmtsCertificateManagementCompliance MODULE-COMPLIANCE
+STATUS      current
+DESCRIPTION
+        "The compliance statement for Cmts Certificate Management in the DOCSIS Security MIB."
+
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+     docsSecCmtsCertificateManagementGroup
+     }
+
+::= { docsSecMibCompliances 6 }
+
+docsSecGroup OBJECT-GROUP
+    OBJECTS {
+     docsSecCmtsCertRevocationListUrl,
+     docsSecCmtsCertRevocationListRefreshInterval,
+     docsSecCmtsCertRevocationListLastUpdate,
+     docsSecCmtsOnlineCertStatusProtocolUrl,
+     docsSecCmtsOnlineCertStatusProtocolSignatureBypass,
+     docsSecCmtsServerCfgTftpOptions,
+     docsSecCmtsServerCfgConfigFileLearningEnable,
+     docsSecCmtsEncryptEncryptAlgPriority,
+     docsSecCmtsSavControlCmAuthEnable,
+     docsSecCmtsCmEaeExclusionMacAddr,
+     docsSecCmtsCmEaeExclusionMacAddrMask,
+     docsSecCmtsCmEaeExclusionRowStatus,
+     docsSecSavCmAuthGrpName,
+     docsSecSavCmAuthStaticPrefixListId,
+     docsSecSavCfgListPrefixAddrType,
+     docsSecSavCfgListPrefixAddr,
+     docsSecSavCfgListPrefixLen,
+     docsSecSavCfgListRowStatus,
+     docsSecSavStaticListPrefixAddrType,
+     docsSecSavStaticListPrefixAddr,
+     docsSecSavStaticListPrefixLen,
+     docsSecCmtsCmSavStatsSavDiscards,
+     docsSecCmtsCertificateCertRevocationMethod,
+     docsSecCmtsCmBpi2EnforceExclusionMacAddr,
+     docsSecCmtsCmBpi2EnforceExclusionMacAddrMask,
+     docsSecCmtsCmBpi2EnforceExclusionRowStatus,
+     docsSecCmtsBpiVersionCfgBpiVersion
+     }
+    STATUS      current
+    DESCRIPTION
+         "Group of objects implemented in the CMTS."
+    ::= { docsSecMibGroups 1 }
+
+docsSecCmGroup OBJECT-GROUP
+    OBJECTS {
+     docsBpi2CodeUpdateCvcChain
+    }
+    STATUS      deprecated
+    DESCRIPTION
+         "Group of objects deprecated in the CM."
+    ::= { docsSecMibGroups 2 }
+    
+docsSecCmSshGroup OBJECT-GROUP
+    OBJECTS {
+     docsSecCmSshServerEnabledInterfaces,
+     docsSecCmSshServerStatus,
+     docsSecCmSshServerPublicKey,
+     docsSecCmSshServerNewConnectionTimeout,
+     docsSecCmSshServerInactivityTimeout,
+     docsSecCmSshServerSshSourceAddrRestrictionType,
+     docsSecCmSshServerSshSourceAddrRestriction,
+     docsSecCmSshServerSshSourcePrefixRestriction,
+     docsSecCmCdsFileServerIpAddrType,
+     docsSecCmCdsFileServerIpAddr,
+     docsSecCmCdsFileServerSshCmCdsDownloadUrl,
+     docsSecCmCdsFileServerRevocationStatusAction,
+     docsSecCmPasswordCredentialUserId,
+     docsSecCmPasswordCredentialPassword,                    
+     docsSecCmPasswordCredentialMacAddr,
+     docsSecCmPasswordCredentialRowStatus,
+     docsSecCmPublicKeyCredentialUserId,
+     docsSecCmPublicKeyCredentialSshPublicKey,
+     docsSecCmPublicKeyCredentialMacAddr,
+     docsSecCmPublicKeyCredentialRowStatus,
+     docsSecCmSccaServerCfgIpAddrType,
+     docsSecCmSccaServerCfgIpAddr,
+     docsSecCmSccaServerCfgRestApiUrl,
+     docsSecCmSccaServerCfgRevocationStatusAction
+    }
+    STATUS      current
+    DESCRIPTION
+         "Group of objects implemented in the CM for 
+         Ssh Key Management."
+    ::= { docsSecMibGroups 3 }
+
+docsSecBpiPlusGroup OBJECT-GROUP
+    OBJECTS {
+      docsSecBpiPlusBaseCmAuthStatusInfo,
+      docsSecBpiPlusBaseCmBpiPlusVer,
+      docsSecBpiPlusV2CfgCmAuthKeyEcCurve,
+      docsSecCmtsDesignationCfgCmtsDesignationType,
+      docsSecCmtsDesignationCfgCmtsDesignationAttr,
+      docsSecTrustOnFirstUseCfgAllowedBpiVers
+     }
+    STATUS      current
+    DESCRIPTION
+         "Group of objects associated with BPI+ Management."
+    ::= { docsSecMibGroups 4 }
+
+docsSecCertificateManagementGroup OBJECT-GROUP
+    OBJECTS {
+      docsSecCmIntermediateCaCertDocs30IntCaCert,
+      docsSecCmIntermediateCaCertIntCaCert,
+      docsSecCmtsTrustAnchorCertDeviceId,
+      docsSecCmtsTrustAnchorCertCaCert,
+      docsSecLearnedCmtsCertDeviceId,
+      docsSecLearnedCmtsCertDeviceCert,
+      docsSecCmCertRevocationCfgMethod,
+      docsSecCmOnlineCertStatusProtocolCfgCache,
+      docsSecCmOnlineCertStatusProtocolCfgRefreshInterval,
+      docsSecCmOnlineCertStatusProtocolCfgUrl
+     }
+    STATUS      current
+    DESCRIPTION
+         "Group of objects associated with Certificate Management."
+    ::= { docsSecMibGroups 5 }
+
+docsSecCmtsCertificateManagementGroup OBJECT-GROUP
+    OBJECTS {
+      docsSecCmtsCertD30RootCaCert,
+      docsSecCmtsCertRootCaCert,
+      docsSecCmtsCertDeviceCaCert,
+      docsSecCmtsCertCmtsCert
+     }
+    STATUS      current
+    DESCRIPTION
+         "Group of objects associated with Cmts Certificate Management."
+    ::= { docsSecMibGroups 6 }
+
+END

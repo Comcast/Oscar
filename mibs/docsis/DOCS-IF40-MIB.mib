@@ -1,0 +1,204 @@
+DOCS-IF40-MIB DEFINITIONS ::= BEGIN
+  IMPORTS
+    MODULE-IDENTITY,
+    OBJECT-TYPE
+             FROM SNMPv2-SMI         -- RFC 2578
+    OBJECT-GROUP,
+    MODULE-COMPLIANCE
+             FROM SNMPv2-CONF        -- RFC 2580
+    TEXTUAL-CONVENTION
+             FROM SNMPv2-TC          -- RFC 2579
+    clabProjDocsis
+              FROM CLAB-DEF-MIB
+    docsIf3CmtsCmRegStatusEntry
+             FROM DOCS-IF3-MIB;
+
+docsIf40Mib MODULE-IDENTITY
+     LAST-UPDATED    "202502200000Z" -- February 20, 2025
+     ORGANIZATION    "Cable Television Laboratories, Inc."
+     CONTACT-INFO
+         "
+         Postal: Cable Television Laboratories, Inc.
+         858 Coal Creek Circle
+         Louisville, Colorado 80027-9750
+         U.S.A.
+         Phone: +1 303-661-9100
+         Fax:   +1 303-661-9199
+         E-mail: mibs@cablelabs.com"
+     DESCRIPTION
+        "This MIB module contains the management objects for the
+        management of DOCSIS 4.0 features, primarily FDD and FDX
+        operation.
+        Copyright 2024-2025 Cable Television Laboratories, Inc.
+        All rights reserved."
+     REVISION "202502200000Z" -- February 20, 2025
+     DESCRIPTION
+        "Revised per ECN DOCS-IF40-MIB-25.2395-1"
+     REVISION "202407050000Z" -- July 5, 2024
+     DESCRIPTION
+        "Initial version, per CM-OSSIv4.0-N-24.2382-1"
+     ::= { clabProjDocsis 38 }
+
+-- Textual Conventions
+
+AdvBandPlanCapabilityType ::= TEXTUAL-CONVENTION
+     STATUS      current
+     DESCRIPTION
+         "This bit-field indicates the ability of the CM to participate in
+          Advanced Band Plan Operation as an FDX, FDD or FDX-L.
+          If the 'supportsFdxL' bit (bit 0) is set to '1', the CM is able to
+          operate as an FDX-L CM.
+          If the 'supportsFdx' bit (bit 1) is set to '1', the CM is able to
+          operate as an FDX CM.
+          If the 'supportsFdd' bit (bit 2) is set to '1', the CM is able to
+          operate as an FDD CM.
+          The 'supportsFdxL' and 'supportsFdx' options are mutually exclusive."
+     REFERENCE
+         "DOCSIS 4.0 MAC and Upper Layer Protocols Interface Specification,
+          CM-SP-MULPIv4.0-I08-231211,
+          Common TLV Encodings annex, Advanced Band Plan Capability section"
+
+     SYNTAX      BITS {
+                          supportsFdxL(0),
+                          supportsFdx(1),
+                          supportsFdd(2)
+                      }
+
+
+-- Object Definitions
+docsIf40Notifications  OBJECT IDENTIFIER ::= { docsIf40Mib 0 }
+docsIf40MibObjects  OBJECT IDENTIFIER ::= { docsIf40Mib 1 }
+docsIf40CcapMibObjects  OBJECT IDENTIFIER ::= { docsIf40MibObjects 1 }
+docsIf40CmMibObjects  OBJECT IDENTIFIER ::= { docsIf40MibObjects 2 }
+
+--
+-- DOCS-IF40-MIB Elements
+--
+-- ***************************************************************
+
+--
+-- CCAP Objects
+--
+
+--
+-- Extensions to the DOCS-IF3-MIB docsIf3CmtsCmRegStatusTable
+--
+docsIf40CmtsCmRegStatusTable OBJECT-TYPE
+     SYNTAX      SEQUENCE OF DocsIf40CmtsCmRegStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "This table extends the table in the IF3 MIB that
+          defines attributes that represent the CM's registration
+          status as tracked by the CMTS. In particular.
+          this table defines the DOCSIS 4.0 capabilities."
+     ::= { docsIf40CcapMibObjects 1 }
+
+docsIf40CmtsCmRegStatusEntry OBJECT-TYPE
+     SYNTAX      DocsIf40CmtsCmRegStatusEntry
+     MAX-ACCESS  not-accessible
+     STATUS      current
+     DESCRIPTION
+         "The conceptual row of docsIf40CmtsCmRegStatusTable."
+     AUGMENTS {
+              docsIf3CmtsCmRegStatusEntry
+              }
+     ::= { docsIf40CmtsCmRegStatusTable 1 }
+
+DocsIf40CmtsCmRegStatusEntry ::= SEQUENCE 
+     {
+     docsIf40CmtsCmRegStatusAdvBandPlanCapability          AdvBandPlanCapabilityType
+     }
+
+docsIf40CmtsCmRegStatusAdvBandPlanCapability OBJECT-TYPE
+     SYNTAX      AdvBandPlanCapabilityType
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute indicates the ability of the CM to participate in
+          Advanced Band Plan Operation as an FDX, FDD or FDX-L."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CCAP-OSSIv4.0
+         CmtsCmRegStatus::AdvBandPlanCapability
+         DOCSIS 4.0 MAC and Upper Layer Protocols Interface
+         Specification CM-SP-MULPIv4.0-I08-231211,
+         Common TLV Encodings annex, Advanced Band Plan Capability
+         section."
+     ::= { docsIf40CmtsCmRegStatusEntry 1 }
+
+--
+-- CM Objects
+--
+
+--
+-- The CmCapabilities object defines capability attributes for the CM.
+--
+docsIf40CmCapabilities OBJECT IDENTIFIER ::= { docsIf40CmMibObjects 1 }
+
+docsIf40CmCapabilitiesAdvBandPlanCapability OBJECT-TYPE
+     SYNTAX      AdvBandPlanCapabilityType
+     MAX-ACCESS  read-only
+     STATUS      current
+     DESCRIPTION
+         "This attribute indicates the ability of the CM to participate
+          in Advanced Band Plan Operation as an FDX, FDD or FDX-L."
+     REFERENCE
+        "Information Model Mapping: CM-SP-CM-OSSIv4.0 
+         CmCapabilities::AdvBandPlanCapability
+         DOCSIS 4.0 MAC and Upper Layer Protocols Interface
+         Specification CM-SP-MULPIv4.0-I07-230503,
+         Common TLV Encodings annex, Advanced Band Plan Capability
+         section."
+     ::= { docsIf40CmCapabilities 1 }
+
+
+-- Conformance Definitions
+docsIf40MibConformance OBJECT IDENTIFIER ::= { docsIf40Mib 2 }
+docsIf40MibCompliances OBJECT IDENTIFIER ::= { docsIf40MibConformance 1 }
+docsIf40MibGroups      OBJECT IDENTIFIER ::= { docsIf40MibConformance 2 }
+
+
+docsIf40CcapCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+        "The compliance statement for the CCAP."
+
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+     docsIf40CcapGroup
+     }
+
+    ::= { docsIf40MibCompliances 1 }
+
+docsIf40CmCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+        "The compliance statement for the CM."
+
+    MODULE -- this MODULE
+    MANDATORY-GROUPS {
+     docsIf40CmGroup
+     }
+
+    ::= { docsIf40MibCompliances 2 }
+
+docsIf40CcapGroup OBJECT-GROUP
+    OBJECTS {
+      docsIf40CmtsCmRegStatusAdvBandPlanCapability
+     }
+    STATUS      current
+    DESCRIPTION
+         "Group of objects implemented in a DOCSIS 4.0 CCAP"
+    ::= { docsIf40MibGroups 1 }
+
+docsIf40CmGroup OBJECT-GROUP
+    OBJECTS {
+      docsIf40CmCapabilitiesAdvBandPlanCapability
+     }
+    STATUS      current
+    DESCRIPTION
+         "Group of objects implemented in a DOCSIS 4.0 CM"
+    ::= { docsIf40MibGroups 2 }
+
+
+END
