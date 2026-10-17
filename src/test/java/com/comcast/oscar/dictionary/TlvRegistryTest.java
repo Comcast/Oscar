@@ -43,6 +43,48 @@ class TlvRegistryTest {
             .has(Dictionary.VALUE));
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {"Docsis", "DPoE"})
+  void parsesClassifierErrorNamesAndPreservesEncodedValues(String header) throws Exception {
+    String family = header.equals("Docsis") ? "docsis" : "dpoe";
+    var registry = TlvRegistry.forFamily(family);
+    assertEquals("ErroredParameter", registry.find(List.of(22, 8, 1)).name());
+    assertEquals("ErrorCode", registry.find(List.of(22, 8, 2)).name());
+    assertEquals("ErrorMessage", registry.find(List.of(22, 8, 3)).name());
+    var imported =
+        parse(
+            header
+                + " { UpstreamPacketClassification { ClassifierError { "
+                + "ErroredParameter; ErrorCode 1; ErrorMessage hello; } } }");
+    // Existing legacy codec layout: 22 -> 8 -> code 2 and NUL-terminated message 3.
+    byte[] expected = {22, 13, 8, 11, 2, 1, 1, 3, 6, 104, 101, 108, 108, 111, 0};
+    assertArrayEquals(expected, imported.toByteArray());
+    var exporter =
+        new com.comcast.oscar.configurationfile.ConfigurationFileExport(
+            imported.getTlvBuilder(), imported.getConfigurationFileType());
+    String text = exporter.toPrettyPrint(false, true);
+    assertTrue(text.contains("ErrorCode"));
+    assertTrue(text.contains("ErrorMessage"));
+    assertFalse(text.contains("Error Message"));
+    assertArrayEquals(expected, parse(text).toByteArray());
+  }
+
+  @Test
+  void allCatalogNamesAreSingleTokens() {
+    for (String family : List.of("docsis", "docsis40", "dpoe", "packetcable")) {
+      assertSingleTokenNames(TlvRegistry.forFamily(family), List.of());
+    }
+  }
+
+  private static void assertSingleTokenNames(TlvRegistry registry, List<Integer> path) {
+    for (var definition : registry.children(path)) {
+      assertFalse(
+          definition.name().codePoints().anyMatch(Character::isWhitespace),
+          definition.path() + ": " + definition.name());
+      assertSingleTokenNames(registry, definition.path());
+    }
+  }
+
   @Test
   void parserPreservesRepeatedRootValuesAndDocumentIsolation() {
     ConfigurationFileImport first = parse("Docsis { NetworkAccess 1; NetworkAccess 0; }");
@@ -145,6 +187,10 @@ class TlvRegistryTest {
          "lengthBytes":1,"supportedVersion":"1","maxInstances":1,"description":"Example"}
         """;
     assertNotNull(read(definition));
+    assertThrows(
+        IllegalArgumentException.class, () -> read(definition.replace("Example", "Bad Name")));
+    assertThrows(
+        IllegalArgumentException.class, () -> read(definition.replace("Example", "Bad\\tName")));
     assertThrows(IllegalArgumentException.class, () -> read(definition + "," + definition));
     assertThrows(IllegalArgumentException.class, () -> read(definition.replace("[3]", "[3,1]")));
     assertThrows(IllegalArgumentException.class, () -> read(definition.replace("integer", "typo")));

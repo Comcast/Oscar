@@ -113,3 +113,16 @@ Do not commit generated Python `__pycache__` directories.
 
 See the [development checkpoint](../development/snmp-map-refresh/README.md)
 for implementation details, verification results and remaining work.
+
+
+## TLV registry names
+
+Registry `name` values are Oscar text identifiers and must not contain whitespace;
+descriptions may use normal prose. The loader rejects whitespace in names.
+
+The legacy DOCSIS and DPoE classifier-error children at `22.8.1`, `22.8.2`,
+and `22.8.3` use `ErroredParameter`, `ErrorCode`, and `ErrorMessage`.
+Older generated templates using spaced spellings must update those names.
+These are symbol spelling corrections, not changes to numeric paths, codecs,
+or protocol eligibility. DOCSIS 4.0 and PacketCable names were already single
+tokens. Consumers such as oscar-ui need an Oscar artifact containing this fix.

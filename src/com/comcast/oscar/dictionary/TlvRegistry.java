@@ -58,6 +58,7 @@ public final class TlvRegistry {
           || entry.path().stream().anyMatch(n -> n < 0 || n > 255)
           || entry.name() == null
           || entry.name().isBlank()
+          || entry.name().codePoints().anyMatch(Character::isWhitespace)
           || entry.description() == null
           || entry.supportedVersion() == null
           || !CODECS.contains(entry.codec())

@@ -92,10 +92,10 @@ packaged CLI smoke test after building, use the public lab key, never a producti
 key in a test command:
 
 ```bash
-java -jar target/oscar-3.1.0-all.jar -c -s d4 4.0 \
+java -jar target/oscar-3.1.1-all.jar -c -s d4 4.0 \
   -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
   -i target/docsis40-lab/25-41.txt -o target/docsis40-lab/cli-10g.bin
-java -jar target/oscar-3.1.0-all.jar -d -s d4 4.0 \
+java -jar target/oscar-3.1.1-all.jar -d -s d4 4.0 \
   -i target/docsis40-lab/cli-10g.bin
 ```
 
