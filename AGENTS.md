@@ -31,6 +31,12 @@ bundled source, cite the exact issue and section, and test serialized bytes and
 decoded meaning against source-derived expectations. Mark unresolved definitions
 as unverified rather than inventing standard encodings.
 
+## QA hygiene
+
+Use [qa-hygiene](skills/qa-hygiene/SKILL.md) for TLV catalog naming,
+registry/parser hygiene changes, and QA hygiene reviews. Reuse the existing
+JUnit checks for whitespace-free TLV identifiers across all catalogs.
+
 ## Skill maintenance
 
 Keep canonical skill files and bundled references under `skills/<skill-name>/`.
