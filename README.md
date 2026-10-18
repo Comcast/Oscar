@@ -205,6 +205,9 @@ for API examples, key handling, result meanings and configuration syntax.
 These features require a build containing the new implementation; an older
 release JAR does not gain them from these documentation changes.
 
+See [SNMP value export](docs/snmp-value-export.md) for Snmp11/Snmp64 value
+formatting, round-trip coverage, and remaining limitations.
+
 Maintain wiki pages under `docs/wiki/`. Preview updates with
 `tools/update-wiki.sh`; see [wiki publishing](docs/wiki-publishing.md) for
 publishing commands and link handling.

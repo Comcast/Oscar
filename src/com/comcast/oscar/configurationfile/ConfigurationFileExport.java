@@ -1112,58 +1112,30 @@ public class ConfigurationFileExport {
 
       JSONArray jaTopLevelTLVOID = joTopLevelTLV.getJSONArray(Dictionary.VALUE);
 
-      jaTopLevelTLVOID.getJSONObject(0).getString("OID");
-
-      // Check to see if this is a 2 byte VarBind, if so convert from ASCII to HexSting
-      if (joTopLevelTLV.getInt(Dictionary.BYTE_LENGTH) < 2) {
-
-        sbTopLevelTLVCodeBlock
-            .append('\t')
-            .append(joTopLevelTLV.get(Dictionary.TLV_NAME))
-            .append(' ')
-            .append(
-                NetSNMP.toOIDFormat(
-                    jaTopLevelTLVOID.getJSONObject(0).getString("OID"), boolDottextOutputFormat))
-            .append(' ')
-            .append(
-                BER_DATA_TYPE.get(
-                    Integer.decode(jaTopLevelTLVOID.getJSONObject(0).getString("DATA_TYPE"))))
-            .append(" \"")
-            .append(jaTopLevelTLVOID.getJSONObject(0).getString("VALUE"))
-            .append("\";")
-            .append("\t /* TLV: ")
-            .append(
-                joTopLevelTLV
-                    .get(Dictionary.PARENT_TYPE_LIST)
-                    .toString()
-                    .replace("-1,", "")
-                    .replaceAll(",", "."))
-            .append("*/\n");
-      } else {
-
-        sbTopLevelTLVCodeBlock
-            .append('\t')
-            .append(joTopLevelTLV.get(Dictionary.TLV_NAME))
-            .append(' ')
-            .append(
-                NetSNMP.toOIDFormat(
-                    jaTopLevelTLVOID.getJSONObject(0).getString("OID"), boolDottextOutputFormat))
-            .append(' ')
-            .append(
-                BER_DATA_TYPE.get(
-                    Integer.decode(jaTopLevelTLVOID.getJSONObject(0).getString("DATA_TYPE"))))
-            .append(" \"")
-            .append(HexString.asciiToHex(jaTopLevelTLVOID.getJSONObject(0).getString("VALUE"), ":"))
-            .append("\";")
-            .append("\t /* TLV: ")
-            .append(
-                joTopLevelTLV
-                    .get(Dictionary.PARENT_TYPE_LIST)
-                    .toString()
-                    .replace("-1,", "")
-                    .replaceAll(",", "."))
-            .append("*/\n");
-      }
+      // BER decoding already supplies the value representation for its type.
+      // The outer TLV length width must not change that representation.
+      sbTopLevelTLVCodeBlock
+          .append('\t')
+          .append(joTopLevelTLV.get(Dictionary.TLV_NAME))
+          .append(' ')
+          .append(
+              NetSNMP.toOIDFormat(
+                  jaTopLevelTLVOID.getJSONObject(0).getString("OID"), boolDottextOutputFormat))
+          .append(' ')
+          .append(
+              BER_DATA_TYPE.get(
+                  Integer.decode(jaTopLevelTLVOID.getJSONObject(0).getString("DATA_TYPE"))))
+          .append(" \"")
+          .append(jaTopLevelTLVOID.getJSONObject(0).getString("VALUE"))
+          .append("\";")
+          .append("\t /* TLV: ")
+          .append(
+              joTopLevelTLV
+                  .get(Dictionary.PARENT_TYPE_LIST)
+                  .toString()
+                  .replace("-1,", "")
+                  .replaceAll(",", "."))
+          .append("*/\n");
 
       if (logger.isDebugEnabled())
         logger.debug("topLevelTLVCodeBlock(jo,i): " + sbTopLevelTLVCodeBlock);
