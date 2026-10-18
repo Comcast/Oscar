@@ -35,6 +35,22 @@ class NetSNMPResourceTest {
   }
 
   @Test
+  void securityObjectsResolveFromBundledMap() {
+    String[][] mappings = {
+      {"usmUserSecurityName", ".1.3.6.1.6.3.15.1.2.2.1.3"},
+      {"usmUserAuthKeyChange", ".1.3.6.1.6.3.15.1.2.2.1.6"},
+      {"usmUserPrivKeyChange", ".1.3.6.1.6.3.15.1.2.2.1.9"},
+      {"vacmGroupName", ".1.3.6.1.6.3.16.1.2.1.3"},
+      {"snmpCommunityName", ".1.3.6.1.6.3.18.1.1.1.2"},
+      {"usmDHUserAuthKeyChange", ".1.3.6.1.3.101.1.1.2.1.1"}
+    };
+    for (String[] mapping : mappings) {
+      assertEquals(mapping[1], NetSNMP.toDottedOID(mapping[0]));
+      assertEquals(mapping[0], NetSNMP.toTextualOID(mapping[1]));
+    }
+  }
+
+  @Test
   void resourceMapSupportsBidirectionalLookups() {
     assertEquals("res", NetSNMP.DirectoryStructureNetSNMP.fNetSNMPJSON().getParentFile().getName());
     assertEquals(".1.3.6.1.2.1.69.1.2.1.2.1", NetSNMP.toDottedOID("docsDevNmAccessIp.1"));

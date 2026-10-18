@@ -3,7 +3,8 @@
 [DottedTextualNetSNMPMap.json](DottedTextualNetSNMPMap.json) caches numeric OIDs
 and symbolic names for Oscar's bidirectional SNMP lookups. Use the
 [update script](../tools/update-snmp-map.sh) to refresh names or generate
-additional DOCSIS definitions instead of editing thousands of entries manually.
+additional DOCSIS and SNMP security definitions instead of editing thousands
+of entries manually.
 
 The source map is bundled in both release JARs. For `java -jar`, Oscar uses a
 writable `res/DottedTextualNetSNMPMap.json` beside the JAR and initializes a
@@ -45,7 +46,8 @@ Refresh names for existing cache entries using the current upstream MIBs:
 bash tools/update-snmp-map.sh --update-mibs
 ```
 
-To also enumerate and add named DOCSIS definitions using `snmptranslate -Tz`:
+To also enumerate and add named DOCSIS and SNMP security definitions using
+`snmptranslate -Tz`:
 
 ```bash
 bash tools/update-snmp-map.sh --update-mibs --generate
@@ -64,7 +66,7 @@ To refresh existing names only:
 bash tools/update-snmp-map.sh --update-mibs --write
 ```
 
-To refresh names and add all discovered DOCSIS definitions:
+To refresh names and add all discovered DOCSIS and SNMP security definitions:
 
 ```bash
 bash tools/update-snmp-map.sh --update-mibs --generate --write
@@ -95,8 +97,11 @@ Do not commit generated Python `__pycache__` directories.
   keys and dotted numeric values. A reverse entry is not required.
 - Preserve numeric spelling, including leading dots: Oscar's cache lookup uses
   exact strings rather than normalizing every input.
-- Generated definitions must belong to the selected `DOCS-`, `CCAP-` or `DSG-`
-  modules. Imported support modules are loaded but are not generation targets.
+- Generated definitions belong to the selected `DOCS-`, `CCAP-` or `DSG-`
+  modules, plus `SNMP-USER-BASED-SM-MIB`, `SNMP-VIEW-BASED-ACM-MIB`,
+  `SNMP-USM-DH-OBJECTS-MIB`, and `SNMP-COMMUNITY-MIB`. These four bundled
+  modules supply USM, VACM, DH key-change and community mappings. Other
+  imported support modules are loaded but are not generation targets.
 - Current DOCSIS MIBs come from the
   [CableLabs DOCSIS directory](https://mibs.cablelabs.com/MIBs/DOCSIS/).
   Selected dependencies use pinned PyPNM and LibreNMS files, plus the current
@@ -104,7 +109,7 @@ Do not commit generated Python `__pycache__` directories.
   [implementation](../tools/maintenance/update-snmp-map.py) for exact URLs.
 - Existing instance OIDs and out-of-scope entries are preserved. An ARRIS
   enterprise OID, for example, needs its vendor MIB to obtain a full name and
-  is not resolved by this DOCSIS-only generator.
+  is not resolved by this scoped generator.
 - Zero unresolved entries does not mean every vendor OID is fully named:
   skipped out-of-scope entries are not included in that count.
 - Ambiguous generated labels use `MODULE::name` keys. Round-trip mismatches,
@@ -126,3 +131,17 @@ Older generated templates using spaced spellings must update those names.
 These are symbol spelling corrections, not changes to numeric paths, codecs,
 or protocol eligibility. DOCSIS 4.0 and PacketCable names were already single
 tokens. Consumers such as oscar-ui need an Oscar artifact containing this fix.
+
+## SNMP security generation coverage
+
+The original generator selected only DOCSIS/CCAP/DSG module names. SNMP
+security definitions were therefore omitted even though their MIB files were
+already present under `mibs/txt/`. Run `--generate --write` to add them; no
+new MIB download is required. The generator validates each name against its
+numeric OID before writing the map.
+
+Generated entries describe base objects, not every possible table instance.
+OSCAR currently uses exact cache lookups; uncached indexed names still require
+Net-SNMP and the MIBs at runtime. Regenerating this map alone does not add
+prefix-based instance resolution. Existing nonempty runtime caches are also
+preserved, so rebuilding the JAR does not replace an older installed cache.

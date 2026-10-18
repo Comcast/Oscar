@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preview or refresh cached DOCSIS OID names using an isolated MIB set."""
+"""Preview or refresh cached DOCSIS and SNMP security OID names using an isolated MIB set."""
 import argparse
 import hashlib
 import json
@@ -33,6 +33,13 @@ DEPENDENCY_SOURCES['RFC1271-MIB'] = (
     'c42d6d3d82e5c4ef2a2452bf6655c61af57cba41/mibs/RFC1271-MIB'
 )
 DEPENDENCY_SOURCES['CLAB-DEF-MIB'] = 'https://mibs.cablelabs.com/MIBs/common/CLAB-DEF-MIB.mib'
+# These are generation targets, not merely imported supporting definitions.
+SNMP_SECURITY_MODULES = frozenset({
+    'SNMP-USER-BASED-SM-MIB',
+    'SNMP-VIEW-BASED-ACM-MIB',
+    'SNMP-USM-DH-OBJECTS-MIB',
+    'SNMP-COMMUNITY-MIB',
+})
 MODULE = re.compile(r"([\w-]+)\s+DEFINITIONS\s*::=\s*BEGIN")
 OID = re.compile(r"\.?[0-9]+(?:\.[0-9]+)+")
 
@@ -116,7 +123,8 @@ def mib_set(downloads):
     for data in saved.values():
         name, imports = module_info(data)
         modules[name] = (data, imports)
-    roots = {name for name in modules if name.startswith(('DOCS-', 'CCAP-', 'DSG-'))}
+    roots = {name for name in modules if name.startswith(('DOCS-', 'CCAP-', 'DSG-'))
+             or name in SNMP_SECURITY_MODULES}
     selected = set()
     missing = set()
     pending = list(roots)
@@ -233,7 +241,7 @@ def generate(mapping, directory, roots):
             candidates[name] = oid
             qualified_names[name] = qualified
     if not candidates:
-        raise ValueError('No DOCSIS OIDs found in loaded MIB tree')
+        raise ValueError('No selected OIDs found in loaded MIB tree')
     names = sorted(candidates)
     numeric = lookup_many(directory, roots, ('-IR', '-On'), names)
     for name, oid in zip(names, numeric):
@@ -264,7 +272,7 @@ def generate(mapping, directory, roots):
         added += 1
     if len(set(result.values())) != len(result):
         raise ValueError('Generated mapping contains duplicate values')
-    print(f'{len(candidates)} DOCSIS definitions; {added} added; {len(result)} total mappings')
+    print(f'{len(candidates)} selected definitions; {added} added; {len(result)} total mappings')
     return result
 
 
@@ -272,7 +280,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--write', action='store_true', help='Apply validated changes (default: preview)')
     parser.add_argument('--update-mibs', action='store_true', help='Download current CableLabs DOCSIS MIBs before checking')
-    parser.add_argument('--generate', action='store_true', help='Add all named DOCSIS definitions using snmptranslate -Tz')
+    parser.add_argument('--generate', action='store_true', help='Add named DOCSIS and SNMP security definitions using snmptranslate -Tz')
     args = parser.parse_args()
     if not shutil.which('snmptranslate'):
         raise ValueError('Install Net-SNMP snmptranslate first')
@@ -284,7 +292,7 @@ def main():
         raise ValueError('Duplicate mapping values are incompatible with Oscar')
     downloads = download() if args.update_mibs else {}
     roots, modules = mib_set(downloads)
-    print(f'{len(roots)} DOCSIS modules; {len(modules) - len(roots)} imported dependencies')
+    print(f'{len(roots)} generation modules; {len(modules) - len(roots)} imported dependencies')
     with tempfile.TemporaryDirectory(prefix='oscar-docsis-mibs-') as temporary:
         directory = Path(temporary)
         for name, data in modules.items():

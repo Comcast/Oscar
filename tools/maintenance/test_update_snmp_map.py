@@ -1,5 +1,6 @@
 import importlib.util
 import json
+import shutil
 from pathlib import Path
 import subprocess
 import sys
@@ -20,6 +21,46 @@ def mib(name, imported=None):
 
 
 class UpdateSnmpMapTest(unittest.TestCase):
+    def test_security_modules_are_generation_roots(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / 'mibs/txt').mkdir(parents=True)
+            modules = {name + '.mib': mib(name, 'SNMPv2-SMI')
+                       for name in updater.SNMP_SECURITY_MODULES}
+            modules['SNMPv2-SMI.mib'] = mib('SNMPv2-SMI')
+            modules['VENDOR-MIB.mib'] = mib('VENDOR-MIB')
+            with patch.object(updater, 'ROOT', root):
+                roots, selected = updater.mib_set(modules)
+        self.assertEqual(roots, updater.SNMP_SECURITY_MODULES)
+        self.assertIn('SNMPv2-SMI', selected)
+        self.assertNotIn('SNMPv2-SMI', roots)
+        self.assertNotIn('VENDOR-MIB', selected)
+
+    @unittest.skipUnless(shutil.which('snmptranslate'), 'Net-SNMP is required')
+    def test_bundled_security_mibs_generate_names_and_resolve_instances(self):
+        roots, modules = updater.mib_set({})
+        expected = {
+            'usmUserSecurityName': '.1.3.6.1.6.3.15.1.2.2.1.3',
+            'usmUserAuthKeyChange': '.1.3.6.1.6.3.15.1.2.2.1.6',
+            'usmUserPrivKeyChange': '.1.3.6.1.6.3.15.1.2.2.1.9',
+            'vacmGroupName': '.1.3.6.1.6.3.16.1.2.1.3',
+            'snmpCommunityName': '.1.3.6.1.6.3.18.1.1.1.2',
+            'usmDHUserAuthKeyChange': '.1.3.6.1.3.101.1.1.2.1.1',
+        }
+        with tempfile.TemporaryDirectory() as temporary:
+            directory = Path(temporary)
+            for name, data in modules.items():
+                (directory / (name + '.mib')).write_bytes(data)
+            generated = updater.generate({}, directory, roots)
+            for name, oid in expected.items():
+                with self.subTest(name=name):
+                    self.assertEqual(generated[name], oid)
+            instance = '.5.128.0.0.0.1.8.108.97.98.45.117.115.101.114'
+            name = 'usmUserAuthKeyChange' + instance
+            oid = expected['usmUserAuthKeyChange'] + instance
+            self.assertEqual(updater.translate(directory, roots, '-IR', '-On', name), oid)
+            self.assertEqual(updater.translate(directory, roots, '-Obas', oid), name)
+
     def test_pypnm_dependencies_use_pinned_module_specific_filenames(self):
         self.assertIn('82bbf79fe04a0b5e766dc3eb4d5ca2004008bca9', updater.DEPENDENCY_BASE)
         self.assertEqual(updater.DEPENDENCY_SOURCES['SCTE-HMS-MPEG-MIB'],
