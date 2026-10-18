@@ -19,6 +19,7 @@ VERSION_DOCUMENTATION_PATHS = (
     Path("README.md"),
     Path("docs/wiki/CLI-Examples.md"),
     Path("docs/wiki/Installation.md"),
+    Path("docs/wiki/development.md"),
     Path("development/docsis40-implementation.md"),
 )
 

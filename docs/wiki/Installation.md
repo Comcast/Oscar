@@ -51,14 +51,14 @@ Use a writable folder under your user profile, not `C:\Windows\system32`:
 ```powershell
 New-Item -ItemType Directory -Force "$HOME\Oscar" | Out-Null
 Set-Location "$HOME\Oscar"
-Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/Comcast/Oscar/releases/download/v3.2.0/oscar.jar" -OutFile ".\oscar.jar"
+Invoke-WebRequest -UseBasicParsing -Uri "https://github.com/Comcast/Oscar/releases/download/v3.2.1/oscar.jar" -OutFile ".\oscar.jar"
 java -jar .\oscar.jar -v
 java -jar .\oscar.jar --help
 ```
 
-The version command should report `3.2.0`. You can also download `oscar.jar`
-manually from the [v3.2.0 release](https://github.com/Comcast/Oscar/releases/tag/v3.2.0)
-and place it in this folder. The `target/oscar-3.2.0-all.jar` path used in
+The version command should report `3.2.1`. You can also download `oscar.jar`
+manually from the [v3.2.1 release](https://github.com/Comcast/Oscar/releases/tag/v3.2.1)
+and place it in this folder. The `target/oscar-3.2.1-all.jar` path used in
 source-build examples does not apply to the downloaded release.
 
 ### Compile and Decompile Lab Examples
@@ -67,7 +67,7 @@ Continue in the same folder. Download the version-matched examples and their
 public lab key without editing or adding a newline to the key file:
 
 ```powershell
-$base = "https://raw.githubusercontent.com/Comcast/Oscar/v3.2.0/src/com/comcast/oscar/examples/testfiles"
+$base = "https://raw.githubusercontent.com/Comcast/Oscar/v3.2.1/src/com/comcast/oscar/examples/testfiles"
 foreach ($name in @("DOCSIS-3.1-LAB.txt", "DOCSIS-4.0-LAB.txt", "DOCSIS-LAB.key")) {
     Invoke-WebRequest -UseBasicParsing -Uri "$base/$name" -OutFile ".\$name"
 }
@@ -88,20 +88,52 @@ See [CLI Examples](CLI-Examples.md) for profile details and coverage limits.
 
 ## Linux Installation
 
-From project root:
+Install Java 21 using your distribution's packages or the
+[Temurin installation guide](https://adoptium.net/installation).
+Check `java -version` before continuing. No Maven or repository checkout is
+needed for the release JAR.
 
 ```bash
-./install.sh
+mkdir -p "$HOME/Oscar"
+cd "$HOME/Oscar"
+curl -fL https://github.com/Comcast/Oscar/releases/download/v3.2.1/oscar.jar -o oscar.jar
+java -jar oscar.jar -v
+java -jar oscar.jar --help
 ```
 
-This verifies or installs Java 21 + Maven (Linux-supported flow).
-It also verifies or installs Net-SNMP (`snmptranslate`) on Linux.
+You can also download `oscar.jar` from the
+[release page](https://github.com/Comcast/Oscar/releases/tag/v3.2.1) in a browser.
+For building OSCAR, use the [development guide](development.md).
 
-## Build `oscar.jar`
+## macOS Installation
+
+Install a Java 21 JDK using the macOS package from
+[Temurin](https://adoptium.net/installation). Select Apple Silicon (aarch64) or
+Intel (x64) to match your Mac, then open Terminal and check `java -version`.
+The OSCAR JAR is the same download on each platform; Java supplies the runtime.
 
 ```bash
-./install.sh --build-oscar-jar
+mkdir -p "$HOME/Oscar"
+cd "$HOME/Oscar"
+curl -fL https://github.com/Comcast/Oscar/releases/download/v3.2.1/oscar.jar -o oscar.jar
+java -jar oscar.jar -v
+java -jar oscar.jar --help
 ```
+
+These are command-line instructions, not a macOS app bundle. No Maven or source
+checkout is required. Use the [development guide](development.md) to build.
+
+## Release files and updates
+
+Download `oscar.jar` or `oscar-all.jar` for standalone use. Both include runtime
+libraries; `oscar-thin.jar` requires a separately configured dependency classpath.
+GitHub's source archives are for development. Compare the JAR's SHA-256 with its
+published checksum file using `Get-FileHash` (PowerShell), `sha256sum` (Linux),
+or `shasum -a 256` (macOS).
+
+To update, stop any running OSCAR command and replace the JAR with the desired
+release. Keep configuration files separately. To remove OSCAR, delete its JAR;
+Java is a separate installation and may be used by other applications.
 
 ## First Run Directories
 When OSCAR runs, it may initialize these folders if missing:

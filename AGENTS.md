@@ -37,6 +37,13 @@ Use [qa-hygiene](skills/qa-hygiene/SKILL.md) for TLV catalog naming,
 registry/parser hygiene changes, and QA hygiene reviews. Reuse the existing
 JUnit checks for whitespace-free TLV identifiers across all catalogs.
 
+## Documentation layout
+
+Use [documentation-layout](skills/documentation-layout/SKILL.md) when changing
+README, installation, development, or release documentation. Keep README focused
+on installation choices and links; put detailed setup and build guidance in
+`docs/wiki/development.md` and user JAR instructions in `docs/wiki/Installation.md`.
+
 ## Skill maintenance
 
 Keep canonical skill files and bundled references under `skills/<skill-name>/`.
