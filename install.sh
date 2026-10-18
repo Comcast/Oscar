@@ -10,7 +10,7 @@ Usage: ./install.sh [options]
 
 Options:
   -b, --build-oscar-jar   Build a local oscar.jar after dependency install
-  -d, --development       Install developer tooling prerequisites (python3, nodejs, npm)
+  -d, --development       Install developer tooling prerequisites (gh, python3, nodejs, npm)
   -h, --help              Show this help message
 EOF
 }
@@ -219,6 +219,32 @@ ensure_snmptranslate() {
   return 1
 }
 
+ensure_github_cli() {
+  if command -v gh >/dev/null 2>&1; then
+    gh --version
+    return 0
+  fi
+
+  if ! command -v apt-get >/dev/null 2>&1; then
+    echo "GitHub CLI (gh) requires apt-get for automatic installation." >&2
+    echo "Install gh, then re-run: ./install.sh --development" >&2
+    return 1
+  fi
+
+  local -a privilege_command=()
+  if [ "${EUID}" -ne 0 ]; then
+    if ! command -v sudo >/dev/null 2>&1; then
+      echo "Install gh as an administrator: apt-get install gh" >&2
+      return 1
+    fi
+    privilege_command=(sudo)
+  fi
+
+  "${privilege_command[@]}" apt-get update
+  "${privilege_command[@]}" apt-get install -y gh
+  gh --version
+}
+
 ensure_python3() {
   if command -v python3 >/dev/null 2>&1; then
     python3 --version
@@ -375,8 +401,11 @@ case "$(uname -s 2>/dev/null || echo "")" in
     configure_local_tool_paths
 
     if [ "${DEVELOPMENT_SETUP}" -eq 1 ]; then
+      ensure_github_cli
       ensure_python3
       ensure_markdownlint
+      echo "For GitHub releases, authenticate once: gh auth login"
+      echo "Check authentication with: gh auth status"
     fi
 
     if [ "${BUILD_OSCAR_JAR}" -eq 1 ]; then

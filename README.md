@@ -159,6 +159,22 @@ java -jar target/oscar-3.2.0-all.jar -d -s d4 4.0 \
 See [CLI Examples](docs/wiki/CLI-Examples.md) for recompilation checks and
 [CLI Overview](docs/wiki/CLI-Overview.md) for new features and version selection.
 
+## GitHub release tooling
+
+Install developer dependencies, including GitHub CLI (`gh`), on Ubuntu:
+
+```bash
+./install.sh --development
+gh auth login
+gh auth status
+```
+
+The installer keeps an existing `gh` installation or installs the `gh` package
+from your configured APT repositories, using sudo when needed. Authentication
+is a separate interactive step; the installer does not log in or publish releases.
+For other installation methods, see the
+[GitHub CLI installation guide](https://github.com/cli/cli/blob/trunk/docs/install_linux.md).
+
 ## Shared-secret checks and extended MICs
 
 The Java API checks a supplied shared secret against an existing DOCSIS 3.1 or
