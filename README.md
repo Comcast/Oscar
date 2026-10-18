@@ -175,6 +175,23 @@ is a separate interactive step; the installer does not log in or publish release
 For other installation methods, see the
 [GitHub CLI installation guide](https://github.com/cli/cli/blob/trunk/docs/install_linux.md).
 
+Publish an existing pushed tag (compatible with older `gh` versions):
+
+```bash
+python3 tools/release/publish-release.py --tag v3.2.0 --dry-run
+python3 tools/release/publish-release.py --tag v3.2.0
+```
+
+This checks the tag on GitHub and creates a published release with generated
+notes. The release workflow then builds and uploads the JAR assets. An existing
+published release is left unchanged; an existing draft must be reviewed and
+published on GitHub. Authentication, network and missing-tag failures stop the
+script. `--dry-run` reads GitHub state without publishing.
+
+This publisher does not bump versions, commit, push tags, or build locally.
+Use `tools/release/release.py` for local release preparation and
+`tools/update-tag.sh --tag v3.2.0 --push` to publish the prepared tag first.
+
 ## Shared-secret checks and extended MICs
 
 The Java API checks a supplied shared secret against an existing DOCSIS 3.1 or
