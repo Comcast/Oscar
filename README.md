@@ -57,7 +57,7 @@ runtime dependencies; the thin JAR omits them. Sizes vary between builds.
 The thin JAR is not a standalone
 replacement for `oscar.jar`: its runtime dependencies must be supplied separately.
 
-SQLite is not required to build, test, or run 3.1.1, including bulk conversion
+SQLite is not required to build, test, or run 3.1.2, including bulk conversion
 and template merging. SQLite databases and the JDBC driver are no longer
 supplied. Applications using the retained legacy SQL API must supply their own
 driver and legacy database; dictionary export is no longer supported.
@@ -102,8 +102,8 @@ After committing, ensure a release tag exists locally, or explicitly publish it
 to `origin`:
 
 ```bash
-tools/update-tag.sh --tag v3.1.1
-tools/update-tag.sh -t v3.1.1 --push
+tools/update-tag.sh --tag v3.1.2
+tools/update-tag.sh -t v3.1.2 --push
 ```
 
 Tags must start with `v` and have three numeric components. Missing local tags
@@ -137,11 +137,11 @@ mkdir -p output
 Compile the editable examples; CM/CMTS MICs, End marker and padding are generated:
 
 ```bash
-java -jar target/oscar-3.1.1-all.jar -c -s d 3.1 \
+java -jar target/oscar-3.1.2-all.jar -c -s d 3.1 \
   -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
   -i src/com/comcast/oscar/examples/testfiles/DOCSIS-3.1-LAB.txt \
   -o output/DOCSIS-3.1-LAB.bin
-java -jar target/oscar-3.1.1-all.jar -c -s d4 4.0 \
+java -jar target/oscar-3.1.2-all.jar -c -s d4 4.0 \
   -k src/com/comcast/oscar/examples/testfiles/DOCSIS-LAB.key \
   -i src/com/comcast/oscar/examples/testfiles/DOCSIS-4.0-LAB.txt \
   -o output/DOCSIS-4.0-LAB.bin
@@ -150,9 +150,9 @@ java -jar target/oscar-3.1.1-all.jar -c -s d4 4.0 \
 Decompile to text; decoding does not require a shared key:
 
 ```bash
-java -jar target/oscar-3.1.1-all.jar -d -s d 3.1 \
+java -jar target/oscar-3.1.2-all.jar -d -s d 3.1 \
   -i output/DOCSIS-3.1-LAB.bin > output/DOCSIS-3.1-roundtrip.txt
-java -jar target/oscar-3.1.1-all.jar -d -s d4 4.0 \
+java -jar target/oscar-3.1.2-all.jar -d -s d4 4.0 \
   -i output/DOCSIS-4.0-LAB.bin > output/DOCSIS-4.0-roundtrip.txt
 ```
 
