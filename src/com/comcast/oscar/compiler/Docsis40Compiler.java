@@ -18,7 +18,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public final class Docsis40Compiler extends DocsisCompiler {
-  private static final List<Integer> LEGACY_MIC_ORDER =
+  static final List<Integer> LEGACY_MIC_ORDER =
       List.of(1, 2, 3, 17, 43, 6, 18, 19, 20, 59, 22, 23, 24, 25, 28, 29, 35, 36, 37, 40);
   private final TlvRegistry registry = TlvRegistry.forFamily("docsis40");
   private String secret;

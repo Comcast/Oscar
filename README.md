@@ -168,3 +168,8 @@ publishing commands and link handling.
 🔗 [Maurice LinkedIn](https://www.linkedin.com/in/mauricemgarcia)
 
 🔗 [Allen LinkedIn](https://www.linkedin.com/in/aflick/)
+
+## MIC verification API
+
+See [Verify configuration MICs and a shared secret](docs/mic-verification.md)
+for standard and extended DOCSIS MIC checks against original binary bytes.
