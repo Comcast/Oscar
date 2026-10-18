@@ -159,6 +159,19 @@ java -jar target/oscar-3.1.2-all.jar -d -s d4 4.0 \
 See [CLI Examples](docs/wiki/CLI-Examples.md) for recompilation checks and
 [CLI Overview](docs/wiki/CLI-Overview.md) for new features and version selection.
 
+## Shared-secret checks and extended MICs
+
+The Java API checks a supplied shared secret against an existing DOCSIS 3.1 or
+4.0 binary, including standard and extended MICs (HMAC-MD5 and MMH). It reports
+CM, CMTS and extended results separately. Verification is API-only; there is
+currently no CLI verification command or OSCAR-UI integration.
+
+Both versions also generate implicit and explicit extended MICs during
+compilation. See [MIC verification and generation](docs/mic-verification.md)
+for API examples, key handling, result meanings and configuration syntax.
+These features require a build containing the new implementation; an older
+release JAR does not gain them from these documentation changes.
+
 Maintain wiki pages under `docs/wiki/`. Preview updates with
 `tools/update-wiki.sh`; see [wiki publishing](docs/wiki-publishing.md) for
 publishing commands and link handling.
@@ -168,8 +181,3 @@ publishing commands and link handling.
 🔗 [Maurice LinkedIn](https://www.linkedin.com/in/mauricemgarcia)
 
 🔗 [Allen LinkedIn](https://www.linkedin.com/in/aflick/)
-
-## MIC verification API
-
-See [Verify configuration MICs and a shared secret](docs/mic-verification.md)
-for standard and extended DOCSIS MIC checks against original binary bytes.

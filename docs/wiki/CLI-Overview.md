@@ -36,6 +36,22 @@ The D4.0 catalog is intentionally separate from legacy DOCSIS. Its coverage is
 are deferred. For runnable text/binary pairs and build, compile, decompile and
 recompile commands, see [CLI Examples](./CLI-Examples.md).
 
+## Extended MIC generation and verification
+
+D3.1 and D4.0 compilation supports implicit and explicit extended MICs with
+HMAC-MD5 or MMH when the input contains TLV 43.6 parameters. Select the version
+explicitly and supply the existing `-k` shared-key file option:
+
+```bash
+java -jar oscar.jar -c -s d 3.1 -k shared-secret.key -i input.txt -o output.bin
+java -jar oscar.jar -c -s d4 4.0 -k shared-secret.key -i input-d4.txt -o output-d4.bin
+```
+
+Use a JAR built with the new extended MIC implementation. For input syntax,
+see [MIC generation](../mic-verification.md#generate-extended-mics-in-docsis-31-and-40).
+The shared-secret **checker is Java API-only**: compilation creates MICs;
+decompilation does not verify the supplied secret. See [API Overview](./API-Overview.md).
+
 ## Common Commands
 
 Compile DOCSIS 3 template text to binary:

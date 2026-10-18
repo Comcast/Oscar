@@ -5,9 +5,22 @@ bytes without decoding to text, recompiling, modifying the file, or logging keys
 It checks one supplied key (or an explicit pair of legacy/extended keys).
 It does not search for keys and does not require Net-SNMP.
 
+## Availability
+
+Build OSCAR from a revision containing `DocsisMicVerifier` and the shared
+D3.1/D4.0 finalizer. These changes do not imply that a new release has been
+published. Verification is currently a Java API only, with no CLI flag or UI
+control. Never compile with a candidate key and then verify that new output as
+a check of the original file: compilation replaces the MICs.
+
 ## API
 
 ```java
+import com.comcast.oscar.compiler.DocsisMicVerifier;
+import java.nio.file.Files;
+import java.util.Arrays;
+
+// Inside your method; configurationPath and secretPath are java.nio.file.Path values.
 byte[] binary = Files.readAllBytes(configurationPath);
 byte[] secret = Files.readAllBytes(secretPath); // exact bytes; no newline trimming
 try {
