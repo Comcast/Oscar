@@ -96,11 +96,56 @@ mvn -B -Dtest=DocsisMicVerifierTest,Docsis40Test test
 mvn -B test
 ```
 
-## Existing compiler findings (separate follow-up)
+## Generate extended MICs in DOCSIS 3.1 and 4.0
 
-Inspection found that legacy `DocsisCompiler.setExtendedCMTSMic` is a stub and
-legacy compiler DEBUG output can include its shared secret. Those existing paths
-were reported to the author and remain unchanged pending a separate decision.
-The new verifier does not call them. The older legacy MIC selection list also
-contains historical fields and omits the IPv6 provisioning address; verification
-uses the pinned MULPI order already implemented by `Docsis40Compiler` instead.
+DOCSIS 3.1 (`ConfigurationFile.DOCSIS_VER_31`) and DOCSIS 4.0 compilation
+share `DocsisMicFinalizer`. The D3.1 stub has been removed. Both support implicit
+TLV 7 and explicit TLV 43.6.3, with HMAC-MD5 (1) or MMH (2). Compilation uses
+the existing shared-secret string API (UTF-8) and requires a nonempty key.
+Separate generation keys are not exposed by that API.
+
+D3.1 text retains the existing names and BITS string syntax:
+
+```text
+VendorSpecific {
+    VendorId [FF:FF:FF];
+    ExtCmtsMicConf {
+        ExtCmtsMicHMACType 1;
+        ExtCmtsMicBitmap 000100000000000000000000000000000000000000010000;
+        ExpExtCmtsMicDigest [00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00];
+    }
+}
+```
+
+This is a fragment to include inside `Docsis { ... }`, not a complete provisioned
+file. Select D3.1 when constructing `ConfigurationFile`. The bitmap selects TLVs
+3 and 43. The explicit placeholder is replaced during compilation; use eight
+zero octets for MMH, or omit the digest child for implicit mode. VendorId must
+be first. The D3.1 catalog now includes that child and variable bitmap lengths.
+Existing identifiers are preserved; D4.0 retains its existing names.
+
+Generation stably sorts top-level parameters by type when extended MIC parameters
+are present, preserving repeated-instance order, and zeroes explicit self-coverage
+before calculation. It then inserts CM MIC, CMTS MIC, End and padding. Without
+extended parameters, input parameter order is retained. Verification always uses
+the supplied binary bytes. D3.1 uses the pinned pre-3.0 MIC selection order,
+including the IPv6 provisioning address, for standard/explicit TLV 7.
+
+The catalogs are currently **independent**, not an inherited overlay:
+`TlvRegistry` loads `docsis.json` and `docsis40.json` separately. Removing D4.0
+43.6 definitions would remove D4.0 support. Shared calculation code eliminates
+algorithm duplication; catalog inheritance would require a separate loader and
+compatibility change, particularly because the names differ.
+
+Source: MULPI 3.1 I21 §C.1.1.18, printed pp. 596-597 (VendorId first, FF:FF:FF),
+§C.1.1.18.1.6, pp. 598-599 (43.6 children), and §D.1.3/D.2.1; corresponding
+MULPI 4.0 I12 sections are cited above. Tests cover independently calculated
+D3.1 generation bytes, text import, both algorithms/modes, repeated commits,
+invalid parameters, and existing D4.0 generation cases.
+
+## Remaining legacy compiler follow-up
+
+Older DOCSIS versions still use the historical MIC selection code, whose DEBUG
+output can include the shared secret. That previously reported path remains
+unchanged. D3.1 and D4.0 now use the shared finalizer, which does not log keys.
+No CM/CMTS interoperability claim follows from the automated tests.

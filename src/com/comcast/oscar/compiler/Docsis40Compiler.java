@@ -5,21 +5,13 @@ import com.comcast.oscar.dictionary.TlvDefinition;
 import com.comcast.oscar.dictionary.TlvRegistry;
 import com.comcast.oscar.utilities.HexString;
 import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 public final class Docsis40Compiler extends DocsisCompiler {
-  static final List<Integer> LEGACY_MIC_ORDER =
-      List.of(1, 2, 3, 17, 43, 6, 18, 19, 20, 59, 22, 23, 24, 25, 28, 29, 35, 36, 37, 40);
   private final TlvRegistry registry = TlvRegistry.forFamily("docsis40");
   private String secret;
   private byte[] finalized;
@@ -82,73 +74,24 @@ public final class Docsis40Compiler extends DocsisCompiler {
     }
   }
 
+  /** Finalizes validated DOCSIS 4.0 parameters with shared MIC generation. */
   @Override
   public void commit() {
     finalized = null;
-    if (secret == null || secret.isEmpty()) {
-      throw new IllegalArgumentException("DOCSIS 4.0 compilation requires a nonempty CMTS key");
-    }
     List<Element> parameters = parameters();
-    Element extension = null;
-    for (Element element : parameters) {
-      if (element.type() == 43) {
-        if (extension != null) throw new IllegalArgumentException("Duplicate Extended CMTS MIC");
-        extension = element;
-      }
-    }
-    byte[] bitmap = null;
-    boolean explicit = false;
-    int algorithm = 1;
-    if (extension != null) {
-      var fields = parse(required(parse(extension.value(), false), 6).value(), false);
-      algorithm = unsigned(required(fields, 1).value());
-      if (algorithm != 1 && algorithm != 2) {
-        throw new UnsupportedOperationException(
-            "Unverified vendor or reserved E-MIC algorithm " + algorithm);
-      }
-      bitmap = required(fields, 2).value();
-      explicit = fields.stream().anyMatch(field -> field.type() == 3);
-      if ((bitmap[0] & 128) != 0 || selected(bitmap, 7) || (explicit && selected(bitmap, 6))) {
+    if (parameters.stream().anyMatch(element -> element.type() == 91)) {
+      boolean covered =
+          parameters.stream()
+              .filter(element -> element.type() == 43)
+              .flatMap(element -> parse(element.value(), false).stream())
+              .filter(child -> child.type() == 6)
+              .anyMatch(child -> selected(required(parse(child.value(), false), 2).value(), 91));
+      if (!covered) {
         throw new IllegalArgumentException(
-            "Invalid E-MIC bitmap: reserved bit 0 or self-referential MIC selection");
-      }
-      parameters.sort(Comparator.comparingInt(Element::type));
-      if (explicit) {
-        int digestLength = algorithm == 2 ? 8 : 16;
-        if (required(fields, 3).value().length != digestLength) {
-          throw new IllegalArgumentException(
-              "ExplicitDigest must contain " + digestLength + " octets for algorithm " + algorithm);
-        }
-        extension = replaceDigest(extension, new byte[digestLength]);
-        replaceExtension(parameters, extension);
-        byte[] digest = extendedDigest(select(parameters, bitmap), algorithm);
-        replaceExtension(parameters, replaceDigest(extension, digest));
+            "Low Latency Disable requires E-MIC bitmap coverage for TLV 91");
       }
     }
-    if (parameters.stream().anyMatch(element -> element.type() == 91)
-        && (bitmap == null || !selected(bitmap, 91))) {
-      throw new IllegalArgumentException(
-          "Low Latency Disable requires E-MIC bitmap coverage for TLV 91");
-    }
-    parameters.add(new Element(6, md5(encode(parameters))));
-    byte[] cmts;
-    if (bitmap != null && !explicit) {
-      cmts = Arrays.copyOf(extendedDigest(select(parameters, bitmap), algorithm), 16);
-    } else {
-      var selected = new ByteArrayOutputStream();
-      for (int type : LEGACY_MIC_ORDER) {
-        for (Element element : parameters) {
-          if (element.type() == type) selected.writeBytes(element.encoded());
-        }
-      }
-      cmts = hmac(selected.toByteArray());
-    }
-    parameters.add(new Element(7, cmts));
-    var output = new ByteArrayOutputStream();
-    output.writeBytes(encode(parameters));
-    output.write(255);
-    while (output.size() % 4 != 0) output.write(0);
-    finalized = output.toByteArray();
+    finalized = DocsisMicFinalizer.finish(encode(parameters), registry, secret);
   }
 
   private List<Element> parameters() {
@@ -386,45 +329,5 @@ public final class Docsis40Compiler extends DocsisCompiler {
 
   private static boolean selected(byte[] bitmap, int type) {
     return type / 8 < bitmap.length && (bitmap[type / 8] & (128 >>> (type % 8))) != 0;
-  }
-
-  private static byte[] select(List<Element> elements, byte[] bitmap) {
-    return encode(elements.stream().filter(element -> selected(bitmap, element.type())).toList());
-  }
-
-  private static Element replaceDigest(Element extension, byte[] digest) {
-    var outer = parse(extension.value(), false);
-    var inner = parse(required(outer, 6).value(), false);
-    inner.replaceAll(field -> field.type() == 3 ? new Element(3, digest) : field);
-    outer.replaceAll(field -> field.type() == 6 ? new Element(6, encode(inner)) : field);
-    return new Element(43, encode(outer));
-  }
-
-  private static void replaceExtension(List<Element> parameters, Element extension) {
-    parameters.replaceAll(element -> element.type() == 43 ? extension : element);
-  }
-
-  private byte[] hmac(byte[] bytes) {
-    try {
-      Mac mac = Mac.getInstance("HmacMD5");
-      mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacMD5"));
-      return mac.doFinal(bytes);
-    } catch (GeneralSecurityException failure) {
-      throw new IllegalStateException("HMAC-MD5 unavailable", failure);
-    }
-  }
-
-  private byte[] extendedDigest(byte[] bytes, int algorithm) {
-    return algorithm == 2
-        ? DocsisMmh.digest(secret.getBytes(StandardCharsets.UTF_8), bytes)
-        : hmac(bytes);
-  }
-
-  private static byte[] md5(byte[] bytes) {
-    try {
-      return MessageDigest.getInstance("MD5").digest(bytes);
-    } catch (GeneralSecurityException failure) {
-      throw new IllegalStateException("MD5 unavailable", failure);
-    }
   }
 }

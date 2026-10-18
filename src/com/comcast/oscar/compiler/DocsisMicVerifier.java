@@ -185,7 +185,7 @@ public final class DocsisMicVerifier {
         reason = Reason.MISSING_SECRET;
       } else {
         var input = new ByteArrayOutputStream();
-        for (int type : Docsis40Compiler.LEGACY_MIC_ORDER) {
+        for (int type : DocsisMicFinalizer.LEGACY_MIC_ORDER) {
           for (Element element : elements) {
             if (element.type() == type) {
               append(input, bytes, element);

@@ -172,6 +172,105 @@ class DocsisMicVerifierTest {
     }
   }
 
+  @Test
+  void generatesDocsis31ExtendedBytesAgainstIndependentDigests() throws Exception {
+    for (int algorithm : new int[] {1, 2}) {
+      for (boolean explicit : new boolean[] {false, true}) {
+        int digestLength = algorithm == 2 ? 8 : 16;
+        byte[] extension =
+            tlv(
+                43,
+                concat(
+                    tlv(8, hex("ffffff")),
+                    tlv(
+                        6,
+                        concat(
+                            tlv(1, new byte[] {(byte) algorithm}),
+                            tlv(2, hex("100020000010")),
+                            explicit ? tlv(3, new byte[digestLength]) : new byte[0]))));
+        byte[] sorted = hex("030101030100120105");
+        byte[] covered = concat(sorted, extension);
+        byte[] digest = algorithm == 2 ? DocsisMmh.digest(KEY, covered) : hmac(KEY, covered);
+        var compiler =
+            new DocsisCompiler(
+                "public-test-key",
+                com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants
+                    .DOCSIS_31_CONFIGURATION_TYPE);
+        compiler.add(
+            new com.comcast.oscar.utilities.HexString(
+                concat(hex("120105030101030100"), extension)));
+        compiler.commit();
+        if (explicit) {
+          System.arraycopy(digest, 0, extension, extension.length - digestLength, digestLength);
+        }
+        byte[] cm = tlv(6, MessageDigest.getInstance("MD5").digest(concat(sorted, extension)));
+        byte[] cmts =
+            explicit
+                ? hmac(KEY, concat(hex("030101030100"), extension, cm, hex("120105")))
+                : Arrays.copyOf(digest, 16);
+        byte[] expected = concat(sorted, extension, cm, tlv(7, cmts), hex("ff"));
+        expected = Arrays.copyOf(expected, (expected.length + 3) / 4 * 4);
+        assertArrayEquals(expected, compiler.toByteArray());
+        compiler.commit();
+        assertArrayEquals(expected, compiler.toByteArray());
+        assertEquals(MATCH, DocsisMicVerifier.verify(expected, PROFILE, KEY).extended());
+      }
+    }
+  }
+
+  @Test
+  void importsDocsis31ExtendedNamesAndGeneratesMic() {
+    for (int algorithm : new int[] {1, 2}) {
+      for (boolean explicit : new boolean[] {false, true}) {
+        String zeros = "00:".repeat(algorithm == 2 ? 7 : 15) + "00";
+        String source =
+            "Docsis { NetworkAccess 1; VendorSpecific { VendorId [FF:FF:FF]; "
+                + "ExtCmtsMicConf { ExtCmtsMicHMACType "
+                + algorithm
+                + "; ExtCmtsMicBitmap 000100000000000000000000000000000000000000010000; "
+                + (explicit ? "ExpExtCmtsMicDigest [" + zeros + "]; " : "")
+                + "} } }";
+        var imported =
+            new com.comcast.oscar.configurationfile.ConfigurationFileImport(
+                new StringBuilder(source));
+        var file =
+            new com.comcast.oscar.configurationfile.ConfigurationFile(
+                com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants
+                    .DOCSIS_31_CONFIGURATION_TYPE,
+                imported.getTlvBuilder(),
+                "public-test-key");
+        file.commit();
+        var result = DocsisMicVerifier.verify(file.toByteArray(), PROFILE, KEY);
+        assertEquals(MATCH, result.cm());
+        assertEquals(MATCH, result.cmts());
+        assertEquals(MATCH, result.extended());
+      }
+    }
+  }
+
+  @Test
+  void rejectsInvalidExtendedGenerationInputs() throws Exception {
+    for (String fields :
+        new String[] {
+          "010101", // missing bitmap
+          "0101010200", // empty bitmap
+          "010101020180", // reserved bit zero
+          "010101020101", // selects CMTS MIC
+          "01010102010203080000000000000000", // explicit selects CM MIC
+          "01010102011003080000000000000000", // wrong MD5 digest length
+          "010101010101020110" // duplicate algorithm
+        }) {
+      byte[] extension = tlv(43, concat(tlv(8, hex("ffffff")), tlv(6, hex(fields))));
+      var compiler =
+          new DocsisCompiler(
+              "public-test-key",
+              com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants
+                  .DOCSIS_31_CONFIGURATION_TYPE);
+      compiler.add(new com.comcast.oscar.utilities.HexString(extension));
+      assertThrows(IllegalArgumentException.class, compiler::commit, fields);
+    }
+  }
+
   private static byte[] fixture(boolean explicit, int algorithm) throws Exception {
     byte[] parameters = hex("120105030101030100");
     byte[] bitmap = hex("100020000010"); // Types 3, 18 and 43; retain physical order.

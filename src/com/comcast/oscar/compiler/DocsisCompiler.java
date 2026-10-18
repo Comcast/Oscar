@@ -1,6 +1,8 @@
 package com.comcast.oscar.compiler;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
+import com.comcast.oscar.dictionary.TlvRegistry;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.BinaryConversion;
@@ -42,12 +44,6 @@ public class DocsisCompiler extends TlvBuilder {
   private final byte NULL = (byte) 0x00;
 
   private ByteArrayOutputStream baosTlvFinalizeArray = new ByteArrayOutputStream();
-
-  /* Use for Ext. CMTS MIC */
-  @SuppressWarnings("unused")
-  private int iExtCmtsHashTechnique = -1;
-
-  private HexString hsTopLevelTlvBitMAsk = null;
 
   /**
    * @param iDocsisVersion
@@ -144,18 +140,11 @@ public class DocsisCompiler extends TlvBuilder {
       logger.debug("DocsisCompiler.commit() LengthOfConfig: " + toByteArray().length);
     }
 
-    /**
-     * Place holder for now
-     *
-     * <p>Doing this so that I do not have to strip the Configuration every time this method is
-     * called
-     */
-    if (hsTopLevelTlvBitMAsk != null) {
-      try {
-        baosTlvFinalizeArray.write(setExtendedCMTSMic(toByteArray()));
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    if (iDocsisVersion == ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE) {
+      baosTlvFinalizeArray.writeBytes(
+          DocsisMicFinalizer.finish(
+              super.toByteArray(), TlvRegistry.forFamily("docsis"), sSharedSecretKey));
+      return;
     }
 
     // Get TLV Byte Array then append NEW CM + CMTS MIC
@@ -194,64 +183,6 @@ public class DocsisCompiler extends TlvBuilder {
       }
 
     return boolStatus;
-  }
-
-  /**
-   * C.1.1.18.1.6 Extended CMTS MIC Configuration Setting The Extended CMTS MIC Configuration
-   * Setting parameter is a multi-part encoding that configures how the CMTS performs message
-   * integrity checking. This is used to detect unauthorized modification or corruption of the CM
-   * configuration file, using techniques which are not possible using the pre-3.0 DOCSIS CMTS MIC,
-   * in particular, using more advanced hashing techniques, or requiring different TLVs to be
-   * included in the HMAC calculation. This TLV cannot be contained within an instance of TLV type
-   * 43 which contains other subtypes (excluding subtype 8). Type Length Value 43.6 n Extended CMTS
-   * MIC Parameter Encoding subtype/length/value tuples
-   *
-   * <p>C.1.1.18.1.6.1 Extended CMTS MIC HMAC type The Extended CMTS MIC HMAC type parameter is a
-   * single byte encoding that identifies the type of hashing algorithm used in the CMTS MIC hash
-   * TLV. This subtype is always included within an Extended CMTS MIC Configuration Setting TLV; the
-   * instance of the CMTS MIC Hash within the configuration file will use the HMAC technique
-   * described by the value of this TLV. The CMTS SHOULD support a configuration that can require
-   * all REG-REQ or REG-REQ-MP messages to contain an Extended CMTS MIC Encoding with a particular
-   * CMTS MIC algorithm. Type Length Value 43.6.1 1 Enumeration 1 - MD5 HMAC [RFC 2104] 2 -
-   * MMH16-m-n HMAC [DOCSIS SECv3.0] 43 - vendor specific
-   *
-   * <p>C.1.1.18.1.6.2 Extended CMTS MIC Bitmap451 The Extended CMTS MIC Bitmap is a multi byte
-   * encoding that is a bitmask representing specified TLV types in a CM configuration file,
-   * REG-REQ, or REG-REQ-MP message, Annex D.2. This TLV is always present, and the TLVs to be
-   * included within the digest calculation are those whose top level types correspond to bits which
-   * are set in this value. For example, to require the Downstream Frequency Configuration Setting
-   * to be included in the digest calculation, set bit 1 in the value of this TLV. This TLV uses the
-   * BITS Encoding convention where bit positions are numbered starting with bit #0 as the most
-   * significant bit. Type Length Value 43.6.2 n BITS Encoding - Each bit position in this string
-   * represents a top-level TLV bit position 0 is reserved and is always set to a value of 0.
-   *
-   * <p>C.1.1.18.1.6.3 Explicit Extended CMTS MIC Digest Subtype452 This subtype explicitly provides
-   * the calculated extended MIC digest value over all TLVs reported in REG-REQ or REG-REQ-MP for
-   * which bits are set in the Extended CMTS MIC Bitmap. If the Extended CMTS MIC Bitmap indicates
-   * TLV 43 is to be included in the calculation of the Extended CMTS MIC digest, this subtype (with
-   * the value 0) is to be included in that calculation, see Annexes D.1.3 and D.2.1. A valid
-   * Explicit Extended CMTS MIC Digest does NOT contain the CM MIC value. When this subtype is
-   * present, the CMTS MIC Configuration Setting in TLV7 is calculated using the set of TLVs as
-   * specified for DOCSIS 2.0, in Annex D.2.1. If this subtype is omitted from an Extended CMTS MIC
-   * Encoding, the extended CMTS MIC is implicitly provided in the CMTS MIC Configuration Setting of
-   * TLV 7. When the Explicit Extended CMTS MIC Digest Subtype is present, if the CMTS fails the
-   * Extended CMTS MIC Digest verification but passes the pre-3.0 DOCSIS CMTS MIC digest
-   * verification of TLV7, then the CMTS MUST NOT consider the CM to have failed authentication.
-   * Instead, the CMTS MUST silently ignore all TLVs in REGREQ or REG-REQ-MP which were marked as
-   * protected by the Extended CMTS MIC Bitmap but are not included in the set of TLVs protected by
-   * the pre-3.0 DOCSIS CMTS MIC (TLV7) calculation. Type Length 453 Value 43.6.3 n Calculated MIC
-   * digest using the CMTS MIC HMAC Type algorithm
-   *
-   * @param baTLV byte[]
-   * @return byte[]
-   */
-  private byte[] setExtendedCMTSMic(byte[] baTLV) {
-
-    ByteArrayOutputStream baosExtMicTlv43_6 = new ByteArrayOutputStream();
-
-    if (logger.isDebugEnabled()) logger.debug("DocsisCompiler.setExtendedCMTSMic()");
-
-    return baosExtMicTlv43_6.toByteArray();
   }
 
   /**

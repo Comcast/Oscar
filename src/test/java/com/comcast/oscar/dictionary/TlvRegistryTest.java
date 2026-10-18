@@ -122,7 +122,7 @@ class TlvRegistryTest {
 
   @Test
   void countsEveryMigratedDefinition() {
-    assertEquals(676, count(TlvRegistry.forFamily("docsis"), List.of()));
+    assertEquals(677, count(TlvRegistry.forFamily("docsis"), List.of()));
     assertEquals(13, count(TlvRegistry.forFamily("packetcable"), List.of()));
     assertEquals(624, count(TlvRegistry.forFamily("dpoe"), List.of()));
   }
