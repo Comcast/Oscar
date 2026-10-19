@@ -1,5 +1,5 @@
 ---
-name: oscar-docsis-dpog-config-tlvs
+name: oscar-dpog-10-config-tlvs
 description: Implement, review, or validate DPoG 1.0 configuration-file TLVs and OSCAR editor eligibility using DPoG-SP-MULPIv1.0-C01-160830. Use for DPoG catalogs, nested encodings, SNMP, service flows, file validation, and integrity handling. Distinguish DHCP capabilities from file settings; do not apply DPoE or DOCSIS 3.1/4.0 rules as substitutes.
 ---
 
