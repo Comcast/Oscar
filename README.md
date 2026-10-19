@@ -8,7 +8,8 @@
   </picture>
 </p>
 
-[![Security scans](https://github.com/Comcast/Oscar/actions/workflows/security.yml/badge.svg?branch=master)](https://github.com/Comcast/Oscar/actions/workflows/security.yml)
+[![CodeQL](https://github.com/Comcast/Oscar/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/Comcast/Oscar/actions/workflows/codeql.yml)
+[![Dependency security](https://github.com/Comcast/Oscar/actions/workflows/security.yml/badge.svg?branch=master)](https://github.com/Comcast/Oscar/actions/workflows/security.yml)
 [![CI](https://github.com/Comcast/Oscar/actions/workflows/ci.yml/badge.svg)](https://github.com/Comcast/Oscar/actions/workflows/ci.yml)
 [![CI macOS](https://github.com/Comcast/Oscar/actions/workflows/ci-macos.yml/badge.svg)](https://github.com/Comcast/Oscar/actions/workflows/ci-macos.yml)
 ![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)

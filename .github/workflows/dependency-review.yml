@@ -1,6 +1,16 @@
 name: Dependency review
 on:
   pull_request:
+    paths:
+      - '**/pom.xml'
+      - '.mvn/**'
+      - 'mvnw'
+      - 'mvnw.cmd'
+      - 'install.sh'
+      - '.github/workflows/**'
+      - '.github/dependabot.yml'
+      - 'build.xml'
+      - 'lib/**'
 permissions:
   contents: read
 jobs:

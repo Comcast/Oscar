@@ -10,32 +10,44 @@ and dependency metadata, not just on whether a build succeeds.
 
 ## Workflows and release gates
 
-`security.yml` runs on the default branch, pull requests, a weekly schedule,
-manual dispatch, and as a reusable release check:
+`security.yml` runs on dependency-related default-branch pushes and pull
+requests, manual dispatch, and every release through the reusable workflow.
+Path filters watch Maven declarations/wrappers, installation inputs, and Actions
+workflows. OSCAR-UI also watches OSCAR/Qt bootstrap scripts, source archive pins,
+the packaging dependency declarations, and the OSCAR updater. Ordinary Java
+source, documentation, and image changes do not trigger dependency scans.
+Changing a Java `import` alone does not change the resolved package version.
+
+`codeql.yml` runs weekly and manually, independently of dependency changes.
+CodeQL is no longer part of the per-push, per-PR, or release workflow gate.
+The checks have separate responsibilities:
 
 - CodeQL analyzes Java, Python, and GitHub Actions. Java uses a manual compile.
   Alerts appear in the repository Security tab. A successful analysis does not
-  mean there are no findings; CodeQL findings do not themselves fail this gate.
+  mean there are no findings; review the alerts separately.
 - Grype scans resolved runtime JARs, including transitive Maven dependencies,
   and fails on high/critical findings even when no fix is available. Scanner or
   database failures also block this job. The JSON findings and dependency tree
   are retained as workflow artifacts, including on scan failure.
-- On default-branch pushes, Maven dependency submission populates GitHub's
+- On matching default-branch pushes, Maven dependency submission populates GitHub's
   dependency graph for Dependabot. Submission has contents-write permission;
   it does not run for fork PRs or release tags. The reusable release caller
   grants the permission ceiling, while scanning jobs retain read access.
 
-`dependency-review.yml` checks pull requests for newly introduced known
-high/critical dependency vulnerabilities. It supplements the full runtime scan;
+`dependency-review.yml` uses the same path filters and checks pull requests
+for newly introduced known high/critical dependency vulnerabilities. It supplements the full runtime scan;
 PR review alone would not cover direct pushes. No branch-protection rules were
 changed: direct pushes remain possible, but the release workflow requires the
-Security jobs to finish successfully before building/uploading release assets.
+dependency-security jobs to finish successfully before building/uploading
+release assets.
 Repository administrators can separately make these checks required for PRs.
 
-The Security badge links to the workflow, not a certification that the project
-has no vulnerabilities. It shows the latest default-branch workflow result.
-New workflow files and badges become active after they are pushed. Scheduled
-checks detect new advisories even without code changes.
+The Dependency security and CodeQL badges link to their separate workflows,
+not a certification that the project has no vulnerabilities. Each shows its
+latest default-branch result; code-only pushes need not produce a new result.
+New workflow files and badges become active after they are pushed. Dependabot
+alerts remain enabled to detect newly disclosed dependency vulnerabilities
+even without package changes. Weekly CodeQL scans inspect source code.
 
 ## Scope and limitations
 
@@ -73,4 +85,4 @@ Lint the workflow files with actionlint and verify dependency resolution using
 the Maven commands in `security.yml`. Confirm the first hosted run resolves
 CodeQL packs, the Grype database, and submits the graph successfully. These
 network-backed checks are not replaced by local Java tests. Check that both
-release workflows require the Security job and retain reports after failures.
+release workflows require the dependency Security job and retain reports after failures.
