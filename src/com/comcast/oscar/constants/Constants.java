@@ -8,7 +8,7 @@ public class Constants {
 
   private static final String TAB = "\t";
 
-  public static final String OSCAR_VERSION = "3.2.5";
+  public static final String OSCAR_VERSION = "3.3.0";
   public static final String OSCAR_CLI_USAGE =
       "java -jar oscar.jar -k <key> -i <.txt> -o <.bin> -c";
   public static final String OSCAR_CLI_HEADER =
