@@ -55,7 +55,7 @@ run the Java checks below when behavior changes.
 - Follow existing identifiers such as `ErroredParameter`, `ErrorCode`, and
   `ErrorMessage`. Do not silently strip whitespace while loading: reject bad
   catalog input so the source can be fixed.
-- Check all four catalogs: `docsis`, `docsis40`, `dpoe`, and `packetcable`,
+- Check all five catalogs: `docsis`, `docsis40`, `dpoe`, `dpog`, and `packetcable`,
   including nested children. Extend the catalog-wide check when adding a family.
 - Treat renames as text-format compatibility changes. Update affected fixtures
   and documentation; old templates may need renaming or regeneration. Preserve

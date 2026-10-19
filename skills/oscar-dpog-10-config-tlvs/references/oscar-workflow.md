@@ -18,6 +18,15 @@ Do not duplicate protocol registries in OSCAR-UI. Establish upstream API and
 catalog ownership first. For a suspected upstream defect encountered from the
 UI, present evidence and impact before choosing an upstream fix or workaround.
 
+## Catalog baseline
+
+`res/tlv-registry/dpog.json` is now a separate provisional lookup catalog.
+See [applicability and gaps](../../../docs/dpog-catalog.md) and
+[implementation checklist](../../../docs/wiki/DPoE-&-DPoG.md).
+`TlvDictionary` routes DPoG configuration-type lookup to this catalog.
+Wire metadata remains inherited and unverified; CLI/compiler/editor routing
+and encoding verification are pending. Do not infer conformance from lookup.
+
 ## Revisit the DPoG editor (pending)
 
 Skill preparation does not authorize a registry/compiler/editor rewrite.

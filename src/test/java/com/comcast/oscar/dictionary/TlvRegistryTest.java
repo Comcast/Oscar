@@ -57,7 +57,7 @@ class TlvRegistryTest {
 
   @Test
   void loadsAllFamiliesAndReturnsIndependentTemplates() {
-    for (String family : List.of("docsis", "packetcable", "dpoe")) {
+    for (String family : List.of("docsis", "packetcable", "dpoe", "dpog")) {
       TlvRegistry registry = TlvRegistry.forFamily(family);
       assertFalse(registry.children(List.of()).isEmpty());
       TlvDefinition root = registry.children(List.of()).get(0);
@@ -105,7 +105,7 @@ class TlvRegistryTest {
 
   @Test
   void allCatalogNamesAreSingleTokens() {
-    for (String family : List.of("docsis", "docsis40", "dpoe", "packetcable")) {
+    for (String family : List.of("docsis", "docsis40", "dpoe", "dpog", "packetcable")) {
       assertSingleTokenNames(TlvRegistry.forFamily(family), List.of());
     }
   }

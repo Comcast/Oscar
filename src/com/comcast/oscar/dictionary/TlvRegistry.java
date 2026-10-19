@@ -98,7 +98,15 @@ public final class TlvRegistry {
   /** Load once for each supported family; failures prevent use of a partial registry. */
   private static class Catalogs {
     private static final Map<String, TlvRegistry> ALL =
-        Map.of("docsis", load("docsis"), "packetcable", load("packetcable"), "dpoe", load("dpoe"));
+        Map.of(
+            "docsis",
+            load("docsis"),
+            "packetcable",
+            load("packetcable"),
+            "dpoe",
+            load("dpoe"),
+            "dpog",
+            load("dpog"));
   }
 
   public static TlvRegistry forFamily(String family) {

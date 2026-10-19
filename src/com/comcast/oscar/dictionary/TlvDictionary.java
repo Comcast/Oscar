@@ -26,6 +26,7 @@ public class TlvDictionary {
       ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE;
   public static final Integer CONFIGURATION_FILE_TYPE_DPOE =
       ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
+  public static final String DPOG_DICTIONARY_TABLE_NAME = "DPOG_TLV_DEFINITION";
   private String table;
   private TlvRegistry registry;
 
@@ -44,6 +45,7 @@ public class TlvDictionary {
           case DOCSIS_DICTIONARY_TABLE_NAME -> "docsis";
           case PACKET_CABLE_DICTIONARY_TABLE_NAME -> "packetcable";
           case DPOE_DICTIONARY_TABLE_NAME -> "dpoe";
+          case DPOG_DICTIONARY_TABLE_NAME -> "dpog";
           default -> throw new IllegalArgumentException("Unknown TLV dictionary: " + table);
         };
     registry = TlvRegistry.forFamily(family);
@@ -82,17 +84,29 @@ public class TlvDictionary {
     return result;
   }
 
+  /**
+   * Builds independent lookup templates for the requested configuration family.
+   *
+   * @param configurationType a ConfigurationFileTypeConstants value
+   * @return top-level templates with nested children; DPoG returns its provisional catalog
+   * @throws IllegalArgumentException when the configuration family is unsupported
+   */
   public JSONArray getAllTlvDefinition(int configurationType) {
     String selected;
-    if (configurationType == ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE)
+    if (configurationType == ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE) {
       selected = DOCSIS_40_DICTIONARY_TABLE_NAME;
-    else if (configurationType >= 0 && configurationType <= 4)
+    } else if (configurationType >= 0 && configurationType <= 4) {
       selected = DOCSIS_DICTIONARY_TABLE_NAME;
-    else if (configurationType >= 100 && configurationType <= 102)
+    } else if (configurationType >= 100 && configurationType <= 102) {
       selected = PACKET_CABLE_DICTIONARY_TABLE_NAME;
-    else if (configurationType == 200 || configurationType == 201)
+    } else if (configurationType == ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE
+        || configurationType == ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE) {
       selected = DPOE_DICTIONARY_TABLE_NAME;
-    else throw new IllegalArgumentException("Unsupported configuration type: " + configurationType);
+    } else if (configurationType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      selected = DPOG_DICTIONARY_TABLE_NAME;
+    } else {
+      throw new IllegalArgumentException("Unsupported configuration type: " + configurationType);
+    }
     TlvDictionary dictionary = new TlvDictionary(selected);
     JSONArray result = new JSONArray();
     dictionary.getTopLevelTLV().forEach(type -> result.put(dictionary.getTlvDefinition(type)));
