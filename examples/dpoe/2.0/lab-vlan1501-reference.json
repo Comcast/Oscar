@@ -1,0 +1,194 @@
+{
+  "source": "https://sunnynetwork.wordpress.com/2016/03/10/lab-9dpoe-system/",
+  "image": "https://sunnynetwork.wordpress.com/wp-content/uploads/2016/03/dpoe_3.png",
+  "status": "Manual transcription of visible numeric fields; reference only, not OSCAR JSON input or a conformance vector.",
+  "tlvs": [
+    {
+      "path": "43",
+      "length": 27,
+      "children": [
+        {
+          "path": "43.8",
+          "length": 3,
+          "hex": "FF:FF:FF"
+        },
+        {
+          "path": "43.5",
+          "length": 20,
+          "children": [
+            {
+              "path": "43.5.1",
+              "length": 15,
+              "ascii": "EB-TRANS-SVID-1"
+            },
+            {
+              "path": "43.5.13",
+              "length": 1,
+              "value": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "24",
+      "length": 48,
+      "children": [
+        {
+          "path": "24.1",
+          "length": 2,
+          "value": 1001
+        },
+        {
+          "path": "24.6",
+          "length": 1,
+          "hex": "07"
+        },
+        {
+          "path": "24.15",
+          "length": 1,
+          "value": 4
+        },
+        {
+          "path": "24.8",
+          "length": 4,
+          "value": 100000000
+        },
+        {
+          "path": "24.43",
+          "length": 24,
+          "children": [
+            {
+              "path": "24.43.8",
+              "length": 3,
+              "hex": "FF:FF:FF"
+            },
+            {
+              "path": "24.43.5",
+              "length": 17,
+              "children": [
+                {
+                  "path": "24.43.5.1",
+                  "length": 15,
+                  "ascii": "EB-TRANS-SVID-1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "24.17",
+          "length": 4,
+          "value": 2000
+        }
+      ]
+    },
+    {
+      "path": "22",
+      "length": 19,
+      "children": [
+        {
+          "path": "22.3",
+          "length": 2,
+          "value": 1001
+        },
+        {
+          "path": "22.1",
+          "length": 1,
+          "value": 51
+        },
+        {
+          "path": "22.14",
+          "length": 4,
+          "children": [
+            {
+              "path": "22.14.2",
+              "length": 2,
+              "value": 1501
+            }
+          ]
+        },
+        {
+          "path": "22.13",
+          "length": 4,
+          "hex": "40:00:00:00"
+        }
+      ]
+    },
+    {
+      "path": "25",
+      "length": 13,
+      "children": [
+        {
+          "path": "25.1",
+          "length": 2,
+          "value": 2001
+        },
+        {
+          "path": "25.6",
+          "length": 1,
+          "hex": "07"
+        },
+        {
+          "path": "25.8",
+          "length": 4,
+          "value": 100000000
+        }
+      ]
+    },
+    {
+      "path": "23",
+      "length": 45,
+      "children": [
+        {
+          "path": "23.1",
+          "length": 1,
+          "value": 61
+        },
+        {
+          "path": "23.3",
+          "length": 2,
+          "value": 2001
+        },
+        {
+          "path": "23.14",
+          "length": 4,
+          "children": [
+            {
+              "path": "23.14.2",
+              "length": 2,
+              "value": 1501
+            }
+          ]
+        },
+        {
+          "path": "23.43",
+          "length": 24,
+          "children": [
+            {
+              "path": "23.43.8",
+              "length": 3,
+              "hex": "FF:FF:FF"
+            },
+            {
+              "path": "23.43.5",
+              "length": 17,
+              "children": [
+                {
+                  "path": "23.43.5.1",
+                  "length": 15,
+                  "ascii": "EB-TRANS-SVID-1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "path": "23.13",
+          "length": 4,
+          "hex": "40:00:00:00"
+        }
+      ]
+    }
+  ]
+}

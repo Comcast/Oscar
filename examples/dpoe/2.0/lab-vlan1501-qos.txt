@@ -1,0 +1,41 @@
+/*
+ * Public-lab-derived DPoE example: VLAN 1501, symmetric 100 Mbit/s.
+ * Source and omissions: lab-vlan1501-notes.md.
+ * Runnable classifier/QoS subset, NOT the complete L2VPN transport service.
+ * Top-level L2VPN, vendor VPN associations and downstream CMIM are omitted.
+ * Do not deploy this subset as an equivalent replacement for the source lab.
+ */
+DPoE {
+    /* Added locally to make the network-access intent explicit. */
+    NetworkAccess 1;
+
+    UpstreamServiceFlow {
+        ServiceFlowReference 1001;
+        QualityOfServiceParameterSetType 07;
+        SchedulingType 4;
+        MaxSubstainedTrafficRate 100000000;
+        NominalPollingInterval 2000;
+    }
+    UpstreamPacketClassification {
+        ServiceFlowReference 1001;
+        ClassifierReference 51;
+        8021adSTagCTagFrameClassification {
+            /* S-VID 1501 = 0x05DD; upper four reserved bits are zero. */
+            S-VID (00000101)(11011101);
+        }
+        CMInterfaceMask (01000000)(00000000)(00000000)(00000000);
+    }
+    DownstreamServiceFlow {
+        ServiceFlowReference 2001;
+        QualityOfServiceParameterSetType 07;
+        MaxSubstainedTrafficRate 100000000;
+    }
+    DownstreamPacketClassification {
+        ClassifierReference 61;
+        ServiceFlowReference 2001;
+        8021adSTagCTagFrameClassification {
+            S-VID (00000101)(11011101);
+        }
+        /* 23.13 is absent from OSCAR's current DPoE catalog. */
+    }
+}

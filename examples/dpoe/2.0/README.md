@@ -1,6 +1,16 @@
-# DPoE 2.0 example
+# DPoE 2.0 examples
 
 [Example index](../../README.md)
+
+Start with [the VLAN 1501 public-lab adaptation](lab-vlan1501-notes.md):
+100 Mbit/s upstream/downstream flows, two VLAN classifiers, scheduling/polling,
+and an upstream interface mask. The guide explains the source, runnable subset,
+missing L2VPN/CMIM fields, and compile/decode/round-trip commands.
+
+The [numeric source reference](lab-vlan1501-reference.json) records the complete
+visible screenshot fields for follow-up; it is not an OSCAR import file.
+
+## Minimal syntax fragment
 
 [network-access.txt](network-access.txt) is a synthetic, single-TLV codec
 fragment. It is not the internet lab configuration discussed previously, nor a

@@ -8,7 +8,7 @@ public lab material, not operator-approved production profiles.
 | --- | --- | --- |
 | DOCSIS 3.1 | [docsis/3.1](docsis/3.1/README.md) | Text/binary pair: 1 Gbit/s downstream, 100 Mbit/s upstream |
 | DOCSIS 4.0 | [docsis/4.0](docsis/4.0/README.md) | Text/binary pair: 10 Gbit/s downstream, 1 Gbit/s upstream; partial D4 support |
-| DPoE 2.0 | [dpoe/2.0](dpoe/2.0/README.md) | Minimal synthetic network-access fragment; full profile pending |
+| DPoE 2.0 | [dpoe/2.0](dpoe/2.0/README.md) | Public-lab VLAN 1501 classifier/QoS adaptation plus minimal fragment; full L2VPN profile pending |
 | PacketCable 1.0 | [packetcable/1.0](packetcable/1.0/README.md) | Opening-delimiter fragment; not a complete voice profile |
 | DPoG 1.0 | [dpog/1.0](dpog/1.0/README.md) | Status and prerequisites; no supported compiler example yet |
 
