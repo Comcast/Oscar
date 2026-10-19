@@ -39,6 +39,28 @@ import org.json.JSONObject;
  * @author Maurice Garcia (mgarcia01752@outlook.com)
  */
 public class TlvDisassemble extends TlvDictionary {
+  /**
+   * Inspects a raw TLV stream without requiring construction of a valid configuration.
+   *
+   * <p>Preserves wire order, unknown entries, original bytes, and bounded partial results. Does not
+   * decode credential-bearing values, validate MICs, repair input, or log bytes. Options select the
+   * family independently of any legacy instance dictionary.
+   *
+   * @param configurationBytes raw DOCSIS or DPoE stream, never null
+   * @param options explicit family and resource limits, never null
+   * @return immutable structural report with explicitly accessible original bytes
+   * @throws IllegalArgumentException if input exceeds the configured byte limit
+   */
+  public static TlvDisassemblyReport diagnose(
+      byte[] configurationBytes, DisassemblyOptions options) {
+    java.util.Objects.requireNonNull(configurationBytes, "configurationBytes");
+    java.util.Objects.requireNonNull(options, "options");
+    if (configurationBytes.length > options.maxBytes()) {
+      throw new IllegalArgumentException("Diagnostic input exceeds byte limit");
+    }
+    return new TlvDiagnosticWalker(configurationBytes.clone(), options).inspect();
+  }
+
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(TlvDisassemble.class);
 

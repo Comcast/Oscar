@@ -33,6 +33,7 @@ public class BuildOptions {
    * @param options
    */
   public static Options run(Options options) {
+    com.comcast.oscar.cli.commands.DiagnoseBinary.addOptions(options);
     options.addOption("h", "help", false, "View all commands with descriptions.");
     options.addOption("v", "version", false, "Display current version.");
     options.addOption(CVC.OptionParameters());

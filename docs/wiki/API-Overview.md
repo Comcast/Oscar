@@ -43,3 +43,8 @@ imported TLVs and a nonempty shared secret, then call `commit()` before reading
 `toByteArray()`. Include TLV 43.6 parameters to select implicit or explicit
 HMAC-MD5/MMH. The [generation guide](../mic-verification.md#generate-extended-mics-in-docsis-31-and-40)
 shows the D3.1 names and bitmap syntax. D4.0 retains its separate catalog names.
+
+## Damaged binary diagnostics
+
+See [Binary TLV diagnostics](Binary-TLV-Diagnostics.md) for bounded, read-only
+partial inspection through `TlvDisassemble.diagnose`.

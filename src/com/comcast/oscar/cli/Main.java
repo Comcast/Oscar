@@ -25,6 +25,17 @@ public class Main {
    * @param args
    */
   public static void main(String args[]) {
+    // Keep diagnostics independent of directory creation, banner output, and bracket rewriting.
+    if (java.util.Arrays.stream(args)
+        .anyMatch(
+            argument ->
+                argument.equals("--diagnose-binary")
+                    || argument.startsWith("--diagnose-binary=")
+                    || argument.equals("--diagnostic-family")
+                    || argument.startsWith("--diagnostic-family="))) {
+      System.exit(com.comcast.oscar.cli.commands.DiagnoseBinary.run(args, System.out, System.err));
+      return;
+    }
     /* Determine path. Remove for testing purposes. */
     DirectoryStructure.setFromJar();
 

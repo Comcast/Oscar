@@ -84,3 +84,8 @@ java -jar oscar.jar -s de 2 -ftd > dpoe-template.txt
 - `-tr` OID translate/description
 
 For full command syntax and practical examples, see [CLI Examples](./CLI-Examples.md).
+
+## Binary diagnostics
+
+Use `--diagnose-binary FILE` for read-only partial TLV inspection. See
+[Binary TLV diagnostics](Binary-TLV-Diagnostics.md) for output and exit codes.
