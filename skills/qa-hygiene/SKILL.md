@@ -26,7 +26,13 @@ existing notices for the earliest supported year; checkout timestamps are not
 creation dates. Retain the first year and extend the end year when updating a
 file. Use a single year for new files and spaces around the range separator.
 
-When updating a project-owned file, replace redundant long Apache license
+This rule applies across the OSCAR codebase. Whenever a project-owned source
+file is touched for any change, update its license banner in the same change:
+add the short SPDX header if missing, update the copyright year range, and
+remove the redundant legacy banner. Use the language-appropriate comment syntax
+for non-Java source files.
+
+Replace redundant long Apache license
 Javadocs (`@bannerLicense`, HTML breaks, and their author-only banner) with this
 header. Do not retain both license forms. Keep useful class and function
 Javadocs, including input/output examples. The full license remains in root
