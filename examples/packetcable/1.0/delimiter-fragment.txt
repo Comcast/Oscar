@@ -1,0 +1,8 @@
+/*
+ * Synthetic OSCAR parser/codec fragment, not a usable MTA provisioning file.
+ * Demonstrates the existing PacketCable 1.0 opening delimiter only.
+ * No voice service, credentials, integrity, or complete-file validity implied.
+ */
+PacketCable-1.0 {
+    TelephonyConfigFileBeginEnd 1;
+}

@@ -39,6 +39,7 @@ build prerequisites, building, testing, and preparing releases.
 
 ## Documentation
 
+- [Downloadable examples by file type](examples/README.md)
 - [CLI usage](docs/wiki/CLI-Overview.md) and [configuration examples](docs/wiki/CLI-Examples.md)
 - [Java API](docs/wiki/API-Overview.md) and [MIC verification](docs/mic-verification.md)
 - [SNMP value export](docs/snmp-value-export.md)

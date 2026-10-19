@@ -1,0 +1,8 @@
+/*
+ * Synthetic OSCAR parser/codec fragment, not a complete provisioning profile.
+ * DPoE-SP-MULPIv2.0-I14-230322, C.10/Table 7, p. 99 lists TLV 3.
+ * Uses OSCAR's legacy codec; not a production or externally sourced example.
+ */
+DPoE {
+    NetworkAccess 1;
+}

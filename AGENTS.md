@@ -52,6 +52,15 @@ README, installation, development, or release documentation. Keep README focused
 on installation choices and links; put detailed setup and build guidance in
 `docs/wiki/development.md` and user JAR instructions in `docs/wiki/Installation.md`.
 
+## User configuration examples
+
+Keep user-facing samples under `examples/<family>/<version>/`. Update
+`examples/README.md` and the family/version README when adding or changing
+samples. State provenance, commands, verification and fragment versus complete
+profile status. Use synthetic/public lab values. Keep published DOCSIS copies
+synchronized with their existing regression fixtures; retain old fixture paths
+for existing tests and download links.
+
 ## Skill maintenance
 
 Keep canonical skill files and bundled references under `skills/<skill-name>/`.
