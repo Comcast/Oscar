@@ -24,3 +24,8 @@ regressions, not evidence of device interoperability.
   requires a separate fix with tick-value boundary tests.
 - Counter64 is listed by the BER API but is absent from the text grammar.
   Its text compile/export support requires separate validation.
+
+- Text import currently loses spaces in SNMP OctetString values: the synthetic
+  value `"lab  modem;a"` was exported as `"labmodem;a"` after import. This is
+  separate from `PrettyPrint`, which now preserves quoted contents. Fixing
+  formatter whitespace handling does not repair values already changed by import.

@@ -665,7 +665,7 @@ class Docsis40Test {
     var exported = new ConfigurationFileExport(imported.getTlvBuilder(), 5);
     assertEquals(5, exported.getConfigurationFileType());
     String text = exported.toPrettyPrint(false);
-    assertTrue(text.contains("Docsis-4.0{"), text);
+    assertTrue(text.contains("Docsis-4.0 {"), text);
     assertTrue(text.contains("FdxDownstreamUpperBandEdge"), text);
     assertArrayEquals(imported.toByteArray(), parse(text).toByteArray());
   }
