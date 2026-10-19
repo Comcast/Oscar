@@ -21,6 +21,36 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class TlvRegistryTest {
+  @ParameterizedTest
+  @ValueSource(strings = {"docsis", "dpoe"})
+  void decodesDropClassifierEthertypeAndSiblingVlan(String family) throws Exception {
+    // CM-SP-MULPIv3.1-I21-201020, C.2.1.8.3 and C.2.1.9, pp. 684-685:
+    // 60.10.3 is a three-byte value; 60.11 is its ancestor's sibling, not its child.
+    var registry = TlvRegistry.forFamily(family);
+    int configurationType =
+        family.equals("docsis")
+            ? com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants
+                .DOCSIS_31_CONFIGURATION_TYPE
+            : com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants
+                .DPOE_20_CONFIGURATION_TYPE;
+    assertTrue(registry.children(List.of(60, 10, 3)).isEmpty());
+    assertEquals("8021PQPacketClassification", registry.find(List.of(60, 11)).name());
+    for (byte[] payload :
+        List.of(
+            new byte[] {10, 5, 3, 3, 4, 0, 0},
+            new byte[] {10, 5, 3, 3, 4, 0, 0, 11, 8, 1, 2, 0, 7, 2, 2, 0, 100})) {
+      var builder = new TlvBuilder();
+      builder.add(60, payload);
+      byte[] expected = builder.toByteArray();
+      var exporter =
+          new com.comcast.oscar.configurationfile.ConfigurationFileExport(
+              builder, configurationType);
+      String text = exporter.toPrettyPrint(false, true);
+      assertTrue(text.contains("EthertypeDSAPMacType"), text);
+      assertArrayEquals(expected, parse(text).toByteArray());
+    }
+  }
+
   @Test
   void loadsAllFamiliesAndReturnsIndependentTemplates() {
     for (String family : List.of("docsis", "packetcable", "dpoe")) {
