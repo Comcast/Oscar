@@ -200,8 +200,3 @@ tools/git/git-push.sh --master
 This checks and pushes only the current main/master branch; it does not create
 or publish a release. See the [Git helper guide](../../tools/git/README.md)
 for clean-checkout requirements, validation, and retry behavior.
-
-## Security scans
-
-See [Security scanning](../security-scanning.md) for CodeQL, dependency review,
-Dependabot, runtime-JAR scanning, release gates, and coverage limitations.
