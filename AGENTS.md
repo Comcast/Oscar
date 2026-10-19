@@ -69,3 +69,13 @@ Use `Feature`, `BugFix`, or `Documentation` followed by a colon and an imperativ
 summary. Add `- ` detail lines, including a `- Tests: ` line describing validation.
 Keep each message line at most 60 characters. Use a double-quoted argument with
 literal newlines for multiline messages.
+
+## Push workflow
+
+Use `tools/git/git-push.sh --master` for validated main/master branch pushes.
+It requires a clean checkout, skips already-published commits, rejects
+behind/diverged branches, and runs local checks before upload. It does not
+create tags or releases. See `tools/git/README.md`; keep that guide current
+when changing helpers. Never push merely to validate a helper; use temporary
+repositories for tests. Provide the command rather than executing a push
+unless the user explicitly authorizes execution.

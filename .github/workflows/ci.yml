@@ -36,6 +36,9 @@ jobs:
       - name: Run all checks
         run: tools/run-all.sh
 
+      - name: Test Git helpers
+        run: python3 -m unittest discover -s tools/git -p 'test_*.py'
+
       - name: Run JUnit tests
         run: mvn -B test
 

@@ -190,3 +190,15 @@ build, release, and resource details here or in focused linked guides. Follow
 
 Wiki sources live under `docs/wiki/`. Preview with `tools/update-wiki.sh`; see
 [wiki publishing](../wiki-publishing.md) before publishing.
+
+## Push branch changes
+
+After committing, run:
+
+```bash
+tools/git/git-push.sh --master
+```
+
+This checks and pushes only the current main/master branch; it does not create
+or publish a release. See the [Git helper guide](../../tools/git/README.md)
+for clean-checkout requirements, validation, and retry behavior.
