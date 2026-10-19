@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.netsnmp;
@@ -28,20 +28,6 @@ import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class NetSNMP {
 
   private static final Logger logger = LogManager.getLogger(NetSNMP.class);
@@ -345,26 +331,18 @@ public class NetSNMP {
     return als;
   }
 
-  /**
-   * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
-   *     ___________________________________________________________________<br>
-   *     Licensed under the Apache License, Version 2.0 (the "License")<br>
-   *     you may not use this file except in compliance with the License.<br>
-   *     You may obtain a copy of the License at<br>
-   *     http://www.apache.org/licenses/LICENSE-2.0<br>
-   *     Unless required by applicable law or agreed to in writing, software<br>
-   *     distributed under the License is distributed on an "AS IS" BASIS,<br>
-   *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
-   *     See the License for the specific language governing permissions and<br>
-   *     limitations under the License.<br>
-   * @author Maurice Garcia (mgarcia01752@outlook.com)
-   */
   public static class DirectoryStructureNetSNMP extends DirectoryStructure {
 
     /**
-     * @return NetSNMP subdirectory
+     * Locate the mutable OID cache. The oscar.snmp.cache.path property overrides the default.
+     *
+     * @return cache file, normally res/DottedTextualNetSNMPMap.json
      */
     public static File fNetSNMPJSON() {
+      String cachePath = System.getProperty("oscar.snmp.cache.path");
+      if (cachePath != null && !cachePath.isBlank()) {
+        return new File(cachePath);
+      }
       return new File(fResourcesDir(), Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE);
     }
   }
@@ -378,7 +356,10 @@ public class NetSNMP {
     bmDotTextMap.put(sOIDKey, sOIDConvert);
 
     try {
-      omNetSNMP.writeValue(DirectoryStructureNetSNMP.fNetSNMPJSON(), bmDotTextMap);
+      omNetSNMP
+          .writerWithDefaultPrettyPrinter()
+          .writeValue(
+              DirectoryStructureNetSNMP.fNetSNMPJSON(), new java.util.TreeMap<>(bmDotTextMap));
     } catch (JsonGenerationException e) {
       e.printStackTrace();
     } catch (JsonMappingException e) {

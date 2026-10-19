@@ -155,6 +155,9 @@
         <version>3.5.2</version>
         <configuration>
           <useModulePath>false</useModulePath>
+          <systemPropertyVariables>
+            <oscar.snmp.cache.path>${project.build.directory}/test-snmp-cache/res/DottedTextualNetSNMPMap.json</oscar.snmp.cache.path>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>

@@ -32,3 +32,12 @@ These tests verify representative API behavior, not every TLV or device
 interoperability. The shared key and all SNMP values are synthetic lab values.
 DOCSIS 4.0 uses its currently supported catalog rather than assuming all
 legacy DOCSIS entries are present.
+
+## SNMP lookup resource protection
+
+`NetSNMPResourceTest` checks the tracked OID map for duplicate JSON keys,
+trailing data, invalid OID/name pairs, required security mappings, and readable
+one-entry-per-line formatting. Maven tests use a separate mutable cache under
+`target/test-snmp-cache/res/`, selected by `oscar.snmp.cache.path`, so lookup
+activity cannot rewrite the tracked `res/DottedTextualNetSNMPMap.json`.
+Runtime cache writes sort keys and retain readable JSON formatting.
