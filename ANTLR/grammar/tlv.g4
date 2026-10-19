@@ -1,3 +1,7 @@
+/*
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
 grammar tlv;
 
 @lexer::header {
@@ -152,6 +156,7 @@ configType      : (
                 |   'PacketCable-1.5'
                 |   'PacketCable-2.0'
                 |   'DPoE'
+                |   'DPoG'
                   );
 
 //Start TLV Parsing

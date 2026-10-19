@@ -48,8 +48,8 @@ class DpogRegistryTest {
       assertNull(registry.find(List.of(classifierType, 10, 4)));
     }
     assertNotNull(registry.find(List.of(22, 13)));
-    // 23.13 is required by DPoG, but lacks a legacy definition; do not invent its encoding.
-    assertNull(registry.find(List.of(23, 13)));
+    // DPoG Table 9 extends the delegated CMIM bitmap encoding to downstream.
+    assertNotNull(registry.find(List.of(23, 13)));
     for (List<Integer> path :
         List.of(List.of(60, 11, 2), List.of(60, 14, 10), List.of(60, 15, 13), List.of(60, 17, 2))) {
       assertNotNull(registry.find(path), path.toString());

@@ -19,13 +19,14 @@ No configuration files, customer data, or external services are used.
 | DOCSIS | 3.1 | SNMP and nested upstream/downstream service flows |
 | DOCSIS | 4.0 | Service class, rate units and nested AQM |
 | DPoE | 1.0, 2.0 | SNMP and nested service flows |
+| DPoG | 1.0 | SNMP and nested service flows |
 | PacketCable | 1.0, 1.5, 2.0 | Delimiters, Snmp11, Snmp64 and generated hash |
 
 Pass the explicit configuration type to the exporter. PacketCable editions
 cannot be identified from their common delimiter alone; deprecated automatic
 detection still emits `PacketCable-X.X`. DPoE 1.0 and 2.0 use the existing shared
-DPoE catalog. DPoG has registry definitions but no complete compiler/parser,
-so it is not a supported round-trip type.
+DPoE catalog. DPoG has a dedicated parser/compiler/export path; see the
+[DPoG guide](wiki/DPoE-&-DPoG.md) for constraints and additional tests.
 
 These tests verify representative API behavior, not every TLV or device
 interoperability. The shared key and all SNMP values are synthetic lab values.

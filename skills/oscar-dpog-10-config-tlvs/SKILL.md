@@ -27,7 +27,7 @@ drop unknown bytes while saving a customer file.
 
 This document delegates many wire definitions to [MULPIv3.0] and other sources.
 Section 2.1 lists CM-SP-MULPIv3.0 without an issue suffix. Record the exact issue
-actually consulted; it is not bundled here. When a required definition is
+actually consulted. MULPI 3.0 C01 and L2VPN I15 are now bundled in the source map. When a required definition is
 missing, label it **unverified** and obtain its source before encoding it.
 Existing DPoE code and the DOCSIS 3.1/4.0 skills are comparison material, not
 substitute normative authority for DPoG.

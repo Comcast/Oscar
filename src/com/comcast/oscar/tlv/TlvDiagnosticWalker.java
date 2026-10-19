@@ -25,9 +25,7 @@ final class TlvDiagnosticWalker {
   TlvDiagnosticWalker(byte[] bytes, DisassemblyOptions options) {
     this.bytes = bytes;
     this.options = options;
-    registry =
-        TlvRegistry.forFamily(
-            options.family() == DisassemblyOptions.Family.DOCSIS ? "docsis" : "dpoe");
+    registry = TlvRegistry.forFamily(options.family().name().toLowerCase(java.util.Locale.ROOT));
   }
 
   TlvDisassemblyReport inspect() {

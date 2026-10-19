@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.cli.commands;
@@ -9,25 +9,11 @@ import com.comcast.oscar.tlv.TlvDisassemble;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 
-/**
- * @author Allen Flickinger (allen.flickinger@gmail.com)
- * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- */
 public class Specification {
 
   public static final String ERROR =
       "No specification found. Please set the specification and version. EX: -s d 1.1 (DOCSIS 1.1)"
-          + " / -s p 1.5 (PacketCable 1.5).";
+          + " / -s p 1.5 (PacketCable 1.5) / -s dg 1.0 (DPoG 1.0).";
 
   private int iConfigurationFileType = ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE;
   private String sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
@@ -39,14 +25,14 @@ public class Specification {
    * @return Option
    */
   public static final Option OptionParameters() {
-    OptionBuilder.withArgName("d{ocsis}|p{acketcable}|d{po}e> <version");
+    OptionBuilder.withArgName("d{ocsis}|p{acketcable}|d{po}e|d{po}g> <version");
     OptionBuilder.hasArgs();
     OptionBuilder.hasOptionalArgs();
     OptionBuilder.withValueSeparator(' ');
     OptionBuilder.withLongOpt("spec");
     OptionBuilder.withDescription(
         "Set specification and version of the file to be compiled/decompiled EX: -s d 1.1 (DOCSIS"
-            + " 1.1) / -s p 1.5 (PacketCable 1.5).");
+            + " 1.1) / -s p 1.5 (PacketCable 1.5) / -s dg 1.0 (DPoG 1.0).");
     return OptionBuilder.create("s");
   }
 
@@ -141,9 +127,11 @@ public class Specification {
         this.iConfigurationFileType = ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE;
       }
     } else if (sSpecification.equalsIgnoreCase("dg") || sSpecification.equalsIgnoreCase("dpog")) {
-      this.iConfigurationFileType = ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE;
-      this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
-      this.boolPacketCable = true;
+      this.iConfigurationFileType =
+          sVersion.equals("1") || sVersion.equals("1.0") || sVersion.equals("10")
+              ? ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE
+              : -1;
+      this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DPOG;
     } else if (sSpecification.equalsIgnoreCase("d1")
         || sSpecification.equalsIgnoreCase("docsis1")
         || sSpecification.equalsIgnoreCase("d1.0")
@@ -230,7 +218,7 @@ public class Specification {
         || sSpecification.equalsIgnoreCase("dpog1")
         || sSpecification.equalsIgnoreCase("dpog1.0")) {
       this.iConfigurationFileType = ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE;
-      this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DOCSIS;
+      this.sTlvDisassemble = TlvDisassemble.TLV_TYPE_DPOG;
     } else {
       this.iConfigurationFileType = -1;
       this.sTlvDisassemble = null;

@@ -101,6 +101,12 @@ class ConfigurationApiRoundTripTest {
             + " TelephonyConfigFileBeginEnd 255;";
     return Stream.of(
         Arguments.of(
+            "DPoG 1.0",
+            DPOG_10_CONFIGURATION_TYPE,
+            "DPoG",
+            TlvDictionary.DPOG_DICTIONARY_TABLE_NAME,
+            nested),
+        Arguments.of(
             "DOCSIS 1.0",
             DOCSIS_10_CONFIGURATION_TYPE,
             "Docsis",

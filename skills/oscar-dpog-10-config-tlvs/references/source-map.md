@@ -45,8 +45,23 @@ These are applicability anchors, not complete byte-encoding test vectors.
 C.7/Table 12, p. 82 lists 43.6 as MAY. Section 9.1.5.6, p. 61 distinguishes
 mandatory-item/file validation failures from optional rejection of invalid MICs.
 
-Section 2.1 references CM-SP-MULPIv3.0 without an issue identifier. This skill
-bundles only the supplied DPoG document: inherited lengths, enums, mandatory
-file elements, and MIC algorithms requiring that reference are not verified
-merely by reading its DPoG support table. Follow other references such as
-DPoG-OSSI/OAM or DPoE-MEF only when needed; record missing evidence explicitly.
+## Delegated sources verified for implementation
+
+DPoG section 2.1 references CM-SP-MULPIv3.0 without an issue identifier.
+The implementation consulted the following exact editions; other external
+references remain unverified unless recorded separately:
+
+- [CM-SP-MULPIv3.0-C01-171207](sources/CM-SP-MULPIv3.0-C01-171207.txt),
+  [CableLabs download](https://account.cablelabs.com/server/alfresco/cce8943e-b49b-4c24-bc83-107acd636001).
+  Search C.1.2.1–2 for end/pad markers; D.1.1–D.2.1 for framing/MICs
+  (pp. 615–621); C.2.1.4.8 for CMIM; C.1.1.18.1 for Vendor ID;
+  C.1.1.18.1.6 for extended MIC fields.
+- [CM-SP-L2VPN-I15-150528](sources/CM-SP-L2VPN-I15-150528.txt),
+  [CableLabs download](https://account.cablelabs.com/server/alfresco/e562be82-d890-44bf-ac98-9e91b9d053a5).
+  B.2.1–2, p. 93 defines DUT filtering TLV 45 and children.
+
+The manifest records acquisition URLs and PDF/text hashes. Full searchable
+text retains original notices. Source acquisition does not certify every
+inherited registry field. DPoG Table 9 explicitly lists downstream CMIM 23.13,
+whereas MULPI 3.0 C.2.1.4.8 lists only upstream 22/60.13: the DPoG entry uses
+the delegated bitmap representation with DPoG-specific applicability.

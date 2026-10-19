@@ -12,7 +12,8 @@ public record DisassemblyOptions(
   /** Families with supported raw TLV-stream framing; no envelope autodetection is attempted. */
   public enum Family {
     DOCSIS,
-    DPOE
+    DPOE,
+    DPOG
   }
 
   /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.cli;
@@ -33,6 +33,7 @@ import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileException;
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.constants.Constants;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.utilities.DirectoryStructure;
@@ -45,20 +46,6 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-/**
- * @author Allen Flickinger (allen.flickinger@gmail.com)
- * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- */
 public class CommandRun {
 
   private int iBulkBuild = BulkBuild.TEXT_OUTPUT;
@@ -393,6 +380,12 @@ public class CommandRun {
             != (cfi.getConfigurationFileType() == ConfigurationFile.DOCSIS_VER_40)) {
           throw new IllegalArgumentException(
               "DOCSIS 4.0 requires both -s d 4.0 and a Docsis-4.0 text header");
+        }
+        if ((comSpecification.getConfigurationFileType()
+                == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE)
+            != (cfi.getConfigurationFileType()
+                == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE)) {
+          throw new IllegalArgumentException("DPoG requires both -s dg 1.0 and a DPoG text header");
         }
         cf =
             new ConfigurationFile(

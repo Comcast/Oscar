@@ -3,9 +3,10 @@
 Source: DPoG-SP-MULPIv1.0-C01-160830, Annex C, Tables 7 and 9–15.
 
 This matrix records support classifications, not required file occurrences.
-`dpog.json` is a provisional lookup catalog: legacy codec metadata is unverified
-against the delegated DOCSIS 3.0 edition. No new wire encoding is invented.
-Rows without an existing codec remain absent pending source verification.
+`dpog.json` now drives parsing, compilation and export. Inherited legacy
+metadata remains subject to field-by-field verification. The source-backed
+additions below close the previously missing named paths; this is not a
+whole-spec conformance claim. See the [implementation guide](wiki/DPoE-&-DPoG.md).
 Structural ancestors are retained only to reach listed children; unlisted
 descendants are not automatically inherited. SHOULD NOT rows remain visible.
 
@@ -114,7 +115,7 @@ descendants are not automatically inherited. SHOULD NOT rows remain visible.
 | 23.12.5 | MUST | C.4 / 78 | Included |
 | 23.12.6 | MUST | C.4 / 78 | Included |
 | 23.12.7 | MUST | C.4 / 78 | Included |
-| 23.13 | MUST | C.4 / 78 | Missing legacy definition; pending |
+| 23.13 | MUST | C.4 / 78 | Included; delegated wire source verified |
 | 23.14 | MUST NOT | C.4 / 78 | Excluded |
 | 23.14.1 | MUST NOT | C.4 / 78 | Excluded |
 | 23.14.2 | MUST NOT | C.4 / 78 | Excluded |
@@ -145,7 +146,7 @@ descendants are not automatically inherited. SHOULD NOT rows remain visible.
 | 23.17.2 | MUST NOT | C.4 / 79 | Excluded |
 | 23.43 | MUST | C.4 / 79 | Included |
 | 23.43.5.1 | MUST NOT | C.4 / 79 | Excluded |
-| 23.43.8 | MUST | C.4 / 79 | Missing legacy definition; pending |
+| 23.43.8 | MUST | C.4 / 79 | Included; delegated wire source verified |
 | 24 | MUST | C.1 / 74 | Included |
 | 24.1 | MUST | C.5 / 80 | Included |
 | 24.4 | MUST | C.5 / 80 | Included |
@@ -177,7 +178,7 @@ descendants are not automatically inherited. SHOULD NOT rows remain visible.
 | 24.37 | MUST NOT | C.5 / 81 | Excluded |
 | 24.43 | MUST | C.5 / 81 | Included |
 | 24.43.5.1 | MUST NOT | C.5 / 81 | Excluded |
-| 24.43.8 | MUST | C.5 / 81 | Missing legacy definition; pending |
+| 24.43.8 | MUST | C.5 / 81 | Included; delegated wire source verified |
 | 25 | MUST | C.1 / 74 | Included |
 | 25.1 | MUST | C.5 / 80 | Included |
 | 25.4 | MUST | C.5 / 80 | Included |
@@ -291,11 +292,11 @@ descendants are not automatically inherited. SHOULD NOT rows remain visible.
 | 43.7.2 | MUST | C.9 / 84 | Included |
 | 43.7.2.1 | MUST | C.9 / 84 | Included |
 | 43.7.2.2 | MUST | C.9 / 84 | Included |
-| 43.8 | MUST | C.7 / 82 | Missing legacy definition; pending |
+| 43.8 | MUST | C.7 / 82 | Included; delegated wire source verified |
 | 43.9 | MUST NOT | C.7 / 82 | Excluded |
 | 43.10 | MUST | C.7 / 82 | Included |
 | 43.11 | SHOULD NOT | C.7 / 82 | Included |
-| 45 | SHOULD NOT | C.1 / 74 | Missing legacy definition; pending |
+| 45 | SHOULD NOT | C.1 / 74 | Included; delegated wire source verified |
 | 45.1 | MUST NOT | C.8 / 84 | Excluded |
 | 45.2 | MUST NOT | C.8 / 84 | Excluded |
 | 53 | MUST | C.1 / 74 | Included |
@@ -386,3 +387,17 @@ descendants are not automatically inherited. SHOULD NOT rows remain visible.
 | 72 | MUST NOT | C.1 / 75 | Excluded |
 | 73 | MUST NOT | C.1 / 75 | Excluded |
 | 255 | MUST | C.1 / 75 | Included |
+
+## Added wire definitions
+
+- 23.13: DPoG Table 9 downstream applicability; bitmap representation from
+  MULPI 3.0 C01 C.2.1.4.8. DOCSIS itself lists only 22/60.13.
+- 23.43.8, 24.43.8, 43.8: three-octet vendor ID, MULPI 3.0 C01
+  C.1.1.18.1, C.2.1.11 and C.2.2.7.8.
+- 43.6.1–3: algorithm, bitmap and explicit digest, MULPI 3.0 C01
+  C.1.1.18.1.6.1–3. MIC generation uses the existing shared finalizer.
+- 45, 45.1–2: composite DUT filtering/control/CMIM, L2VPN I15 B.2 pp. 92–93.
+  DPoG SHOULD NOT remains a recommendation, not an unconditional rejection.
+
+Exact sources and hashes are in the
+[skill source map](../skills/oscar-dpog-10-config-tlvs/references/source-map.md).

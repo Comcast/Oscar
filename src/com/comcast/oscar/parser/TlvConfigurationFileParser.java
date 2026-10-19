@@ -1,10 +1,11 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.parser;
 
 import com.comcast.oscar.configurationfile.ConfigurationFile;
+import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.dictionary.Dictionary;
 import com.comcast.oscar.dictionary.DictionaryTLV;
 import com.comcast.oscar.dictionary.TlvDictionary;
@@ -22,20 +23,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class TlvConfigurationFileParser extends tlvBaseListener {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(TlvConfigurationFileParser.class);
@@ -97,6 +84,11 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     else if (ctx.getText().equals("DPoE")) {
       dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
       iConfigurationFileType = ConfigurationFile.DPOE_VER_20;
+    }
+
+    if (ctx.getText().equals("DPoG")) {
+      dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.DPOG_DICTIONARY_TABLE_NAME);
+      iConfigurationFileType = ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE;
     }
 
     if (logger.isDebugEnabled())
@@ -236,6 +228,25 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     validateTlvName(ctx.getStart().getText());
   }
 
+  private void validateDpogNumbers(JSONArray definitions) {
+    for (int index = 0; index < definitions.length(); index++) {
+      JSONObject definition = definitions.getJSONObject(index);
+      if (definition.getBoolean(Dictionary.ARE_SUBTYPES)) {
+        validateDpogNumbers(definition.getJSONArray(Dictionary.SUBTYPE_ARRAY));
+      } else if (definition.getString(Dictionary.DATA_TYPE).equals("integer")) {
+        String textValue = definition.optString(Dictionary.VALUE, "");
+        int width = definition.getInt(Dictionary.LENGTH_MIN);
+        if (width > 0 && !textValue.isEmpty()) {
+          java.math.BigInteger number = new java.math.BigInteger(textValue);
+          if (number.signum() < 0 || number.bitLength() > width * Byte.SIZE) {
+            throw new IllegalArgumentException(
+                "DPoG integer exceeds encoded width: " + definition.getString(Dictionary.TLV_NAME));
+          }
+        }
+      }
+    }
+  }
+
   private JSONObject validateTlvName(String name) {
     JSONObject definition = joWorkingTLVDictionary;
     var ancestors = aqsSubTypeHierarchyStack.descendingIterator();
@@ -253,10 +264,11 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   }
 
   private JSONObject trackDefinition(JSONObject definition) {
-    if (iConfigurationFileType == ConfigurationFile.DOCSIS_VER_40
+    if ((iConfigurationFileType == ConfigurationFile.DOCSIS_VER_40
+            || iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE)
         && !seenDefinitions.add(definition)) {
       throw new IllegalArgumentException(
-          "Repeated DOCSIS 4.0 child TLV: " + definition.getString(Dictionary.TLV_NAME));
+          "Repeated child TLV: " + definition.getString(Dictionary.TLV_NAME));
     }
     return definition;
   }
@@ -267,6 +279,12 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
       for (int index = 0; index < children.length(); index++) {
         JSONObject child = children.getJSONObject(index);
         if (child.getString(Dictionary.TLV_NAME).equalsIgnoreCase(name)) {
+          if (iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+            // Visited children move to the end in source order; unvisited definitions emit no
+            // bytes.
+            children.remove(index);
+            children.put(child);
+          }
           return child;
         }
       }
@@ -365,6 +383,9 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     if (logger.isDebugEnabled())
       logger.debug("TlvConfigurationFileParser.toByteArray() " + jaTlvDictionary);
 
+    if (iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      validateDpogNumbers(jaTlvDictionary);
+    }
     try {
       baTlvAssembler =
           TlvBuilder.stripZeroByteTLV(

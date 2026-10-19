@@ -7,6 +7,16 @@
       "file": "DPoG-SP-MULPIv1.0-C01-160830.txt",
       "bytes": 333331,
       "sha256": "2269bc9b86bb2666c0250296b0fb178d2664ffc6fac683000aea66a15da97479"
+    },
+    {
+      "file": "CM-SP-MULPIv3.0-C01-171207.txt",
+      "bytes": 2898929,
+      "sha256": "654b857b24b4875225bd89019028c69b9321f0dd128360d02f6c3a50b4c06098"
+    },
+    {
+      "file": "CM-SP-L2VPN-I15-150528.txt",
+      "bytes": 445649,
+      "sha256": "18538ba8a90532fdd66b94cbca8ec9a17b56d4216739ccc339339f038240c6b5"
     }
   ],
   "removedOriginals": [
@@ -22,5 +32,25 @@
     "pages": 97,
     "verification": "97 nonempty page segments; no Unicode replacement characters; Annex C/Table 7 page 73 visually compared."
   },
-  "note": "PDF removed at user request after verifying extraction; text retains original notices. External referenced specifications are not bundled."
+  "note": "DPoG original removed at user request. Delegated MULPI 3.0 and L2VPN text added for file format, integrity, CMIM, vendor IDs and DUT encoding. Original notices retained; PDFs remain ignored build inputs.",
+  "delegatedSources": [
+    {
+      "document": "CM-SP-MULPIv3.0-C01-171207",
+      "url": "https://account.cablelabs.com/server/alfresco/cce8943e-b49b-4c24-bc83-107acd636001",
+      "acquired": "2026-10-19",
+      "pdfSha256": "6866a5ae402cf1b7300cdd1f51cae0d9fb8b57c151461deb4209d6f2dc504bd6",
+      "text": "CM-SP-MULPIv3.0-C01-171207.txt",
+      "extraction": "pdftotext -layout",
+      "pages": 792
+    },
+    {
+      "document": "CM-SP-L2VPN-I15-150528",
+      "url": "https://account.cablelabs.com/server/alfresco/e562be82-d890-44bf-ac98-9e91b9d053a5",
+      "acquired": "2026-10-19",
+      "pdfSha256": "a2b5b847c5a82f3d9bbadf6a5998f1823bd40814370cf7cfa725d9fd6ef5a5e9",
+      "text": "CM-SP-L2VPN-I15-150528.txt",
+      "extraction": "pdftotext -layout",
+      "pages": 136
+    }
+  ]
 }

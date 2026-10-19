@@ -37,7 +37,7 @@ public final class DiagnoseBinary {
         null,
         "diagnostic-family",
         true,
-        "Diagnostic framing: docsis (default) or dpoe; use with --diagnose-binary.");
+        "Diagnostic framing: docsis (default), dpoe or dpog; use with --diagnose-binary.");
   }
 
   /**
@@ -86,7 +86,7 @@ public final class DiagnoseBinary {
       }
       return report.structurallyComplete() ? 0 : 1;
     } catch (ParseException | IllegalArgumentException exception) {
-      errors.println("Usage: --diagnose-binary FILE [--diagnostic-family docsis|dpoe]");
+      errors.println("Usage: --diagnose-binary FILE [--diagnostic-family docsis|dpoe|dpog]");
       errors.println("Use this command alone; input must not exceed 1 MiB.");
       return 2;
     } catch (IOException exception) {

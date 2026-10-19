@@ -1,0 +1,35 @@
+/* Synthetic DPoG 1.0 lab profile: 1 Gbit/s down, 100 Mbit/s up.
+ * Public example only; not a customer file or validated operator profile.
+ * No L2VPN/OMCI service provisioning is implied. See README.md.
+ */
+DPoG {
+    NetworkAccess 1;
+    Snmp11 1.3.6.1.2.1.1.5.0 OctetString "dpog-lab";
+    Snmp11 1.3.6.1.2.1.1.6.0 OctetString "synthetic-site";
+    UpstreamServiceFlow {
+        ServiceFlowReference 1001;
+        ServiceClassName lab-up;
+        QualityOfServiceParameterSetType 07;
+        MaxSubstainedTrafficRate 100000000;
+        MaxTrafficBurst 6000000;
+        SchedulingType 4;
+        NominalPollingInterval 2000;
+    }
+    UpstreamPacketClassification {
+        ClassifierReference 51;
+        ServiceFlowReference 1001;
+        CMInterfaceMask (01000000)(00000000)(00000000)(00000000);
+    }
+    DownstreamServiceFlow {
+        ServiceFlowReference 2001;
+        ServiceClassName lab-down;
+        QualityOfServiceParameterSetType 07;
+        MaxSubstainedTrafficRate 1000000000;
+        MaxTrafficBurst 6000000;
+    }
+    DownstreamPacketClassification {
+        ClassifierReference 61;
+        ServiceFlowReference 2001;
+        CMInterfaceMask (01000000)(00000000)(00000000)(00000000);
+    }
+}

@@ -13,74 +13,75 @@ import org.antlr.v4.runtime.tree.*;
 public class tlvParser extends Parser {
   protected static final DFA[] _decisionToDFA;
   protected static final PredictionContextCache _sharedContextCache = new PredictionContextCache();
-  public static final int T__21 = 1,
-      T__20 = 2,
-      T__19 = 3,
-      T__18 = 4,
-      T__17 = 5,
-      T__16 = 6,
-      T__15 = 7,
-      T__14 = 8,
-      T__13 = 9,
-      T__12 = 10,
-      T__11 = 11,
-      T__10 = 12,
-      T__9 = 13,
-      T__8 = 14,
-      T__7 = 15,
-      T__6 = 16,
-      T__5 = 17,
-      T__4 = 18,
-      T__3 = 19,
-      T__2 = 20,
-      T__1 = 21,
-      T__0 = 22,
-      WS = 23,
-      WS_NO_SKIP = 24,
-      SPACE = 25,
-      NO_WS = 26,
-      LBRACE = 27,
-      RBRACE = 28,
-      SEMICOLON = 29,
-      LPARENTH = 30,
-      RPARENTH = 31,
-      COMMA = 32,
-      DOT = 33,
-      COLON = 34,
-      SINGLE_QUOTE = 35,
-      DOUBLE_QUOTE = 36,
-      LBRACKET = 37,
-      RBRACKET = 38,
-      TICK = 39,
-      INT = 40,
-      SINGLE_INT = 41,
-      SINGLE_OCTET = 42,
-      IP_PORT_RANGE = 43,
-      HEX_NIBBLE = 44,
-      HEX_NIBBLE_UPPERCASE = 45,
-      HEX_NIBBLE_LOWERCASE = 46,
-      HEX_BYTE = 47,
-      HEX_BYTE_UPPER_CASE = 48,
-      HEX_BYTE_LOWER_CASE = 49,
-      ALPHA_NUMERIC = 50,
-      IDENTIFIER = 51,
-      SINGLE_QUOTE_STRING = 52,
-      EMBEDDED_STRING = 53,
-      HEX_ARRAY = 54,
-      VALUE_BIT_ARRAY = 55,
-      VALUE_DOUBLE_BYTE_ARRAY = 56,
-      MAC_ADDRESS_ARRAY = 57,
-      IPv4_ADDRESS = 58,
-      IPv4_TRANSPORT_ADDRESS = 59,
-      IPv6_ADDRESS = 60,
-      IPv6_TRANSPORT_ADDRESS = 61,
-      MULTI_LINE_COMMENT = 62,
-      INT_OID = 63,
-      STRING_OID = 64,
-      EMBEDDED_NO_STRING = 65,
-      SINGLE_QUOTE_NO_STRING = 66,
-      SNMP_OID_1 = 67,
-      SNMP_OID = 68;
+  public static final int T__22 = 1,
+      T__21 = 2,
+      T__20 = 3,
+      T__19 = 4,
+      T__18 = 5,
+      T__17 = 6,
+      T__16 = 7,
+      T__15 = 8,
+      T__14 = 9,
+      T__13 = 10,
+      T__12 = 11,
+      T__11 = 12,
+      T__10 = 13,
+      T__9 = 14,
+      T__8 = 15,
+      T__7 = 16,
+      T__6 = 17,
+      T__5 = 18,
+      T__4 = 19,
+      T__3 = 20,
+      T__2 = 21,
+      T__1 = 22,
+      T__0 = 23,
+      WS = 24,
+      WS_NO_SKIP = 25,
+      SPACE = 26,
+      NO_WS = 27,
+      LBRACE = 28,
+      RBRACE = 29,
+      SEMICOLON = 30,
+      LPARENTH = 31,
+      RPARENTH = 32,
+      COMMA = 33,
+      DOT = 34,
+      COLON = 35,
+      SINGLE_QUOTE = 36,
+      DOUBLE_QUOTE = 37,
+      LBRACKET = 38,
+      RBRACKET = 39,
+      TICK = 40,
+      INT = 41,
+      SINGLE_INT = 42,
+      SINGLE_OCTET = 43,
+      IP_PORT_RANGE = 44,
+      HEX_NIBBLE = 45,
+      HEX_NIBBLE_UPPERCASE = 46,
+      HEX_NIBBLE_LOWERCASE = 47,
+      HEX_BYTE = 48,
+      HEX_BYTE_UPPER_CASE = 49,
+      HEX_BYTE_LOWER_CASE = 50,
+      ALPHA_NUMERIC = 51,
+      IDENTIFIER = 52,
+      SINGLE_QUOTE_STRING = 53,
+      EMBEDDED_STRING = 54,
+      HEX_ARRAY = 55,
+      VALUE_BIT_ARRAY = 56,
+      VALUE_DOUBLE_BYTE_ARRAY = 57,
+      MAC_ADDRESS_ARRAY = 58,
+      IPv4_ADDRESS = 59,
+      IPv4_TRANSPORT_ADDRESS = 60,
+      IPv6_ADDRESS = 61,
+      IPv6_TRANSPORT_ADDRESS = 62,
+      MULTI_LINE_COMMENT = 63,
+      INT_OID = 64,
+      STRING_OID = 65,
+      EMBEDDED_NO_STRING = 66,
+      SINGLE_QUOTE_NO_STRING = 67,
+      SNMP_OID_1 = 68,
+      SNMP_OID = 69;
   public static final String[] tokenNames = {
     "<INVALID>",
     "'/'",
@@ -94,6 +95,7 @@ public class tlvParser extends Parser {
     "'Docsis-4.0'",
     "'DPoE'",
     "'IpAddress'",
+    "'DPoG'",
     "'PacketCable-1.0'",
     "'Counter'",
     "'Integer32'",
@@ -236,9 +238,10 @@ public class tlvParser extends Parser {
                         | (1L << 9)
                         | (1L << 10)
                         | (1L << 12)
-                        | (1L << 18)
+                        | (1L << 13)
                         | (1L << 19)
-                        | (1L << 21)))
+                        | (1L << 20)
+                        | (1L << 22)))
                 != 0))) {
           _errHandler.recoverInline(this);
         }
@@ -930,7 +933,7 @@ public class tlvParser extends Parser {
           _errHandler.sync(this);
           _la = _input.LA(1);
         } while ((((_la) & ~0x3f) == 0
-            && ((1L << _la) & ((1L << 5) | (1L << 16) | (1L << IDENTIFIER))) != 0));
+            && ((1L << _la) & ((1L << 5) | (1L << 17) | (1L << IDENTIFIER))) != 0));
         setState(77);
         match(RBRACE);
       }
@@ -1055,11 +1058,11 @@ public class tlvParser extends Parser {
               }
             }
             break;
-          case 16:
+          case 17:
             {
               {
                 setState(86);
-                match(16);
+                match(17);
               }
             }
             break;
@@ -1213,19 +1216,19 @@ public class tlvParser extends Parser {
               }
             }
             break;
-          case 14:
+          case 15:
             {
               {
                 setState(100);
-                match(14);
+                match(15);
               }
             }
             break;
-          case 13:
+          case 14:
             {
               {
                 setState(101);
-                match(13);
+                match(14);
               }
             }
             break;
@@ -1237,27 +1240,27 @@ public class tlvParser extends Parser {
               }
             }
             break;
-          case 17:
+          case 18:
             {
               {
                 setState(103);
-                match(17);
+                match(18);
               }
             }
             break;
-          case 22:
+          case 23:
             {
               {
                 setState(104);
-                match(22);
+                match(23);
               }
             }
             break;
-          case 15:
+          case 16:
             {
               {
                 setState(105);
-                match(15);
+                match(16);
               }
             }
             break;
@@ -1346,7 +1349,7 @@ public class tlvParser extends Parser {
                   case 2:
                     {
                       setState(112);
-                      match(20);
+                      match(21);
                     }
                     break;
 
@@ -1556,7 +1559,7 @@ public class tlvParser extends Parser {
           _errHandler.sync(this);
           _la = _input.LA(1);
         } while ((((_la) & ~0x3f) == 0
-            && ((1L << _la) & ((1L << 5) | (1L << 16) | (1L << IDENTIFIER))) != 0));
+            && ((1L << _la) & ((1L << 5) | (1L << 17) | (1L << IDENTIFIER))) != 0));
         setState(137);
         match(RBRACE);
       }
@@ -1571,7 +1574,7 @@ public class tlvParser extends Parser {
   }
 
   public static final String _serializedATN =
-      "\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3F\u008e\4\2\t\2\4"
+      "\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3G\u008e\4\2\t\2\4"
           + "\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"
           + "\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"
           + "\3\2\3\2\3\3\3\3\3\3\3\3\5\3+\n\3\3\4\3\4\3\4\3\5\3\5\3\5\3\6\3\6\3\7"
@@ -1582,34 +1585,34 @@ public class tlvParser extends Parser {
           + "\17\3\20\3\20\3\20\3\20\6\20v\n\20\r\20\16\20w\3\21\3\21\3\21\3\21\3\21"
           + "\3\21\3\21\3\21\3\21\5\21\u0083\n\21\3\22\3\22\3\22\6\22\u0088\n\22\r"
           + "\22\16\22\u0089\3\22\3\22\3\22\4cw\23\2\4\6\b\n\f\16\20\22\24\26\30\32"
-          + "\34\36 \"\2\4\7\2\b\b\13\f\16\16\24\25\27\27\5\2**\65\658?\u009c\2$\3"
+          + "\34\36 \"\2\4\7\2\b\b\13\f\16\17\25\26\30\30\5\2++\66\669@\u009c\2$\3"
           + "\2\2\2\4*\3\2\2\2\6,\3\2\2\2\b/\3\2\2\2\n\62\3\2\2\2\f\64\3\2\2\2\16:"
           + "\3\2\2\2\20D\3\2\2\2\22F\3\2\2\2\24H\3\2\2\2\26Q\3\2\2\2\30Y\3\2\2\2\32"
           + "a\3\2\2\2\34o\3\2\2\2\36u\3\2\2\2 y\3\2\2\2\"\u0084\3\2\2\2$%\t\2\2\2"
           + "%\3\3\2\2\2&+\5\6\4\2\'+\5\24\13\2(+\5\26\f\2)+\5 \21\2*&\3\2\2\2*\'\3"
-          + "\2\2\2*(\3\2\2\2*)\3\2\2\2+\5\3\2\2\2,-\7\65\2\2-.\5\f\7\2.\7\3\2\2\2"
-          + "/\60\7\65\2\2\60\61\5\16\b\2\61\t\3\2\2\2\62\63\7\65\2\2\63\13\3\2\2\2"
-          + "\648\t\3\2\2\659\7\37\2\2\66\67\7\37\2\2\679\7@\2\28\65\3\2\2\28\66\3"
-          + "\2\2\29\r\3\2\2\2:>\t\3\2\2;?\7\37\2\2<=\7\37\2\2=?\7@\2\2>;\3\2\2\2>"
-          + "<\3\2\2\2?\17\3\2\2\2@E\5\b\5\2AE\5\24\13\2BE\5\26\f\2CE\5 \21\2D@\3\2"
-          + "\2\2DA\3\2\2\2DB\3\2\2\2DC\3\2\2\2E\21\3\2\2\2FG\7\65\2\2G\23\3\2\2\2"
-          + "HI\5\22\n\2IK\7\35\2\2JL\5\20\t\2KJ\3\2\2\2LM\3\2\2\2MK\3\2\2\2MN\3\2"
-          + "\2\2NO\3\2\2\2OP\7\36\2\2P\25\3\2\2\2QU\7\65\2\2RV\7\37\2\2ST\7\37\2\2"
-          + "TV\7@\2\2UR\3\2\2\2US\3\2\2\2V\27\3\2\2\2WZ\7\7\2\2XZ\7\22\2\2YW\3\2\2"
-          + "\2YX\3\2\2\2Z\31\3\2\2\2[b\13\2\2\2\\b\7#\2\2]b\7&\2\2^b\7%\2\2_b\7 \2"
-          + "\2`b\7!\2\2a[\3\2\2\2a\\\3\2\2\2a]\3\2\2\2a^\3\2\2\2a_\3\2\2\2a`\3\2\2"
-          + "\2bc\3\2\2\2cd\3\2\2\2ca\3\2\2\2d\33\3\2\2\2ep\7\n\2\2fp\7\20\2\2gp\7"
-          + "\17\2\2hp\7\4\2\2ip\7\23\2\2jp\7\30\2\2kp\7\21\2\2lp\7\r\2\2mp\7\6\2\2"
-          + "np\7\5\2\2oe\3\2\2\2of\3\2\2\2og\3\2\2\2oh\3\2\2\2oi\3\2\2\2oj\3\2\2\2"
-          + "ok\3\2\2\2ol\3\2\2\2om\3\2\2\2on\3\2\2\2p\35\3\2\2\2qv\13\2\2\2rv\7\26"
-          + "\2\2sv\7\t\2\2tv\7\3\2\2uq\3\2\2\2ur\3\2\2\2us\3\2\2\2ut\3\2\2\2vw\3\2"
-          + "\2\2wx\3\2\2\2wu\3\2\2\2x\37\3\2\2\2yz\5\30\r\2z{\5\32\16\2{|\5\34\17"
-          + "\2|}\7&\2\2}~\5\36\20\2~\u0082\7&\2\2\177\u0083\7\37\2\2\u0080\u0081\7"
-          + "\37\2\2\u0081\u0083\7@\2\2\u0082\177\3\2\2\2\u0082\u0080\3\2\2\2\u0083"
-          + "!\3\2\2\2\u0084\u0085\5\2\2\2\u0085\u0087\7\35\2\2\u0086\u0088\5\4\3\2"
-          + "\u0087\u0086\3\2\2\2\u0088\u0089\3\2\2\2\u0089\u0087\3\2\2\2\u0089\u008a"
-          + "\3\2\2\2\u008a\u008b\3\2\2\2\u008b\u008c\7\36\2\2\u008c#\3\2\2\2\20*8"
-          + ">DMUYacouw\u0082\u0089";
+          + "\2\2\2*(\3\2\2\2*)\3\2\2\2+\5\3\2\2\2,-\7\66\2\2-.\5\f\7\2.\7\3\2\2\2"
+          + "/\60\7\66\2\2\60\61\5\16\b\2\61\t\3\2\2\2\62\63\7\66\2\2\63\13\3\2\2\2"
+          + "\648\t\3\2\2\659\7 \2\2\66\67\7 \2\2\679\7A\2\28\65\3\2\2\28\66\3\2\2"
+          + "\29\r\3\2\2\2:>\t\3\2\2;?\7 \2\2<=\7 \2\2=?\7A\2\2>;\3\2\2\2><\3\2\2\2"
+          + "?\17\3\2\2\2@E\5\b\5\2AE\5\24\13\2BE\5\26\f\2CE\5 \21\2D@\3\2\2\2DA\3"
+          + "\2\2\2DB\3\2\2\2DC\3\2\2\2E\21\3\2\2\2FG\7\66\2\2G\23\3\2\2\2HI\5\22\n"
+          + "\2IK\7\36\2\2JL\5\20\t\2KJ\3\2\2\2LM\3\2\2\2MK\3\2\2\2MN\3\2\2\2NO\3\2"
+          + "\2\2OP\7\37\2\2P\25\3\2\2\2QU\7\66\2\2RV\7 \2\2ST\7 \2\2TV\7A\2\2UR\3"
+          + "\2\2\2US\3\2\2\2V\27\3\2\2\2WZ\7\7\2\2XZ\7\23\2\2YW\3\2\2\2YX\3\2\2\2"
+          + "Z\31\3\2\2\2[b\13\2\2\2\\b\7$\2\2]b\7\'\2\2^b\7&\2\2_b\7!\2\2`b\7\"\2"
+          + "\2a[\3\2\2\2a\\\3\2\2\2a]\3\2\2\2a^\3\2\2\2a_\3\2\2\2a`\3\2\2\2bc\3\2"
+          + "\2\2cd\3\2\2\2ca\3\2\2\2d\33\3\2\2\2ep\7\n\2\2fp\7\21\2\2gp\7\20\2\2h"
+          + "p\7\4\2\2ip\7\24\2\2jp\7\31\2\2kp\7\22\2\2lp\7\r\2\2mp\7\6\2\2np\7\5\2"
+          + "\2oe\3\2\2\2of\3\2\2\2og\3\2\2\2oh\3\2\2\2oi\3\2\2\2oj\3\2\2\2ok\3\2\2"
+          + "\2ol\3\2\2\2om\3\2\2\2on\3\2\2\2p\35\3\2\2\2qv\13\2\2\2rv\7\27\2\2sv\7"
+          + "\t\2\2tv\7\3\2\2uq\3\2\2\2ur\3\2\2\2us\3\2\2\2ut\3\2\2\2vw\3\2\2\2wx\3"
+          + "\2\2\2wu\3\2\2\2x\37\3\2\2\2yz\5\30\r\2z{\5\32\16\2{|\5\34\17\2|}\7\'"
+          + "\2\2}~\5\36\20\2~\u0082\7\'\2\2\177\u0083\7 \2\2\u0080\u0081\7 \2\2\u0081"
+          + "\u0083\7A\2\2\u0082\177\3\2\2\2\u0082\u0080\3\2\2\2\u0083!\3\2\2\2\u0084"
+          + "\u0085\5\2\2\2\u0085\u0087\7\36\2\2\u0086\u0088\5\4\3\2\u0087\u0086\3"
+          + "\2\2\2\u0088\u0089\3\2\2\2\u0089\u0087\3\2\2\2\u0089\u008a\3\2\2\2\u008a"
+          + "\u008b\3\2\2\2\u008b\u008c\7\37\2\2\u008c#\3\2\2\2\20*8>DMUYacouw\u0082"
+          + "\u0089";
   public static final ATN _ATN = ATNSimulator.deserialize(_serializedATN.toCharArray());
 
   static {

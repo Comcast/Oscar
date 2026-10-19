@@ -192,6 +192,10 @@ public class ConfigurationFileExport {
 
       init();
 
+    } else if (iConfigurationFileType
+        == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOG_DICTIONARY_TABLE_NAME);
+      init(iConfigurationFileType);
     } else if ((iConfigurationFileType >= DPOE_VER_10) && (iConfigurationFileType <= DPOE_VER_20)) {
 
       if (logger.isDebugEnabled())
@@ -271,6 +275,10 @@ public class ConfigurationFileExport {
 
       init();
 
+    } else if (iConfigurationFileType
+        == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOG_DICTIONARY_TABLE_NAME);
+      init(iConfigurationFileType);
     } else if ((iConfigurationFileType >= DPOE_VER_10) && (iConfigurationFileType <= DPOE_VER_20)) {
 
       if (logger.isDebugEnabled()) logger.debug("DPoE Configuration File");
@@ -363,7 +371,10 @@ public class ConfigurationFileExport {
     this.iConfigurationFileType = cfConfigurationFile.getConfigurationFileType();
 
     // Check for DPoE Type Configuration File
-    if ((this.iConfigurationFileType >= DPOE_VER_10)
+    if (iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOG_DICTIONARY_TABLE_NAME);
+      init(iConfigurationFileType);
+    } else if ((this.iConfigurationFileType >= DPOE_VER_10)
         && (this.iConfigurationFileType <= DPOE_VER_20)) {
 
       if (logger.isDebugEnabled())
@@ -456,6 +467,13 @@ public class ConfigurationFileExport {
 
       init();
 
+    } else if (iConfigurationFileType
+        == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOG_DICTIONARY_TABLE_NAME);
+      jaTlvDictionary = dsqTlvDictionary.getAllTlvDefinition(iConfigurationFileType);
+      bTLV = new byte[0];
+      initBER();
+      sConfigurationFileStart = "DPoG";
     } else if ((this.iConfigurationFileType >= DPOE_VER_10)
         && (this.iConfigurationFileType <= DPOE_VER_20)) {
 
@@ -855,6 +873,17 @@ public class ConfigurationFileExport {
 
   /** */
   private void tlvToDictionary() {
+
+    if (iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      aljoTopLevelTlvDictionary = new ArrayList<>();
+      var binding = new TlvVariableBinding(bTLV, dsqTlvDictionary.getTopLevelByteLength());
+      var decoded =
+          new TlvDisassemble(binding, TlvDictionary.DPOG_DICTIONARY_TABLE_NAME).getTlvDictionary();
+      for (int index = 0; index < decoded.length(); index++) {
+        aljoTopLevelTlvDictionary.add(decoded.getJSONObject(index));
+      }
+      return;
+    }
 
     String sDictionaryTableName;
 
@@ -1291,7 +1320,10 @@ public class ConfigurationFileExport {
 
     initBER();
 
-    if ((iConfigurationFileType >= DPOE_VER_10) && (iConfigurationFileType <= DPOE_VER_20)) {
+    if (iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      com.comcast.oscar.compiler.DPoGCompiler.validateEncoding(bTLV);
+      sConfigurationFileStart = "DPoG";
+    } else if ((iConfigurationFileType >= DPOE_VER_10) && (iConfigurationFileType <= DPOE_VER_20)) {
 
       removeNonDictionaryTopLevelTLV();
 

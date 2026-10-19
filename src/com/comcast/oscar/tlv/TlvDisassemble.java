@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.tlv;
@@ -28,20 +28,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class TlvDisassemble extends TlvDictionary {
   /**
    * Inspects a raw TLV stream without requiring construction of a valid configuration.
@@ -76,6 +62,7 @@ public class TlvDisassemble extends TlvDictionary {
   public static final String TLV_TYPE_DOCSIS_40 = "DOCSIS40_TLV_DEFINITION";
   public static final String TLV_TYPE_PACKET_CABLE =
       DictionarySQLConstants.PACKET_CABLE_DICTIONARY_TABLE_NAME;
+  public static final String TLV_TYPE_DPOG = TlvDictionary.DPOG_DICTIONARY_TABLE_NAME;
   public static final String TLV_TYPE_DPOE = DictionarySQLConstants.DPOE_DICTIONARY_TABLE_NAME;
 
   /**
@@ -164,6 +151,21 @@ public class TlvDisassemble extends TlvDictionary {
    * @return JSONArray
    */
   public JSONArray getTlvDictionary() {
+    if (TLV_TYPE_DPOG.equals(getDictionaryTableName())) {
+      byte[] binary = tbTlvBuffer != null ? tbTlvBuffer.toByteArray() : tvbTlvBuffer.toByteArray();
+      JSONArray decoded = new JSONArray();
+      for (var element : DPoGTlvCodec.parse(binary)) {
+        JSONObject dictionary = super.getTlvDictionary(element.definition().type());
+        try {
+          loadTlvValuesIntoTlvDictionary(element.encoded(), dictionary);
+        } catch (TlvException exception) {
+          throw new IllegalArgumentException(
+              "Cannot decode DPoG TLV " + element.definition().path(), exception);
+        }
+        decoded.put(DPoGTlvCodec.orderDictionary(dictionary, element));
+      }
+      return decoded;
+    }
 
     // Store the entire return
     JSONArray jaTlvDictionary = new JSONArray();

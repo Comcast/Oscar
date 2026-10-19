@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.configurationfile;
@@ -34,20 +34,6 @@ import net.lingala.zip4j.model.enums.CompressionMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class ConfigurationFile {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(ConfigurationFile.class);
@@ -691,7 +677,13 @@ public class ConfigurationFile {
   /** */
   private void init() {
 
-    if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE)
+    if (iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      this.miiTypeToByteLengh =
+          new TlvDictionary(TlvDictionary.DPOG_DICTIONARY_TABLE_NAME).getTopLevelByteLength();
+      dcConfigurationFile = new com.comcast.oscar.compiler.DPoGCompiler(sCmtsSharedSecretKey);
+      dcConfigurationFile.add(tbConfigurationFile);
+    } else if ((iConfigurationFileType
+            >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE)
         && (iConfigurationFileType
             <= ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE)) {
 
@@ -975,7 +967,10 @@ public class ConfigurationFile {
    */
   private void updateCompiler(TlvBuilder tb) {
 
-    if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE)
+    if (iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      this.dcConfigurationFile.add(tb);
+    } else if ((iConfigurationFileType
+            >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE)
         && (iConfigurationFileType
             <= ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE)) {
       this.dcConfigurationFile.add(tb);
@@ -995,7 +990,10 @@ public class ConfigurationFile {
    */
   private void updateCompiler(TlvVariableBinding tvb) {
 
-    if ((iConfigurationFileType >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE)
+    if (iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      this.dcConfigurationFile.add(tvb);
+    } else if ((iConfigurationFileType
+            >= ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE)
         && (iConfigurationFileType
             <= ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE)) {
       this.dcConfigurationFile.add(tvb);

@@ -81,6 +81,7 @@ the OSCAR Java API and CLI, not a new UI menu.
 ```bash
 java -jar oscar.jar --diagnose-binary configuration.cfg
 java -jar oscar.jar --diagnose-binary configuration.cfg --diagnostic-family dpoe
+java -jar oscar.jar --diagnose-binary configuration.cfg --diagnostic-family dpog
 ```
 
 Use these options alone; do not combine them with normal input, output, or
