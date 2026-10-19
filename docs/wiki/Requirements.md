@@ -8,7 +8,7 @@
 
 ## Platforms
 - Linux (primary)
-- CI validated on Ubuntu 22.04 and 24.04
+- CI targets Ubuntu 22.04, 24.04, and 26.04 LTS
 
 ## Optional
 - Net-SNMP (`snmptranslate`) for dotted/textual OID translation support
