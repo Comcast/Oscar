@@ -14,6 +14,10 @@ editor, codec, and file-integrity changes:
 - DOCSIS 4.0: [oscar-docsis-40-config-tlvs](skills/oscar-docsis-40-config-tlvs/SKILL.md),
     pinned to **CM-SP-MULPIv4.0-I12-261014**.
 
+- DPoG 1.0: [oscar-docsis-dpog-config-tlvs](skills/oscar-docsis-dpog-config-tlvs/SKILL.md),
+  pinned to **DPoG-SP-MULPIv1.0-C01-160830**. Use its applicability and
+  delegated-source checks before revisiting the DPoG editor.
+
 Current DOCSIS 4.0 implementation scope excludes L2VPN-specific settings and
 eDOCSIS/eSAFE settings. Record them as deferred rather than claiming coverage.
 Generated configuration tests use a public lab key, not production credentials;

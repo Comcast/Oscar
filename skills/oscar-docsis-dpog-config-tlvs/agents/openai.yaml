@@ -1,0 +1,4 @@
+interface:
+  display_name: "OSCAR DPoG Configuration TLVs"
+  short_description: "Source-backed DPoG configuration TLVs and editor scope"
+  default_prompt: "Use $oscar-docsis-dpog-config-tlvs to review or implement DPoG configuration-file TLVs with source citations and explicit applicability."

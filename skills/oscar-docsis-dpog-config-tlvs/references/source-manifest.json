@@ -1,0 +1,26 @@
+{
+  "document": "DPoG-SP-MULPIv1.0-C01-160830",
+  "origin": "User-provided PDF in skills/oscar-docsis-dpog-config-tlvs/",
+  "acquired": "2026-10-19",
+  "files": [
+    {
+      "file": "DPoG-SP-MULPIv1.0-C01-160830.txt",
+      "bytes": 333331,
+      "sha256": "2269bc9b86bb2666c0250296b0fb178d2664ffc6fac683000aea66a15da97479"
+    }
+  ],
+  "removedOriginals": [
+    {
+      "file": "DPoG-SP-MULPIv1.0-C01-160830.pdf",
+      "bytes": 1015424,
+      "sha256": "cf9f8b6354babb40a0727b250e64172583df9997f64645367356161e0f8a96c2"
+    }
+  ],
+  "extraction": {
+    "command": "pdftotext -layout -enc UTF-8 INPUT.pdf OUTPUT.txt",
+    "tool": "pdftotext version 22.02.0",
+    "pages": 97,
+    "verification": "97 nonempty page segments; no Unicode replacement characters; Annex C/Table 7 page 73 visually compared."
+  },
+  "note": "PDF removed at user request after verifying extraction; text retains original notices. External referenced specifications are not bundled."
+}
