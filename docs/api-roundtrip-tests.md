@@ -41,3 +41,19 @@ one-entry-per-line formatting. Maven tests use a separate mutable cache under
 `target/test-snmp-cache/res/`, selected by `oscar.snmp.cache.path`, so lookup
 activity cannot rewrite the tracked `res/DottedTextualNetSNMPMap.json`.
 Runtime cache writes sort keys and retain readable JSON formatting.
+
+## CVC binary preservation regression
+
+Run `mvn -B -Dtest=CvcApiRoundTripTest test`. Synthetic byte arrays exercise
+manufacturer CVC (32) and co-signer CVC (33), separately and together, at
+1, 253, 254, 255, 508 and 1025 bytes. Tests check fragment lengths and payload
+order independently, then compare complete binaries byte for byte after two
+unchanged text round trips, including MICs and padding. No certificate files
+are read; these tests do not validate DER syntax, signatures or certificate trust.
+The 254-byte fragmentation expectation follows CM-SP-MULPIv3.1-I21-201020,
+sections C.1.2.10 and C.1.2.11.
+
+Known defect exposed by these tests: all 12 individual-type cases pass, but
+the six adjacent manufacturer/co-signer cases fail. The exporter loses CVC
+entries and duplicates NetworkAccess when switching fragmented TLV types.
+The tests remain enabled to reproduce this defect; an exporter fix is pending.
