@@ -9,9 +9,9 @@ of entries manually.
 The source map is bundled in both release JARs. For `java -jar`, Oscar uses a
 writable `res/DottedTextualNetSNMPMap.json` beside the JAR and initializes a
 missing or empty cache from the bundled map. Existing nonempty caches are
-preserved; runtime translations may add entries. SQLite is not used, and no
-`db/` directory is created. Preserve any custom mappings from an older
-installation by copying its map into the new `res/` location before use.
+preserved; runtime translations may add entries. Preserve any custom mappings
+from an older installation by copying its map into the new `res/` location
+before use.
 
 The maintenance script updates the source map in this repository. Rebuild the
 JARs after refreshing it to include the updated map in release artifacts.

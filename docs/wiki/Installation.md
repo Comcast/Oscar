@@ -142,6 +142,6 @@ When OSCAR runs, it may initialize these folders if missing:
 - `mibs/bin/`
 - `mibs/txt/`
 
-SQLite is not required. The SNMP OID map is bundled in the JAR and seeds a
+The SNMP OID map is bundled in the JAR and seeds a
 missing or empty `res/DottedTextualNetSNMPMap.json` beside it. Existing nonempty
-caches are preserved. The old `db/` directory is no longer created.
+caches are preserved.

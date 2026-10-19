@@ -1,7 +1,7 @@
 # TLV symbol tables
 
 Oscar's parser, encoder, decoder, dictionary display, and bulk operations load
-TLV definitions from JSON files. SQLite is no longer used by these paths.
+TLV definitions from JSON files.
 
 | Catalog | Contents |
 | --- | --- |
@@ -63,7 +63,7 @@ Each definition is one JSON object:
 | `maxInstances` | Preserved legacy occurrence metadata; `-1` means unrestricted in the legacy data |
 | `description` | Help text |
 
-Parents are derived from numeric paths; database row IDs are unnecessary.
+Parents are derived from numeric paths.
 Definition order is retained because the existing codecs serialize child templates
 in catalog order. Keep that order when making unrelated edits.
 An entry with children is a container. Use the existing codec vocabulary and
@@ -78,33 +78,15 @@ new runtime occurrence or specification-conformance enforcement in the migration
 The DOCSIS 4.0 compiler additionally validates its catalog's lengths and
 multiplicity plus the source-derived constraints described in its coverage notes.
 
-## Compatibility and migration decisions
+## Catalog compatibility
 
-- The original packaged `res/dictionary.sqlite`, before its TLV tables were
-  removed, was the migration baseline. Its integer representation for DOCSIS
-  `25.35.1` and `25.35.2` is retained; the old `db/` copy used byte arrays for
-  those fields. Catalog `sourceSha256` values identify that original baseline.
+- DOCSIS `25.35.1` and `25.35.2` retain integer value encoding.
 - DOCSIS upstream attribute-mask types are corrected to `43.9.3` and `43.9.4`
   using MULPIv3.1-I21, section C.1.1.18.1.8, printed page 601.
 - DPoE CLI selections now use the DPoE decoder catalog instead of DOCSIS.
 - The misspelled codec `string bits` becomes `string_bits`.
-- Duplicate DPoE paths are consolidated using the lowest original row ID.
-  Alternative rows and conflicting metadata are retained in the migration audit.
-  This is an explicit compatibility policy, not a DPoE specification correction.
 - DPoE `25.14` is named `MaximumDownstreamLatency` according to its own legacy
   description, removing a collision with `25.13` (`TimeoutForAdmittedQoS`).
-
-The complete audit and reproducible initial exporter are under
-`development/tlv-registry/`. The exporter is a migration tool: rerunning it
-requires the original pre-cleanup database and replaces the catalogs, so do not
-use it after making intentional catalog edits.
-
-The obsolete SQLite databases and JDBC dependency have been removed entirely.
-TLV definitions live only in the JSON catalogs. Legacy SQL query classes remain
-for compatibility, but callers must supply their own driver and legacy
-database; SQLite dictionary export is no longer supported. Editing a legacy
-database does not change the migrated parser/codec behavior. CLI startup no
-longer creates a database directory or extracts a SQLite dictionary.
 
 The SNMP OID map is separately maintained under
 `res/DottedTextualNetSNMPMap.json`; see the [resource guide](../res/README.md).

@@ -79,8 +79,6 @@ java -cp "target/oscar-3.2.1.jar:target/lib/*" com.comcast.oscar.cli.Main --help
 Windows classpaths use `;` instead of `:`. Downloaded thin JARs likewise require
 their runtime dependencies; they are not standalone replacements for `oscar.jar`.
 
-SQLite is not required for normal build, test, conversion, or template merging.
-The retained legacy SQL API requires a caller-provided driver and database.
 See [resource maintenance](../../res/README.md) for the bundled SNMP map and
 runtime cache; do not maintain a duplicate map in a consuming application.
 
