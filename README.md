@@ -8,6 +8,7 @@
   </picture>
 </p>
 
+[![Security scans](https://github.com/Comcast/Oscar/actions/workflows/security.yml/badge.svg?branch=master)](https://github.com/Comcast/Oscar/actions/workflows/security.yml)
 [![CI](https://github.com/Comcast/Oscar/actions/workflows/ci.yml/badge.svg)](https://github.com/Comcast/Oscar/actions/workflows/ci.yml)
 [![CI macOS](https://github.com/Comcast/Oscar/actions/workflows/ci-macos.yml/badge.svg)](https://github.com/Comcast/Oscar/actions/workflows/ci-macos.yml)
 ![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)
@@ -44,3 +45,5 @@ build prerequisites, building, testing, and preparing releases.
 - [SNMP value export](docs/snmp-value-export.md)
 - [DOCSIS 4.0 implementation status](development/docsis40-implementation.md) — partial support
 - [Apache-2.0 license](LICENSE)
+
+[Security scanning and coverage](docs/security-scanning.md)
