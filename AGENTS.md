@@ -14,6 +14,10 @@ editor, codec, and file-integrity changes:
 - DOCSIS 4.0: [oscar-docsis-40-config-tlvs](skills/oscar-docsis-40-config-tlvs/SKILL.md),
     pinned to **CM-SP-MULPIv4.0-I12-261014**.
 
+- DPoE 2.0: [oscar-dpoe-20-config-tlvs](skills/oscar-dpoe-20-config-tlvs/SKILL.md),
+  pinned to **DPoE-SP-MULPIv2.0-I14-230322**. Use its DPoE-specific
+  encodings and applicability rules; do not substitute DPoG exclusions.
+
 - DPoG 1.0: [oscar-dpog-10-config-tlvs](skills/oscar-dpog-10-config-tlvs/SKILL.md),
   pinned to **DPoG-SP-MULPIv1.0-C01-160830**. Use its applicability and
   delegated-source checks before revisiting the DPoG editor.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "OSCAR DPoE 2.0 Configuration TLVs"
+  short_description: "Source-backed DPoE 2.0 config TLVs for OSCAR"
+  default_prompt: "Use $oscar-dpoe-20-config-tlvs to review or implement OSCAR DPoE configuration TLVs with exact source citations."

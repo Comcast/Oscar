@@ -1,0 +1,26 @@
+{
+  "document": "DPoE-SP-MULPIv2.0-I14-230322",
+  "origin": "User-provided DPoE-SP-MULPIv2.0-I14-230322.pdf",
+  "acquired": "2026-10-19",
+  "files": [
+    {
+      "file": "DPoE-SP-MULPIv2.0-I14-230322.txt",
+      "bytes": 436467,
+      "sha256": "3d1b03c9d39258b6627adf8163df4195574c0f1ca4eaf4a5f98bc2d035cc51ea"
+    }
+  ],
+  "removedOriginals": [
+    {
+      "file": "DPoE-SP-MULPIv2.0-I14-230322.pdf",
+      "bytes": 1720831,
+      "sha256": "f07ed7ef2ab026a564b3244a585118dfdf0b149bc0e600bdf73e421615d6491e"
+    }
+  ],
+  "extraction": {
+    "command": "pdftotext -layout -enc UTF-8 INPUT.pdf OUTPUT.txt",
+    "tool": "pdftotext version 22.02.0",
+    "pages": 129,
+    "verification": "129 nonempty page segments; no Unicode replacement characters; pages 87, 91 and 96 visually compared."
+  },
+  "note": "Original PDF removed after extraction verification, following repository AGENTS.md policy. Extracted text retains original notices. Delegated specifications are not bundled."
+}

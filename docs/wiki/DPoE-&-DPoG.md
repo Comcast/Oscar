@@ -1,6 +1,8 @@
 # DPoE and DPoG
 
-DPoE uses the existing `dpoe.json` catalog. DPoG 1.0 now has a separate,
+DPoE uses the existing `dpoe.json` catalog. Its
+[DPoE 2.0 I14 registry review](../dpoe-registry-review.md) records confirmed
+length/codec mismatches and missing structured fields. DPoG 1.0 now has a separate,
 provisional `dpog.json`, based on DPoG-SP-MULPIv1.0-C01-160830 Annex C.
 See the [path-by-path applicability matrix](../dpog-catalog.md).
 
