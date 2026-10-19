@@ -17,7 +17,8 @@ java -jar oscar.jar -d -s p 1.0 -i output/packetcable-delimiter.bin > output/pac
 Compilation exercises the current tool behavior; it does not turn this fragment
 into a valid service profile. Use an operator-reviewed profile for actual MTAs.
 
-Verified with the current OSCAR build: compilation and decoding succeed, but
-the decoded wrapper is `PacketCable-X.X`, so this guide does not claim that
-the decoded text can be recompiled unchanged. The compiler also inserts
-finalization fields; the source remains only a delimiter demonstration.
+With an explicit PacketCable version, decoded text retains its importable
+version header. Recompilation replaces the generated integrity hash rather
+than appending another one. In-memory regression tests cover all three
+PacketCable editions; see [API round-trip tests](../../../docs/api-roundtrip-tests.md).
+The source remains only a delimiter demonstration.

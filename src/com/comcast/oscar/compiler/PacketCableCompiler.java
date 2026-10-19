@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.compiler;
@@ -14,27 +14,16 @@ import com.comcast.oscar.utilities.CheckSum;
 import com.comcast.oscar.utilities.HexString;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.snmp4j.asn1.BER;
+import org.snmp4j.asn1.BERInputStream;
 import org.snmp4j.smi.OID;
+import org.snmp4j.smi.VariableBinding;
 
-/**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class PacketCableCompiler extends TlvBuilder {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(PacketCableCompiler.class);
@@ -71,7 +60,7 @@ public class PacketCableCompiler extends TlvBuilder {
       bTlvFileMarker =
           stripTlv(
               BinaryConversion.byteToUnsignedInteger(PacketCableConstants.FILE_MARKER),
-              super.toByteArray());
+              stripIntegrityHash(super.toByteArray()));
     } catch (TlvException e2) {
       e2.printStackTrace();
     }
@@ -421,6 +410,40 @@ public class PacketCableCompiler extends TlvBuilder {
   /* *********************************************************************************
    * 									Private Methods
    **********************************************************************************/
+
+  /** Remove only this edition's generated BASIC.1 hash before recalculating it. */
+  private byte[] stripIntegrityHash(byte[] configurationBytes) throws TlvException {
+    String integrityOid =
+        iPacketCableVersion == ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE
+            ? PacketCableConstants.PKT_CABLE_20_BASIC_AUTH_OID
+            : PacketCableConstants.PKT_CABLE_10_BASIC_AUTH_OID;
+    ByteArrayOutputStream retainedTlvs = new ByteArrayOutputStream();
+    for (HexString encodedTlv : getTopLevelTlvToHexStringList(configurationBytes)) {
+      byte[] tlvBytes = encodedTlv.toByteArray();
+      int tlvType = Byte.toUnsignedInt(tlvBytes[0]);
+      if (tlvType == PacketCableConstants.SNMP_TLV_11
+          || tlvType == PacketCableConstants.SNMP_TLV_64) {
+        int lengthWidth =
+            tlvType == PacketCableConstants.SNMP_TLV_64
+                ? PacketCableConstants.SNMP_TLV_64_BYTE_LENGTH
+                : PacketCableConstants.PACKET_CABLE_STANDARD_BYTE_LENGTH;
+        int valueOffset = TLV_TYPE_OVERHEAD + lengthWidth;
+        VariableBinding binding = new VariableBinding();
+        try {
+          binding.decodeBER(
+              new BERInputStream(
+                  ByteBuffer.wrap(tlvBytes, valueOffset, tlvBytes.length - valueOffset)));
+        } catch (IOException exception) {
+          throw new IllegalArgumentException("Invalid PacketCable SNMP binding", exception);
+        }
+        if (binding.getOid().equals(new OID(integrityOid))) {
+          continue;
+        }
+      }
+      retainedTlvs.writeBytes(tlvBytes);
+    }
+    return retainedTlvs.toByteArray();
+  }
 
   /**
    * @param bTlvArray

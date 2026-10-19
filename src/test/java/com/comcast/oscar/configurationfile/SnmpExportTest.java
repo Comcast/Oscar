@@ -46,9 +46,7 @@ class SnmpExportTest {
                 .toLowerCase()
                 .contains((varbind.type() + " \"" + varbind.value() + "\";").toLowerCase()),
             header + " " + tlvName + " " + varbind.type() + ": " + exported);
-        var reimported =
-            new ConfigurationFileImport(
-                new StringBuilder(exported.replace("PacketCable-X.X", header)));
+        var reimported = new ConfigurationFileImport(new StringBuilder(exported));
         assertArrayEquals(
             original, reimported.toByteArray(), header + " " + tlvName + " " + varbind.type());
       }

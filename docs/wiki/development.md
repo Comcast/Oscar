@@ -43,6 +43,9 @@ mvn package
 mvn test
 ```
 
+See [in-memory API round-trip coverage](../api-roundtrip-tests.md) for the
+supported configuration editions and focused test command.
+
 The package step runs tests and builds executable and thin JARs. To run the
 current executable build on Linux or macOS:
 
