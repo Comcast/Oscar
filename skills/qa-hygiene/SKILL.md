@@ -1,6 +1,6 @@
 ---
 name: qa-hygiene
-description: Check Oscar TLV registry and parser hygiene when changing catalog names, registry validation, or related tests, or when asked for an Oscar QA hygiene review.
+description: Check Oscar Java source license headers, TLV registry and parser hygiene, and related tests when changing project-owned source or performing a QA hygiene review.
 ---
 
 # Oscar QA hygiene
@@ -8,6 +8,38 @@ description: Check Oscar TLV registry and parser hygiene when changing catalog n
 Run commands from the Oscar repository root. Inspect the affected catalog,
 loader, parser, and existing tests before adding checks. Keep this review scoped
 to the requested changes.
+
+## Java license headers
+
+For project-owned Java source, use one short header before the package declaration:
+
+```java
+/*
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+```
+
+The years above are an example, not a value to copy blindly. Check Git history
+with `git log --follow --format=%ad --date=format:%Y -- path/to/File.java` and
+existing notices for the earliest supported year; checkout timestamps are not
+creation dates. Retain the first year and extend the end year when updating a
+file. Use a single year for new files and spaces around the range separator.
+
+When updating a project-owned file, replace redundant long Apache license
+Javadocs (`@bannerLicense`, HTML breaks, and their author-only banner) with this
+header. Do not retain both license forms. Keep useful class and function
+Javadocs, including input/output examples. The full license remains in root
+`LICENSE`, and root `NOTICE` must be retained.
+
+Preserve third-party copyright, attribution, and license notices; do not relabel
+third-party code as Comcast-owned. Do not hand-edit generated ANTLR Java merely
+to change headers. This convention applies going forward to new or touched files;
+it does not require an unrelated repository-wide rewrite.
+
+Validate changed headers with `tools/code-hygene-checker.sh --copyright-only`.
+For header-only edits, verify executable code is unchanged and run diff checks;
+run the Java checks below when behavior changes.
 
 ## TLV identifiers
 
