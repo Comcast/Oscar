@@ -45,7 +45,8 @@ class NetSNMPResourceTest {
   @Test
   void testCacheCannotOverwriteTrackedResource() throws Exception {
     Path source = Path.of("res", Constants.DOTTED_TEXTUAL_NetSNMP_MAP_FILE).toRealPath();
-    Path cache = NetSNMP.DirectoryStructureNetSNMP.fNetSNMPJSON().toPath().toAbsolutePath().normalize();
+    Path cache =
+        NetSNMP.DirectoryStructureNetSNMP.fNetSNMPJSON().toPath().toAbsolutePath().normalize();
     assertNotEquals(source, cache);
     assertTrue(cache.startsWith(Path.of("target").toRealPath()));
   }

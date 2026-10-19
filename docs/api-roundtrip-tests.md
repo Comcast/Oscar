@@ -53,7 +53,8 @@ are read; these tests do not validate DER syntax, signatures or certificate trus
 The 254-byte fragmentation expectation follows CM-SP-MULPIv3.1-I21-201020,
 sections C.1.2.10 and C.1.2.11.
 
-Known defect exposed by these tests: all 12 individual-type cases pass, but
-the six adjacent manufacturer/co-signer cases fail. The exporter loses CVC
-entries and duplicates NetworkAccess when switching fragmented TLV types.
-The tests remain enabled to reproduce this defect; an exporter fix is pending.
+The exporter flushes each contiguous fragment group before switching TLV types,
+clears its payload buffer, and starts the next group independently. Tests cover
+both certificate orders and raw inputs ending without an EOF marker, as well as
+finalized configurations. All 24 cases must preserve bytes exactly. This guards
+against the former loss of adjacent CVC entries and duplication of NetworkAccess.

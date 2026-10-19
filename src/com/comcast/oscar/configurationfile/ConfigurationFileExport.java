@@ -887,15 +887,6 @@ public class ConfigurationFileExport {
 
     String sDictionaryTableName;
 
-    // Starting Container for holding a DATA_TYPE_MULTI_TLV_BYTE_ARRAY
-    TlvBuilder tbTopLevelTLV = new TlvBuilder();
-
-    // Container for holding a DATA_TYPE_MULTI_TLV_BYTE_ARRAY
-    TlvBuilder tbMultiTlvByteArray = new TlvBuilder();
-
-    // Container for holding MultiTlvByteArray
-    TlvVariableBinding tvbMultiTlvByteArray = null;
-
     // List to start JSON Array Objects
     aljoTopLevelTlvDictionary = new ArrayList<JSONObject>();
 
@@ -943,7 +934,8 @@ public class ConfigurationFileExport {
               + "bTLV.length: "
               + bTLV.length);
 
-    int iTlvType = 0, iMultiTlvByteArrayType = RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH;
+    int pendingCertificateType = RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH;
+    ByteArrayOutputStream pendingCertificate = new ByteArrayOutputStream();
 
     if (logger.isDebugEnabled()) {
       logger.debug("ConfigrationFileExport.tlvToDictionary() -> miiTopLevelTLV: " + miiTopLevelTLV);
@@ -963,147 +955,57 @@ public class ConfigurationFileExport {
       }
     }
 
-    /***************************************************************************
-     * 					Sort by TopLevel TLVs via List<byte[]>
-     ***************************************************************************/
-    for (byte[] bTopLevelTLV : tbTLV.sortByTopLevelTlv(miiTopLevelTLV)) {
-
-      // Search TLV List
-      if (logger.isDebugEnabled())
-        logger.debug(
-            "ConfigrationFileExport.tlvToDictionary() -> Sort by TopLevel" + miiTopLevelTLV);
-
-      // Get TLV Type
-      iTlvType = BinaryConversion.byteToUnsignedInteger(bTopLevelTLV[0]);
-
-      if (logger.isDebugEnabled())
-        logger.debug("ConfigrationFileExport.tlvToDictionary() -> TLV-TYPE: " + iTlvType);
-
-      // Check for DOCSIS EOF - Reached end of file (EOF)
-      if (iTlvType == BinaryConversion.byteToUnsignedInteger(DocsisConstants.EOF)) {
+    for (byte[] encodedTlv : tbTLV.sortByTopLevelTlv(miiTopLevelTLV)) {
+      int tlvType = Byte.toUnsignedInt(encodedTlv[0]);
+      if (pendingCertificateType != RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH
+          && tlvType != pendingCertificateType) {
+        appendCertificate(
+            pendingCertificateType, pendingCertificate.toByteArray(), sDictionaryTableName);
+        pendingCertificate.reset();
+        pendingCertificateType = RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH;
+      }
+      if (tlvType == Byte.toUnsignedInt(DocsisConstants.EOF)) {
         break;
       }
-
-      // Get TLV Dictionary for iTlvType
-      JSONObject joDictionaryTemp = dsqTlvDictionary.getTlvDefinition(iTlvType);
-
-      // Check for TLV's that are DATA_TYPE_MULTI_TLV_BYTE_ARRAY
-      try {
-
-        // Check for TLV's that are DATA_TYPE_MULTI_TLV_BYTE_ARRAY and make sure that we are not
-        // combining  different TLV Types
-        if (joDictionaryTemp
-                .getString(Dictionary.DATA_TYPE)
-                .equals(DataTypeDictionaryReference.DATA_TYPE_MULTI_TLV_BYTE_ARRAY)
-            && (joDictionaryTemp.getInt(Dictionary.TYPE) == iTlvType)) {
-
-          // If this is a -1, that means that this is the first time it saw a
-          // DATA_TYPE_MULTI_TLV_BYTE_ARRAY
-          if ((iMultiTlvByteArrayType == RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH)
-              || (iMultiTlvByteArrayType == iTlvType)) {
-
-            // Set
-            iMultiTlvByteArrayType = iTlvType;
-
-            // Build DATA_TYPE_MULTI_TLV_BYTE_ARRAY
-            try {
-              tbMultiTlvByteArray.add(iTlvType, TlvBuilder.getTlvValue(bTopLevelTLV));
-            } catch (TlvException e) {
-              e.printStackTrace();
-            }
-
-            // Goto next TLV to get the next contiguous DATA_TYPE_MULTI_TLV_BYTE_ARRAY
-            continue;
-
-            // There may be a condition that 2 different DATA_TYPE_MULTI_TLV_BYTE_ARRAY are
-            // contiguous
-          } else if (iMultiTlvByteArrayType != iTlvType) {
-            iMultiTlvByteArrayType = RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH;
-          }
-
-          // Create a TlvBuilder for the Top Level TLV that is not a DATA_TYPE_MULTI_TLV_BYTE_ARRAY
-        } else {
-          tbTopLevelTLV = new TlvBuilder();
-        }
-
-      } catch (JSONException e1) {
-        e1.printStackTrace();
-      }
-
-      // At this point we may need to process the current type and the
-      // DATA_TYPE_MULTI_TLV_BYTE_ARRAY
-      if (iMultiTlvByteArrayType != RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH) {
-
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "ConfigrationFileExport.tlvToDictionary()"
-                  + " - End Of MULTI_TLV_BYTE_ARRAY"
-                  + " - Current Type: "
-                  + iTlvType
-                  + " - Process MULTI_TLV_BYTE_ARRAY Type: "
-                  + iMultiTlvByteArrayType);
-
-        // Compile total TLV Value and send to byte Array
-        byte[] bMultiTlvByteArray = TlvBuilder.coupleMultipleTopLevelTlvValues(tbMultiTlvByteArray);
-
-        // Create new TlvVariableBinding
-        tvbMultiTlvByteArray = new TlvVariableBinding();
-
-        // Add
+      JSONObject definition = dsqTlvDictionary.getTlvDefinition(tlvType);
+      if (DataTypeDictionaryReference.DATA_TYPE_MULTI_TLV_BYTE_ARRAY.equals(
+          definition.getString(Dictionary.DATA_TYPE))) {
+        pendingCertificateType = tlvType;
         try {
-          tvbMultiTlvByteArray.add(iMultiTlvByteArrayType, bMultiTlvByteArray);
-        } catch (TlvException e) {
-          e.printStackTrace();
+          pendingCertificate.writeBytes(TlvBuilder.getTlvValue(encodedTlv));
+        } catch (TlvException error) {
+          throw new IllegalArgumentException("Cannot read certificate TLV " + tlvType, error);
         }
-
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "ConfigrationFileExport.tlvToDictionary()"
-                  + " - TlvVariableBinding HEX: "
-                  + tvbMultiTlvByteArray.toString());
-
-        if (logger.isDebugEnabled()) logger.debug("++++++++HERE++++++++");
-
-        // Get TopLevelTLV TlvDisassemble
-        TlvDisassemble tdTopLevelTLV =
-            new TlvDisassemble(tvbMultiTlvByteArray, sDictionaryTableName);
-
-        // Get TopLevelTLV Dictionary and insert into Array List
-        try {
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "ConfigrationFileExport.tlvToDictionary() "
-                    + tdTopLevelTLV.getTlvDictionary().getJSONObject(0).toString());
-
-          aljoTopLevelTlvDictionary.add(tdTopLevelTLV.getTlvDictionary().getJSONObject(0));
-
-        } catch (JSONException e) {
-          e.printStackTrace();
-        }
-
-        // Reset iMultiTlvByteArrayType
-        iMultiTlvByteArrayType = RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH;
-      }
-
-      // If this is not a DATA_TYPE_MULTI_TLV_BYTE_ARRAY , its only a single Top Level TLV
-      tbTopLevelTLV.add(new TlvVariableBinding(bTopLevelTLV, miiTopLevelTLV));
-
-      // Get TopLevelTLV TlvDisassemble
-      TlvDisassemble tdTopLevelTLV = new TlvDisassemble(tbTopLevelTLV, sDictionaryTableName);
-
-      // Get TopLevelTLV Dictionary and insert into Array List
-      try {
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "ConfigrationFileExport.tlvToDictionary() "
-                  + tdTopLevelTLV.getTlvDictionary().getJSONObject(0).toString());
-
-        aljoTopLevelTlvDictionary.add(tdTopLevelTLV.getTlvDictionary().getJSONObject(0));
-
-      } catch (JSONException e) {
-        e.printStackTrace();
+      } else {
+        var binding = new TlvVariableBinding(encodedTlv, miiTopLevelTLV);
+        aljoTopLevelTlvDictionary.add(
+            new TlvDisassemble(binding, sDictionaryTableName).getTlvDictionary().getJSONObject(0));
       }
     }
+    // Raw API input can end with certificate fragments without an EOF marker.
+    if (pendingCertificateType != RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH) {
+      appendCertificate(
+          pendingCertificateType, pendingCertificate.toByteArray(), sDictionaryTableName);
+    }
+  }
+
+  /**
+   * Decode one contiguous certificate fragment group into one text-export entry.
+   *
+   * @param certificateType numeric TLV type identifying this certificate
+   * @param certificateBytes concatenated payload, in original fragment order
+   * @param dictionaryName catalog used to decode the certificate
+   */
+  private void appendCertificate(
+      int certificateType, byte[] certificateBytes, String dictionaryName) {
+    var binding = new TlvVariableBinding();
+    try {
+      binding.add(certificateType, certificateBytes);
+    } catch (TlvException error) {
+      throw new IllegalArgumentException("Cannot decode certificate TLV " + certificateType, error);
+    }
+    aljoTopLevelTlvDictionary.add(
+        new TlvDisassemble(binding, dictionaryName).getTlvDictionary().getJSONObject(0));
   }
 
   /**

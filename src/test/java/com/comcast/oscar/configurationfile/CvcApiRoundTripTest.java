@@ -27,10 +27,11 @@ class CvcApiRoundTripTest {
 
   @ParameterizedTest(name = "{0}, {1} bytes")
   @MethodSource("certificates")
-  void preservesCvcFragmentsAndCompleteBinary(String label, int payloadLength, int[] certificateTypes)
-      throws Exception {
+  void preservesCvcFragmentsAndCompleteBinary(
+      String label, int payloadLength, int[] certificateTypes) throws Exception {
     var imported = new ConfigurationFileImport(new StringBuilder("Docsis { NetworkAccess 1; }"));
-    var configuration = new ConfigurationFile(DOCSIS_31_CONFIGURATION_TYPE, imported.getTlvBuilder(), LAB_KEY);
+    var configuration =
+        new ConfigurationFile(DOCSIS_31_CONFIGURATION_TYPE, imported.getTlvBuilder(), LAB_KEY);
     var certificates = new TlvBuilder();
     for (int certificateType : certificateTypes) {
       byte[] payload = payload(payloadLength, certificateType);
@@ -39,21 +40,33 @@ class CvcApiRoundTripTest {
       assertFragments(certificate.toByteArray(), certificateType, payload);
       certificates.add(certificateType, payload);
     }
+    // Also flush the final fragment group when raw API input has no EOF or MICs.
+    String fragmentText =
+        new ConfigurationFileExport(certificates, DOCSIS_31_CONFIGURATION_TYPE)
+            .toPrettyPrint(false, true);
+    var fragmentImport = new ConfigurationFileImport(new StringBuilder(fragmentText));
+    assertArrayEquals(certificates.toByteArray(), fragmentImport.toByteArray());
     configuration.add(certificates);
     configuration.commit();
     byte[] expected = configuration.toByteArray().clone();
     byte[] current = expected.clone();
     for (int iteration = 0; iteration < 2; iteration++) {
       var binary = new TlvBuilder();
-      binary.add(new TlvVariableBinding(current.clone(),
-          new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME).getTopLevelByteLength()));
+      binary.add(
+          new TlvVariableBinding(
+              current.clone(),
+              new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME)
+                  .getTopLevelByteLength()));
       var exporter = new ConfigurationFileExport(binary, DOCSIS_31_CONFIGURATION_TYPE);
       String text = exporter.toPrettyPrint(false, true);
       for (int certificateType : certificateTypes) {
-        assertTrue(text.contains(certificateType == MANUFACTURER_CVC ? "ManufacturerCVC" : "Co-signerCVC"), text);
+        assertTrue(
+            text.contains(certificateType == MANUFACTURER_CVC ? "ManufacturerCVC" : "Co-signerCVC"),
+            text);
       }
       var reparsed = new ConfigurationFileImport(new StringBuilder(text));
-      var rebuilt = new ConfigurationFile(DOCSIS_31_CONFIGURATION_TYPE, reparsed.getTlvBuilder(), LAB_KEY);
+      var rebuilt =
+          new ConfigurationFile(DOCSIS_31_CONFIGURATION_TYPE, reparsed.getTlvBuilder(), LAB_KEY);
       rebuilt.commit();
       current = rebuilt.toByteArray();
       assertArrayEquals(expected, current, label + " iteration " + iteration);
@@ -62,10 +75,15 @@ class CvcApiRoundTripTest {
   }
 
   private static Stream<Arguments> certificates() {
-    return Stream.of(1, 253, 254, 255, 508, 1025).flatMap(length -> Stream.of(
-        Arguments.of("Manufacturer", length, new int[] {MANUFACTURER_CVC}),
-        Arguments.of("Co-signer", length, new int[] {CO_SIGNER_CVC}),
-        Arguments.of("Both", length, new int[] {MANUFACTURER_CVC, CO_SIGNER_CVC})));
+    return Stream.of(1, 253, 254, 255, 508, 1025)
+        .flatMap(
+            length ->
+                Stream.of(
+                    Arguments.of("Manufacturer", length, new int[] {MANUFACTURER_CVC}),
+                    Arguments.of("Co-signer", length, new int[] {CO_SIGNER_CVC}),
+                    Arguments.of("Both", length, new int[] {MANUFACTURER_CVC, CO_SIGNER_CVC}),
+                    Arguments.of(
+                        "Reverse order", length, new int[] {CO_SIGNER_CVC, MANUFACTURER_CVC})));
   }
 
   private static byte[] payload(int length, int certificateType) {
@@ -83,11 +101,13 @@ class CvcApiRoundTripTest {
       assertTrue(offset + 2 <= encoded.length, "Complete fragment header");
       assertEquals(certificateType, Byte.toUnsignedInt(encoded[offset++]));
       int fragmentLength = Byte.toUnsignedInt(encoded[offset++]);
-      assertEquals(Math.min(FRAGMENT_BYTES, expectedPayload.length - reconstructed.size()), fragmentLength);
+      assertEquals(
+          Math.min(FRAGMENT_BYTES, expectedPayload.length - reconstructed.size()), fragmentLength);
       assertTrue(offset + fragmentLength <= encoded.length, "Complete fragment value");
       reconstructed.writeBytes(Arrays.copyOfRange(encoded, offset, offset + fragmentLength));
       offset += fragmentLength;
     }
-    assertArrayEquals(expectedPayload, reconstructed.toByteArray(), "Preserve all payload bytes in order");
+    assertArrayEquals(
+        expectedPayload, reconstructed.toByteArray(), "Preserve all payload bytes in order");
   }
 }
