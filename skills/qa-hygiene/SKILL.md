@@ -95,3 +95,14 @@ Report commands and results, distinguishing pre-existing checks from new tests.
 These naming constraints are Oscar parser requirements, not DOCSIS normative
 rules. For changes to TLV meanings or encodings, follow the version-specific
 configuration-file skills linked in `AGENTS.md` and their pinned sources.
+
+## User-facing Git commands
+
+Start every copy/paste command block for Git activity with an executable `cd`
+to the actual target repository's absolute path. This includes save/commit,
+push, tag, release, and direct Git commands. A repository comment alone is not
+enough. Verify the target checkout and its helper interface; do not assume the
+current shell is already in the correct project. Use `cd /absolute/repo &&`
+as the first line so a failed directory change prevents the following command.
+Provide push/release commands for the user to execute unless explicitly asked
+to execute them.
