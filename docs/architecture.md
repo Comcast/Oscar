@@ -2,10 +2,9 @@
 
 ## Embedded-device catalogs
 
-Status: explicit DOCSIS and DOCSIS 4.0 profiles now attach a reviewed eRouter
-subset. Selected legacy leaves have moved to the shared source catalog.
-The first service is eRouter. eSTB and eMTA are future candidates, subject to
-verification of their own specifications and provisioning formats.
+Status: DOCSIS and DOCSIS 4.0 attach the reviewed eRouter subset.
+Regular DOCSIS also attaches OpenCable/eSTB. Selected legacy definitions have moved to shared source catalogs.
+eMTA remains subject to verification of its specification and provisioning format.
 
 ### Ownership and attachment
 
@@ -94,7 +93,10 @@ for tests and published examples.
 - [ ] Verify in-memory round trips for every existing family after activation.
 - [x] Add DOCSIS 4.0 user examples for the enabled subset.
 - [ ] Integrate editor-specific applicability and sensitivity metadata.
-- [ ] Review eSTB/eMTA specifications before adding their catalogs.
+- [x] Review OpenCable/eSTB I17 and activate the verified subset beneath 217.
+- [x] Verify eSTB SNMP/vendor encodings and repeated instances.
+- [ ] Validate eSTB provisioning on hardware and device-specific dependencies.
+- [ ] Review eMTA specifications before adding its catalog.
 
 ### Enabled eRouter subset
 
@@ -119,3 +121,29 @@ while preserving decoded bytes. Generated parser files are regenerated with
 ANTLR 4.1; they are not edited manually. Quoted-string JUnit tests cover literal
 URL bytes, escapes, nesting, SNMP, malformed input and binary/text round trips.
 This parser capability is independent of embedded-service catalog activation.
+
+### OpenCable/eSTB coverage
+
+[opencable.json](../res/tlv-registry/opencable.json) attaches beneath 217 in
+regular DOCSIS only. HOST2.1-CFR I17 targets DOCSIS 2.0/3.0 embedded modems;
+no D4 attachment is inferred. The regular OSCAR `Docsis` parser uses its common
+legacy family (internally named DOCSIS_VER_31); this is not a claim of D3.1 hardware.
+
+All 34 source definitions are attached: IP mode, prefix validation, notification
+receivers, SNMP coexistence/access views, VarBind, vendor container/ID and SEB
+cipher bitmap. Legacy standalone 217.8 remains for compatibility but the source
+places meaningful VendorID at 217.43.8. Opaque vendor child definitions are not
+invented. Nested `Snmp11` replaces the unusable legacy `SnmpOID` spelling; scalar
+VarBind syntax uses the existing grammar. Vendor data uses nested form, not an
+opaque hexadecimal value on the container. Notification numeric fields now use
+decimal integers of the specified width (previously raw hexadecimal).
+
+For 217, import creates independent instances in encounter order; export walks
+bounded child payloads in wire order and rejects unknown/truncated child data.
+It reuses the existing scalar codecs. Other families retain their current parsing
+behavior. The existing D4 duplicate-container rejection is a separate TODO.
+
+See [OpenCable verification](opencable-verification.md) for
+source interpretations, test coverage, compatibility changes and the hardware
+acceptance checklist. Historical cipher assignments are encoding facts, not
+recommendations to enable obsolete TLS suites.

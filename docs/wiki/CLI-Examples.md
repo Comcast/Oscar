@@ -128,3 +128,29 @@ The reviewed type-202 subset is now shared by DOCSIS and DOCSIS 4.0 through
 explicit registry profiles. The enabled settings are initialization, TR-069 fields other than ACS Override, RA interval,
 multicast server, Link-ID and topology. Remaining eSAFE settings and unresolved
 eRouter encodings remain deferred. See `docs/architecture.md` in the repository.
+
+## OpenCable/eSTB settings
+
+Regular DOCSIS supports OpenCable IP-mode, prefix-validation, SNMP and
+SEB cipher-bitmap settings beneath `eSTBConfig` (217). For example, insert this
+fragment inside an existing DOCSIS configuration:
+
+```text
+eSTBConfig {
+    IPModeControl 2;
+    HomeNetworkPrefixValidation {
+        InstanceNumber 1;
+        PrefixUsage 1;
+        IPAddressVersion 1;
+        IPv4PrefixLength 24;
+        IPv4SubnetAddress 192.0.2.0;
+    }
+}
+```
+
+This uses synthetic values and is not a complete provisioning profile.
+Repeated prefix and SNMP access entries retain their source order.
+OpenCable is not enabled in the DOCSIS 4.0 registry. See the [coverage and remaining work](../architecture.md#opencableestb-coverage).
+
+Use the [OpenCable verification and lab checklist](../opencable-verification.md)
+for SNMP syntax changes, source interpretations and hardware acceptance.

@@ -80,6 +80,8 @@ public final class TlvTextString {
     String text = value.toString();
     if ((codec.equals("string") || codec.equals("string_null_terminated")) && !isPlainValue(text))
       return quote(text);
+    if (codec.equals("byte_array") && (text.isEmpty() || text.matches("[A-Fa-f]{2}")))
+      return quote(text);
     return text;
   }
 }

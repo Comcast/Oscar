@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.datatype;
@@ -14,20 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.snmp4j.smi.OID;
 
-/**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class DataTypeFormatConversion {
 
   private static final Logger logger = LogManager.getLogger(DataTypeFormatConversion.class);
@@ -43,10 +29,8 @@ public class DataTypeFormatConversion {
   public static final Integer IPV4_TRANSPORT_ADDRESS_MAX_BYTE_LENGTH =
       (IPV4_ADDRESS_BYTE_LENGTH + IP_PORT_BYTE_LENGTH);
 
-  // public static String IP_PORT_RANGE =
-  // "(6553[0-5]|655[0-2][0-9]\\d|65[0-4](\\d){2}|6[0-4](\\d){3}|[1-5](\\d){4}| {0,3})";
   public static final String IP_PORT_RANGE =
-      "([0-9]|6[0-4](\\d){3}|65[0-4](\\d){2}|655[0-2][0-9]\\d|6553[0-5])";
+      "(?:[0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])";
 
   // http://www.pretechsol.com/2013/05/ipv6-java-regular-expression-example.html#.UnujD_lwp8E
   public static final Pattern IPV6_ADDRESS_REGEX =
@@ -136,7 +120,7 @@ public class DataTypeFormatConversion {
 
     ByteArrayOutputStream baosTransport = new ByteArrayOutputStream();
 
-    baosTransport.write(bIPv6TransportAddress, IPV6_ADDRESS_BYTE_LENGTH + 1, IP_PORT_BYTE_LENGTH);
+    baosTransport.write(bIPv6TransportAddress, IPV6_ADDRESS_BYTE_LENGTH, IP_PORT_BYTE_LENGTH);
 
     int iIpPort = new HexString(baosTransport.toByteArray()).toInteger();
 
@@ -202,7 +186,9 @@ public class DataTypeFormatConversion {
 
       // Clean up response
       hsInteger.add(
-          Integer.parseInt(mIPv6TransportAddress.group(14).replaceAll("\\(|\\)|\\s+", "")));
+          Integer.parseInt(
+              sIPv6TransportAddress.substring(
+                  sIPv6TransportAddress.lastIndexOf('(') + 1, sIPv6TransportAddress.length() - 1)));
       hsInteger.prefixNullPaddToLength(IP_PORT_BYTE_LENGTH);
 
       try {
@@ -275,7 +261,7 @@ public class DataTypeFormatConversion {
 
     ByteArrayOutputStream baosTransport = new ByteArrayOutputStream();
 
-    baosTransport.write(bIPv4TransportAddress, IPV4_ADDRESS_BYTE_LENGTH + 1, IP_PORT_BYTE_LENGTH);
+    baosTransport.write(bIPv4TransportAddress, IPV4_ADDRESS_BYTE_LENGTH, IP_PORT_BYTE_LENGTH);
 
     int iIpPort = new HexString(baosTransport.toByteArray()).toInteger();
 
@@ -379,7 +365,7 @@ public class DataTypeFormatConversion {
 
       sInetAddress = HexString.toInetAddress(baosInetAddress.toByteArray());
 
-      baosTransport.write(bInetTransportAddress, IPV4_ADDRESS_BYTE_LENGTH + 1, IP_PORT_BYTE_LENGTH);
+      baosTransport.write(bInetTransportAddress, IPV6_ADDRESS_BYTE_LENGTH, IP_PORT_BYTE_LENGTH);
 
     } else if (bInetTransportAddress.length == IPV4_TRANSPORT_ADDRESS_MAX_BYTE_LENGTH) {
 
@@ -430,7 +416,7 @@ public class DataTypeFormatConversion {
       }
     }
 
-    return new byte[] {};
+    throw new IllegalArgumentException("Invalid IPv4/IPv6 transport address or port");
   }
 
   /**

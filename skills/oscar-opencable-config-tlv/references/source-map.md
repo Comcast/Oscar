@@ -51,11 +51,13 @@ notification table behavior. Section 2 identifies delegated documents and editio
 
 ## Ambiguities and delegated requirements
 
-15.2.1.4 prints length `1.32` (verified visually), an apparent range typo.
-15.2.2.2 prints OID 1.3.6 as `06 03 01 03 06`, inconsistent with conventional BER
-arc packing; resolve against authoritative ASN.1 material/errata before choosing
-wire bytes. 15.2.2 refers to duplicate children in a “TLV 54.4”; inspect the
-context and seek clarification before generalizing that wording.
+15.2.1.4 prints length `1.32` (verified visually). OSCAR uses 1–32 octets as
+an interpretation consistent with [RFC 3415 view names](https://www.rfc-editor.org/rfc/rfc3415.html).
+15.2.2.2's OID example conflicts with ASN.1 BER. OSCAR uses standard BER:
+`1.3.6` is `06 02 2B 06`, per [X.690 8.19](https://www.itu.int/rec/dologin_pub.asp?id=T-REC-X.690-201508-S%21%21PDF-E&lang=f&type=items).
+These decisions are documented interpretations, not CableLabs errata.
+15.2.2's duplicate-child reference to “54.4” remains ambiguous; do not invent
+new device discard behavior from it. See `docs/opencable-verification.md`.
 
 Do not modernize the historical cipher bitmap in 15.2.8 or treat it as a current
 security recommendation. A future encoder must describe this issue's bits exactly.

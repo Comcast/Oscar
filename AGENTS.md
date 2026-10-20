@@ -32,7 +32,7 @@ editor, codec, and file-integrity changes:
   substitute eRouter enums, duplicate rules or PacketCable provisioning.
 
 Current DOCSIS 4.0 implementation scope excludes L2VPN-specific settings and
-eDOCSIS/eSAFE settings except the reviewed eRouter profile subset. Record
+eDOCSIS/eSAFE settings except the reviewed eRouter subset. Record
 remaining settings as deferred rather than claiming coverage.
 Generated configuration tests use a public lab key, not production credentials;
 passing them is not proof of CM/CMTS interoperability.

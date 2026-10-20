@@ -247,6 +247,12 @@ public final class TlvRegistry {
             switch (kind) {
               case "container", "unsignedInteger" -> "integer";
               case "string", "ascii" -> "string";
+              case "ipv4" -> "byte_array_ipv4_address";
+              case "ipv6" -> "byte_array_ipv6_address";
+              case "snmpVarBind" -> "oid";
+              case "objectIdentifier" -> "oid_asn1_object6";
+              case "transportAddress" -> "byte_array_inet_transport_address";
+              case "bytes" -> "byte_array";
               default -> throw new IllegalArgumentException("Unreviewed service codec " + kind);
             };
         if (kind.equals("unsignedInteger") && !length.has("bytes"))
@@ -258,8 +264,22 @@ public final class TlvRegistry {
                 full,
                 entry.getString("name"),
                 codec,
-                length.optInt("bytes", 0),
-                length.optInt("bytes", 255),
+                length.optInt(
+                    "bytes",
+                    length.optInt(
+                        "min",
+                        length.has("allowedBytes")
+                            ? length.getJSONArray("allowedBytes").getInt(0)
+                            : 0)),
+                length.optInt(
+                    "bytes",
+                    length.optInt(
+                        "max",
+                        length.has("allowedBytes")
+                            ? length
+                                .getJSONArray("allowedBytes")
+                                .getInt(length.getJSONArray("allowedBytes").length() - 1)
+                            : 255)),
                 1,
                 container.supportedVersion(),
                 entry.optInt("maxInstances", -1),

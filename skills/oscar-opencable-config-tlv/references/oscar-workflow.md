@@ -1,6 +1,9 @@
 # OSCAR OpenCable implementation workflow
 
-This skill is reference preparation only; it does not activate a new catalog.
+The shared `opencable.json` catalog activates a reviewed subset beneath 217
+for regular DOCSIS only, including the reviewed SNMP/vendor definitions.
+See `docs/opencable-verification.md` for source interpretations and
+remaining hardware acceptance work.
 
 ## Current entry points and observations
 
@@ -11,7 +14,7 @@ Inspect `res/tlv-registry/docsis.json`, `docsis40.json`, `dpoe.json` and the
 assuming a definition alone enables an editor or codec.
 
 Observed 2026-10-20: DOCSIS and DPoE contain legacy `eSTBConfig` at 217 and its
-children; D4 has no 217 definitions. The legacy VendorID is at 217.8, whereas
+children; D4 deliberately has no OpenCable attachment. The legacy VendorID is at 217.8, whereas
 15.2.4–5 places its meaningful use beneath vendor container 217.43. Investigate
 compatibility before moving or removing it. Legacy presence is not normative
 verification, especially for family applicability, SNMP codecs and length rules.
@@ -20,13 +23,13 @@ verification, especially for family applicability, SNMP codecs and length rules.
 
 Follow `docs/architecture.md`: use relative service paths and a base-catalog
 `attachments` entry containing `parentPath`, `reference`, and `includedPaths`.
-A future OpenCable/eSTB reference attaches beneath 217, not eRouter's 202.
+The OpenCable/eSTB reference attaches beneath 217, not eRouter's 202.
 Do not create a separate profile file or copy children across family catalogs.
 Activate only a reviewed subset; unresolved entries remain excluded explicitly.
-The current shared loader handles only its reviewed semantic kinds; SNMP,
-transport-address and other kinds need verified codec integration first.
+The shared loader maps VarBind, BER OID, transport-address and byte kinds to
+tested codecs. Preserve instance boundaries when reading or writing 217.
 
-## Acceptance checklist for subsequent implementation
+## Remaining acceptance checklist
 
 - Record issue/section/page and complete per-path constraints.
 - Audit parent placement, enums, byte lengths and duplicate handling against 15.2.

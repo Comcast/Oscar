@@ -470,14 +470,62 @@ public class TlvDisassemble extends TlvDictionary {
     }
   }
 
-  /**
-   * @param bTlvBuffer
-   * @param joTlvDictionary
-   * @return JSONObject
-   * @throws TlvException
-   */
+  /** Decode one bounded eSTB instance; repeated children produce independent JSON nodes. */
+  private JSONObject decodeEmbeddedInstance(byte[] encoded, JSONObject template)
+      throws TlvException {
+    if (encoded.length < 2 || Byte.toUnsignedInt(encoded[1]) != encoded.length - 2)
+      throw new IllegalArgumentException("Invalid embedded TLV length");
+    JSONObject result = new JSONObject(template.toString());
+    if (!result.getBoolean(Dictionary.ARE_SUBTYPES)) {
+      int size = encoded.length - 2;
+      int minimum = result.getInt(Dictionary.LENGTH_MIN);
+      int maximum = result.getInt(Dictionary.LENGTH_MAX);
+      if (size < minimum || (maximum > 0 && size > maximum))
+        throw new IllegalArgumentException("Invalid embedded scalar width");
+      if (result.getString(Dictionary.DATA_TYPE).equals("byte_array_inet_transport_address")
+          && size != 6
+          && size != 18)
+        throw new IllegalArgumentException("Transport address must contain 6 or 18 bytes");
+      JSONArray parentPath = result.getJSONArray(Dictionary.PARENT_TYPE_LIST);
+      result.put(
+          Dictionary.PARENT_TYPE_LIST, new JSONArray().put(-1).put(result.getInt(Dictionary.TYPE)));
+      loadTlvValuesIntoTlvDictionary(encoded, result);
+      result.put(Dictionary.PARENT_TYPE_LIST, parentPath);
+      return result;
+    }
+    JSONArray children = new JSONArray();
+    for (int offset = 2; offset < encoded.length; ) {
+      if (offset + 2 > encoded.length)
+        throw new IllegalArgumentException("Truncated embedded TLV header");
+      int type = Byte.toUnsignedInt(encoded[offset]);
+      int end = offset + 2 + Byte.toUnsignedInt(encoded[offset + 1]);
+      if (end > encoded.length)
+        throw new IllegalArgumentException("Embedded TLV exceeds parent length");
+      JSONObject child = null;
+      for (Object entry : template.getJSONArray(Dictionary.SUBTYPE_ARRAY)) {
+        JSONObject candidate = (JSONObject) entry;
+        if (candidate.getInt(Dictionary.TYPE) == type) {
+          child = candidate;
+          break;
+        }
+      }
+      if (child == null) throw new IllegalArgumentException("Unknown embedded child TLV " + type);
+      children.put(
+          decodeEmbeddedInstance(java.util.Arrays.copyOfRange(encoded, offset, end), child));
+      offset = end;
+    }
+    result.put(Dictionary.SUBTYPE_ARRAY, children);
+    return result;
+  }
+
   private JSONObject loadTlvValuesIntoTlvDictionary(byte[] bTlvBuffer, JSONObject joTlvDictionary)
       throws TlvException {
+
+    if (TLV_TYPE_DOCSIS.equals(getDictionaryTableName())
+        && joTlvDictionary.getInt(Dictionary.TYPE) == 217
+        && joTlvDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
+      return decodeEmbeddedInstance(bTlvBuffer, joTlvDictionary);
+    }
 
     JSONArray jaMultiSubTlvInstance = null;
 

@@ -41,6 +41,11 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 
   private int iConfigurationFileType = -1;
 
+  // eSTB instances must not share the mutable registry definition: repeated
+  // prefixes and SNMP access rows carry independent values in source order.
+  private JSONObject openCableTemplate;
+  private final java.util.List<JSONObject> openCableInstances = new java.util.ArrayList<>();
+
   private final java.util.Set<JSONObject> seenDefinitions =
       java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
 
@@ -118,6 +123,13 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     }
     joWorkingTLVDictionary = dsqTlvDictionary.getTlvDefinition(type);
     seenDefinitions.clear();
+    openCableInstances.clear();
+    openCableTemplate =
+        type == 217 && iConfigurationFileType == ConfigurationFile.DOCSIS_VER_31
+            ? new JSONObject(joWorkingTLVDictionary.toString())
+            : null;
+    if (openCableTemplate != null)
+      joWorkingTLVDictionary.put(Dictionary.SUBTYPE_ARRAY, new JSONArray());
 
     if (logger.isDebugEnabled())
       logger.debug("TlvConfigurationFileParser.enterStartTLV() " + joWorkingTLVDictionary);
@@ -170,7 +182,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
       logger.debug(
           "TlvConfigurationFileParser.enterSnmp(): ArrayDeque:  " + aqsSubTypeHierarchyStack);
 
-    DictionaryTLV.updateDictionaryValue(aqsSubTypeHierarchyStack, joWorkingTLVDictionary, ctx);
+    DictionaryTLV.updateDictionaryValue(aqsSubTypeHierarchyStack, valueTarget(), ctx);
 
     try {
       miiTopLevelTypeToNumByteLength.put(
@@ -248,6 +260,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   }
 
   private JSONObject validateTlvName(String name) {
+    if (openCableTemplate != null) return openCableInstance(name);
     JSONObject definition = joWorkingTLVDictionary;
     var ancestors = aqsSubTypeHierarchyStack.descendingIterator();
     if (!ancestors.hasNext()) {
@@ -261,6 +274,29 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
       definition = findChildDefinition(definition, ancestors.next());
     }
     return trackDefinition(findChildDefinition(definition, name));
+  }
+
+  private JSONObject openCableInstance(String name) {
+    int depth = aqsSubTypeHierarchyStack.size();
+    JSONObject template = openCableTemplate;
+    var ancestors = aqsSubTypeHierarchyStack.descendingIterator();
+    if (ancestors.hasNext()) ancestors.next();
+    while (ancestors.hasNext()) template = findChildDefinition(template, ancestors.next());
+    if (depth > 0) template = findChildDefinition(template, name);
+    JSONObject instance = depth == 0 ? joWorkingTLVDictionary : new JSONObject(template.toString());
+    if (instance.getBoolean(Dictionary.ARE_SUBTYPES))
+      instance.put(Dictionary.SUBTYPE_ARRAY, new JSONArray());
+    if (depth > 0)
+      openCableInstances.get(depth - 1).getJSONArray(Dictionary.SUBTYPE_ARRAY).put(instance);
+    while (openCableInstances.size() > depth) openCableInstances.removeLast();
+    openCableInstances.add(instance);
+    return instance;
+  }
+
+  private JSONObject valueTarget() {
+    return openCableTemplate == null
+        ? joWorkingTLVDictionary
+        : openCableInstances.get(aqsSubTypeHierarchyStack.size() - 1);
   }
 
   private JSONObject trackDefinition(JSONObject definition) {
@@ -325,7 +361,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 
     DictionaryTLV.updateDictionaryValue(
         aqsSubTypeHierarchyStack,
-        joWorkingTLVDictionary,
+        valueTarget(),
         com.comcast.oscar.utilities.TlvTextString.decode(ctx.getStart().getText()));
   }
 
@@ -349,7 +385,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 
     DictionaryTLV.updateDictionaryValue(
         aqsSubTypeHierarchyStack,
-        joWorkingTLVDictionary,
+        valueTarget(),
         com.comcast.oscar.utilities.TlvTextString.decode(ctx.getStart().getText()));
   }
 
