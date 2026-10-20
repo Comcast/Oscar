@@ -173,18 +173,12 @@ public class TlvDisassemble extends TlvDictionary {
     // Check which Type of TLV Buffer we are using
     if (tbTlvBuffer != null) {
 
-      logger.debug("TlvDisassemble.getTlvDictionary() - Using TlvBuilder Class");
-
       liTlvBuffer = tbTlvBuffer.getTopLevelTlvList(getTopLevelByteLength());
 
     } else if (tvbTlvBuffer != null) {
 
-      logger.debug("TlvDisassemble.getTlvDictionary() - Using TlvVariableBinding Class");
-
       liTlvBuffer = tvbTlvBuffer.getTopLevelTlvList();
     }
-
-    logger.debug("TlvDisassemble.getTlvDictionary() - TLV-LIST: {}", liTlvBuffer);
 
     // Get Major TLV from tbTlvBuffer via Map Type -> Byte Length
     for (Integer iType : liTlvBuffer) {
@@ -192,16 +186,11 @@ public class TlvDisassemble extends TlvDictionary {
       // mgarcia - Added 140103 - Need a new Buffer for each Type Look up
       boasTlvBufferTemp = new ByteArrayOutputStream();
 
-      logger.debug("TlvDisassemble.getTlvDictionary() MAJOR-TLV-TYPE: {}", iType);
-
       // Get TLV Dictionary via TLV Type
       joTlvDictionary = super.getTlvDictionary(iType);
 
-      logger.debug(
-          "TlvDisassemble.getTlvDictionary.joTlvDictionary({}): {}", iType, joTlvDictionary);
-
       if (joTlvDictionary == null) {
-        logger.debug("TlvDisassemble.getTlvDictionary() -> INVALID-TLV: {}", iType);
+
         continue;
       }
 
@@ -241,9 +230,6 @@ public class TlvDisassemble extends TlvDictionary {
           e.printStackTrace();
         }
 
-        logger.debug("TlvDisassemble.getTlvDictionary() VAR-BIND-TLV-BUFFER: {}", tvbTlvBuffer);
-        logger.debug("TlvDisassemble.getTlvDictionary() joTlvDictionary: {}", joTlvDictionary);
-
       } else if (tbTlvBuffer != null) {
 
         // Map to hold TYPE to Byte Length
@@ -254,8 +240,6 @@ public class TlvDisassemble extends TlvDictionary {
         } catch (JSONException e1) {
           e1.printStackTrace();
         }
-
-        logger.debug("TlvDisassemble.getTlvDictionary() MapTypeToByteLen: {}", miiTypeByteLength);
 
         // fetch Major TLV and store in BASO
         try {
@@ -307,8 +291,6 @@ public class TlvDisassemble extends TlvDictionary {
         e.printStackTrace();
       }
 
-      logger.debug("TlvDisassemble.getTopLevelTLVJSON() - JSONObject: {}", joTlvDictionary);
-
       try {
 
         if (joTlvDictionary.getInt(Dictionary.TYPE) == iTlvType) {
@@ -353,10 +335,6 @@ public class TlvDisassemble extends TlvDictionary {
 
     for (int iJsonArrayIndex = 0; iJsonArrayIndex < iLength; iJsonArrayIndex++) {
 
-      logger.debug(
-          "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,ja) +-----INDEX: {}-----+",
-          iJsonArrayIndex);
-
       JSONObject joTlvDictionary = null;
 
       try {
@@ -370,19 +348,11 @@ public class TlvDisassemble extends TlvDictionary {
         // Check to see if this object have SubTypes , if so go into SubType Array
         if (joTlvDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
 
-          logger.debug(
-              "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,ja) SUB-TYPE-ARRAY-FALSE: {}",
-              joTlvDictionary);
-
           // If this is the start of the array, I need only advance 2 bytes to the next Type
           loadTlvValuesIntoTlvDictionary(
               bTlvBuffer, joTlvDictionary.getJSONArray(Dictionary.SUBTYPE_ARRAY));
 
         } else {
-
-          logger.debug(
-              "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,ja) SUB-TYPE-ARRAY-FALSE: {}",
-              joTlvDictionary);
 
           // If this is the start of the array, I need only advance 2 bytes to the next Type
           try {
@@ -392,25 +362,17 @@ public class TlvDisassemble extends TlvDictionary {
 
             if (joCheckForMultiSubTLVInstance.has(Dictionary.MULTI_SUB_TLV_INSTANCE)) {
 
-              logger.debug(joCheckForMultiSubTLVInstance);
-              logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(ba,ja) - MULTI-SUB");
-
               JSONArray ja_ =
                   joCheckForMultiSubTLVInstance.getJSONArray(Dictionary.MULTI_SUB_TLV_INSTANCE);
-              logger.debug(ja_);
 
               for (int iIndex = 0; iIndex < ja_.length(); iIndex++) {
-                logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(ba,ja) - JSONObject ");
+
                 jaTlvDictionary.put(new JSONObject(ja_.get(iIndex).toString()));
               }
-
-              logger.debug(
-                  "TlvDisassemble.loadTlvValuesIntoTlvDictionary(ba,ja) - ADDED-MULTI-SUB ");
-              logger.debug(jaTlvDictionary);
             }
 
           } catch (TlvException e) {
-            logger.debug(jaTlvDictionary);
+
             e.printStackTrace();
           }
         }
@@ -472,6 +434,9 @@ public class TlvDisassemble extends TlvDictionary {
   private JSONObject loadTlvValuesIntoTlvDictionary(byte[] bTlvBuffer, JSONObject joTlvDictionary)
       throws TlvException {
 
+    // DOCSIS type 217 is eSTBConfig, referencing opencable.json in the TLV registry.
+    // TODO: Preserve reference metadata at runtime to replace this hard-coded dispatch.
+    // Verify eRouter and length-width handling before routing all referenced containers here.
     if (TLV_TYPE_DOCSIS.equals(getDictionaryTableName())
         && joTlvDictionary.getInt(Dictionary.TYPE) == 217
         && joTlvDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
@@ -480,39 +445,17 @@ public class TlvDisassemble extends TlvDictionary {
 
     JSONArray jaMultiSubTlvInstance = null;
 
-    logger.debug(
-        "+=================================loadTlvValuesIntoTlvDictionary============================================+");
-    logger.debug(
-        "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - joTlvDictionary: {}",
-        joTlvDictionary);
-    logger.debug(
-        () ->
-            "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - TlvBufferLength: "
-                + bTlvBuffer.length);
-    logger.debug(
-        () ->
-            "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - ByteArray: "
-                + new HexString(bTlvBuffer).toString(":"));
-
     try {
 
       if (joTlvDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
-
-        logger.debug(
-            "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo).joTlvDictionary.SubTypesFound");
 
         loadTlvValuesIntoTlvDictionary(bTlvBuffer, new JSONArray().put(joTlvDictionary));
 
       } else {
 
-        logger.debug(
-            "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo).joTlvDictionary.No-SubTypesFound");
-
         // Get ParentTypeList Array
         byte[] bParentChildTlvEncodeList =
             toParentTypeListByteArray(joTlvDictionary.getJSONArray(Dictionary.PARENT_TYPE_LIST));
-
-        HexString hsPCTEL = new HexString(bParentChildTlvEncodeList);
 
         // Get Specific TLV if available
         int[] bPCTEPointer;
@@ -531,23 +474,7 @@ public class TlvDisassemble extends TlvDictionary {
 
         String hsPCTEPointer = java.util.Arrays.toString(bPCTEPointer);
 
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) "
-                  + " -> TlvBufferLength: "
-                  + bTlvBuffer.length
-                  + " -> bParentChildTlvEncodeList: "
-                  + hsPCTEL
-                  + " -> HexPointerIndex: "
-                  + hsPCTEPointer
-                  + " -> HexPointerIndexLength: "
-                  + bPCTEPointer.length);
-
         if (bPCTEPointer.length != 0) {
-
-          logger.debug(
-              "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) -> NextTLV -> {}",
-              hsPCTEPointer);
 
           /* Need to create a special case when there are 2 of the same TLV - Example TLV 43 Vendor Specific */
           for (int iIndex = 0; iIndex < bPCTEPointer.length; iIndex++) {
@@ -559,24 +486,6 @@ public class TlvDisassemble extends TlvDictionary {
                     bPCTEPointer[iIndex],
                     joTlvDictionary.getInt(Dictionary.BYTE_LENGTH));
 
-            logger.debug(
-                "+-------------------------------------------------------------------------------------------------+");
-            logger.debug(
-                () ->
-                    "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) BYTE-ARRAY-VALUE-LENGTH: "
-                        + bValue.length);
-            logger.debug(
-                "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TlvDictionaryObject: {}",
-                joTlvDictionary);
-            logger.debug(
-                () ->
-                    "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV_NAME: "
-                        + joTlvDictionary.getString(Dictionary.TLV_NAME));
-            logger.debug(
-                () ->
-                    "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) BYTE_LENGTH: "
-                        + joTlvDictionary.getInt(Dictionary.BYTE_LENGTH));
-
             // Determine the Data Type of Value
             String sDataType = joTlvDictionary.getString(Dictionary.DATA_TYPE);
 
@@ -585,34 +494,16 @@ public class TlvDisassemble extends TlvDictionary {
               joTlvDictionary.put(Dictionary.VALUE, new java.math.BigInteger(1, bValue));
             } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
 
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-INT: "
-                          + new HexString(bValue).toHexStringList());
-
               // Get Value
               int iTlvValue = new HexString(bValue).toInteger();
 
               // Insert Value into JSON Object
               joTlvDictionary.put(Dictionary.VALUE, iTlvValue);
 
-              logger.debug(
-                  "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-VALUE: {}", iTlvValue);
-
             } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID)) {
-
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-OID-PRE: "
-                          + new HexString(bValue).toHexStringList());
 
               // Need to see if this is a BER byte array
               // bValue = BERService.cleanBEROIDPrefix(bValue);
-
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-OID-PST: "
-                          + new HexString(bValue).toHexStringList());
 
               // Get Value
               BEROIDConversion bocOID = new BEROIDConversion(bValue);
@@ -624,20 +515,10 @@ public class TlvDisassemble extends TlvDictionary {
               // Insert Value into JSON Object
               joTlvDictionary.put(Dictionary.VALUE, jaOID);
 
-              logger.debug(
-                  "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) - DATA_TYPE_OID -"
-                      + " joTlvDictionary: {}",
-                  joTlvDictionary);
-
             }
 
             /*Will need to come back and apply to all DataTypes - Fix Issue38*/
             else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY)) {
-
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-BYTE-ARRAY: "
-                          + new HexString(bValue).toHexStringList());
 
               // Get Value
               String sTlvValue = new HexString(bValue).toString(":");
@@ -668,17 +549,8 @@ public class TlvDisassemble extends TlvDictionary {
                 joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
               }
 
-              logger.debug(
-                  "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) {}", joTlvDictionary);
-
             } else if (sDataType.equals(
                 DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED)) {
-
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo)"
-                          + " HEX-STRING-NULL-TERMINATED: "
-                          + new HexString(bValue).toHexStringList());
 
               // Get Value
               String sTlvValueASCII =
@@ -689,11 +561,6 @@ public class TlvDisassemble extends TlvDictionary {
 
             } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING)) {
 
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) HEX-STRING: "
-                          + new HexString(bValue).toHexStringList());
-
               // Get Value
               String sTlvValueASCII = new HexString(bValue).toASCII();
 
@@ -702,12 +569,6 @@ public class TlvDisassemble extends TlvDictionary {
 
             } else if (sDataType.equals(
                 DataTypeDictionaryReference.DATA_TYPE_MULTI_TLV_BYTE_ARRAY)) {
-
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo)"
-                          + " HEX-MULTI-TLV-BYTE-ARRAY: "
-                          + new HexString(bValue).toString(":"));
 
               // Get Value
               String sTlvValue = new HexString(bValue).toString(":");
@@ -719,12 +580,6 @@ public class TlvDisassemble extends TlvDictionary {
                 DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR)) {
 
               String sTlvValue = null;
-
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo)"
-                          + " DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR: "
-                          + new HexString(bValue).toString(":"));
 
               try {
                 sTlvValue = DataTypeFormatConversion.byteArrayToIPv4TransportAddress(bValue);
@@ -740,12 +595,6 @@ public class TlvDisassemble extends TlvDictionary {
 
               String sTlvValue = null;
 
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo)"
-                          + " DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR: "
-                          + new HexString(bValue).toString(":"));
-
               try {
                 sTlvValue = DataTypeFormatConversion.byteArrayToIPv6TransportAddress(bValue);
               } catch (DataTypeFormatException e) {
@@ -760,12 +609,6 @@ public class TlvDisassemble extends TlvDictionary {
 
               String sTlvValue = null;
 
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo)"
-                          + " DATA_TYPE_TRANSPORT_ADDR_INET_ADDR: "
-                          + new HexString(bValue).toString(":"));
-
               try {
                 sTlvValue = DataTypeFormatConversion.byteArrayToInetTransportAddress(bValue);
               } catch (DataTypeFormatException e) {
@@ -778,12 +621,6 @@ public class TlvDisassemble extends TlvDictionary {
             } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_DOUBLE_BYTE_ARRAY)) {
 
               String sTlvValue = null;
-
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo)"
-                          + " DATA_TYPE_DOUBLE_BYTE_ARRAY: "
-                          + new HexString(bValue).toString(":"));
 
               try {
                 sTlvValue = DataTypeFormatConversion.doubleByteArray(bValue);
@@ -798,11 +635,6 @@ public class TlvDisassemble extends TlvDictionary {
 
               StringBuilder sbTlvValue = null;
 
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_STRING_BITS: "
-                          + new HexString(bValue).toString(":"));
-
               sbTlvValue = DataTypeFormatConversion.byteArrayBinaryBitMaskToString(bValue, 8);
 
               // Insert Value into JSON Object
@@ -811,19 +643,6 @@ public class TlvDisassemble extends TlvDictionary {
             } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_MAC_ADDRESS)) {
 
               String sTlvValue = null;
-
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_MAC_ADDRESS: "
-                          + new HexString(bValue).toString(":"));
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-NAME: "
-                          + joTlvDictionary.getString(Dictionary.TLV_NAME));
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) TLV-NAME: "
-                          + joTlvDictionary.getString(Dictionary.PARENT_TYPE_LIST));
 
               sTlvValue = DataTypeFormatConversion.byteArrayToMacAddressFormat(bValue);
 
@@ -835,12 +654,6 @@ public class TlvDisassemble extends TlvDictionary {
 
               String sTlvValue = null;
 
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo)"
-                          + " DATA_TYPE_BYTE_ARRAY_IPV4_ADDR: "
-                          + new HexString(bValue).toString(":"));
-
               sTlvValue = DataTypeFormatConversion.inetAddressToString(bValue);
 
               // Insert Value into JSON Object
@@ -851,12 +664,6 @@ public class TlvDisassemble extends TlvDictionary {
 
               String sTlvValue = null;
 
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo)"
-                          + " DATA_TYPE_BYTE_ARRAY_IPV6_ADDR: "
-                          + new HexString(bValue).toString(":"));
-
               sTlvValue = DataTypeFormatConversion.inetAddressToString(bValue);
 
               // Insert Value into JSON Object
@@ -866,22 +673,12 @@ public class TlvDisassemble extends TlvDictionary {
 
               String sTlvValue = null;
 
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE: "
-                          + new HexString(bValue).toString(":"));
-
               sTlvValue = new HexString(bValue).toString();
 
               // Insert Value into JSON Object
               joTlvDictionary.put(Dictionary.VALUE, sTlvValue);
 
             } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
-
-              logger.debug(
-                  () ->
-                      "TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) DATA_TYPE_BYTE: "
-                          + new HexString(bValue).toString(":"));
 
               String sObjectOnlyHex =
                   "30" + HexString.toHexString(bValue.length) + new HexString(bValue).toString();
@@ -890,15 +687,11 @@ public class TlvDisassemble extends TlvDictionary {
 
               BEROIDConversion bocOidAsnObj5 = new BEROIDConversion(hsHexOID.toByteArray());
 
-              logger.debug(() -> "Hex -> OID-DOT: " + bocOidAsnObj5.getOidDotNotaion());
-
               // Insert Value into JSON Object
               joTlvDictionary.put(Dictionary.VALUE, bocOidAsnObj5.getOidDotNotaion());
             }
           }
         }
-
-        logger.debug("TlvDisassemble.loadTlvValuesIntoTlvDictionary(b,jo) {}", joTlvDictionary);
       }
 
     } catch (JSONException e) {
