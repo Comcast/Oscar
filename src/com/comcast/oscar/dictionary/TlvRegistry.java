@@ -133,22 +133,18 @@ public final class TlvRegistry {
             ? TlvRegistry.class.getResourceAsStream(source)
             : Files.newInputStream(Path.of(source))) {
       if (input == null) throw new IOException("Missing catalog " + source);
-      TlvRegistry base = read(input, family, source);
-      if (!family.equals("docsis40") && !family.equals("docsis")) return base;
-      try (InputStream profile = openCatalog(family + ".profile.json")) {
-        return compose(
-            base,
-            new JSONObject(
-                new String(profile.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8)),
-            TlvRegistry::openCatalog,
-            family);
-      }
+      return read(input, family, source, TlvRegistry::openCatalog);
     } catch (IOException | IllegalArgumentException e) {
       throw new IllegalStateException("Cannot load TLV catalog " + source, e);
     }
   }
 
   static TlvRegistry read(InputStream input, String family, String source) throws IOException {
+    return read(input, family, source, null);
+  }
+
+  static TlvRegistry read(InputStream input, String family, String source, CatalogSource resolver)
+      throws IOException {
     ObjectMapper mapper =
         new ObjectMapper()
             .enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION)
@@ -156,14 +152,28 @@ public final class TlvRegistry {
             .enable(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES)
             .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
             .disable(DeserializationFeature.ACCEPT_FLOAT_AS_INT);
-    Catalog catalog = mapper.readValue(input, Catalog.class);
+    com.fasterxml.jackson.databind.node.ObjectNode document =
+        mapper.readValue(input, com.fasterxml.jackson.databind.node.ObjectNode.class);
+    com.fasterxml.jackson.databind.JsonNode attachments = document.remove("attachments");
+    if (attachments != null && !attachments.isArray())
+      throw new IllegalArgumentException(source + ": attachments must be an array");
+    Catalog catalog = mapper.treeToValue(document, Catalog.class);
     if (catalog.formatVersion() != 1
         || !family.equals(catalog.family())
         || catalog.edition().isBlank()
         || catalog.definitions().isEmpty()) {
       throw new IllegalArgumentException(source + ": invalid catalog header");
     }
-    return new TlvRegistry(catalog.definitions(), source);
+    TlvRegistry base = new TlvRegistry(catalog.definitions(), source);
+    if (attachments == null || resolver == null) return base;
+    return compose(
+        base,
+        new JSONObject()
+            .put("formatVersion", catalog.formatVersion())
+            .put("family", family)
+            .put("attachments", new JSONArray(attachments.toString())),
+        resolver,
+        family);
   }
 
   @FunctionalInterface
@@ -193,7 +203,7 @@ public final class TlvRegistry {
   static TlvRegistry compose(
       TlvRegistry base, JSONObject profile, CatalogSource source, String family)
       throws IOException {
-    if (profile.getInt("formatVersion") != 1 || !family.equals(profile.getString("profile")))
+    if (profile.getInt("formatVersion") != 1 || !family.equals(profile.getString("family")))
       throw new IllegalArgumentException("Invalid profile " + family);
     List<TlvDefinition> combined = new ArrayList<>(base.entries);
     for (Object item : profile.getJSONArray("attachments")) {
@@ -202,7 +212,7 @@ public final class TlvRegistry {
       TlvDefinition container = base.find(parent);
       if (container == null || container.lengthMin() != 0)
         throw new IllegalArgumentException("Attachment requires a base container: " + parent);
-      String name = attachment.getString("catalog");
+      String name = attachment.getString("reference");
       if (!name.matches("[a-zA-Z0-9.-]+") || name.contains(".."))
         throw new IllegalArgumentException("Invalid catalog filename: " + name);
       JSONObject service;

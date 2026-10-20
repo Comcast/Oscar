@@ -10,27 +10,24 @@ verification of their own specifications and provisioning formats.
 ### Ownership and attachment
 
 Base family catalogs own outer embedded-device containers. Service catalogs own
-relative child paths. A profile manifest explicitly selects base catalogs
-and attaches service catalogs to containers for a supported family/version.
-For example, an eRouter local path `2.4` attaches beneath DOCSIS `202`, producing
-public path `202.2.4`. A service is not a new configuration-file family.
+relative child paths. The base catalog carries an `attachments` array pointing to shared service catalogs.
+The attachment supplies the parent and an explicit allowlist of reviewed children.
+`reference` is an OSCAR-defined filename pointer, resolved within the registry
+directory (or bundled registry resources). It is not JSON Schema `$ref` and
+does not fetch remote URLs.
+For example, eRouter local path `2.4` becomes `202.2.4`. There is no separate
+profile file or new configuration-file family.
 
-Profile files are `res/tlv-registry/docsis.profile.json` and
-`docsis40.profile.json`. The family selects its base catalog. Actual attachment
-shape (shortened; `includedPaths` is an explicit reviewed allowlist):
+Example section inside `docsis.json` or `docsis40.json` (allowlist shortened):
 
 ```json
-{
-  "formatVersion": 1,
-  "profile": "docsis40",
-  "attachments": [
-    {"parentPath": [202], "catalog": "erouter.json", "includedPaths": [[1]]}
-  ]
-}
+"attachments": [
+  {"parentPath": [202], "reference": "erouter.json", "includedPaths": [[1]]}
+]
 ```
 
-The manifest owns applicability. The service's `attachment` metadata records its
-specification-defined placement and must agree with the manifest. Do not infer
+The base catalog owns applicability. The service's `attachment` metadata records its
+specification-defined placement and must agree with the attachment. Do not infer
 support from filenames, directory scanning, or reuse of legacy definitions.
 DPoE, DPoG and DOCSIS 4.0 require separate applicability decisions. eMTA standalone
 PacketCable provisioning must not be conflated with embedded DOCSIS settings.
@@ -51,7 +48,7 @@ See the [eRouter source map](../skills/oscar-erouter-config-tlvs/references/sour
 
 ### Loader composition and validation
 
-The loader validates the profile and every service before publishing
+The loader validates the base catalog and every service before publishing
 an immutable registry. Resolve catalog references only within the configured
 catalog root; reject traversal, missing files, unsupported schema versions and
 recursive includes. This initial design permits attachments to base containers,
@@ -101,7 +98,7 @@ for tests and published examples.
 
 ### Enabled eRouter subset
 
-Both profiles share 202.1, 202.2.1–6, 202.3, 202.10, 202.12, 202.13 and
+Both base catalogs attach 202.1, 202.2.1–6, 202.3, 202.10, 202.12, 202.13 and
 202.42. DOCSIS retains its legacy 202.2 container because ACSOverride still uses
 it; D4 attaches that container from the service catalog. Other legacy DOCSIS
 202 entries remain for compatibility and are not enabled in D4. This is a staged

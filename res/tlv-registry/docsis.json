@@ -3,6 +3,59 @@
   "family": "docsis",
   "edition": "oscar-legacy-2.2.15",
   "sourceSha256": "65bd12dc05e4ec99c575b6157c0728328d9dfe1ca5b058814cba63e6686d00ab",
+  "attachments": [
+    {
+      "parentPath": [
+        202
+      ],
+      "reference": "erouter.json",
+      "includedPaths": [
+        [
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          2,
+          6
+        ],
+        [
+          3
+        ],
+        [
+          10
+        ],
+        [
+          12
+        ],
+        [
+          13
+        ],
+        [
+          42
+        ]
+      ],
+      "omissions": "ACSOverride and TR-369 integer widths, SNMP OID ambiguity, and remaining SNMP/vendor codecs await separate verification."
+    }
+  ],
   "definitions": [
     {"path": [202, 2], "name": "TR-069ManagementServer", "codec": "integer", "lengthMin": 0, "lengthMax": 0, "lengthBytes": 1, "supportedVersion": "3", "maxInstances": 1, "description": "This encoding specifies some aspects of TR-069 Device.ManagementServer object to be used by the cable\nprovisioning system. Whenever a TLV or sub-TLV is absent, default values from [TR-069a4] and [TR-181i2a3]\napply."},
     {"path": [0], "name": "PADD", "codec": "integer", "lengthMin": 0, "lengthMax": 0, "lengthBytes": 0, "supportedVersion": "1", "maxInstances": 1, "description": "PADD NULL bytes to file so that file is divisiable by 4 bytes"},
