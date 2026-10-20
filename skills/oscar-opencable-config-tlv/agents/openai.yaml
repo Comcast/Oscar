@@ -1,0 +1,4 @@
+interface:
+  display_name: "OSCAR OpenCable Configuration TLVs"
+  short_description: "Source-backed OpenCable eSTB type 217 TLVs"
+  default_prompt: "Use $oscar-opencable-config-tlv to review OSCAR eSTB configuration encodings with exact source citations."

@@ -26,6 +26,11 @@ editor, codec, and file-integrity changes:
   pinned to **CM-SP-eRouter-I21-220209**. Use for type-202 settings together
   with the target-family skill; check source ambiguities before encoding.
 
+- OpenCable eSTB: [oscar-opencable-config-tlv](skills/oscar-opencable-config-tlv/SKILL.md),
+  pinned to **OC-SP-HOST2.1-CFR-I17-130418**. Use sections 15.1.1 and 15.2
+  for type-217 configuration, together with the target-family skill. Do not
+  substitute eRouter enums, duplicate rules or PacketCable provisioning.
+
 Current DOCSIS 4.0 implementation scope excludes L2VPN-specific settings and
 eDOCSIS/eSAFE settings except the reviewed eRouter profile subset. Record
 remaining settings as deferred rather than claiming coverage.

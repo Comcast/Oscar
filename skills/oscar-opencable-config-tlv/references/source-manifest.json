@@ -1,0 +1,26 @@
+{
+  "document": "OC-SP-HOST2.1-CFR-I17-130418",
+  "origin": "User-provided OC-SP-HOST2.1-CFR-I17-130418.pdf",
+  "acquired": "2026-10-20",
+  "files": [
+    {
+      "file": "OC-SP-HOST2.1-CFR-I17-130418.txt",
+      "bytes": 599578,
+      "sha256": "146b8c2c15477a55cb74ca40cb3acc98d155569bb0d421f0167ba643d88b740f"
+    }
+  ],
+  "removedOriginals": [
+    {
+      "file": "OC-SP-HOST2.1-CFR-I17-130418.pdf",
+      "bytes": 1464645,
+      "sha256": "f0c378d322fe144e33b5e4c4b5106cd76f4b54201bf9ed186879e4f672e7c355"
+    }
+  ],
+  "extraction": {
+    "command": "pdftotext -layout -enc UTF-8 INPUT.pdf OUTPUT.txt",
+    "tool": "pdftotext version 22.02.0",
+    "pages": 209,
+    "verification": "209 nonempty page segments; no Unicode replacement characters; PDF pages 184 and 191 (printed 174 and 181) visually compared."
+  },
+  "note": "Original PDF removed after extraction verification under AGENTS.md policy. Extracted text preserves source notices. Delegated documents are not bundled."
+}
