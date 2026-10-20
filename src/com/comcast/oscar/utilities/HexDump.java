@@ -1,8 +1,6 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  */
-package com.comcast.oscar.utilities;
-
 /*
  * Copyright (C) 2006 The Android Open Source Project
  *
@@ -19,215 +17,131 @@ package com.comcast.oscar.utilities;
  * limitations under the License.
  */
 
+package com.comcast.oscar.utilities;
+
+import java.nio.ByteBuffer;
+import java.util.HexFormat;
+import java.util.Objects;
+
+/** Uppercase hexadecimal conversion and traditional offset/hex/ASCII dumps. */
 public class HexDump {
-  private static final char[] HEX_DIGITS = {
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
-  };
+  private static final int BYTES_PER_ROW = 16;
+  // One leading space plus two hexadecimal digits per byte.
+  private static final int HEX_COLUMN_WIDTH = 3;
+  private static final HexFormat HEX = HexFormat.of().withUpperCase();
+  private static final HexFormat COLON_HEX = HEX.withDelimiter(":");
+  private static final HexFormat ROW_HEX = HEX.withPrefix(" ");
 
   /**
-   * Method dumpHexString.
+   * Formats all bytes as 16-byte rows with absolute offsets and printable ASCII.
    *
-   * @param array byte[]
-   * @return String
+   * @param array non-null bytes; never modified
+   * @return dump beginning with a newline; empty input retains an empty offset row
+   * @throws NullPointerException if array is null
    */
   public static String dumpHexString(byte[] array) {
     return dumpHexString(array, 0, array.length);
   }
 
   /**
-   * Method dumpHexString.
+   * Formats bytes from offset to the end as colon-separated uppercase hex, without a leading
+   * delimiter. For example, {0, 1, -1} at offset 1 yields "01:FF".
    *
-   * @param array byte[]
-   * @param offset int
-   * @param length int
-   * @return String
+   * @param array non-null bytes; never modified
+   * @param offset starting byte index, from zero through array.length inclusive
+   * @return colon-separated hex, or empty text when offset equals array.length
+   * @throws IndexOutOfBoundsException if offset is outside the array
+   * @throws NullPointerException if array is null
    */
   public static String dumpHexString(byte[] array, int offset) {
-    StringBuilder result = new StringBuilder();
-
-    for (int i = offset; i < offset + array.length; i++) {
-      byte b = array[i];
-
-      if (i != 0) {
-        result.append(':');
-      }
-
-      result.append(HEX_DIGITS[(b >>> 4) & 0x0F]);
-      result.append(HEX_DIGITS[b & 0x0F]);
-    }
-
-    return result.toString();
+    Objects.checkFromToIndex(offset, array.length, array.length);
+    return COLON_HEX.formatHex(array, offset, array.length);
   }
 
   /**
-   * Method dumpHexString.
+   * Formats a bounded slice as 16-byte rows: newline, eight-digit 0x offset, hex, then ASCII.
+   * Partial rows are padded to align the ASCII column; bytes outside space through tilde become
+   * dots. A one-byte 41 slice at offset zero ends with "41" and an aligned "A".
    *
-   * @param array byte[]
-   * @param offset int
-   * @param length int
-   * @return String
+   * @param array non-null bytes; never modified
+   * @param offset absolute starting byte index
+   * @param length number of bytes; zero retains an empty offset row
+   * @return formatted dump with no trailing newline
+   * @throws IndexOutOfBoundsException if the slice is negative, overflowing or outside the array
+   * @throws NullPointerException if array is null
    */
   public static String dumpHexString(byte[] array, int offset, int length) {
+    Objects.checkFromIndexSize(offset, length, array.length);
     StringBuilder result = new StringBuilder();
-
-    byte[] line = new byte[16];
-    int lineIndex = 0;
-
-    result.append("\n0x");
-    result.append(toHexString(offset));
-
-    for (int i = offset; i < offset + length; i++) {
-      if (lineIndex == 16) {
-        result.append(' ');
-
-        for (int j = 0; j < 16; j++) {
-          if (line[j] > ' ' && line[j] < '~') {
-            result.append(new String(line, j, 1));
-          } else {
-            result.append('.');
-          }
-        }
-
-        result.append("\n0x");
-        result.append(toHexString(i));
-        lineIndex = 0;
+    int end = offset + length;
+    int row = offset;
+    do {
+      int count = Math.min(BYTES_PER_ROW, end - row);
+      result.append("\n0x").append(HEX.toHexDigits(row));
+      ROW_HEX.formatHex(result, array, row, row + count);
+      result.append(" ".repeat((BYTES_PER_ROW - count) * HEX_COLUMN_WIDTH + 1));
+      for (int index = row; index < row + count; index++) {
+        int value = Byte.toUnsignedInt(array[index]);
+        result.append(value >= ' ' && value <= '~' ? (char) value : '.');
       }
-
-      byte b = array[i];
-      result.append(' ');
-      result.append(HEX_DIGITS[(b >>> 4) & 0x0F]);
-      result.append(HEX_DIGITS[b & 0x0F]);
-
-      line[lineIndex++] = b;
-    }
-
-    if (lineIndex != 16) {
-      int count = (16 - lineIndex) * 3;
-      count++;
-      for (int i = 0; i < count; i++) {
-        result.append(' ');
-      }
-
-      for (int i = 0; i < lineIndex; i++) {
-        if (line[i] > ' ' && line[i] < '~') {
-          result.append(new String(line, i, 1));
-        } else {
-          result.append('.');
-        }
-      }
-    }
-
+      row += count;
+    } while (row < end);
     return result.toString();
   }
 
-  /**
-   * Method toHexString.
-   *
-   * @param b byte
-   * @return String
-   */
-  public static String toHexString(byte b) {
-    return toHexString(toByteArray(b));
+  /** Returns two uppercase hex digits for a byte; for example, -1 becomes "FF". */
+  public static String toHexString(byte value) {
+    return HEX.toHexDigits(value);
   }
 
   /**
-   * Method toHexString.
+   * Returns uppercase hex without delimiters; empty input produces empty text.
    *
-   * @param array byte[]
-   * @return String
+   * @param array non-null bytes; never modified
+   * @throws NullPointerException if array is null
    */
   public static String toHexString(byte[] array) {
-    return toHexString(array, 0, array.length);
+    return HEX.formatHex(array);
   }
 
   /**
-   * Method toHexString.
+   * Returns uppercase hex for a slice, with two digits per byte and no delimiters.
    *
-   * @param array byte[]
-   * @param offset int
-   * @param length int
-   * @return String
+   * @param array non-null bytes; never modified
+   * @param offset starting byte index
+   * @param length number of bytes; zero produces empty text
+   * @throws IndexOutOfBoundsException if the slice is negative, overflowing or outside the array
+   * @throws NullPointerException if array is null
    */
   public static String toHexString(byte[] array, int offset, int length) {
-    char[] buf = new char[length * 2];
+    Objects.checkFromIndexSize(offset, length, array.length);
+    return HEX.formatHex(array, offset, offset + length);
+  }
 
-    int bufIndex = 0;
-    for (int i = offset; i < offset + length; i++) {
-      byte b = array[i];
-      buf[bufIndex++] = HEX_DIGITS[(b >>> 4) & 0x0F];
-      buf[bufIndex++] = HEX_DIGITS[b & 0x0F];
-    }
+  /** Returns eight uppercase hex digits, including leading zeros; -1 becomes "FFFFFFFF". */
+  public static String toHexString(int value) {
+    return HEX.toHexDigits(value);
+  }
 
-    return new String(buf);
+  /** Returns a new single-element array containing the supplied byte. */
+  public static byte[] toByteArray(byte value) {
+    return new byte[] {value};
+  }
+
+  /** Returns a new four-byte, big-endian representation; 0x01020304 becomes 01:02:03:04. */
+  public static byte[] toByteArray(int value) {
+    return ByteBuffer.allocate(Integer.BYTES).putInt(value).array();
   }
 
   /**
-   * Method toHexString.
+   * Parses pairs of hexadecimal digits, accepting either letter case and no separators.
    *
-   * @param i int
-   * @return String
-   */
-  public static String toHexString(int i) {
-    return toHexString(toByteArray(i));
-  }
-
-  /**
-   * Method toByteArray.
-   *
-   * @param b byte
-   * @return byte[]
-   */
-  public static byte[] toByteArray(byte b) {
-    byte[] array = new byte[1];
-    array[0] = b;
-    return array;
-  }
-
-  /**
-   * Method toByteArray.
-   *
-   * @param i int
-   * @return byte[]
-   */
-  public static byte[] toByteArray(int i) {
-    byte[] array = new byte[4];
-
-    array[3] = (byte) (i & 0xFF);
-    array[2] = (byte) ((i >> 8) & 0xFF);
-    array[1] = (byte) ((i >> 16) & 0xFF);
-    array[0] = (byte) ((i >> 24) & 0xFF);
-
-    return array;
-  }
-
-  /**
-   * Method toByte.
-   *
-   * @param c char
-   * @return int
-   */
-  private static int toByte(char c) {
-    if (c >= '0' && c <= '9') return (c - '0');
-    if (c >= 'A' && c <= 'F') return (c - 'A' + 10);
-    if (c >= 'a' && c <= 'f') return (c - 'a' + 10);
-
-    throw new RuntimeException("Invalid hex char '" + c + "'");
-  }
-
-  /**
-   * Method hexStringToByteArray.
-   *
-   * @param hexString String
-   * @return byte[]
+   * @param hexString non-null, even-length hex; empty text is allowed
+   * @return a new byte array; for example, "00ff" becomes {0, -1}
+   * @throws IllegalArgumentException for odd-length text or non-hexadecimal characters
+   * @throws NullPointerException if hexString is null
    */
   public static byte[] hexStringToByteArray(String hexString) {
-    int length = hexString.length();
-    byte[] buffer = new byte[length / 2];
-
-    for (int i = 0; i < length; i += 2) {
-      buffer[i / 2] = (byte) ((toByte(hexString.charAt(i)) << 4) | toByte(hexString.charAt(i + 1)));
-    }
-
-    return buffer;
+    return HEX.parseHex(hexString);
   }
 }

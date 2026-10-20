@@ -27,3 +27,14 @@ class HeaderTest(unittest.TestCase):
 
     def test_duplicate_notice_is_rejected(self):
         self.assertTrue(self.check("/* SPDX-License-Identifier: Apache-2.0\n SPDX-License-Identifier: Apache-2.0 */\npackage example;"))
+
+    def test_preserved_android_attribution_passes(self):
+        self.assertFalse(self.check(
+            '/*\n * SPDX-License-Identifier: Apache-2.0\n */\n'
+            '/*\n * Copyright (C) 2006 The Android Open Source Project\n */\n'
+            'package example; public class Example {}'))
+
+    def test_arbitrary_third_party_text_does_not_bypass_check(self):
+        self.assertTrue(self.check(
+            '/* SPDX-License-Identifier: Apache-2.0 */\n'
+            '/* Copyright 2026 Unknown */\npackage example; public class Example {}'))

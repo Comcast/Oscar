@@ -78,3 +78,10 @@ fragments, not complete provisionable configuration files.
 
 Run with `mvn -B -Dtest=TlvBuilderSnmpTest test`. The initial nine regression
 cases produced eight failures against the old implementation before the fix.
+
+## Hexadecimal display regression
+
+`HexDumpTest` checks exact row layout at 16-byte boundaries, nonzero offsets,
+ASCII limits, every byte value, fixed-width conversions, input immutability and
+invalid ranges/hex. Seven failing cases were reproduced before fixing the
+implementation. See [hexadecimal display](hex-dump.md) and its benchmark record.

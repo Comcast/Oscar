@@ -16,7 +16,9 @@ def problems(path: Path) -> list[str]:
     errors = []
     if header.count("SPDX-License-Identifier: Apache-2.0") != 1:
         errors.append("expected one Apache-2.0 SPDX header before package")
-    if not re.search(r"Copyright \d{4}(?: - \d{4})? Comcast Cable Communications Management, LLC", header):
+    # HexDump retains the upstream Android attribution; never relabel it as Comcast-owned.
+    android_notice = "Copyright (C) 2006 The Android Open Source Project" in header
+    if not android_notice and not re.search(r"Copyright \d{4}(?: - \d{4})? Comcast Cable Communications Management, LLC", header):
         errors.append("missing Comcast copyright or malformed year range")
     if "@bannerLicense" in text:
         errors.append("remove the redundant legacy license banner")
