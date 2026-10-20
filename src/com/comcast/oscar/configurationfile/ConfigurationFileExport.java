@@ -584,7 +584,8 @@ public class ConfigurationFileExport {
     String sConfigurationOuput = "";
 
     if (boolTlvCommentSuppress) {
-      sConfigurationOuput = ppConfigurationFile.toString().replaceAll("/\\*.*?\\*/", "");
+      sConfigurationOuput =
+          com.comcast.oscar.utilities.TlvTextString.withoutComments(ppConfigurationFile.toString());
     } else {
       sConfigurationOuput = ppConfigurationFile.toString();
     }
@@ -1046,9 +1047,11 @@ public class ConfigurationFileExport {
           .append(
               BER_DATA_TYPE.get(
                   Integer.decode(jaTopLevelTLVOID.getJSONObject(0).getString("DATA_TYPE"))))
-          .append(" \"")
-          .append(jaTopLevelTLVOID.getJSONObject(0).getString("VALUE"))
-          .append("\";")
+          .append(" ")
+          .append(
+              com.comcast.oscar.utilities.TlvTextString.quote(
+                  jaTopLevelTLVOID.getJSONObject(0).getString("VALUE")))
+          .append(";")
           .append("\t /* TLV: ")
           .append(
               joTopLevelTLV
@@ -1069,7 +1072,10 @@ public class ConfigurationFileExport {
             .append('\t')
             .append(joTopLevelTLV.get(Dictionary.TLV_NAME))
             .append(' ')
-            .append(joTopLevelTLV.get(Dictionary.VALUE))
+            .append(
+                com.comcast.oscar.utilities.TlvTextString.format(
+                    joTopLevelTLV.get(Dictionary.VALUE),
+                    joTopLevelTLV.optString(Dictionary.DATA_TYPE)))
             .append(';')
             .append("\t /* TLV: ")
             .append(

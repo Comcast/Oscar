@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.ber;
@@ -15,23 +15,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class OIDToJSONArray {
 
   private String sOID, sDataType, sValue = null;
+  private boolean parsedQuotedValue;
 
   private final String OID = "OID";
   private final String DATA_TYPE = "DATA_TYPE";
@@ -69,7 +56,8 @@ public class OIDToJSONArray {
         Integer.toString(
             BinaryConversion.byteToUnsignedInteger(
                 BERService.berStringDataTypeToByte(ctx.dataType().getText())));
-    this.sValue = ctx.value().getText();
+    this.sValue = com.comcast.oscar.utilities.TlvTextString.decode(ctx.value().getText());
+    this.parsedQuotedValue = true;
   }
 
   /**
@@ -83,7 +71,7 @@ public class OIDToJSONArray {
     mssReturn.put(DATA_TYPE, this.sDataType);
 
     // Clean up double quotes in the from and end of string
-    this.sValue = this.sValue.replaceAll("^\"|\"$", "");
+    if (!parsedQuotedValue) this.sValue = this.sValue.replaceAll("^\"|\"$", "");
     mssReturn.put(VALUE, this.sValue);
 
     return mssReturn;
@@ -107,7 +95,7 @@ public class OIDToJSONArray {
       joOID.put(DATA_TYPE, this.sDataType);
 
       // Clean up double quotes in the from and end of string
-      this.sValue = this.sValue.replaceAll("^\"|\"$", "");
+      if (!parsedQuotedValue) this.sValue = this.sValue.replaceAll("^\"|\"$", "");
       joOID.put(VALUE, this.sValue);
 
     } catch (JSONException e) {

@@ -96,3 +96,13 @@ for tests and published examples.
 - [ ] Verify in-memory round trips for every existing family after activation.
 - [ ] Add user examples and editor documentation for enabled functionality.
 - [ ] Review eSTB/eMTA specifications before adding their catalogs.
+
+## Configuration text strings
+
+The ANTLR grammar accepts quoted scalar strings and quoted SNMP values.
+`TlvTextString` owns escape decoding, export quoting and quote-aware comment
+suppression. This keeps URL punctuation and whitespace out of grammar syntax
+while preserving decoded bytes. Generated parser files are regenerated with
+ANTLR 4.1; they are not edited manually. Quoted-string JUnit tests cover literal
+URL bytes, escapes, nesting, SNMP, malformed input and binary/text round trips.
+This parser capability is independent of embedded-service catalog activation.

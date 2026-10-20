@@ -324,7 +324,9 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     }
 
     DictionaryTLV.updateDictionaryValue(
-        aqsSubTypeHierarchyStack, joWorkingTLVDictionary, ctx.getStart().getText());
+        aqsSubTypeHierarchyStack,
+        joWorkingTLVDictionary,
+        com.comcast.oscar.utilities.TlvTextString.decode(ctx.getStart().getText()));
   }
 
   /**
@@ -346,7 +348,9 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     }
 
     DictionaryTLV.updateDictionaryValue(
-        aqsSubTypeHierarchyStack, joWorkingTLVDictionary, ctx.getStart().getText());
+        aqsSubTypeHierarchyStack,
+        joWorkingTLVDictionary,
+        com.comcast.oscar.utilities.TlvTextString.decode(ctx.getStart().getText()));
   }
 
   /**

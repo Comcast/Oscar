@@ -1,0 +1,15 @@
+/* Synthetic eRouter TR-069 fragment; see README.md. */
+Docsis {
+    NetworkAccess 1;
+    eRouterConfig {
+        InitializationMode 1;
+        TR-069ManagementServer {
+            EnableCWMP 1;
+            URL "https://acs.example.test/cwmp";
+            Username "lab-user";
+            Password "lab-password";
+            ConnectionRequestUsername "lab-request";
+            ConnectionRequestPassword "lab-request-password";
+        }
+    }
+}

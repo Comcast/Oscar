@@ -1,0 +1,7 @@
+/* Synthetic eRouter fragment; see README.md. */
+Docsis {
+    NetworkAccess 1;
+    eRouterConfig {
+        InitializationMode 3;
+    }
+}

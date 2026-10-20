@@ -13,7 +13,7 @@ package com.comcast.oscar.parser;
 }
 
 WS            : [ \t\r\n]+ -> skip;
-WS_NO_SKIP    : [ \t\r\n]+;      
+WS_NO_SKIP    : [ \t\r\n]+;
 SPACE         : ' ';
 NO_WS         : '';
 LBRACE        : '{';
@@ -26,6 +26,7 @@ DOT           : '.';
 COLON         : ':';
 SINGLE_QUOTE  : '\'';
 DOUBLE_QUOTE  : '"';
+QUOTED_STRING : '"' ('\\' ["\\nrt] | ~["\\\r\n])* '"';
 LBRACKET      : '[';
 RBRACKET      : ']';
 TICK          : '`';
@@ -58,7 +59,7 @@ HEX_BYTE_LOWER_CASE   : HEX_NIBBLE_LOWERCASE HEX_NIBBLE_LOWERCASE;
 *                                     Code Block Tokens
 **************************************************************************************************
 *
-* Various Format Values: 
+* Various Format Values:
 *     (00000001)(00000010)(00000011)(00000100)
 *     (1,2)(3,4)(5,6)(7,8)
 *     (03:FF:FF:FF:FF:FF)(04:FF:FF:FF:FF:FF)
@@ -98,20 +99,20 @@ IPv4_TRANSPORT_ADDRESS : ((SINGLE_OCTET DOT) |  SINGLE_OCTET)+ LPARENTH IP_PORT_
 IPv6_ADDRESS : (HEX_NIBBLE+|(HEX_NIBBLE+ COLON))+;
 
 //2001:558:0:0:0:0:0:0(0)
-IPv6_TRANSPORT_ADDRESS : IPv6_ADDRESS LPARENTH IP_PORT_RANGE RPARENTH;                           
+IPv6_TRANSPORT_ADDRESS : IPv6_ADDRESS LPARENTH IP_PORT_RANGE RPARENTH;
 
 
 /* ******************************************************************************
                                Remark or Comment Fields
 *******************************************************************************/
-                    
+
 //SINGLE_LINE_COMMENT : '//' (~[\n\r])* ('\n' | '\r' | '\r\n')? -> skip;
 
 MULTI_LINE_COMMENT  : '/*' .*? '*/' -> skip;
 
 /* ******************************************************************************
 *                                   SNMP
-**********************************************************************************/                                    
+**********************************************************************************/
 // .1.
 INT_OID                 : ('.' [0-9]+ '.');
 
@@ -122,20 +123,20 @@ STRING_OID              : (IDENTIFIER DOT);
 EMBEDDED_NO_STRING      : (SINGLE_QUOTE_NO_STRING DOT);
 SINGLE_QUOTE_NO_STRING  : SINGLE_QUOTE SINGLE_QUOTE;
 
-/********************************SNMP OID PARSER********************************                    
+/********************************SNMP OID PARSER********************************
 *
 *   1 - vacmSecurityToGroupStorageType.2.'readwritesec'
 *   2 - docsDevFilterLLCStatus.20
 *   3 - vacmAccessStorageType.'readwritegroup'.''.2.noAuthNoPriv
-*   
+*
 ********************************************************************************/
 SNMP_OID_1                : (
-                            ( 
-                              INT_OID 
-                |             EMBEDDED_STRING 
-                |             STRING_OID 
+                            (
+                              INT_OID
+                |             EMBEDDED_STRING
+                |             STRING_OID
                 |             EMBEDDED_NO_STRING
-                            )+ 
+                            )+
                             (
                               INT
                 |             IDENTIFIER
@@ -161,11 +162,11 @@ configType      : (
 
 //Start TLV Parsing
 startTLV        : (
-                    tlv 
-                |   sub 
-                |   emptyTLV 
-                |   snmp 
-                  ); 
+                    tlv
+                |   sub
+                |   emptyTLV
+                |   snmp
+                  );
 
 //Generic TLV Parsers
 tlv             : IDENTIFIER typeValue;
@@ -176,19 +177,20 @@ type :  IDENTIFIER;
 
 //Value that is inserted in the JSON Object Dictionary
 typeValue       : (
-                      INT                     
-                |     IDENTIFIER              
-                |     VALUE_BIT_ARRAY         
-                |     VALUE_DOUBLE_BYTE_ARRAY 
-                |     MAC_ADDRESS_ARRAY       
-                |     IPv4_TRANSPORT_ADDRESS  
-                |     IPv6_TRANSPORT_ADDRESS  
-                |     IPv6_ADDRESS            
+                      INT
+                |     IDENTIFIER
+                |     VALUE_BIT_ARRAY
+                |     VALUE_DOUBLE_BYTE_ARRAY
+                |     MAC_ADDRESS_ARRAY
+                |     IPv4_TRANSPORT_ADDRESS
+                |     IPv6_TRANSPORT_ADDRESS
+                |     IPv6_ADDRESS
                 |     IPv4_ADDRESS
+                |     QUOTED_STRING
                 |     HEX_ARRAY
-                           
+
                   ) (
-                      SEMICOLON | 
+                      SEMICOLON |
                       (
                         SEMICOLON (
                                     MULTI_LINE_COMMENT
@@ -197,18 +199,19 @@ typeValue       : (
                   );
 
 subTypeValue    : (
-                      INT                     
-                |     IDENTIFIER              
-                |     VALUE_BIT_ARRAY         
-                |     VALUE_DOUBLE_BYTE_ARRAY 
-                |     MAC_ADDRESS_ARRAY       
-                |     IPv4_TRANSPORT_ADDRESS  
-                |     IPv6_TRANSPORT_ADDRESS  
-                |     IPv6_ADDRESS            
+                      INT
+                |     IDENTIFIER
+                |     VALUE_BIT_ARRAY
+                |     VALUE_DOUBLE_BYTE_ARRAY
+                |     MAC_ADDRESS_ARRAY
+                |     IPv4_TRANSPORT_ADDRESS
+                |     IPv6_TRANSPORT_ADDRESS
+                |     IPv6_ADDRESS
                 |     IPv4_ADDRESS
+                |     QUOTED_STRING
                 |     HEX_ARRAY
                   ) (
-                      SEMICOLON | 
+                      SEMICOLON |
                       (
                         SEMICOLON (
                                     MULTI_LINE_COMMENT
@@ -218,11 +221,11 @@ subTypeValue    : (
 
 // Sub TLV embedded in TopLevel TLV
 subTLV          : (
-                    sTlv 
-                |   sub 
-                |   emptyTLV 
-                |   snmp 
-                  ); 
+                    sTlv
+                |   sub
+                |   emptyTLV
+                |   snmp
+                  );
 
 subType :  IDENTIFIER;
 
@@ -236,7 +239,7 @@ snmpType        :         (
                             ('Snmp11')
                 |           ('Snmp64')
                           );
-                          
+
 // ObjectID to pass to SNMP4J Class to be convered to BER Encoding
 oid             :         (.|'.'|'"'|'\''|'('|')')+?;
 
@@ -251,25 +254,23 @@ dataType        :         (
                 |           ('TimeTicks')
                 |           ('IpAddress')
                 |           ('OctetString')
-                |           ('HexString')                
+                |           ('HexString')
                           );
 
-value           :         (.|'@'|'='|'/')+?;
+value           :         QUOTED_STRING;
 
-snmp            :         ( 
-                              snmpType 
-                              oid 
-                              dataType 
-                              DOUBLE_QUOTE 
-                              value 
-                              DOUBLE_QUOTE 
+snmp            :         (
+                              snmpType
+                              oid
+                              dataType
+                              value
                               (
-                                  SEMICOLON 
+                                  SEMICOLON
                                 | (SEMICOLON (MULTI_LINE_COMMENT))
                               )
                           );
 
 
 /* *********************************BEGIN***************************************/
-begin           :         configType LBRACE startTLV+ RBRACE; 
-                          
+begin           :         configType LBRACE startTLV+ RBRACE;
+
