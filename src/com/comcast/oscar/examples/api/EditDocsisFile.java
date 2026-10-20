@@ -5,8 +5,8 @@
 package com.comcast.oscar.examples.api;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileExport;
-import com.comcast.oscar.dictionary.DictionarySQLQueries;
 import com.comcast.oscar.dictionary.DictionaryTLV;
+import com.comcast.oscar.dictionary.TlvDictionary;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvDisassemble;
@@ -54,7 +54,7 @@ public class EditDocsisFile {
 
     ArrayDeque<String> ads =
         DictionaryTLV.getTypeHierarchyStack(
-            "3", new DictionarySQLQueries(DictionarySQLQueries.DOCSIS_DICTIONARY_TABLE_NAME));
+            "3", new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME));
 
     try {
       DictionaryTLV.updateDictionaryValue(ads, ja.getJSONObject(0), "0");

@@ -10,7 +10,6 @@ import com.comcast.oscar.datatype.DataTypeDictionaryReference;
 import com.comcast.oscar.datatype.DataTypeFormatConversion;
 import com.comcast.oscar.datatype.DataTypeFormatException;
 import com.comcast.oscar.dictionary.Dictionary;
-import com.comcast.oscar.dictionary.DictionarySQLConstants;
 import com.comcast.oscar.dictionary.TlvDictionary;
 import com.comcast.oscar.utilities.HexString;
 import java.io.ByteArrayOutputStream;
@@ -58,12 +57,12 @@ public class TlvDisassemble extends TlvDictionary {
 
   private TlvVariableBinding tvbTlvBuffer = null;
 
-  public static final String TLV_TYPE_DOCSIS = DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;
+  public static final String TLV_TYPE_DOCSIS = TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME;
   public static final String TLV_TYPE_DOCSIS_40 = "DOCSIS40_TLV_DEFINITION";
   public static final String TLV_TYPE_PACKET_CABLE =
-      DictionarySQLConstants.PACKET_CABLE_DICTIONARY_TABLE_NAME;
+      TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME;
   public static final String TLV_TYPE_DPOG = TlvDictionary.DPOG_DICTIONARY_TABLE_NAME;
-  public static final String TLV_TYPE_DPOE = DictionarySQLConstants.DPOE_DICTIONARY_TABLE_NAME;
+  public static final String TLV_TYPE_DPOE = TlvDictionary.DPOE_DICTIONARY_TABLE_NAME;
 
   /**
    * @param tbTlvBuffer

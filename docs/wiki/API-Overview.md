@@ -54,3 +54,12 @@ partial inspection through `TlvDisassemble.diagnose`.
 Use the public [minimum validator](../docsis-minimum-validation.md) for text or
 binary files and in-memory editor content. It checks top-level required settings
 without generating MICs or requiring a secret. Compilation enforces the same rule.
+
+## Dictionary lookups
+
+Use `new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME)` for DOCSIS
+lookups, or the corresponding family constant. Definitions load from the bundled
+JSON registry; no database setup or dictionary export is needed.
+`DictionaryTLV.getTypeHierarchyStack(path, dictionary)` accepts this lookup API.
+The old SQL query classes and database helpers are removed in this revamp;
+clients using those APIs must migrate and recompile.

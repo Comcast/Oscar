@@ -11,15 +11,12 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/** Compatibility-shaped lookup API backed by JSON symbol tables, not SQL. */
+/** TLV lookup API backed by JSON symbol tables. */
 public class TlvDictionary {
   public static final String DOCSIS_40_DICTIONARY_TABLE_NAME = "DOCSIS40_TLV_DEFINITION";
-  public static final String DOCSIS_DICTIONARY_TABLE_NAME =
-      DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;
-  public static final String PACKET_CABLE_DICTIONARY_TABLE_NAME =
-      DictionarySQLConstants.PACKET_CABLE_DICTIONARY_TABLE_NAME;
-  public static final String DPOE_DICTIONARY_TABLE_NAME =
-      DictionarySQLConstants.DPOE_DICTIONARY_TABLE_NAME;
+  public static final String DOCSIS_DICTIONARY_TABLE_NAME = "DOCSIS_TLV_DEFINITION";
+  public static final String PACKET_CABLE_DICTIONARY_TABLE_NAME = "PACKET_CABLE_TLV_DEFINITION";
+  public static final String DPOE_DICTIONARY_TABLE_NAME = "DPOE_TLV_DEFINITION";
   public static final Integer CONFIGURATION_FILE_TYPE_DOCSIS =
       ConfigurationFileTypeConstants.DOCSIS_10_CONFIGURATION_TYPE;
   public static final Integer CONFIGURATION_FILE_TYPE_PACKET_CABLE =

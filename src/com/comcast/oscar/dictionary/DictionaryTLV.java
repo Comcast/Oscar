@@ -67,13 +67,6 @@ public class DictionaryTLV implements Dictionary {
         sTlvDotNotation, dsq.getTlvDefinition(Integer.decode(sTlvDotNotation.split("\\.")[0])));
   }
 
-  /** Preserve the legacy SQL-backed API for external callers. */
-  public static ArrayDeque<String> getTypeHierarchyStack(
-      String sTlvDotNotation, DictionarySQLQueries dsq) {
-    return getTypeHierarchyStack(
-        sTlvDotNotation, dsq.getTlvDefinition(Integer.decode(sTlvDotNotation.split("\\.")[0])));
-  }
-
   private static ArrayDeque<String> getTypeHierarchyStack(
       String sTlvDotNotation, JSONObject joTlvDictionary) {
 

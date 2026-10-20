@@ -11,7 +11,6 @@ import com.comcast.oscar.constants.Constants;
 import com.comcast.oscar.datatype.DataTypeDictionaryReference;
 import com.comcast.oscar.datatype.DataTypeFormatConversion;
 import com.comcast.oscar.dictionary.Dictionary;
-import com.comcast.oscar.dictionary.DictionarySQLConstants;
 import com.comcast.oscar.dictionary.TlvDictionary;
 import com.comcast.oscar.netsnmp.NetSNMP;
 import com.comcast.oscar.tlv.TlvBuilder;
@@ -863,13 +862,13 @@ public class ConfigurationFileExport {
 
         logger.debug("ConfigrationFileExport.tlvToDictionary() -> PACKET-CABLE-FILE-FOUND");
 
-        sDictionaryTableName = DictionarySQLConstants.PACKET_CABLE_DICTIONARY_TABLE_NAME;
+        sDictionaryTableName = TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME;
 
       } else {
 
         logger.debug("ConfigrationFileExport.tlvToDictionary() -> DOCSIS-CABLE-FILE-FOUND");
 
-        sDictionaryTableName = DictionarySQLConstants.DOCSIS_DICTIONARY_TABLE_NAME;
+        sDictionaryTableName = TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME;
       }
 
       // Get Top Level TLV Dictionary

@@ -25,6 +25,16 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class TlvRegistryTest {
+  @Test
+  void resolvesExampleHierarchyThroughRegistryDictionary() {
+    var dictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
+    assertEquals(
+        List.of("NetworkAccess"),
+        List.copyOf(DictionaryTLV.getTypeHierarchyStack("3", dictionary)));
+    assertFalse(
+        dictionary.getAllTlvDefinition(TlvDictionary.CONFIGURATION_FILE_TYPE_DOCSIS).isEmpty());
+  }
+
   @ParameterizedTest
   @ValueSource(strings = {"docsis", "dpoe"})
   void decodesDropClassifierEthertypeAndSiblingVlan(String family) throws Exception {

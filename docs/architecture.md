@@ -254,3 +254,15 @@ would change evaluation or side effects. Shared-secret values are not logged.
 - [x] Verify DOCSIS 3.1/4.0 compile/export/recompile bytes with DEBUG on and off.
 
 Follow the [QA logging guidance](../skills/qa-hygiene/SKILL.md#debug-logging).
+
+## Registry-only dictionary access
+
+`TlvDictionary` and `TlvRegistry` own lookup and catalog loading. Dictionary
+identifiers remain unchanged; their constants now live in `TlvDictionary`.
+The retired SQL connection/query package, SQL-backed dictionary overload and
+database export/path helpers have been removed. This is an intentional public
+API removal during the revamp. Useful examples now use registry lookups;
+database-only demos have been removed.
+
+- [x] Remove database implementation and obsolete setup from examples.
+- [x] Route remaining dictionary references through the JSON registry.

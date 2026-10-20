@@ -20,7 +20,7 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-/** A startup-loaded symbol table, independent of SQLite and configuration instance values. */
+/** A startup-loaded symbol table, independent of configuration instance values. */
 public final class TlvRegistry {
   private static final Set<String> CODECS =
       Set.of(

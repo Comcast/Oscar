@@ -86,15 +86,6 @@ public class DirectoryStructure {
   }
 
   /**
-   * Directory for databases
-   *
-   * @return database subdirectory
-   */
-  public static File fDbDir() {
-    return new File(sBasePath() + File.separator + "db");
-  }
-
-  /**
    * @return runtime resources subdirectory
    */
   public static File fResourcesDir() {
@@ -153,25 +144,10 @@ public class DirectoryStructure {
   }
 
   /**
-   * SQLite database file
-   *
-   * @return dictionary file
-   */
-  public static File fDictionaryFile() {
-    return new File(fDbDir() + File.separator + "dictionary.sqlite");
-  }
-
-  /**
    * @return timestamped directory
    */
   public static File fTimestampedDir() {
     return new File(File.separator + getDate());
-  }
-
-  /** Legacy SQLite dictionary export is no longer supported. */
-  public void exportDictionary() {
-    throw new UnsupportedOperationException(
-        "SQLite dictionaries are no longer bundled; use the JSON TLV registry.");
   }
 
   /**
@@ -201,13 +177,6 @@ public class DirectoryStructure {
 
     if (!fMibsTextDir().exists()) {
       fMibsTextDir().mkdir();
-    }
-  }
-
-  /** Export files if they do not exist */
-  public void exportFiles() {
-    if (!fDictionaryFile().exists()) {
-      exportDictionary();
     }
   }
 }
