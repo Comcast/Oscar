@@ -4,6 +4,8 @@
  */
 package com.comcast.oscar.compiler;
 
+import static com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes.*;
+
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
@@ -24,33 +26,29 @@ public final class DocsisMicRules {
   }
 
   // Wire type IDs, in digest order rather than numerical or physical file order.
-  private static final int CLASS_OF_SERVICE = 4;
-  private static final int PAYLOAD_HEADER_SUPPRESSION = 26;
-  private static final int PROVISIONED_IPV4_ADDRESS = 20;
-  private static final int PROVISIONED_IPV6_ADDRESS = 59;
   private static final List<Integer> COMPATIBILITY_ORDER =
       List.of(
-          1,
-          2,
-          3,
-          CLASS_OF_SERVICE,
-          17,
-          43,
-          6,
-          18,
-          19,
-          PROVISIONED_IPV4_ADDRESS,
-          22,
-          23,
-          24,
-          25,
-          28,
-          29,
-          PAYLOAD_HEADER_SUPPRESSION,
-          35,
-          36,
-          37,
-          40);
+          DS_FREQUENCY,
+          US_CHANN_ID,
+          NETWORK_ACC_CTRL_OBJ,
+          DOC_10_CLASS_OF_SERV,
+          BPI,
+          DOC_EXT_FIELD,
+          CM_MIC,
+          MAX_CPES,
+          TFTP_SRV_TIMESTAMP,
+          TFTP_SRV_PROV_MODEM_IPV4_ADDR,
+          US_PKT_CLASS,
+          DS_PKT_CLASS,
+          US_SERVICE_FLOW,
+          DS_SERVICE_FLOW,
+          MAX_NUM_CLASS,
+          PRIVACY_ENABLE,
+          PHS,
+          SUB_MGMT_CTRL,
+          SUB_MGMT_CPE_IPV4_LIST,
+          SUB_MGMT_FILTER_GROUPS,
+          ENABLE_TEST_MODES);
   private static final List<Integer> CURRENT_ORDER = currentOrder();
 
   private DocsisMicRules() {}
@@ -76,9 +74,10 @@ public final class DocsisMicRules {
 
   private static List<Integer> currentOrder() {
     var types = new ArrayList<>(COMPATIBILITY_ORDER);
-    types.remove(Integer.valueOf(CLASS_OF_SERVICE));
-    types.remove(Integer.valueOf(PAYLOAD_HEADER_SUPPRESSION));
-    types.add(types.indexOf(PROVISIONED_IPV4_ADDRESS) + 1, PROVISIONED_IPV6_ADDRESS);
+    types.remove(Integer.valueOf(DOC_10_CLASS_OF_SERV));
+    types.remove(Integer.valueOf(PHS));
+    types.add(
+        types.indexOf(TFTP_SRV_PROV_MODEM_IPV4_ADDR) + 1, TFTP_SRV_PROVISIONED_MODEMIPV6_ADDRESS);
     return List.copyOf(types);
   }
 

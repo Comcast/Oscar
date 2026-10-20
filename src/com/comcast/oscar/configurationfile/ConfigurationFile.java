@@ -7,6 +7,7 @@ package com.comcast.oscar.configurationfile;
 import com.comcast.oscar.ber.BEROIDConversion;
 import com.comcast.oscar.ber.OIDCollectionDuplicationValidation;
 import com.comcast.oscar.cablelabsdefinitions.Constants;
+import com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes;
 import com.comcast.oscar.compiler.DPoECompiler;
 import com.comcast.oscar.compiler.DocsisCompiler;
 import com.comcast.oscar.compiler.PacketCableCompiler;
@@ -337,16 +338,22 @@ public class ConfigurationFile {
   public void removeZeroLengthTopLevelTLV() {}
 
   /**
-   * @return a true if no OID duplications are found
+   * Checks the current DOCSIS or PacketCable compiler's SNMP objects for duplicate OIDs. Does not
+   * modify the configuration or write a file. For example, two objects with the same OID return
+   * true; distinct OIDs return false.
+   *
+   * @return true when a duplicate OID is found; false otherwise
    */
   public boolean checkOIDDuplication() {
 
     boolean boolStatus = false;
 
-    // Right now I am going to hard code this part, will need to refer to Dictionary
     Map<Integer, Integer> miiOidLength = new HashMap<Integer, Integer>();
-    miiOidLength.put(11, 1); // TLV 11 1 byteLength encoding
-    miiOidLength.put(64, 2); // TLV 64 2 byteLength encoding
+    miiOidLength.put(
+        (int) PacketCableConstants.SNMP_TLV_11,
+        PacketCableConstants.PACKET_CABLE_STANDARD_BYTE_LENGTH);
+    miiOidLength.put(
+        (int) PacketCableConstants.SNMP_TLV_64, PacketCableConstants.SNMP_TLV_64_BYTE_LENGTH);
 
     BEROIDConversion boc = null;
 
@@ -365,19 +372,25 @@ public class ConfigurationFile {
     for (byte[] bTLV : lbOIDTlv) {
 
       // TLV 11 uses 1 byte Length Encoding
-      if (BinaryConversion.byteToUnsignedInteger(bTLV[0]) == 11) {
+      if (BinaryConversion.byteToUnsignedInteger(bTLV[0]) == PacketCableConstants.SNMP_TLV_11) {
 
         try {
-          boc = new BEROIDConversion(TlvBuilder.getTlvValue(bTLV, 0, 1));
+          boc =
+              new BEROIDConversion(
+                  TlvBuilder.getTlvValue(
+                      bTLV, 0, PacketCableConstants.PACKET_CABLE_STANDARD_BYTE_LENGTH));
         } catch (TlvException e) {
           e.printStackTrace();
         }
 
         // TLV 64 uses 2 byte Length Encoding
-      } else if (BinaryConversion.byteToUnsignedInteger(bTLV[0]) == 64) {
+      } else if (BinaryConversion.byteToUnsignedInteger(bTLV[0])
+          == PacketCableConstants.SNMP_TLV_64) {
 
         try {
-          boc = new BEROIDConversion(TlvBuilder.getTlvValue(bTLV, 0, 2));
+          boc =
+              new BEROIDConversion(
+                  TlvBuilder.getTlvValue(bTLV, 0, PacketCableConstants.SNMP_TLV_64_BYTE_LENGTH));
         } catch (TlvException e) {
           e.printStackTrace();
         }
@@ -636,10 +649,10 @@ public class ConfigurationFile {
       if (tbTLV != null) {
 
         try {
-          bTLV = TlvBuilder.stripTlv(6, tbTLV.toByteArray());
-          bTLV = TlvBuilder.stripTlv(7, bTLV);
-          bTLV = TlvBuilder.stripTlv(255, bTLV);
-          bTLV = TlvBuilder.stripTlv(0, bTLV);
+          bTLV = TlvBuilder.stripTlv(DocsisTlvTypes.CM_MIC, tbTLV.toByteArray());
+          bTLV = TlvBuilder.stripTlv(DocsisTlvTypes.CMTS_MIC, bTLV);
+          bTLV = TlvBuilder.stripTlv(DocsisTlvTypes.END_OF_FILE, bTLV);
+          bTLV = TlvBuilder.stripTlv(DocsisTlvTypes.PAD, bTLV);
         } catch (TlvException e) {
           e.printStackTrace();
         }

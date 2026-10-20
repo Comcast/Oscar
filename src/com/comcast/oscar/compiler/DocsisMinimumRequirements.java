@@ -125,7 +125,10 @@ public final class DocsisMinimumRequirements {
     Objects.requireNonNull(binary, "binary");
     Objects.requireNonNull(docsisVersion, "docsisVersion");
     var registry =
-        TlvRegistry.forFamily(docsisVersion == DocsisVersion.DOCSIS_4_0 ? "docsis40" : "docsis");
+        TlvRegistry.forFamily(
+            docsisVersion == DocsisVersion.DOCSIS_4_0
+                ? TlvRegistry.DOCSIS_40_FAMILY
+                : TlvRegistry.DOCSIS_FAMILY);
     Set<Integer> present = new HashSet<>();
     for (int offset = 0; offset < binary.length; ) {
       int type = Byte.toUnsignedInt(binary[offset++]);

@@ -4,7 +4,7 @@
  */
 package com.comcast.oscar.compiler;
 
-import static com.comcast.oscar.cablelabsdefinitions.Constants.*;
+import static com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes.*;
 
 import com.comcast.oscar.dictionary.TlvRegistry;
 import java.io.ByteArrayOutputStream;
@@ -28,10 +28,10 @@ public final class DocsisMicVerifier {
 
   /** Selects length-field definitions; a binary does not identify its DOCSIS edition. */
   public enum Profile {
-    DOCSIS_31("docsis", DocsisMicRules.Coverage.DOCSIS_31_AND_40),
-    DOCSIS_40("docsis40", DocsisMicRules.Coverage.DOCSIS_31_AND_40),
+    DOCSIS_31(TlvRegistry.DOCSIS_FAMILY, DocsisMicRules.Coverage.DOCSIS_31_AND_40),
+    DOCSIS_40(TlvRegistry.DOCSIS_40_FAMILY, DocsisMicRules.Coverage.DOCSIS_31_AND_40),
     /** Historical OSCAR DOCSIS 1.0-3.0 coverage, not a new conformance claim. */
-    LEGACY_DOCSIS("docsis", DocsisMicRules.Coverage.LEGACY_COMPATIBILITY);
+    LEGACY_DOCSIS(TlvRegistry.DOCSIS_FAMILY, DocsisMicRules.Coverage.LEGACY_COMPATIBILITY);
 
     private final String family;
     private final DocsisMicRules.Coverage coverage;

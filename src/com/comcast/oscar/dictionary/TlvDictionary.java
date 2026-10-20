@@ -54,11 +54,11 @@ public class TlvDictionary {
   public void updateDictionaryTablename(String table) {
     String family =
         switch (table) {
-          case DOCSIS_40_DICTIONARY_TABLE_NAME -> "docsis40";
-          case DOCSIS_DICTIONARY_TABLE_NAME -> "docsis";
-          case PACKET_CABLE_DICTIONARY_TABLE_NAME -> "packetcable";
-          case DPOE_DICTIONARY_TABLE_NAME -> "dpoe";
-          case DPOG_DICTIONARY_TABLE_NAME -> "dpog";
+          case DOCSIS_40_DICTIONARY_TABLE_NAME -> TlvRegistry.DOCSIS_40_FAMILY;
+          case DOCSIS_DICTIONARY_TABLE_NAME -> TlvRegistry.DOCSIS_FAMILY;
+          case PACKET_CABLE_DICTIONARY_TABLE_NAME -> TlvRegistry.PACKETCABLE_FAMILY;
+          case DPOE_DICTIONARY_TABLE_NAME -> TlvRegistry.DPOE_FAMILY;
+          case DPOG_DICTIONARY_TABLE_NAME -> TlvRegistry.DPOG_FAMILY;
           default -> throw new IllegalArgumentException("Unknown TLV dictionary: " + table);
         };
     registry = TlvRegistry.forFamily(family);

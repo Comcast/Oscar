@@ -110,7 +110,8 @@ public final class DPoGCompiler extends DocsisCompiler {
     byte[] parameters = parameters();
     if (sharedSecret != null && !sharedSecret.isEmpty()) {
       finalizedBytes =
-          DocsisMicFinalizer.finish(parameters, TlvRegistry.forFamily("dpog"), sharedSecret);
+          DocsisMicFinalizer.finish(
+              parameters, TlvRegistry.forFamily(TlvRegistry.DPOG_FAMILY), sharedSecret);
     } else {
       var output = new ByteArrayOutputStream();
       output.writeBytes(parameters);

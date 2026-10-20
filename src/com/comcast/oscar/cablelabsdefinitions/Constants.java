@@ -30,82 +30,94 @@ public class Constants {
   public static final Integer DOCSIS_TLV_MIN = 1;
   public static final Integer DOCSIS_TLV_MAX = 254;
 
-  public static final Integer PAD = 0;
-  public static final Integer DS_FREQUENCY = 1;
-  public static final Integer US_CHANN_ID = 2;
-  public static final Integer NETWORK_ACC_CTRL_OBJ = 3;
-  public static final Integer DOC_10_CLASS_OF_SERV = 4;
-  public static final Integer MODEM_CAP = 5;
-  public static final Integer CM_MIC = 6;
-  public static final Integer CMTS_MIC = 7;
-  public static final Integer VENDOR_ID_ENC = 8;
-  public static final Integer SW_UPGRADE_FILENAME = 9;
-  public static final Integer SNMP_WRITE_ACC_CTRL = 10;
-  public static final Integer SNMP_MIB_OBJ = 11;
-  public static final Integer MODEM_IP_ADDR = 12;
-  public static final Integer SRV_NOT_AVA_RSP = 13;
-  public static final Integer CPE_ETH_MAC_ADDR = 14;
-  public static final Integer TELEPHONE_SETTINGS_OPTION = 15;
-  public static final Integer BPI = 17;
-  public static final Integer MAX_CPES = 18;
-  public static final Integer TFTP_SRV_TIMESTAMP = 19;
-  public static final Integer TFTP_SRV_PROV_MODEM_IPV4_ADDR = 20;
-  public static final Integer SW_UPGRADE_IPV4_TFTP_SRV = 21;
-  public static final Integer US_PKT_CLASS = 22;
-  public static final Integer DS_PKT_CLASS = 23;
-  public static final Integer US_SERVICE_FLOW = 24;
-  public static final Integer DS_SERVICE_FLOW = 25;
-  public static final Integer PHS = 26;
-  public static final Integer HMAC_DIGEST = 27;
-  public static final Integer MAX_NUM_CLASS = 28;
-  public static final Integer PRIVACY_ENABLE = 29;
-  public static final Integer AUTHORIZATION_BLOCK = 30;
-  public static final Integer KEY_SEQUENCE_NUMBER = 31;
-  public static final Integer MANUFACTURER_CVC = 32;
-  public static final Integer CO_SIGNER_CVC = 33;
-  public static final Integer SNMPV3_KICKSTART_VALUE = 34;
-  public static final Integer SUB_MGMT_CTRL = 35;
-  public static final Integer SUB_MGMT_CPE_IPV4_LIST = 36;
-  public static final Integer SUB_MGMT_FILTER_GROUPS = 37;
-  public static final Integer SNMPV3_NOTIFICATION_RCVR = 38;
-  public static final Integer ENABLE_20_MODE = 39;
-  public static final Integer ENABLE_TEST_MODES = 40;
-  public static final Integer DS_CHANN_LIST = 41;
-  public static final Integer STATIC_MULTICAST_MAC_ADDRESS = 42;
-  public static final Integer DOC_EXT_FIELD = 43;
-  public static final Integer VENDOR_SPECIFIC_CAP = 44;
-  public static final Integer DS_UNENCRYPTED_TRAFFIC_FLTR = 45;
-  public static final Integer TRANSMIT_CHANN_CONFIG = 46;
-  public static final Integer SERVICE_FLOW_SID_CLUSTER_ASSIGNMENT = 47;
-  public static final Integer RECEIVE_CHANN_PROFILE = 48;
-  public static final Integer RECEIVE_CHANN_CONFIG = 49;
-  public static final Integer DSID_ENCS = 50;
-  public static final Integer SECURITY_ASSOCIATION_ENC = 51;
-  public static final Integer INITIALIZING_CHANN_TIMEOUT = 52;
-  public static final Integer SNMPV1V2C_COEXIST = 53;
-  public static final Integer SNMPV3_ACC_VIEW = 54;
-  public static final Integer SNMP_CPE_ACC_CTRL = 55;
-  public static final Integer CHANN_ASSIGNMENT = 56;
-  public static final Integer CM_INIT_REASON = 57;
-  public static final Integer SW_UPGRADE_IPV6_TFTP_SRV = 58;
-  public static final Integer TFTP_SRV_PROVISIONED_MODEMIPV6_ADDRESS = 59;
-  public static final Integer US_DROP_PKT_CLASS = 60;
-  public static final Integer SUB_MGMT_CPE_IPV6_PREFIXLIST = 61;
-  public static final Integer US_DROP_CLASSIFIER_GROUP_ID = 62;
-  public static final Integer SUB_MGMT_CTRL_MAX_CPEIPV6_ADDRESSES = 63;
-  public static final Integer CMTS_STATIC_MULTICAST_SESSION_ENC = 64;
-  public static final Integer L2VPN_MAC_AGING_ENC = 65;
-  public static final Integer MGT_EVENT_CTRL_ENC = 66;
-  public static final Integer SUB_MGMT_CPE_IPV6_LIST = 67;
-  public static final Integer DEFAULT_US_TARGET_BUFFER_CONFIG = 68;
-  public static final Integer MAC_ADDR_LEARN_CTRL_ENC = 69;
-  public static final Integer US_AGGREGATE_SERVICE_FLOW = 70;
-  public static final Integer DS_AGGREGATE_SERVICEFLOW = 71;
-  public static final Integer MESP = 72;
-  public static final Integer NETWORK_TIMING_PROFILE = 73;
-  public static final Integer ENERGY_MGT_PARA_ENC = 74;
-  public static final Integer ENERGY_MGT_MODE_INDICATOR = 75;
-  public static final Integer END_OF_FILE = 255;
+  // Boxed compatibility aliases; wire IDs are owned by DocsisTlvTypes.
+  public static final Integer PAD = DocsisTlvTypes.PAD;
+  public static final Integer DS_FREQUENCY = DocsisTlvTypes.DS_FREQUENCY;
+  public static final Integer US_CHANN_ID = DocsisTlvTypes.US_CHANN_ID;
+  public static final Integer NETWORK_ACC_CTRL_OBJ = DocsisTlvTypes.NETWORK_ACC_CTRL_OBJ;
+  public static final Integer DOC_10_CLASS_OF_SERV = DocsisTlvTypes.DOC_10_CLASS_OF_SERV;
+  public static final Integer MODEM_CAP = DocsisTlvTypes.MODEM_CAP;
+  public static final Integer CM_MIC = DocsisTlvTypes.CM_MIC;
+  public static final Integer CMTS_MIC = DocsisTlvTypes.CMTS_MIC;
+  public static final Integer VENDOR_ID_ENC = DocsisTlvTypes.VENDOR_ID_ENC;
+  public static final Integer SW_UPGRADE_FILENAME = DocsisTlvTypes.SW_UPGRADE_FILENAME;
+  public static final Integer SNMP_WRITE_ACC_CTRL = DocsisTlvTypes.SNMP_WRITE_ACC_CTRL;
+  public static final Integer SNMP_MIB_OBJ = DocsisTlvTypes.SNMP_MIB_OBJ;
+  public static final Integer MODEM_IP_ADDR = DocsisTlvTypes.MODEM_IP_ADDR;
+  public static final Integer SRV_NOT_AVA_RSP = DocsisTlvTypes.SRV_NOT_AVA_RSP;
+  public static final Integer CPE_ETH_MAC_ADDR = DocsisTlvTypes.CPE_ETH_MAC_ADDR;
+  public static final Integer TELEPHONE_SETTINGS_OPTION = DocsisTlvTypes.TELEPHONE_SETTINGS_OPTION;
+  public static final Integer BPI = DocsisTlvTypes.BPI;
+  public static final Integer MAX_CPES = DocsisTlvTypes.MAX_CPES;
+  public static final Integer TFTP_SRV_TIMESTAMP = DocsisTlvTypes.TFTP_SRV_TIMESTAMP;
+  public static final Integer TFTP_SRV_PROV_MODEM_IPV4_ADDR =
+      DocsisTlvTypes.TFTP_SRV_PROV_MODEM_IPV4_ADDR;
+  public static final Integer SW_UPGRADE_IPV4_TFTP_SRV = DocsisTlvTypes.SW_UPGRADE_IPV4_TFTP_SRV;
+  public static final Integer US_PKT_CLASS = DocsisTlvTypes.US_PKT_CLASS;
+  public static final Integer DS_PKT_CLASS = DocsisTlvTypes.DS_PKT_CLASS;
+  public static final Integer US_SERVICE_FLOW = DocsisTlvTypes.US_SERVICE_FLOW;
+  public static final Integer DS_SERVICE_FLOW = DocsisTlvTypes.DS_SERVICE_FLOW;
+  public static final Integer PHS = DocsisTlvTypes.PHS;
+  public static final Integer HMAC_DIGEST = DocsisTlvTypes.HMAC_DIGEST;
+  public static final Integer MAX_NUM_CLASS = DocsisTlvTypes.MAX_NUM_CLASS;
+  public static final Integer PRIVACY_ENABLE = DocsisTlvTypes.PRIVACY_ENABLE;
+  public static final Integer AUTHORIZATION_BLOCK = DocsisTlvTypes.AUTHORIZATION_BLOCK;
+  public static final Integer KEY_SEQUENCE_NUMBER = DocsisTlvTypes.KEY_SEQUENCE_NUMBER;
+  public static final Integer MANUFACTURER_CVC = DocsisTlvTypes.MANUFACTURER_CVC;
+  public static final Integer CO_SIGNER_CVC = DocsisTlvTypes.CO_SIGNER_CVC;
+  public static final Integer SNMPV3_KICKSTART_VALUE = DocsisTlvTypes.SNMPV3_KICKSTART_VALUE;
+  public static final Integer SUB_MGMT_CTRL = DocsisTlvTypes.SUB_MGMT_CTRL;
+  public static final Integer SUB_MGMT_CPE_IPV4_LIST = DocsisTlvTypes.SUB_MGMT_CPE_IPV4_LIST;
+  public static final Integer SUB_MGMT_FILTER_GROUPS = DocsisTlvTypes.SUB_MGMT_FILTER_GROUPS;
+  public static final Integer SNMPV3_NOTIFICATION_RCVR = DocsisTlvTypes.SNMPV3_NOTIFICATION_RCVR;
+  public static final Integer ENABLE_20_MODE = DocsisTlvTypes.ENABLE_20_MODE;
+  public static final Integer ENABLE_TEST_MODES = DocsisTlvTypes.ENABLE_TEST_MODES;
+  public static final Integer DS_CHANN_LIST = DocsisTlvTypes.DS_CHANN_LIST;
+  public static final Integer STATIC_MULTICAST_MAC_ADDRESS =
+      DocsisTlvTypes.STATIC_MULTICAST_MAC_ADDRESS;
+  public static final Integer DOC_EXT_FIELD = DocsisTlvTypes.DOC_EXT_FIELD;
+  public static final Integer VENDOR_SPECIFIC_CAP = DocsisTlvTypes.VENDOR_SPECIFIC_CAP;
+  public static final Integer DS_UNENCRYPTED_TRAFFIC_FLTR =
+      DocsisTlvTypes.DS_UNENCRYPTED_TRAFFIC_FLTR;
+  public static final Integer TRANSMIT_CHANN_CONFIG = DocsisTlvTypes.TRANSMIT_CHANN_CONFIG;
+  public static final Integer SERVICE_FLOW_SID_CLUSTER_ASSIGNMENT =
+      DocsisTlvTypes.SERVICE_FLOW_SID_CLUSTER_ASSIGNMENT;
+  public static final Integer RECEIVE_CHANN_PROFILE = DocsisTlvTypes.RECEIVE_CHANN_PROFILE;
+  public static final Integer RECEIVE_CHANN_CONFIG = DocsisTlvTypes.RECEIVE_CHANN_CONFIG;
+  public static final Integer DSID_ENCS = DocsisTlvTypes.DSID_ENCS;
+  public static final Integer SECURITY_ASSOCIATION_ENC = DocsisTlvTypes.SECURITY_ASSOCIATION_ENC;
+  public static final Integer INITIALIZING_CHANN_TIMEOUT =
+      DocsisTlvTypes.INITIALIZING_CHANN_TIMEOUT;
+  public static final Integer SNMPV1V2C_COEXIST = DocsisTlvTypes.SNMPV1V2C_COEXIST;
+  public static final Integer SNMPV3_ACC_VIEW = DocsisTlvTypes.SNMPV3_ACC_VIEW;
+  public static final Integer SNMP_CPE_ACC_CTRL = DocsisTlvTypes.SNMP_CPE_ACC_CTRL;
+  public static final Integer CHANN_ASSIGNMENT = DocsisTlvTypes.CHANN_ASSIGNMENT;
+  public static final Integer CM_INIT_REASON = DocsisTlvTypes.CM_INIT_REASON;
+  public static final Integer SW_UPGRADE_IPV6_TFTP_SRV = DocsisTlvTypes.SW_UPGRADE_IPV6_TFTP_SRV;
+  public static final Integer TFTP_SRV_PROVISIONED_MODEMIPV6_ADDRESS =
+      DocsisTlvTypes.TFTP_SRV_PROVISIONED_MODEMIPV6_ADDRESS;
+  public static final Integer US_DROP_PKT_CLASS = DocsisTlvTypes.US_DROP_PKT_CLASS;
+  public static final Integer SUB_MGMT_CPE_IPV6_PREFIXLIST =
+      DocsisTlvTypes.SUB_MGMT_CPE_IPV6_PREFIXLIST;
+  public static final Integer US_DROP_CLASSIFIER_GROUP_ID =
+      DocsisTlvTypes.US_DROP_CLASSIFIER_GROUP_ID;
+  public static final Integer SUB_MGMT_CTRL_MAX_CPEIPV6_ADDRESSES =
+      DocsisTlvTypes.SUB_MGMT_CTRL_MAX_CPEIPV6_ADDRESSES;
+  public static final Integer CMTS_STATIC_MULTICAST_SESSION_ENC =
+      DocsisTlvTypes.CMTS_STATIC_MULTICAST_SESSION_ENC;
+  public static final Integer L2VPN_MAC_AGING_ENC = DocsisTlvTypes.L2VPN_MAC_AGING_ENC;
+  public static final Integer MGT_EVENT_CTRL_ENC = DocsisTlvTypes.MGT_EVENT_CTRL_ENC;
+  public static final Integer SUB_MGMT_CPE_IPV6_LIST = DocsisTlvTypes.SUB_MGMT_CPE_IPV6_LIST;
+  public static final Integer DEFAULT_US_TARGET_BUFFER_CONFIG =
+      DocsisTlvTypes.DEFAULT_US_TARGET_BUFFER_CONFIG;
+  public static final Integer MAC_ADDR_LEARN_CTRL_ENC = DocsisTlvTypes.MAC_ADDR_LEARN_CTRL_ENC;
+  public static final Integer US_AGGREGATE_SERVICE_FLOW = DocsisTlvTypes.US_AGGREGATE_SERVICE_FLOW;
+  public static final Integer DS_AGGREGATE_SERVICEFLOW = DocsisTlvTypes.DS_AGGREGATE_SERVICEFLOW;
+  public static final Integer MESP = DocsisTlvTypes.MESP;
+  public static final Integer NETWORK_TIMING_PROFILE = DocsisTlvTypes.NETWORK_TIMING_PROFILE;
+  public static final Integer ENERGY_MGT_PARA_ENC = DocsisTlvTypes.ENERGY_MGT_PARA_ENC;
+  public static final Integer ENERGY_MGT_MODE_INDICATOR = DocsisTlvTypes.ENERGY_MGT_MODE_INDICATOR;
+  public static final Integer END_OF_FILE = DocsisTlvTypes.END_OF_FILE;
 
   /**
    * Historical OSCAR MIC ordering retained as an immutable compatibility alias. New callers should

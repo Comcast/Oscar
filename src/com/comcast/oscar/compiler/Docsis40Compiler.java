@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public final class Docsis40Compiler extends DocsisCompiler {
-  private final TlvRegistry registry = TlvRegistry.forFamily("docsis40");
+  private final TlvRegistry registry = TlvRegistry.forFamily(TlvRegistry.DOCSIS_40_FAMILY);
   private String secret;
   private byte[] finalized;
 
@@ -315,7 +315,7 @@ public final class Docsis40Compiler extends DocsisCompiler {
       }
       List<Integer> path = new ArrayList<>(parent);
       path.add(type);
-      TlvDefinition definition = TlvRegistry.forFamily("docsis40").find(path);
+      TlvDefinition definition = TlvRegistry.forFamily(TlvRegistry.DOCSIS_40_FAMILY).find(path);
       int width = definition == null ? 1 : definition.lengthBytes();
       if (width > bytes.length - offset)
         throw new IllegalArgumentException("Truncated I12 TLV header at " + path);

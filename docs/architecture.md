@@ -314,6 +314,13 @@ and adds type 59 after type 20. This refactor does not certify the historical
 profile against older specifications. There is one base ordering plus these
 explicit differences, not independently maintained duplicate lists.
 
+`DocsisTlvTypes` owns primitive compile-time wire identifiers. MIC coverage lists
+use those names throughout; the original boxed `Constants` fields are compatibility
+aliases. The identifier owner never depends on MIC rules, avoiding circular class
+initialization. `TlvRegistry` owns named family identifiers used by compiler,
+minimum-validation, dictionary and MIC profile selection; those callers do not
+repeat catalog-name string literals. Tests check alias values and both initialization orders.
+
 The old public MIC list remains a deprecated immutable alias; `getCmMIC(byte[])`
 remains a compatibility delegate. Callers can no longer mutate the global list.
 Standard MIC compilation retains parameter order; the existing extended-MIC

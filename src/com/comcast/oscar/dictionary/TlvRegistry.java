@@ -22,6 +22,14 @@ import org.json.JSONObject;
 
 /** A startup-loaded symbol table, independent of configuration instance values. */
 public final class TlvRegistry {
+  /** Stable catalog identifiers accepted by forFamily; not release versions. */
+  public static final String DOCSIS_FAMILY = "docsis";
+
+  public static final String DOCSIS_40_FAMILY = "docsis40";
+  public static final String DPOE_FAMILY = "dpoe";
+  public static final String DPOG_FAMILY = "dpog";
+  public static final String PACKETCABLE_FAMILY = "packetcable";
+
   private static final Set<String> CODECS =
       Set.of(
           "integer",
@@ -101,25 +109,25 @@ public final class TlvRegistry {
   private static class Catalogs {
     private static final Map<String, TlvRegistry> ALL =
         Map.of(
-            "docsis",
-            load("docsis"),
-            "packetcable",
-            load("packetcable"),
-            "dpoe",
-            load("dpoe"),
-            "dpog",
-            load("dpog"));
+            DOCSIS_FAMILY,
+            load(DOCSIS_FAMILY),
+            PACKETCABLE_FAMILY,
+            load(PACKETCABLE_FAMILY),
+            DPOE_FAMILY,
+            load(DPOE_FAMILY),
+            DPOG_FAMILY,
+            load(DPOG_FAMILY));
   }
 
   public static TlvRegistry forFamily(String family) {
-    if (family.equals("docsis40")) return Docsis40Catalog.INSTANCE;
+    if (family.equals(DOCSIS_40_FAMILY)) return Docsis40Catalog.INSTANCE;
     TlvRegistry registry = Catalogs.ALL.get(family);
     if (registry == null) throw new IllegalArgumentException("Unknown TLV family: " + family);
     return registry;
   }
 
   private static class Docsis40Catalog {
-    private static final TlvRegistry INSTANCE = load("docsis40");
+    private static final TlvRegistry INSTANCE = load(DOCSIS_40_FAMILY);
   }
 
   private static TlvRegistry load(String family) {

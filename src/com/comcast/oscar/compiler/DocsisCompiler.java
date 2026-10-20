@@ -140,12 +140,12 @@ public class DocsisCompiler extends TlvBuilder {
                 || iDocsisVersion == ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE
             ? DocsisMicRules.Coverage.DOCSIS_31_AND_40
             : DocsisMicRules.Coverage.LEGACY_COMPATIBILITY;
-    String family = "docsis";
+    String family = TlvRegistry.DOCSIS_FAMILY;
     if (iDocsisVersion == ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE) {
-      family = "docsis40";
+      family = TlvRegistry.DOCSIS_40_FAMILY;
     } else if (iDocsisVersion == ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE
         || iDocsisVersion == ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE) {
-      family = "dpoe";
+      family = TlvRegistry.DPOE_FAMILY;
     }
     byte[] finalized =
         DocsisMicFinalizer.finish(

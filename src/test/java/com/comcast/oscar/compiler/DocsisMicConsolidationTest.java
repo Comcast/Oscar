@@ -176,6 +176,36 @@ class DocsisMicConsolidationTest {
     }
   }
 
+  @Test
+  void wireIdentifiersHaveOnePrimitiveOwnerAndPreserveBoxedAliases() throws Exception {
+    var owner = com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes.class;
+    var aliases = com.comcast.oscar.cablelabsdefinitions.Constants.class;
+    for (var field : owner.getFields()) {
+      assertEquals(int.class, field.getType(), field.getName());
+      assertTrue(java.lang.reflect.Modifier.isFinal(field.getModifiers()));
+      assertEquals(Integer.class, aliases.getField(field.getName()).getType());
+      assertEquals(field.getInt(null), aliases.getField(field.getName()).get(null));
+    }
+  }
+
+  @Test
+  void compatibilityAliasIsIndependentOfClassInitializationOrder() throws Exception {
+    String constants = "com.comcast.oscar.cablelabsdefinitions.Constants";
+    String rules = "com.comcast.oscar.compiler.DocsisMicRules";
+    var location = DocsisMicRules.class.getProtectionDomain().getCodeSource().getLocation();
+    for (String first : List.of(constants, rules)) {
+      try (var loader =
+          new java.net.URLClassLoader(
+              new java.net.URL[] {location}, ClassLoader.getPlatformClassLoader())) {
+        Class.forName(first, true, loader);
+        var alias =
+            Class.forName(constants, true, loader).getField("DOCSIS_CMTS_MIC_TLV_LIST").get(null);
+        assertEquals(
+            DocsisMicRules.orderedTypes(DocsisMicRules.Coverage.LEGACY_COMPATIBILITY), alias);
+      }
+    }
+  }
+
   private static byte[] independentHmac(byte[] input) throws Exception {
     Mac mac = Mac.getInstance("HmacMD5");
     mac.init(new SecretKeySpec(KEY.getBytes(StandardCharsets.UTF_8), "HmacMD5"));
