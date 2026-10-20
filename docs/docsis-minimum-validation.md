@@ -1,5 +1,7 @@
 # DOCSIS minimum top-level validation
 
+For other families, see [minimum configuration by file type](minimum-configuration.md).
+
 OSCAR checks the minimum top-level settings at complete-file finalization, after
 text parsing and TLV insertions, before writing a compiled file. Incomplete drafts
 and codec fragments can still be imported and exported through the low-level APIs.

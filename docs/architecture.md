@@ -220,6 +220,10 @@ compiling with OSCAR; validating a nested statement at the root is incorrect.
 
 ## Complete-file minimum validation
 
+The user-facing [minimum configuration matrix](minimum-configuration.md) records
+which family compilers enforce required settings and which checks remain absent.
+Update that guide whenever family minimum-validation behavior changes.
+
 `DocsisMinimumRequirements` owns top-level minimum checks as a public, stateless
 module shared by compilers and UI/API callers. It accepts text or binary files
 with explicit `InputFormat` and `DocsisVersion` enums, or in-memory text/bytes.
