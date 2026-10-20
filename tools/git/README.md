@@ -30,3 +30,11 @@ No versions, commits, tags, or releases are created. For release publication,
 use the separate [development instructions](../../docs/wiki/development.md).
 
 Keep this inventory and its examples current when helpers change.
+
+### Test output during push checks
+
+JUnit stdout/stderr, including the intentional DEBUG round-trip test, is saved
+in `target/surefire-reports/*-output.txt`. Maven test failures still fail the
+push checks and display failure summaries. Inspect those output files and the
+corresponding test reports when troubleshooting. To stream test output during a manual diagnostic run, use
+`mvn -Dmaven.test.redirectTestOutputToFile=false test`.

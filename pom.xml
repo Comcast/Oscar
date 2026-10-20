@@ -11,6 +11,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
+    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <log4j.version>2.25.3</log4j.version>
   </properties>
 
@@ -162,6 +163,7 @@
         <version>3.5.2</version>
         <configuration>
           <useModulePath>false</useModulePath>
+          <redirectTestOutputToFile>${maven.test.redirectTestOutputToFile}</redirectTestOutputToFile>
           <systemPropertyVariables>
             <oscar.snmp.cache.path>${project.build.directory}/test-snmp-cache/res/DottedTextualNetSNMPMap.json</oscar.snmp.cache.path>
           </systemPropertyVariables>
