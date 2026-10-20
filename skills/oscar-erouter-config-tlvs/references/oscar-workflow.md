@@ -1,6 +1,8 @@
 # OSCAR implementation workflow
 
-This skill prepares future work; it does not add TLVs or change codecs.
+The source-backed relative-path catalog is `res/tlv-registry/erouter.json`.
+It is staged and not loaded by runtime profiles. See `docs/architecture.md`
+for composition, unresolved encoding gates and the activation checklist.
 
 ## Trace points
 
