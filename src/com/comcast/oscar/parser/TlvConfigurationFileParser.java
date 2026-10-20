@@ -175,14 +175,14 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     if (logger.isDebugEnabled())
       logger.debug("TlvConfigurationFileParser.enterSnmp() " + ctx.getStart().getText());
 
-    validateTlvName(ctx.getStart().getText());
+    JSONObject definition = validateTlvName(ctx.getStart().getText());
     aqsSubTypeHierarchyStack.push(ctx.getStart().getText());
 
     if (logger.isDebugEnabled())
       logger.debug(
           "TlvConfigurationFileParser.enterSnmp(): ArrayDeque:  " + aqsSubTypeHierarchyStack);
 
-    DictionaryTLV.updateDictionaryValue(aqsSubTypeHierarchyStack, valueTarget(), ctx);
+    DictionaryTLV.updateDictionaryValue(aqsSubTypeHierarchyStack, definition, ctx);
 
     try {
       miiTopLevelTypeToNumByteLength.put(

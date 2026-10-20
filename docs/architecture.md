@@ -183,3 +183,22 @@ See [OpenCable verification](opencable-verification.md) for
 source interpretations, test coverage, compatibility changes and the hardware
 acceptance checklist. Historical cipher assignments are encoding facts, not
 recommendations to enable obsolete TLS suites.
+
+## SNMP VarBind naming and editing contract
+
+When adding a specification-backed SNMP VarBind definition, use the OSCAR grammar
+statement matching its TLV length field: `Snmp11` for the one-byte-length form,
+and `Snmp64` for the two-byte-length form. Length means the outer TLV length
+field width, not payload size or the SNMP BER length. Preserve the numeric TLV
+path and confirm type/length encoding against the applicable specification;
+naming does not authorize changing wire types.
+
+This convention applies to complete SNMP VarBinds (OID, type, value), not bare
+OID-valued settings such as access-view subtrees. Do not rename every `oid`
+codec entry. New VarBind entries must agree across registry, grammar, parser,
+exporter and UI, including nested parent paths. Avoid ambiguous `SnmpOID`
+VarBind names. Cover independent wire bytes and binary/text round trips.
+
+The UI presents OID, Type and Value fields for supported VarBind statements.
+Validation must wrap nested statements in their actual registry ancestors before
+compiling with OSCAR; validating a nested statement at the root is incorrect.

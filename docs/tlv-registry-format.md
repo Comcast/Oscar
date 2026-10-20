@@ -96,3 +96,20 @@ complete byte pairs, with a maximum of 254 bytes per instance. Inner service
 semantics are not checked. This fragment is not a deployable voice configuration.
 See [architecture compatibility notes](architecture.md#compatibility-and-opaque-esafe-payloads)
 for removed legacy entries and deferred services.
+
+## SNMP statement names
+
+For complete VarBind fields, OSCAR uses `Snmp11` with a one-byte TLV length
+field and `Snmp64` with a two-byte length field. These are grammar identifiers;
+retain specification terminology in the description. This rule does not apply
+to bare object identifiers such as access-view subtrees. See the
+[architecture contract](architecture.md#snmp-varbind-naming-and-editing-contract).
+
+DPoE's existing 217.11 VarBind is now named `Snmp11` instead of `SnmpOID`.
+Its numeric path, one-byte length, and BER payload are unchanged. Existing
+text using `SnmpOID` must use `Snmp11 OID Type "value";` under `eSTBConfig`.
+A blank old placeholder is not a complete SNMP statement. No new grammar
+production is needed: the existing Snmp11 production already accepts the
+OID, type and value fields. DPoE 1.0 and 2.0 share this catalog; regression
+coverage verifies both export routes. This naming correction does not claim
+new DPoE provisioning conformance or change the legacy support scope.
