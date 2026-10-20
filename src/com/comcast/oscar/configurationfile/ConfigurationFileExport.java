@@ -17,22 +17,21 @@ import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvDisassemble;
 import com.comcast.oscar.tlv.TlvException;
 import com.comcast.oscar.tlv.TlvVariableBinding;
-import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
-import com.comcast.oscar.utilities.JSONTools;
 import com.comcast.oscar.utilities.PrettyPrint;
+import com.comcast.oscar.utilities.TlvTextString;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -44,18 +43,46 @@ public class ConfigurationFileExport {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(ConfigurationFileExport.class);
 
-  /*House the Configuration Byte Array */
-  private byte[] bTLV;
+  // Decoded instance state; export options retain their historical per-instance behavior.
+  private byte[] binary;
 
-  private ArrayList<JSONObject> aljoTopLevelTlvDictionary;
-  private final Integer RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH = -1;
-  private Map<Integer, String> BER_DATA_TYPE = new HashMap<Integer, String>();
-  private TlvDictionary dsqTlvDictionary = null;
-  private String sConfigurationFileStart;
-  private int iConfigurationFileType = -1;
-  private boolean boolVerboseExport = true;
-  private boolean boolDottextOutputFormat = true;
-  private boolean boolTlvCommentSuppress = false;
+  private ArrayList<JSONObject> decodedEntries;
+  private static final int NO_PENDING_CERTIFICATE = -1;
+  private static final int ROOT_CHILD_DEPTH = 1;
+  private static final byte FIRST_TEMPLATE_TYPE = 1;
+  private static final byte TEMPLATE_VALUE = 0;
+  private static final int TEMPLATE_ENTRY_COUNT = 255;
+  // Accept 25 or 202.2.1; reject empty components, signs and nondecimal identifiers.
+  private static final Pattern TLV_PATH_PATTERN = Pattern.compile("[0-9]+(?:\\.[0-9]+)*");
+  private static final String BER_OID_FIELD = "OID";
+  private static final String BER_TYPE_FIELD = "DATA_TYPE";
+  private static final String BER_VALUE_FIELD = "VALUE";
+  private static final String SNMP_STANDARD_NAME = "Snmp11";
+  private static final String SNMP_EXTENDED_NAME = "Snmp64";
+  private static final Map<Integer, String> BER_DATA_TYPE =
+      Map.of(
+          (int) BER.COUNTER32,
+          "Counter32",
+          (int) BER.COUNTER64,
+          "Counter64",
+          (int) BER.GAUGE32,
+          "Gauge32",
+          (int) BER.INTEGER32,
+          "Integer32",
+          (int) BER.TIMETICKS,
+          "TimeTicks",
+          (int) BER.IPADDRESS,
+          "IpAddress",
+          (int) BER.OCTETSTRING,
+          "OctetString",
+          Byte.toUnsignedInt(BERService.HEX),
+          "HexString");
+  private TlvDictionary dictionary = null;
+  private String rootName;
+  private final int configurationType;
+  private boolean includeDefaults = true;
+  private boolean textualOids = true;
+  private boolean suppressComments = false;
 
   public final String END_OF_CODE_BLOCK = "\\*EOCB*\\";
 
@@ -93,719 +120,349 @@ public class ConfigurationFileExport {
 
   public static final Boolean SUPPRESS_TLV_COMMENT = true;
 
-  /**
-   * @deprecated Use {@link #ConfigurationFileExport(File, int)} with an explicit configuration
-   *     type.
-   * @param fTLV - Configuration File - Only support DOCSIS and PacketCable
-   */
-  @Deprecated
-  public ConfigurationFileExport(File fTLV) {
-
-    // Convert to Byte Array
-    this.bTLV = HexString.fileToByteArray(fTLV);
-
-    logger.debug(() -> "ConfigrationFileExport() -> FileByteLength: " + this.bTLV.length);
-
-    if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-
-    } else {
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
-    }
-
-    init();
-
-    // Build Dictionary
-    tlvToDictionary();
-  }
+  // Input adapters: read bytes once, then select the catalog and decode.
 
   /**
-   * @param fTLV - Will Support all Configuration file Types: DOCSIS, PacketCable and DPoE
-   * @param iConfigurationFileType - Set Configuration Type via Static FIELDS
-   */
-  public ConfigurationFileExport(File fTLV, int iConfigurationFileType) {
-
-    this.bTLV = HexString.fileToByteArray(fTLV);
-
-    // DumpTLV to STDOUT
-
-    logger.debug(() -> TlvBuilder.tlvDump(this.bTLV));
-
-    this.iConfigurationFileType = iConfigurationFileType;
-
-    /* This is to support the deprecated method public ConfigurationFileExport (File fTLV) */
-    if ((iConfigurationFileType <= DOCSIS_PKTCBL)) {
-
-      // Convert to Byte Array
-      this.bTLV = HexString.fileToByteArray(fTLV);
-
-      logger.debug(() -> "ConfigrationFileExport(f,i) -> FileByteLength: " + this.bTLV.length);
-
-      if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
-
-        logger.debug(
-            "Packet Cable Configuration File - Anonomous - ConfigType -> ({})",
-            iConfigurationFileType);
-
-        dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-
-      } else {
-
-        logger.debug(
-            "DOCSIS Configuration File - Anonomous - ConfigType -> ({})", iConfigurationFileType);
-
-        dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
-      }
-
-      init();
-
-    } else if ((iConfigurationFileType >= DOCSIS_VER_10)
-        && (iConfigurationFileType <= DOCSIS_VER_40)) {
-
-      logger.debug("DOCSIS Configuration File - ConfigType -> ({})", iConfigurationFileType);
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
-
-      init();
-
-    } else if ((iConfigurationFileType >= PKT_CBL_VER_10)
-        && (iConfigurationFileType <= PKT_CBL_VER_20)) {
-
-      logger.debug("PacketCable Configuration File - ConfigType -> ({})", iConfigurationFileType);
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-
-      init();
-
-    } else if (iConfigurationFileType
-        == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOG_DICTIONARY_TABLE_NAME);
-      init(iConfigurationFileType);
-    } else if ((iConfigurationFileType >= DPOE_VER_10) && (iConfigurationFileType <= DPOE_VER_20)) {
-
-      logger.debug("DPoE Configuration File - ConfigType -> ({})", iConfigurationFileType);
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
-
-      init(iConfigurationFileType);
-    }
-
-    // Build Dictionary
-    tlvToDictionary();
-  }
-
-  /**
-   * This constructor checks the first Byte to determine if it is a Packet Cable File or DOCSIS File
-   * Byte = 0xFE = Packet Cable
+   * Auto-detects DOCSIS versus PacketCable from a nonempty file; cannot infer its edition.
    *
-   * @deprecated Use {@link #ConfigurationFileExport(TlvBuilder, int)} with an explicit
-   *     configuration type.
-   * @param tbTLV - Will ONLY Support Configuration file Types: DOCSIS and PacketCable
+   * @param file non-null binary file
+   * @throws IllegalArgumentException if the file is empty
+   * @throws UncheckedIOException if the file cannot be read
+   * @deprecated use the explicit configuration-type overload
    */
   @Deprecated
-  public ConfigurationFileExport(TlvBuilder tbTLV) {
-
-    // Convert to Byte Array
-    this.bTLV = tbTLV.toByteArray();
-
-    if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
-
-      logger.debug("ConfigrationFileExport(tb) - PacketCable File");
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-
-    } else {
-
-      logger.debug("ConfigrationFileExport(tb) - DOCSIS File");
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
-    }
-
-    init();
-
-    // Build Dictionary
-    tlvToDictionary();
+  public ConfigurationFileExport(File file) {
+    this(readBinary(file), DOCSIS_PKTCBL);
   }
 
   /**
-   * @param tbTLV
-   * @param iConfigurationFileType
-   */
-  public ConfigurationFileExport(TlvBuilder tbTLV, int iConfigurationFileType) {
-
-    // Convert to Byte Array
-    this.bTLV = tbTLV.toByteArray();
-
-    this.iConfigurationFileType = iConfigurationFileType;
-
-    if ((iConfigurationFileType >= DOCSIS_VER_10) && (iConfigurationFileType <= DOCSIS_VER_40)) {
-
-      logger.debug("DOCSIS Configuration File");
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
-
-      init();
-
-    } else if ((iConfigurationFileType >= PKT_CBL_VER_10)
-        && (iConfigurationFileType <= PKT_CBL_VER_20)) {
-
-      logger.debug("PacketCable Configuration File");
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-
-      init();
-
-    } else if (iConfigurationFileType
-        == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOG_DICTIONARY_TABLE_NAME);
-      init(iConfigurationFileType);
-    } else if ((iConfigurationFileType >= DPOE_VER_10) && (iConfigurationFileType <= DPOE_VER_20)) {
-
-      logger.debug("DPoE Configuration File");
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
-
-      init(iConfigurationFileType);
-    }
-
-    // Build Dictionary
-    tlvToDictionary();
-  }
-
-  /**
-   * @deprecated Use {@link #ConfigurationFileExport(TlvBuilder, int)} with an explicit
-   *     configuration type.
-   * @param tbTLV
-   * @param boolStripFinalize boolean
-   */
-  @Deprecated
-  public ConfigurationFileExport(TlvBuilder tbTLV, boolean boolStripFinalize) {
-
-    if (boolStripFinalize) {
-
-      logger.debug("ConfigrationFileExport(tb,bool) - StripFinalize");
-
-      // Check for PacketCable Marker
-      if (tbTLV.toByteArray()[0] == PacketCableConstants.FILE_MARKER) {
-
-        logger.debug("ConfigrationFileExport(tb,bool) - StripFinalize - PacketCable File");
-
-        try {
-          this.bTLV =
-              ConfigurationFile.stripFinalize(tbTLV, ConfigurationFile.PKT_CBL_VER_20)
-                  .toByteArray();
-        } catch (TlvException e) {
-          e.printStackTrace();
-        }
-
-      } else {
-
-        logger.debug("ConfigrationFileExport(tb,bool) - StripFinalize - DOCSIS File");
-
-        try {
-          this.bTLV =
-              ConfigurationFile.stripFinalize(tbTLV, ConfigurationFile.DOCSIS_VER_31).toByteArray();
-        } catch (TlvException e) {
-          e.printStackTrace();
-        }
-      }
-
-    } else {
-      // Convert to Byte Array
-      this.bTLV = tbTLV.toByteArray();
-    }
-
-    if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-
-    } else {
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
-    }
-
-    init();
-
-    // Build Dictionary
-    tlvToDictionary();
-  }
-
-  /**
-   * @param cfConfigurationFile - Will Support all Configuration file Types: DOCSIS, PacketCable and
-   *     DPoE
-   */
-  public ConfigurationFileExport(ConfigurationFile cfConfigurationFile) {
-
-    // Convert to Byte Array
-    this.bTLV = cfConfigurationFile.toByteArray();
-
-    // DumpTLV to STDOUT
-
-    logger.debug(() -> TlvBuilder.tlvDump(this.bTLV));
-
-    // Update to determine what type of configuration is selected
-    this.iConfigurationFileType = cfConfigurationFile.getConfigurationFileType();
-
-    // Check for DPoE Type Configuration File
-    if (iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOG_DICTIONARY_TABLE_NAME);
-      init(iConfigurationFileType);
-    } else if ((this.iConfigurationFileType >= DPOE_VER_10)
-        && (this.iConfigurationFileType <= DPOE_VER_20)) {
-
-      logger.debug(
-          "ConfigurationFileExport(cf) -> DPoE Configuration File - ConfigType -> ({})",
-          iConfigurationFileType);
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
-
-      init(this.iConfigurationFileType);
-
-    } else {
-
-      if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
-
-        logger.debug(
-            "ConfigurationFileExport(cf) -> PacketCable Configuration File - ConfigType -> ({})",
-            iConfigurationFileType);
-
-        dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-
-        init();
-
-      } else {
-
-        logger.debug(
-            "ConfigurationFileExport(cf) -> DOCSIS Configuration File - ConfigType -> ({})",
-            iConfigurationFileType);
-
-        dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
-
-        init();
-      }
-    }
-
-    // Build Dictionary
-    tlvToDictionary();
-  }
-
-  /**
-   * This will only produce the Full Default Configuration Options
+   * Reads a binary file once and decodes it using the selected configuration family.
    *
-   * @param iConfigurationFileType - Will Support all Configuration file Types: DOCSIS, PacketCable
-   *     and DPoE - Set Configuration Type via Static FIELD
+   * @param file non-null readable binary file
+   * @param configurationType ConfigurationFileTypeConstants family/revision code, or DOCSIS_PKTCBL
+   *     for legacy marker detection
+   * @throws IllegalArgumentException for empty input or an unsupported family
+   * @throws UncheckedIOException if the file cannot be read
    */
-  public ConfigurationFileExport(int iConfigurationFileType) {
+  public ConfigurationFileExport(File file, int configurationType) {
+    this(readBinary(file), configurationType);
+  }
 
-    JSONArray jaTlvDictionary = null;
+  /**
+   * Auto-detects the family from nonempty builder bytes without modifying the builder.
+   *
+   * @param builder non-null binary source
+   * @throws IllegalArgumentException if the source is empty
+   * @deprecated use the explicit configuration-type overload
+   */
+  @Deprecated
+  public ConfigurationFileExport(TlvBuilder builder) {
+    this(Objects.requireNonNull(builder).toByteArray(), DOCSIS_PKTCBL);
+  }
 
-    this.iConfigurationFileType = iConfigurationFileType;
+  /**
+   * Decodes builder bytes without modifying the builder or writing a file.
+   *
+   * @param builder non-null binary source
+   * @param configurationType ConfigurationFileTypeConstants family/revision code
+   * @throws IllegalArgumentException for empty input or an unsupported family
+   */
+  public ConfigurationFileExport(TlvBuilder builder, int configurationType) {
+    this(Objects.requireNonNull(builder).toByteArray(), configurationType);
+  }
 
-    logger.debug("ConfigurationFileExport(i): ConfigurationFileType: {}", iConfigurationFileType);
+  /**
+   * Optionally strips finalization fields before legacy family detection and decoding.
+   *
+   * @param builder non-null binary source; not modified
+   * @param stripFinalize true to remove the family's finalization fields
+   * @throws IllegalArgumentException for empty or unstrippable input
+   * @deprecated use the explicit configuration-type overload
+   */
+  @Deprecated
+  public ConfigurationFileExport(TlvBuilder builder, boolean stripFinalize) {
+    this(legacyBytes(builder, stripFinalize), DOCSIS_PKTCBL);
+  }
 
-    if ((this.iConfigurationFileType >= DOCSIS_VER_10)
-        && (this.iConfigurationFileType <= DOCSIS_VER_40)) {
+  /**
+   * Decodes the configuration's current bytes using its declared family, without modifying it.
+   *
+   * @param configuration non-null source; may contain unfinalized parameters
+   * @throws IllegalArgumentException for empty input or an unsupported family
+   */
+  public ConfigurationFileExport(ConfigurationFile configuration) {
+    this(
+        Objects.requireNonNull(configuration).toByteArray(),
+        configuration.getConfigurationFileType());
+  }
 
-      logger.debug("ConfigurationFileExport(i): DOCSIS -> CONFIGURATION-TYPE");
+  private ConfigurationFileExport(byte[] bytes, int configurationType) {
+    if (bytes.length == 0)
+      throw new IllegalArgumentException("Cannot export an empty binary configuration");
+    this.binary = bytes.clone();
+    this.configurationType = configurationType;
+    selectFormat();
+    if (configurationType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      com.comcast.oscar.compiler.DPoGCompiler.validateEncoding(binary);
+    } else if (configurationType >= DPOE_VER_10 && configurationType <= DPOE_VER_20) {
+      removeNonDictionaryTopLevelTLV();
+    }
+    decodeBinaryEntries();
+  }
 
-      dsqTlvDictionary =
+  /**
+   * Builds a reference template containing the selected catalog's definitions, not valid values.
+   *
+   * @param configurationType explicit ConfigurationFileTypeConstants family/revision code
+   * @throws IllegalArgumentException if the family is unsupported or auto-detection was requested
+   */
+  public ConfigurationFileExport(int configurationType) {
+    if (configurationType < DOCSIS_VER_10)
+      throw new IllegalArgumentException("Templates require an explicit configuration type");
+    this.configurationType = configurationType;
+    selectFormat();
+    // Retain the historical getTlvBuilder() representation of reference templates.
+    binary =
+        configurationType <= DOCSIS_VER_40
+            ? docsisTemplateBytes()
+            : configurationType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE
+                ? new byte[0]
+                : packetCableTemplateBytes();
+    if (configurationType >= DPOE_VER_10 && configurationType <= DPOE_VER_20) {
+      removeNonDictionaryTopLevelTLV();
+    }
+    copyTemplateEntries(dictionary.getAllTlvDefinition(configurationType));
+  }
+
+  private static byte[] readBinary(File file) {
+    try {
+      return Files.readAllBytes(Objects.requireNonNull(file).toPath());
+    } catch (IOException failure) {
+      throw new UncheckedIOException("Cannot read binary configuration", failure);
+    }
+  }
+
+  private static byte[] legacyBytes(TlvBuilder builder, boolean strip) {
+    byte[] bytes = Objects.requireNonNull(builder).toByteArray();
+    if (bytes.length == 0)
+      throw new IllegalArgumentException("Cannot export an empty binary configuration");
+    if (!strip) return bytes;
+    int type = bytes[0] == PacketCableConstants.FILE_MARKER ? PKT_CBL_VER_20 : DOCSIS_VER_31;
+    try {
+      return ConfigurationFile.stripFinalize(builder, type).toByteArray();
+    } catch (TlvException failure) {
+      throw new IllegalArgumentException("Cannot strip configuration finalization fields", failure);
+    }
+  }
+
+  private void selectFormat() {
+    if (configurationType <= DOCSIS_PKTCBL) {
+      boolean packetCable = binary[0] == PacketCableConstants.FILE_MARKER;
+      dictionary =
           new TlvDictionary(
-              iConfigurationFileType == DOCSIS_VER_40
+              packetCable
+                  ? TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME
+                  : TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
+      rootName = packetCable ? "PacketCable-X.X" : "Docsis";
+    } else if (configurationType <= DOCSIS_VER_40) {
+      boolean docsis40 = configurationType == DOCSIS_VER_40;
+      dictionary =
+          new TlvDictionary(
+              docsis40
                   ? TlvDictionary.DOCSIS_40_DICTIONARY_TABLE_NAME
                   : TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
-
-      jaTlvDictionary = dsqTlvDictionary.getAllTlvDefinition(iConfigurationFileType);
-
-      bTLV = docsisPsuedoTLVArray();
-
-      init();
-
-    } else if ((this.iConfigurationFileType >= PKT_CBL_VER_10)
-        && (this.iConfigurationFileType <= PKT_CBL_VER_20)) {
-
-      logger.debug("ConfigurationFileExport(i): PACKET-CABLE -> CONFIGURATION-TYPE");
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
-
-      jaTlvDictionary =
-          dsqTlvDictionary.getAllTlvDefinition(TlvDictionary.CONFIGURATION_FILE_TYPE_PACKET_CABLE);
-
-      bTLV = packetCablePsuedoTLVArray();
-
-      init();
-
-    } else if (iConfigurationFileType
-        == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOG_DICTIONARY_TABLE_NAME);
-      jaTlvDictionary = dsqTlvDictionary.getAllTlvDefinition(iConfigurationFileType);
-      bTLV = new byte[0];
-      initBER();
-      sConfigurationFileStart = "DPoG";
-    } else if ((this.iConfigurationFileType >= DPOE_VER_10)
-        && (this.iConfigurationFileType <= DPOE_VER_20)) {
-
-      logger.debug("ConfigurationFileExport(i): DPoE -> CONFIGURATION-TYPE");
-
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
-
-      jaTlvDictionary =
-          dsqTlvDictionary.getAllTlvDefinition(TlvDictionary.CONFIGURATION_FILE_TYPE_DPOE);
-
-      bTLV = packetCablePsuedoTLVArray();
-
-      init(iConfigurationFileType);
+      rootName = docsis40 ? "Docsis-4.0" : "Docsis";
+    } else if (configurationType >= PKT_CBL_VER_10 && configurationType <= PKT_CBL_VER_20) {
+      dictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+      rootName =
+          configurationType == PKT_CBL_VER_10
+              ? "PacketCable-1.0"
+              : configurationType == PKT_CBL_VER_15 ? "PacketCable-1.5" : "PacketCable-2.0";
+    } else if (configurationType >= DPOE_VER_10 && configurationType <= DPOE_VER_20) {
+      dictionary = new TlvDictionary(TlvDictionary.DPOE_DICTIONARY_TABLE_NAME);
+      rootName = "DPoE";
+    } else if (configurationType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      dictionary = new TlvDictionary(TlvDictionary.DPOG_DICTIONARY_TABLE_NAME);
+      rootName = "DPoG";
+    } else {
+      throw new IllegalArgumentException("Unsupported configuration type: " + configurationType);
     }
-
-    convertJSONArrayDictToJSONObjectArrayList(jaTlvDictionary);
   }
 
+  // Text rendering: emit syntax and annotations; PrettyPrint owns final indentation.
+
   /**
-   * @deprecated Use {@link #toPrettyPrint(boolean)} or {@link #toPrettyPrint(boolean, boolean)}.
-   * @since v1.0.1
-   * @param iIndentation
-   * @return String
+   * Returns the legacy unnormalized text representation, including exporter block markers.
+   *
+   * @param indentation historically ignored; retained for source compatibility
+   * @return banner and raw configuration text
+   * @deprecated use the boolean overloads for normalized tab indentation and LF line endings
    */
   @Deprecated
-  public String toPrettyPrint(int iIndentation) {
-
-    StringBuilder sbTlvPrettyPrint = new StringBuilder(banner());
-
-    logger.debug(
-        () ->
-            "ConfigrationFileExport().toPrettyPrint() -> aljoTopLevelTlvDictionaryLength: "
-                + aljoTopLevelTlvDictionary.size());
-
-    sbTlvPrettyPrint.append(sConfigurationFileStart + " {\n");
-
-    for (JSONObject joTLV : aljoTopLevelTlvDictionary) {
-
-      // Added for Default Configuration file option
-      if (joTLV.length() == 0) {
-        continue;
-      }
-
-      try {
-
-        if (joTLV.getBoolean(Dictionary.ARE_SUBTYPES)) {
-
-          sbTlvPrettyPrint.append("\n\t").append(joTLV.get(Dictionary.TLV_NAME)).append(" {\n");
-
-          sbTlvPrettyPrint.append(
-              topLevelTLVCodeBlock(joTLV.getJSONArray(Dictionary.SUBTYPE_ARRAY), 2));
-
-        } else {
-          sbTlvPrettyPrint.append(topLevelTLVCodeBlock(joTLV, 2));
-        }
-
-      } catch (JSONException e) {
-        e.printStackTrace();
-      }
-    }
-
-    sbTlvPrettyPrint.append("}\n\n");
-
-    return sbTlvPrettyPrint.toString();
+  public String toPrettyPrint(int indentation) {
+    return banner().append(renderBody()).append('\n').toString();
   }
 
   /**
-   * @param boolIncludeDefaultTLV = True == will include default TLV if no value is found
-   * @return String of the Compiled Configuration File
+   * Renders configuration text with tabs, LF endings and the current comment-suppression setting.
+   * Values, repeated occurrences and decoded order are retained; no bytes or files are modified.
+   * For example, NetworkAccess is emitted as a tab-indented statement with TLV path [3].
+   *
+   * @param includeDefaults true to include valueless template entries (except incomplete SNMP
+   *     objects)
+   * @return banner followed by formatted configuration text
+   * @throws IllegalArgumentException if decoded entries cannot be rendered completely
    */
-  public String toPrettyPrint(boolean boolIncludeDefaultTLV) {
-
-    // Deprecated setExportVerbose()
-    this.boolVerboseExport = boolIncludeDefaultTLV;
-
-    // Set ConfigurationFile Type
-    String sConfigurationFile = "";
-
-    for (JSONObject joTLV : aljoTopLevelTlvDictionary) {
-
-      // Added for Default Configuration file option
-      if (joTLV.length() == 0) {
-        continue;
-      }
-
-      try {
-
-        if (joTLV.getBoolean(Dictionary.ARE_SUBTYPES)) {
-
-          sConfigurationFile += ("\n\t") + (joTLV.get(Dictionary.TLV_NAME)) + (" {\n");
-          sConfigurationFile +=
-              (topLevelTLVCodeBlock(joTLV.getJSONArray(Dictionary.SUBTYPE_ARRAY), 2));
-
-        } else {
-          sConfigurationFile += (topLevelTLVCodeBlock(joTLV, 2));
-        }
-
-      } catch (JSONException e) {
-        e.printStackTrace();
-      }
-    }
-
-    com.comcast.oscar.utilities.PrettyPrint ppConfigurationFile =
-        new com.comcast.oscar.utilities.PrettyPrint(
-            (sConfigurationFileStart + " {\n") + (sConfigurationFile) + ("}\n"));
-
-    String sConfigurationOuput = "";
-
-    if (boolTlvCommentSuppress) {
-      sConfigurationOuput =
-          com.comcast.oscar.utilities.TlvTextString.withoutComments(ppConfigurationFile.toString());
-    } else {
-      sConfigurationOuput = ppConfigurationFile.toString();
-    }
-
-    return (banner().toString()) + sConfigurationOuput;
+  public String toPrettyPrint(boolean includeDefaults) {
+    this.includeDefaults = includeDefaults;
+    String formatted = new PrettyPrint(renderBody()).toString();
+    return banner()
+        .append(suppressComments ? TlvTextString.withoutComments(formatted) : formatted)
+        .toString();
   }
 
   /**
-   * @param boolIncludeDefaultTLV True == will include default TLV if no value is found
-   * @param boolTlvCommentSuppress True == will NOT include TLV Comment
-   * @return
+   * Renders text and retains the requested annotation setting for subsequent single-argument calls.
+   * The license/help banner remains present even when TLV comments are suppressed.
+   *
+   * @param includeDefaults true to include valueless template entries, except incomplete SNMP
+   *     objects
+   * @param suppressComments true to omit TLV annotations; quoted comment-like values are preserved
+   * @return banner and formatted configuration text, using tabs and LF endings
+   * @throws IllegalArgumentException if decoded entries cannot be rendered completely
    */
-  public String toPrettyPrint(boolean boolIncludeDefaultTLV, boolean boolTlvCommentSuppress) {
-    this.boolTlvCommentSuppress = boolTlvCommentSuppress;
-    return toPrettyPrint(boolIncludeDefaultTLV);
+  public String toPrettyPrint(boolean includeDefaults, boolean suppressComments) {
+    this.suppressComments = suppressComments;
+    return toPrettyPrint(includeDefaults);
+  }
+
+  private String renderBody() {
+    var output = new StringBuilder(rootName).append(" {\n");
+    try {
+      for (JSONObject entry : decodedEntries) appendEntry(output, entry, ROOT_CHILD_DEPTH);
+    } catch (JSONException failure) {
+      throw new IllegalArgumentException("Cannot render complete configuration text", failure);
+    }
+    return output.append("}\n").toString();
   }
 
   /**
-   * @return Map<Integer,String>
+   * Legacy unimplemented placeholder retained for API compatibility.
+   *
+   * @return null; use getTlvBuilder() to obtain the source bytes
    */
   public Map<Integer, String> toHex() {
     return null;
   }
 
   /**
-   * @return TlvBuilder
-   * @throws TlvException
+   * Returns a new builder containing this exporter's binary representation, without formatting.
+   * Template exporters retain their historical synthetic byte representation.
+   *
+   * @return a new builder; modifying it does not modify this exporter
+   * @throws TlvException if the stored representation cannot be added to a builder
    */
   public TlvBuilder getTlvBuilder() throws TlvException {
-
     TlvBuilder tb = new TlvBuilder();
 
-    tb.add(new HexString(this.bTLV));
+    tb.add(new HexString(this.binary));
 
     return tb;
   }
 
+  // Definition help: bounded path traversal, independent of configuration instance values.
+
   /**
-   * Example: TLV Dot Notation: 25.1.2
+   * Returns the name, wrapped description and input hint for one catalog path, such as 25.1.
+   * Container paths are supported as well as leaves; no configuration state is modified.
    *
-   * @param sTlvDotNotation
-   * @return String
+   * @param path non-null dot-separated decimal TLV identifiers
+   * @return human-readable definition and input hint
+   * @throws IllegalArgumentException if the path is malformed or absent from the selected catalog
    */
-  public String getTlvDefintion(String sTlvDotNotation) {
-
-    String sTlvDescription = "";
-    String sTlvName = "";
-    String sDisplayHint = "";
-
-    List<String> lsTlvDotNotation = new ArrayList<String>();
-
-    lsTlvDotNotation = Arrays.asList(sTlvDotNotation.split("\\."));
-
-    logger.debug("ConfigrationFileExport.getTlvDefintion(): {}", lsTlvDotNotation);
-
-    // Get TLV Dictionary for the Top Level
-    JSONObject joTlvDictionary =
-        dsqTlvDictionary.getTlvDefinition(Integer.decode(lsTlvDotNotation.get(0)));
-
-    // Search for TLV Definition
-    if (lsTlvDotNotation.size() == 1) {
-
-      try {
-        sTlvName = joTlvDictionary.getString(Dictionary.TLV_NAME);
-        sTlvDescription = joTlvDictionary.getString(Dictionary.TLV_DESCRIPTION);
-      } catch (JSONException e) {
-        e.printStackTrace();
-      }
-
-      sDisplayHint = getDisplayHint(joTlvDictionary);
-
-    } else if (lsTlvDotNotation.size() >= 1) {
-
-      int iRecursiveSearch = 0;
-
-      while (iRecursiveSearch < lsTlvDotNotation.size()) {
-
-        logger.debug("ConfigrationFileExport.getTlvDefintion(): WHILE-LOOP");
-
-        try {
-
-          if (joTlvDictionary
-              .getString(Dictionary.TYPE)
-              .equals(lsTlvDotNotation.get(iRecursiveSearch))) {
-
-            if (joTlvDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
-
-              try {
-                JSONArray jaTlvDictionary = joTlvDictionary.getJSONArray(Dictionary.SUBTYPE_ARRAY);
-
-                for (int iIndex = 0; iIndex < jaTlvDictionary.length(); iIndex++) {
-
-                  logger.debug("ConfigrationFileExport.getTlvDefintion(): FOR-LOOP");
-
-                  JSONObject joTlvDictionaryTemp = jaTlvDictionary.getJSONObject(iIndex);
-
-                  if (joTlvDictionaryTemp
-                      .getString(Dictionary.TYPE)
-                      .equals(lsTlvDotNotation.get(iRecursiveSearch + 1))) {
-                    joTlvDictionary = joTlvDictionaryTemp;
-                    iRecursiveSearch++;
-                    break;
-                  }
-                }
-
-              } catch (JSONException e) {
-                e.printStackTrace();
-              }
-
-            } else {
-              sTlvName = joTlvDictionary.getString(Dictionary.TLV_NAME);
-
-              sTlvDescription = joTlvDictionary.getString(Dictionary.TLV_DESCRIPTION);
-
-              sDisplayHint = getDisplayHint(joTlvDictionary);
-
-              iRecursiveSearch++;
-            }
+  public String getTlvDefintion(String path) {
+    Objects.requireNonNull(path, "path");
+    if (!TLV_PATH_PATTERN.matcher(path).matches())
+      throw new IllegalArgumentException("Invalid TLV path: " + path);
+    String[] parts = path.split("\\.");
+    JSONObject definition = dictionary.getTlvDefinition(Integer.parseInt(parts[0]));
+    for (int index = 1; index < parts.length && !definition.isEmpty(); index++) {
+      JSONArray children = definition.optJSONArray(Dictionary.SUBTYPE_ARRAY);
+      JSONObject match = new JSONObject();
+      if (children != null) {
+        int type = Integer.parseInt(parts[index]);
+        for (int child = 0; child < children.length(); child++) {
+          JSONObject candidate = children.getJSONObject(child);
+          if (candidate.getInt(Dictionary.TYPE) == type) {
+            match = candidate;
+            break;
           }
-
-        } catch (JSONException e1) {
-          e1.printStackTrace();
         }
       }
+      definition = match;
     }
-
+    if (definition.isEmpty()) throw new IllegalArgumentException("Unknown TLV path: " + path);
     return "\n\n"
-        + sTlvName
+        + definition.getString(Dictionary.TLV_NAME)
         + ":\n\n"
-        + PrettyPrint.ToParagraphForm(sTlvDescription)
-        + "\n\n"
-        + "String Format:\n"
-        + sDisplayHint;
+        + PrettyPrint.ToParagraphForm(definition.getString(Dictionary.TLV_DESCRIPTION))
+        + "\n\nString Format:\n"
+        + getDisplayHint(definition);
   }
 
   /**
-   * @param iTlvType
-   * @return JSONArray
-   */
-  public JSONArray getTopLevelTLVJSON(int iTlvType) {
-
-    JSONArray jaTopLevelTLV = new JSONArray();
-
-    for (JSONObject joTopLevelTLV : aljoTopLevelTlvDictionary) {
-
-      try {
-
-        if (joTopLevelTLV.getInt(Dictionary.TYPE) == iTlvType) {
-          jaTopLevelTLV.put(joTopLevelTLV);
-        }
-
-      } catch (JSONException e) {
-        e.printStackTrace();
-      }
-    }
-    return jaTopLevelTLV;
-  }
-
-  /**
-   * Method will default to no Verbose
+   * Returns all decoded top-level occurrences of a type in export order.
    *
-   * @param fOutput
-   * @return true is write, false is it did not write
+   * @param type numeric top-level wire identifier
+   * @return a new array containing the original mutable entry objects; edits affect later exports
    */
-  public boolean writeToDisk(File fOutput) {
-    return writeToDisk(fOutput, ConfigurationFileExport.EXPORT_FOUND_TLV);
+  public JSONArray getTopLevelTLVJSON(int type) {
+    var matches = new JSONArray();
+    for (JSONObject entry : decodedEntries) {
+      if (entry.getInt(Dictionary.TYPE) == type) matches.put(entry);
+    }
+    return matches;
+  }
+
+  // File output: serialize text once, using a deterministic charset and managed resources.
+
+  /**
+   * Writes found TLVs as UTF-8 text, replacing the destination file.
+   *
+   * @param output non-null destination file
+   * @return true after a successful write; false for an I/O failure
+   * @throws IllegalArgumentException if text rendering fails
+   */
+  public boolean writeToDisk(File output) {
+    return writeToDisk(output, EXPORT_FOUND_TLV);
   }
 
   /**
-   * @param fOutput
-   * @param boolVerbose
-   * @return true is write, false is it did not write
+   * Writes the same text returned by toPrettyPrint, using UTF-8 and LF line endings.
+   *
+   * @param output non-null destination file; an existing file is replaced
+   * @param includeDefaults true to include template placeholders
+   * @return true after a successful write; false if opening or writing fails
+   * @throws IllegalArgumentException if rendering fails before the file is opened
    */
-  public boolean writeToDisk(File fOutput, boolean boolVerbose) {
-
-    byte[] bConfiguration = HexString.toByteArray(HexString.asciiToHex(toPrettyPrint(boolVerbose)));
-
-    if (bConfiguration == null) {
-
-      logger.debug("ConfigurationFile.writeToDisk() - NULL ByteArray");
-
+  public boolean writeToDisk(File output, boolean includeDefaults) {
+    Objects.requireNonNull(output, "output");
+    String text = toPrettyPrint(includeDefaults);
+    try {
+      Files.writeString(output.toPath(), text, StandardCharsets.UTF_8);
+      return true;
+    } catch (IOException failure) {
+      logger.warn("Cannot write configuration text ({})", failure.getClass().getSimpleName());
       return false;
     }
-
-    logger.debug(
-        () ->
-            "ConfigurationFile.writeToDisk() "
-                + " - Total Byte Count: "
-                + bConfiguration.length
-                + " - FileName: "
-                + fOutput.getName());
-
-    OutputStream out = null;
-
-    if (fOutput.getName() != null) {
-
-      try {
-        out = new FileOutputStream(fOutput);
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      }
-
-    } else if (fOutput.getName().length() != 0) {
-
-      try {
-
-        out = new FileOutputStream(fOutput.getName());
-
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-
-    } else {
-
-      File fCf = null;
-
-      fCf = fOutput;
-
-      try {
-        out = new FileOutputStream(fCf);
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      }
-    }
-
-    try {
-      out.write(bConfiguration);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    try {
-      out.flush();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    try {
-      out.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    return true;
   }
 
   /**
    * @return the ConfigurationFile Type per the ConfigurationFile() field statics
    */
   public int getConfigurationFileType() {
-    if (iConfigurationFileType >= 0) return iConfigurationFileType;
-    if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
+    if (configurationType >= 0) return configurationType;
+    if (binary[0] == PacketCableConstants.FILE_MARKER) {
       return ConfigurationFile.PKT_CBL_VER_20;
     } else {
       return ConfigurationFile.DOCSIS_VER_31;
@@ -813,104 +470,75 @@ public class ConfigurationFileExport {
   }
 
   /**
-   * @param boolDottextOutputFormat TRUE = Textual OID Output , FALSE = Dotted OID Output
+   * @param textualOids TRUE = Textual OID Output , FALSE = Dotted OID Output
    */
-  public void setDotTextOIDOutputFormat(boolean boolDottextOutputFormat) {
-    this.boolDottextOutputFormat = boolDottextOutputFormat;
+  public void setDotTextOIDOutputFormat(boolean textualOids) {
+    this.textualOids = textualOids;
   }
 
   /**
    * DEFAULT = true;
    *
    * @deprecated Use {@link #toPrettyPrint(boolean)} to control export verbosity.
-   * @param boolVerboseExport
+   * @param includeDefaults
    */
   @Deprecated
-  public void setExportVerbose(boolean boolVerboseExport) {
-    this.boolVerboseExport = boolVerboseExport;
+  public void setExportVerbose(boolean includeDefaults) {
+    this.includeDefaults = includeDefaults;
   }
 
-  /* *******************************************************************************
-   * 								Private Methods
-   ********************************************************************************/
+  // Binary decoding and contiguous certificate fragment assembly.
 
-  /** */
-  private void tlvToDictionary() {
-
-    if (iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
-      aljoTopLevelTlvDictionary = new ArrayList<>();
-      var binding = new TlvVariableBinding(bTLV, dsqTlvDictionary.getTopLevelByteLength());
+  /** Decodes entries in wire order and joins only contiguous certificate fragments. */
+  private void decodeBinaryEntries() {
+    if (configurationType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
+      decodedEntries = new ArrayList<>();
+      var binding = new TlvVariableBinding(binary, dictionary.getTopLevelByteLength());
       var decoded =
           new TlvDisassemble(binding, TlvDictionary.DPOG_DICTIONARY_TABLE_NAME).getTlvDictionary();
       for (int index = 0; index < decoded.length(); index++) {
-        aljoTopLevelTlvDictionary.add(decoded.getJSONObject(index));
+        decodedEntries.add(decoded.getJSONObject(index));
       }
       return;
     }
 
-    String sDictionaryTableName;
-
-    // List to start JSON Array Objects
-    aljoTopLevelTlvDictionary = new ArrayList<JSONObject>();
-
-    // Create a TLV Builder
+    String sDictionaryTableName = dictionary.getDictionaryTableName();
+    decodedEntries = new ArrayList<>();
     TlvBuilder tbTLV = new TlvBuilder();
 
-    if (iConfigurationFileType == DOCSIS_PKTCBL) {
-      // Determine what kind of file: DOCSIS or PACKET CABLE
-      if (bTLV[0] == PacketCableConstants.FILE_MARKER) {
-
-        logger.debug("ConfigrationFileExport.tlvToDictionary() -> PACKET-CABLE-FILE-FOUND");
-
-        sDictionaryTableName = TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME;
-
-      } else {
-
-        logger.debug("ConfigrationFileExport.tlvToDictionary() -> DOCSIS-CABLE-FILE-FOUND");
-
-        sDictionaryTableName = TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME;
-      }
-
-      // Get Top Level TLV Dictionary
-      dsqTlvDictionary = new TlvDictionary(sDictionaryTableName);
-    } else {
-      sDictionaryTableName = dsqTlvDictionary.getDictionaryTableName();
-    }
-
     // Build Map to determine the Type to ByteLength Mapping
-    Map<Integer, Integer> miiTopLevelTLV = dsqTlvDictionary.getTopLevelByteLength();
+    Map<Integer, Integer> miiTopLevelTLV = dictionary.getTopLevelByteLength();
 
     // Add TLV Byte Array from Constructor for later processing
-    tbTLV.add(new TlvVariableBinding(bTLV, miiTopLevelTLV));
+    tbTLV.add(new TlvVariableBinding(binary, miiTopLevelTLV));
 
     logger.debug(
         () ->
-            "ConfigrationFileExport.tlvToDictionary() -> "
+            "ConfigrationFileExport.decodeBinaryEntries() -> "
                 + "miiTopLevelTLV.size(): "
                 + miiTopLevelTLV.size()
                 + " -> "
                 + "tbTLV.length(): "
                 + tbTLV.length()
                 + " -> "
-                + "bTLV.length: "
-                + bTLV.length);
+                + "binary.length: "
+                + binary.length);
 
-    int pendingCertificateType = RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH;
+    int pendingCertificateType = NO_PENDING_CERTIFICATE;
     ByteArrayOutputStream pendingCertificate = new ByteArrayOutputStream();
 
     for (byte[] encodedTlv : tbTLV.sortByTopLevelTlv(miiTopLevelTLV)) {
       int tlvType = Byte.toUnsignedInt(encodedTlv[0]);
-      if (pendingCertificateType != RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH
-          && tlvType != pendingCertificateType) {
+      if (pendingCertificateType != NO_PENDING_CERTIFICATE && tlvType != pendingCertificateType) {
         appendCertificate(
             pendingCertificateType, pendingCertificate.toByteArray(), sDictionaryTableName);
         pendingCertificate.reset();
-        pendingCertificateType = RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH;
+        pendingCertificateType = NO_PENDING_CERTIFICATE;
       }
       if (tlvType == Byte.toUnsignedInt(DocsisConstants.EOF)) {
         break;
       }
-      JSONObject definition = dsqTlvDictionary.getTlvDefinition(tlvType);
+      JSONObject definition = dictionary.getTlvDefinition(tlvType);
       if (DataTypeDictionaryReference.DATA_TYPE_MULTI_TLV_BYTE_ARRAY.equals(
           definition.getString(Dictionary.DATA_TYPE))) {
         pendingCertificateType = tlvType;
@@ -921,12 +549,12 @@ public class ConfigurationFileExport {
         }
       } else {
         var binding = new TlvVariableBinding(encodedTlv, miiTopLevelTLV);
-        aljoTopLevelTlvDictionary.add(
+        decodedEntries.add(
             new TlvDisassemble(binding, sDictionaryTableName).getTlvDictionary().getJSONObject(0));
       }
     }
     // Raw API input can end with certificate fragments without an EOF marker.
-    if (pendingCertificateType != RESET_DATA_TYPE_MULTI_TLV_BYTE_ARRAY_SEARCH) {
+    if (pendingCertificateType != NO_PENDING_CERTIFICATE) {
       appendCertificate(
           pendingCertificateType, pendingCertificate.toByteArray(), sDictionaryTableName);
     }
@@ -947,262 +575,72 @@ public class ConfigurationFileExport {
     } catch (TlvException error) {
       throw new IllegalArgumentException("Cannot decode certificate TLV " + certificateType, error);
     }
-    aljoTopLevelTlvDictionary.add(
+    decodedEntries.add(
         new TlvDisassemble(binding, dictionaryName).getTlvDictionary().getJSONObject(0));
   }
 
-  /**
-   * @param joTopLevelTLV
-   * @param iIndentation
-   * @return StringBuilder
-   * @throws JSONException
-   */
-  private StringBuilder topLevelTLVCodeBlock(JSONObject joTopLevelTLV, int iIndentation)
-      throws JSONException {
+  // Container and leaf rendering share one buffer. Markers let PrettyPrint drop empty templates.
 
-    StringBuilder sbTopLevelTLVCodeBlock = new StringBuilder();
-
-    StringBuilder sbIndentation = new StringBuilder();
-
-    if ((!this.boolVerboseExport) && (!(joTopLevelTLV.has(Dictionary.VALUE)))) {
-      return sbTopLevelTLVCodeBlock;
-    }
-
-    for (int iNumIndent = 1; iNumIndent < iIndentation; iNumIndent++) sbIndentation.append('\t');
-
-    // If the Value contain a JSON Array, it can only be a OID
-    if ((joTopLevelTLV.has(Dictionary.VALUE))
-        && (JSONTools.containJSONArray(joTopLevelTLV, Dictionary.VALUE))) {
-
-      JSONArray jaTopLevelTLVOID = joTopLevelTLV.getJSONArray(Dictionary.VALUE);
-
-      // BER decoding already supplies the value representation for its type.
-      // The outer TLV length width must not change that representation.
-      sbTopLevelTLVCodeBlock
-          .append('\t')
-          .append(joTopLevelTLV.get(Dictionary.TLV_NAME))
-          .append(' ')
-          .append(
-              NetSNMP.toOIDFormat(
-                  jaTopLevelTLVOID.getJSONObject(0).getString("OID"), boolDottextOutputFormat))
-          .append(' ')
-          .append(
-              BER_DATA_TYPE.get(
-                  Integer.decode(jaTopLevelTLVOID.getJSONObject(0).getString("DATA_TYPE"))))
-          .append(" ")
-          .append(
-              com.comcast.oscar.utilities.TlvTextString.quote(
-                  jaTopLevelTLVOID.getJSONObject(0).getString("VALUE")))
-          .append(";")
-          .append("\t /* TLV: ")
-          .append(
-              joTopLevelTLV
-                  .get(Dictionary.PARENT_TYPE_LIST)
-                  .toString()
-                  .replace("-1,", "")
-                  .replaceAll(",", "."))
-          .append("*/\n");
-
-      logger.debug("topLevelTLVCodeBlock(jo,i): {}", sbTopLevelTLVCodeBlock);
-
-      // Top Level TLV Only
-    } else {
-
-      if (joTopLevelTLV.has(Dictionary.VALUE)) {
-        sbTopLevelTLVCodeBlock
-            .append('\t')
-            .append(joTopLevelTLV.get(Dictionary.TLV_NAME))
-            .append(' ')
-            .append(
-                com.comcast.oscar.utilities.TlvTextString.format(
-                    joTopLevelTLV.get(Dictionary.VALUE),
-                    joTopLevelTLV.optString(Dictionary.DATA_TYPE)))
-            .append(';')
-            .append("\t /* TLV: ")
-            .append(
-                joTopLevelTLV
-                    .get(Dictionary.PARENT_TYPE_LIST)
-                    .toString()
-                    .replace("-1,", "")
-                    .replaceAll(",", "."))
-            .append("*/\n");
-      } else {
-
-        if ((joTopLevelTLV.get(Dictionary.TLV_NAME).equals("Snmp11"))
-            || (joTopLevelTLV.get(Dictionary.TLV_NAME).equals("Snmp64"))) {
-
-          logger.debug(
-              "++++++++++++++++++++++Ignoring Snmp11 || Snmp64"
-                  + " +++++++++++++++++++++++++++++++++++++");
-
-          return sbTopLevelTLVCodeBlock;
-        }
-
-        sbTopLevelTLVCodeBlock
-            .append('\t')
-            .append(joTopLevelTLV.get(Dictionary.TLV_NAME))
-            .append(' ')
-            .append(';')
-            .append("\t /* TLV: ")
-            .append(
-                joTopLevelTLV
-                    .get(Dictionary.PARENT_TYPE_LIST)
-                    .toString()
-                    .replace("-1,", "")
-                    .replaceAll(",", "."))
-            .append("*/\n");
-      }
-
-      logger.debug("topLevelTLVCodeBlock(jo,i): {}", sbTopLevelTLVCodeBlock);
-    }
-
-    return sbTopLevelTLVCodeBlock;
-  }
-
-  /**
-   * @param jaTopLevelTLV
-   * @param iIndentation
-   * @return StringBuilder
-   * @throws JSONException
-   */
-  private StringBuilder topLevelTLVCodeBlock(JSONArray jaTopLevelTLV, int iIndentation)
-      throws JSONException {
-
-    StringBuilder sbTopLevelTLVCodeBlock = new StringBuilder();
-
-    StringBuilder sbIndentation = new StringBuilder();
-    for (int iNumIndent = 1; iNumIndent < iIndentation; iNumIndent++) sbIndentation.append('\t');
-
-    for (int iJsonArrayIndex = 0; iJsonArrayIndex < jaTopLevelTLV.length(); iJsonArrayIndex++) {
-
-      JSONObject joTopLevelTLVLocal = null;
-
-      try {
-        joTopLevelTLVLocal = jaTopLevelTLV.getJSONObject(iJsonArrayIndex);
-      } catch (JSONException e1) {
-        e1.printStackTrace();
-      }
-
-      try {
-
-        if (joTopLevelTLVLocal.getBoolean(Dictionary.ARE_SUBTYPES)) {
-
-          sbTopLevelTLVCodeBlock
-              .append(sbIndentation)
-              .append('\t')
-              .append(joTopLevelTLVLocal.get(Dictionary.TLV_NAME))
-              .append(" {\n");
-
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "topLevelTLVCodeBlock(ja): "
-                    + joTopLevelTLVLocal.getJSONArray(Dictionary.SUBTYPE_ARRAY).toString());
-
-          sbTopLevelTLVCodeBlock.append(
-              topLevelTLVCodeBlock(
-                  joTopLevelTLVLocal.getJSONArray(Dictionary.SUBTYPE_ARRAY), iIndentation + 1));
-
-        } else {
-          sbTopLevelTLVCodeBlock
-              .append(sbIndentation)
-              .append(topLevelTLVCodeBlock(joTopLevelTLVLocal, iIndentation));
-        }
-
-      } catch (JSONException e) {
-        e.printStackTrace();
-      }
-    }
-
-    sbTopLevelTLVCodeBlock.append(sbIndentation).append("} " + END_OF_CODE_BLOCK + "\n\n");
-
-    return sbTopLevelTLVCodeBlock;
-  }
-
-  /** */
-  private void initBER() {
-    BER_DATA_TYPE.put((int) BER.COUNTER32, "Counter32");
-    BER_DATA_TYPE.put((int) BER.COUNTER64, "Counter64");
-    BER_DATA_TYPE.put((int) BER.GAUGE32, "Gauge32");
-    BER_DATA_TYPE.put((int) BER.INTEGER32, "Integer32");
-    BER_DATA_TYPE.put((int) BER.TIMETICKS, "TimeTicks");
-    BER_DATA_TYPE.put((int) BER.IPADDRESS, "IpAddress");
-    BER_DATA_TYPE.put((int) BER.OCTETSTRING, "OctetString");
-
-    // This Type does not exists as a SNMP DataType, this is only for use in this program
-    BER_DATA_TYPE.put(BinaryConversion.byteToUnsignedInteger(BERService.HEX), "HexString");
-  }
-
-  /** */
-  private void init() {
-
-    initBER();
-
-    if (iConfigurationFileType == DOCSIS_VER_40) {
-      dsqTlvDictionary = new TlvDictionary(TlvDictionary.DOCSIS_40_DICTIONARY_TABLE_NAME);
-      sConfigurationFileStart = "Docsis-4.0";
+  private void appendEntry(StringBuilder output, JSONObject entry, int depth) {
+    if (entry.isEmpty()) return;
+    if (entry.getBoolean(Dictionary.ARE_SUBTYPES)) {
+      if (depth == ROOT_CHILD_DEPTH) output.append('\n');
+      output.append("\t".repeat(depth)).append(entry.getString(Dictionary.TLV_NAME)).append(" {\n");
+      JSONArray children = entry.getJSONArray(Dictionary.SUBTYPE_ARRAY);
+      for (int index = 0; index < children.length(); index++)
+        appendEntry(output, children.getJSONObject(index), depth + 1);
+      output.append("\t".repeat(depth)).append("} ").append(END_OF_CODE_BLOCK).append("\n\n");
       return;
     }
-
-    // Figure Out the Configuration file Type DOCSIS vs. PacketCable
-
-    if (bTLV[0] != PacketCableConstants.FILE_MARKER) {
-      sConfigurationFileStart = "Docsis";
-    } else {
-      if (iConfigurationFileType == PKT_CBL_VER_10) {
-        sConfigurationFileStart = "PacketCable-1.0";
-      } else if (iConfigurationFileType == PKT_CBL_VER_15) {
-        sConfigurationFileStart = "PacketCable-1.5";
-      } else if (iConfigurationFileType == PKT_CBL_VER_20) {
-        sConfigurationFileStart = "PacketCable-2.0";
-      } else {
-        // Deprecated auto-detection cannot infer a PacketCable edition from the marker.
-        sConfigurationFileStart = "PacketCable-X.X";
-      }
+    if (!includeDefaults && !entry.has(Dictionary.VALUE)) return;
+    String name = entry.getString(Dictionary.TLV_NAME);
+    if (!entry.has(Dictionary.VALUE)
+        && (name.equals(SNMP_STANDARD_NAME) || name.equals(SNMP_EXTENDED_NAME))) return;
+    output.append("\t".repeat(depth)).append(name).append(' ');
+    if (entry.opt(Dictionary.VALUE) instanceof JSONArray varbinds) {
+      appendSnmpValue(output, varbinds.getJSONObject(0));
+    } else if (entry.has(Dictionary.VALUE)) {
+      output.append(
+          TlvTextString.format(entry.get(Dictionary.VALUE), entry.optString(Dictionary.DATA_TYPE)));
     }
+    output.append(';');
+    appendTlvAnnotation(output, entry);
   }
 
-  /** Only Non DOCSIS and PacketCable files */
-  private void init(int iConfigurationFileType) {
-
-    initBER();
-
-    if (iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
-      com.comcast.oscar.compiler.DPoGCompiler.validateEncoding(bTLV);
-      sConfigurationFileStart = "DPoG";
-    } else if ((iConfigurationFileType >= DPOE_VER_10) && (iConfigurationFileType <= DPOE_VER_20)) {
-
-      removeNonDictionaryTopLevelTLV();
-
-      sConfigurationFileStart = "DPoE";
-    }
+  private void appendSnmpValue(StringBuilder output, JSONObject varbind) {
+    String type = BER_DATA_TYPE.get(Integer.decode(varbind.getString(BER_TYPE_FIELD)));
+    if (type == null) throw new IllegalArgumentException("Unsupported BER type in text export");
+    output
+        .append(NetSNMP.toOIDFormat(varbind.getString(BER_OID_FIELD), textualOids))
+        .append(' ')
+        .append(type)
+        .append(' ')
+        .append(TlvTextString.quote(varbind.getString(BER_VALUE_FIELD)));
   }
+
+  private void appendTlvAnnotation(StringBuilder output, JSONObject entry) {
+    output
+        .append("\t /* TLV: ")
+        .append(
+            entry.get(Dictionary.PARENT_TYPE_LIST).toString().replace("-1,", "").replace(',', '.'))
+        .append("*/\n");
+  }
+
+  // Reference-template byte representations retained for the legacy builder API.
 
   /**
    * @return byte[]
    */
-  private byte[] docsisPsuedoTLVArray() {
-
+  private byte[] docsisTemplateBytes() {
     ByteArrayOutputStream baosTLV = new ByteArrayOutputStream();
 
-    byte bByte[] = {0x01, 0x01, 0x00};
+    byte[] bByte = {FIRST_TEMPLATE_TYPE, Byte.BYTES, TEMPLATE_VALUE};
 
-    for (int iIndex = 0; iIndex < 255; iIndex++) {
-
-      logger.debug("docsisPsuedoTLVArray() - Index: {}", iIndex);
-
-      logger.debug(
-          () -> "docsisPsuedoTLVArray()" + new HexString(baosTLV.toByteArray()).toString());
-
-      try {
-        baosTLV.write(bByte);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    for (int iIndex = 0; iIndex < TEMPLATE_ENTRY_COUNT; iIndex++) {
+      baosTLV.writeBytes(bByte);
 
       bByte[0]++;
     }
-
-    logger.debug(() -> "docsisPsuedoTLVArray()" + new HexString(baosTLV.toByteArray()).toString());
 
     return baosTLV.toByteArray();
   }
@@ -1210,21 +648,16 @@ public class ConfigurationFileExport {
   /**
    * @return byte[]
    */
-  private byte[] packetCablePsuedoTLVArray() {
-
+  private byte[] packetCableTemplateBytes() {
     ByteArrayOutputStream baosTLV = new ByteArrayOutputStream();
 
-    byte bByte[] = {PacketCableConstants.FILE_MARKER, 0x01, 0x00};
+    byte[] bByte = {PacketCableConstants.FILE_MARKER, Byte.BYTES, TEMPLATE_VALUE};
 
-    for (int iIndex = 0; iIndex < 255; iIndex++) {
-      try {
-        baosTLV.write(bByte);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    for (int iIndex = 0; iIndex < TEMPLATE_ENTRY_COUNT; iIndex++) {
+      baosTLV.writeBytes(bByte);
 
       if (bByte[0] == PacketCableConstants.FILE_MARKER) {
-        bByte[0] = 0x01;
+        bByte[0] = FIRST_TEMPLATE_TYPE;
       } else {
         bByte[0]++;
       }
@@ -1233,43 +666,16 @@ public class ConfigurationFileExport {
     return baosTLV.toByteArray();
   }
 
-  /**
-   * @param jaDict
-   */
-  private void convertJSONArrayDictToJSONObjectArrayList(JSONArray jaDict) {
-
-    aljoTopLevelTlvDictionary = new ArrayList<JSONObject>();
-
-    for (int iIndex = 0; iIndex < jaDict.length(); iIndex++) {
-      try {
-
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "convertJSONArrayDictToJSONObjectArrayList() - Index: "
-                  + iIndex
-                  + " -> "
-                  + jaDict.getJSONObject(iIndex).toString());
-
-        aljoTopLevelTlvDictionary.add(jaDict.getJSONObject(iIndex));
-
-      } catch (JSONException e) {
-        e.printStackTrace();
-      }
+  /** Copies catalog entries in their original order; malformed entries fail immediately. */
+  private void copyTemplateEntries(JSONArray definitions) {
+    decodedEntries = new ArrayList<>(definitions.length());
+    for (int index = 0; index < definitions.length(); index++) {
+      decodedEntries.add(definitions.getJSONObject(index));
     }
-
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "convertJSONArrayDictToJSONObjectArrayList() - ArraySize: "
-              + aljoTopLevelTlvDictionary.size());
   }
 
-  /**
-   * Method banner.
-   *
-   * @return StringBuilder
-   */
+  /** Builds the historical license/help banner; it is independent of TLV comment suppression. */
   private StringBuilder banner() {
-
     StringBuilder sbBanner = new StringBuilder();
 
     sbBanner.append("/*\n");
@@ -1278,8 +684,7 @@ public class ConfigurationFileExport {
 
     sbBanner.append("\tSnmp11 OID DataType Value\n");
 
-    if (this.iConfigurationFileType > DOCSIS_VER_40)
-      sbBanner.append("\tSnmp64 OID DataType Value\n\n");
+    if (this.configurationType > DOCSIS_VER_40) sbBanner.append("\tSnmp64 OID DataType Value\n\n");
     else sbBanner.append('\n');
 
     sbBanner.append(
@@ -1301,120 +706,46 @@ public class ConfigurationFileExport {
     return sbBanner;
   }
 
-  /**
-   * @param joTlvDictionary - JSON OBject of the Dictionary
-   * @return the Hint for the datatype that is used
-   */
-  private String getDisplayHint(JSONObject joTlvDictionary) {
+  // Catalog help and value syntax hints; keep exported field values separate from descriptions.
 
-    String sDisplayHint = "";
-
-    try {
-      if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_DOUBLE_BYTE_ARRAY)) {
-
-        sDisplayHint = DataTypeFormatConversion.DOUBLE_BYTE_ARRAY_FORMAT;
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR)) {
-
-        sDisplayHint = DataTypeFormatConversion.IPV4_TRANSPORT_FORMAT;
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR)) {
-
-        sDisplayHint = DataTypeFormatConversion.IPV6_TRANSPORT_FORMAT;
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_STRING_BITS)) {
-
-        sDisplayHint = DataTypeFormatConversion.STRING_BITS_FORMAT;
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)) {
-
-        sDisplayHint = DataTypeFormatConversion.IPV4_ADDRESS_FORMAT;
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV6_ADDR)) {
-
-        sDisplayHint = DataTypeFormatConversion.IPV6_ADDRESS_FORMAT;
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_OID)) {
-
-        sDisplayHint =
-            "docsDevFilterLLCUnmatchedAction.0 Integer32 \"1\" \n "
-                + "vacmAccessStorageType.'readwritegroup'.''.2.noAuthNoPriv Integer \"2\""
-                + "1.3.6.1.2.1.69.1.3.5 Integer32 \"1\"";
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
-
-        sDisplayHint = "Range: -2,147,483,648 to 2,147,483,647";
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_STRING)) {
-
-        sDisplayHint = "Any ASCII String";
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED)) {
-
-        sDisplayHint = "Any ASCII String with a Terminating NULL at the end /0 or 0x00";
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY)) {
-
-        sDisplayHint = "xx:xx:xx......xx:xx:xx - Example: 01:23:34:56:78:9a:bc:cd:ef";
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
-
-        sDisplayHint =
-            "docsDevFilterLLCUnmatchedAction.0 \n "
-                + "vacmAccessStorageType.'readwritegroup'.''.2.noAuthNoPriv \n"
-                + "1.3.6.1.2.1.69.1.3.5 ";
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_BYTE)) {
-
-        sDisplayHint = "Byte: xx Example ff";
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_MAC_ADDRESS)) {
-
-        sDisplayHint = DataTypeFormatConversion.MAC_ADDRESS_FORMAT;
-
-      } else if (joTlvDictionary
-          .getString(Dictionary.DATA_TYPE)
-          .equals(DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_INET_ADDR)) {
-
-        sDisplayHint =
-            DataTypeFormatConversion.IPV4_TRANSPORT_FORMAT
-                + " \n\nOR\n\n"
-                + DataTypeFormatConversion.IPV6_TRANSPORT_FORMAT;
-      }
-    } catch (JSONException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
-    return sDisplayHint;
+  private String getDisplayHint(JSONObject definition) {
+    return switch (definition.getString(Dictionary.DATA_TYPE)) {
+      case DataTypeDictionaryReference.DATA_TYPE_DOUBLE_BYTE_ARRAY ->
+          DataTypeFormatConversion.DOUBLE_BYTE_ARRAY_FORMAT;
+      case DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR ->
+          DataTypeFormatConversion.IPV4_TRANSPORT_FORMAT;
+      case DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR ->
+          DataTypeFormatConversion.IPV6_TRANSPORT_FORMAT;
+      case DataTypeDictionaryReference.DATA_TYPE_STRING_BITS ->
+          DataTypeFormatConversion.STRING_BITS_FORMAT;
+      case DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR ->
+          DataTypeFormatConversion.IPV4_ADDRESS_FORMAT;
+      case DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV6_ADDR ->
+          DataTypeFormatConversion.IPV6_ADDRESS_FORMAT;
+      case DataTypeDictionaryReference.DATA_TYPE_OID ->
+          "docsDevFilterLLCUnmatchedAction.0 Integer32 \"1\" \n "
+              + "vacmAccessStorageType.'readwritegroup'.''.2.noAuthNoPriv Integer \"2\""
+              + "1.3.6.1.2.1.69.1.3.5 Integer32 \"1\"";
+      case DataTypeDictionaryReference.DATA_TYPE_INTEGER ->
+          "Range: -2,147,483,648 to 2,147,483,647";
+      case DataTypeDictionaryReference.DATA_TYPE_STRING -> "Any ASCII String";
+      case DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED ->
+          "Any ASCII String with a Terminating NULL at the end /0 or 0x00";
+      case DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY ->
+          "xx:xx:xx......xx:xx:xx - Example: 01:23:34:56:78:9a:bc:cd:ef";
+      case DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6 ->
+          "docsDevFilterLLCUnmatchedAction.0 \n "
+              + "vacmAccessStorageType.'readwritegroup'.''.2.noAuthNoPriv \n"
+              + "1.3.6.1.2.1.69.1.3.5 ";
+      case DataTypeDictionaryReference.DATA_TYPE_BYTE -> "Byte: xx Example ff";
+      case DataTypeDictionaryReference.DATA_TYPE_MAC_ADDRESS ->
+          DataTypeFormatConversion.MAC_ADDRESS_FORMAT;
+      case DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_INET_ADDR ->
+          DataTypeFormatConversion.IPV4_TRANSPORT_FORMAT
+              + " \n\nOR\n\n"
+              + DataTypeFormatConversion.IPV6_TRANSPORT_FORMAT;
+      default -> "";
+    };
   }
 
   /**
@@ -1422,16 +753,15 @@ public class ConfigurationFileExport {
    * support 1 byte Length TLVs
    */
   private void removeNonDictionaryTopLevelTLV() {
-
     /* Get TopLevel List*/
-    List<Integer> liTopLevelDict = dsqTlvDictionary.getTopLevelTLV();
+    List<Integer> liTopLevelDict = dictionary.getTopLevelTLV();
 
     List<Integer> liTopLevelCFE = null;
 
     try {
       liTopLevelCFE = getTlvBuilder().getTopLevelTlvList();
-    } catch (TlvException e) {
-      e.printStackTrace();
+    } catch (TlvException failure) {
+      throw new IllegalArgumentException("Cannot read top-level configuration entries", failure);
     }
 
     /*This will create a single instance of each Type */
@@ -1444,6 +774,6 @@ public class ConfigurationFileExport {
     logger.debug("removeNonDictionaryTopLevelTLV() -> CFE remove DICT: {}", liTopLevelCFE);
 
     /*Create new ByteArray*/
-    bTLV = TlvBuilder.fetchTlv(liTopLevelCFE, bTLV);
+    binary = TlvBuilder.fetchTlv(liTopLevelCFE, binary);
   }
 }

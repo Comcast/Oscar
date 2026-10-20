@@ -58,3 +58,12 @@ clears its payload buffer, and starts the next group independently. Tests cover
 both certificate orders and raw inputs ending without an EOF marker, as well as
 finalized configurations. All 24 cases must preserve bytes exactly. This guards
 against the former loss of adjacent CVC entries and duplication of NetworkAccess.
+
+## Exact text output
+
+`ConfigurationFileExportTextTest` adds character-for-character output checks to
+binary round trips: indentation, full TLV paths, repeated containers, SNMP 11/64,
+certificate text, quote-safe comment suppression and family headers. It also
+checks bounded lookup, constructor errors and disk-write behavior. See
+[text export](text-export.md) and the fixed fixtures under
+`src/test/resources/export-text/`.

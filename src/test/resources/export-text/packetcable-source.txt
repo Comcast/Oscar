@@ -1,0 +1,1 @@
+PacketCable-2.0 { TelephonyConfigFileBeginEnd 1; Snmp11 1.3.6.1.2.1.1.5.0 OctetString "lab {x}; /*tag*/"; Snmp64 1.3.6.1.2.1.1.5.0 OctetString "lab {x}; /*tag*/"; TelephonyConfigFileBeginEnd 255; }

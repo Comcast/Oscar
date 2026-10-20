@@ -334,3 +334,20 @@ zero padding needed for four-byte alignment. All string keys use UTF-8.
 - [x] Retain explicit/implicit HMAC-MD5 and MMH regression coverage.
 
 See [MIC API and compatibility notes](mic-verification.md#shared-generation-and-compatibility).
+
+## Configuration text export
+
+`ConfigurationFileExport` separates input/family selection, ordered decoding and
+certificate-fragment assembly, syntax rendering, catalog help, and file writing.
+Input adapters share initialization. One append buffer renders the body; shared
+leaf/SNMP/annotation helpers preserve values and paths. `PrettyPrint` remains the
+owner of final indentation and empty-template-container removal. Public overloads
+and per-instance option persistence remain compatible.
+
+- [x] Replace loop string concatenation and repeated constructor setup.
+- [x] Document rendering stages, public contracts and shared immutable BER names.
+- [x] Preserve exact body formatting with fixed pre-refactor fixtures.
+- [x] Keep binary round trips and all-family template coverage as regression gates.
+- [x] Bound definition lookup and reject incomplete rendering; report write failures.
+
+See [text export](text-export.md) for the output and error contracts.
