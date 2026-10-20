@@ -6,6 +6,10 @@ The internal regular-family identifier is DOCSIS_VER_31; no D4 support is claime
 ## Source decisions
 
 - Sections 15.1.1 and 15.2 place the settings beneath 217.
+- [CM-SP-eDOCSIS-I30-190213](https://account.cablelabs.com/server/alfresco/2cc53697-0e59-4983-a5ae-c08d4ab70136),
+  section 5.2.8.1, printed p.47 permits multiple eSAFE containers and requires
+  forwarding their contents in received order. Regular DOCSIS 217 therefore
+  uses `maxInstances: -1`. This does not relax child-specific repetition rules.
 - Section 15.2.1.4 prints `1.32`. OSCAR interprets this as 1–32 octets,
   consistent with the view-name index in [RFC 3415](https://www.rfc-editor.org/rfc/rfc3415.html).
   This is a documented interpretation, not an identified CableLabs erratum.
@@ -15,10 +19,14 @@ The internal regular-family identifier is DOCSIS_VER_31; no D4 support is claime
 - The duplicate-child wording referencing “54.4” remains a source ambiguity.
   OSCAR preserves supplied instances rather than implementing device discard rules.
 - Section 15.2.4–5 places VendorID first inside 43. Legacy standalone 217.8
-  remains readable but is ignored by devices according to the source.
+  is removed from the registry; use 217.43.8.
 
 ## Compatibility changes and verified behavior
 
+- Multiple `eSTBConfig` blocks are supported in regular `Docsis` text.
+  Container boundaries and encounter order survive binary/text round trips.
+  Each container must contain complete child TLVs; automatic fragmentation or
+  reassembly of children split across containers is not implemented.
 - Repeated 217 children no longer overwrite each other's values. Import and
   export preserve their encounter order, even when InstanceNumber is not sorted.
 - Use `Snmp11 OID Type "value";` inside `eSTBConfig`; legacy `SnmpOID` was not
@@ -42,7 +50,9 @@ The internal regular-family identifier is DOCSIS_VER_31; no D4 support is claime
 round trips for IPv4/IPv6 prefixes, repeated prefixes in unsorted instance order,
 SNMP VarBind, coexistence address/mask, repeated IPv6 transport rows, notification
 receiver fields, access-view OID/mask, and nested VendorID. It checks port boundaries
-and rejection of unknown/truncated nested data. D4 isolation is also checked.
+and rejection of unknown/truncated nested data. Repeated parent tests compare
+explicit wire vectors, identical duplicates, interleaved top-level TLVs and
+complete finalized file bytes including regenerated MICs. D4 isolation is also checked.
 Run `mvn -Dtest=OpenCableRegistryTest test`, then `tools/run-all.sh`.
 
 ## Hardware acceptance — pending

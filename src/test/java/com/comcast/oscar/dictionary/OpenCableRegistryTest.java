@@ -15,6 +15,41 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class OpenCableRegistryTest {
   @org.junit.jupiter.api.Test
+  void repeatedContainersPreserveBoundariesAndEncounterOrder() throws Exception {
+    assertEquals(-1, TlvRegistry.forFamily("docsis").find(List.of(217)).maxInstances());
+    assertRoundTrip(
+        "Docsis { eSTBConfig { VendorSpecificInformation { VendorID 001122; } }"
+            + " NetworkAccess 1; eSTBConfig { IPModeControl 2; } }",
+        HexFormat.of().parseHex("d9072b050803001122030101d903010102"));
+    // Duplicating a container preserves bytes; device-level child semantics are separate.
+    assertRoundTrip(
+        "Docsis { eSTBConfig { VendorSpecificInformation { VendorID 001122; } }"
+            + " eSTBConfig { VendorSpecificInformation { VendorID 001122; } } }",
+        HexFormat.of().parseHex("d9072b050803001122d9072b050803001122"));
+  }
+
+  @org.junit.jupiter.api.Test
+  void repeatedContainersPreserveFinalizedMicBytes() throws Exception {
+    var imported =
+        new ConfigurationFileImport(
+            new StringBuilder(
+                "Docsis { NetworkAccess 1; eSTBConfig { VendorSpecificInformation { VendorID"
+                    + " 001122; } } eSTBConfig { IPModeControl 2; } }"));
+    var original =
+        new com.comcast.oscar.configurationfile.ConfigurationFile(
+            imported.getConfigurationFileType(), imported.getTlvBuilder(), "public-lab-key");
+    original.commit();
+    var decoded =
+        new ConfigurationFileImport(
+            new StringBuilder(new ConfigurationFileExport(original).toPrettyPrint(false)));
+    var rebuilt =
+        new com.comcast.oscar.configurationfile.ConfigurationFile(
+            decoded.getConfigurationFileType(), decoded.getTlvBuilder(), "public-lab-key");
+    rebuilt.commit();
+    assertArrayEquals(original.toByteArray(), rebuilt.toByteArray());
+  }
+
+  @org.junit.jupiter.api.Test
   void repeatedPrefixesPreserveInstances() throws Exception {
     String text =
         "Docsis { eSTBConfig { HomeNetworkPrefixValidation { InstanceNumber 2; PrefixUsage 2;"

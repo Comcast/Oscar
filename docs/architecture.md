@@ -112,6 +112,7 @@ for tests and published examples.
 - [ ] Integrate editor-specific applicability and sensitivity metadata.
 - [x] Review OpenCable/eSTB I17 and activate the verified subset beneath 217.
 - [x] Verify eSTB SNMP/vendor encodings and repeated instances.
+- [x] Allow repeated DOCSIS eSTB parents; test order, bytes and MIC round trips.
 - [ ] Validate eSTB provisioning on hardware and device-specific dependencies.
 - [ ] Review eMTA specifications before adding its catalog.
 
@@ -167,12 +168,18 @@ legacy family (internally named DOCSIS_VER_31); this is not a claim of D3.1 hard
 
 All 34 source definitions are attached: IP mode, prefix validation, notification
 receivers, SNMP coexistence/access views, VarBind, vendor container/ID and SEB
-cipher bitmap. Legacy standalone 217.8 remains for compatibility but the source
-places meaningful VendorID at 217.43.8. Opaque vendor child definitions are not
+cipher bitmap. Legacy standalone 217.8 is removed; the supported VendorID
+is 217.43.8. Opaque vendor child definitions are not
 invented. Nested `Snmp11` replaces the unusable legacy `SnmpOID` spelling; scalar
 VarBind syntax uses the existing grammar. Vendor data uses nested form, not an
 opaque hexadecimal value on the container. Notification numeric fields now use
 decimal integers of the specified width (previously raw hexadecimal).
+
+Regular DOCSIS parent 217 has `maxInstances: -1`: eDOCSIS I30 section
+5.2.8.1 permits multiple eSAFE containers and requires forwarding their contents
+in received order. Child-specific repetition rules still apply. Each supported
+container must contain complete child TLVs; automatic fragmentation and
+reassembly of children split across containers remain unsupported.
 
 For 217, import creates independent instances in encounter order; export walks
 bounded child payloads in wire order and rejects unknown/truncated child data.
