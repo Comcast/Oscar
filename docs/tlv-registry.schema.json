@@ -35,19 +35,7 @@
       "items": {
         "$ref": "#/$defs/definition"
       }
-    },
-    "attachments": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/attachment"
-      }
     }
-  },
-  "not": {
-    "required": [
-      "parentPath",
-      "attachments"
-    ]
   },
   "$defs": {
     "path": {
@@ -135,36 +123,10 @@
         },
         "description": {
           "type": "string"
-        }
-      }
-    },
-    "attachment": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "parentPath",
-        "reference",
-        "includedPaths",
-        "omissions"
-      ],
-      "properties": {
-        "parentPath": {
-          "$ref": "#/$defs/path"
         },
         "reference": {
           "type": "string",
           "pattern": "^(?!.*\\.\\.)[a-zA-Z0-9.-]+\\.json$"
-        },
-        "includedPaths": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "$ref": "#/$defs/path"
-          }
-        },
-        "omissions": {
-          "type": "string"
         }
       }
     }

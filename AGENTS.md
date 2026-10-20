@@ -120,6 +120,6 @@ unless the user explicitly authorizes execution.
 ## eRouter scope update
 
 The reviewed type-202 subset is now shared by DOCSIS and DOCSIS 4.0 through
-explicit registry profiles. The enabled settings are initialization, TR-069 fields other than ACS Override, RA interval,
+direct parent-definition references. The enabled settings are initialization, TR-069 fields other than ACS Override, RA interval,
 multicast server, Link-ID and topology. Remaining eSAFE settings and unresolved
 eRouter encodings remain deferred. See `docs/architecture.md` in the repository.

@@ -154,9 +154,18 @@ public final class TlvRegistry {
             .disable(DeserializationFeature.ACCEPT_FLOAT_AS_INT);
     com.fasterxml.jackson.databind.node.ObjectNode document =
         mapper.readValue(input, com.fasterxml.jackson.databind.node.ObjectNode.class);
-    com.fasterxml.jackson.databind.JsonNode attachments = document.remove("attachments");
-    if (attachments != null && !attachments.isArray())
-      throw new IllegalArgumentException(source + ": attachments must be an array");
+    JSONArray references = new JSONArray();
+    for (var node : document.withArray("definitions")) {
+      var definition = (com.fasterxml.jackson.databind.node.ObjectNode) node;
+      var reference = definition.remove("reference");
+      if (reference != null) {
+        if (!reference.isTextual()) throw new IllegalArgumentException("Invalid reference");
+        references.put(
+            new JSONObject()
+                .put("parentPath", new JSONArray(definition.get("path").toString()))
+                .put("reference", reference.asText()));
+      }
+    }
     Catalog catalog = mapper.treeToValue(document, Catalog.class);
     if (catalog.formatVersion() != 1
         || !family.equals(catalog.family())
@@ -165,15 +174,10 @@ public final class TlvRegistry {
       throw new IllegalArgumentException(source + ": invalid catalog header");
     }
     TlvRegistry base = new TlvRegistry(catalog.definitions(), source);
-    if (attachments == null || resolver == null) return base;
-    return compose(
-        base,
-        new JSONObject()
-            .put("formatVersion", catalog.formatVersion())
-            .put("family", family)
-            .put("attachments", new JSONArray(attachments.toString())),
-        resolver,
-        family);
+    if (references.isEmpty()) return base;
+    if (resolver == null)
+      throw new IllegalArgumentException(source + ": reference resolver required");
+    return compose(base, references, resolver, family);
   }
 
   @FunctionalInterface
@@ -199,14 +203,15 @@ public final class TlvRegistry {
     return input;
   }
 
-  /** Attach an explicitly reviewed service subset without changing configuration instance order. */
+  /**
+   * Resolve parent references to complete reviewed service catalogs without changing configuration
+   * instance order.
+   */
   static TlvRegistry compose(
-      TlvRegistry base, JSONObject profile, CatalogSource source, String family)
+      TlvRegistry base, JSONArray references, CatalogSource source, String family)
       throws IOException {
-    if (profile.getInt("formatVersion") != 1 || !family.equals(profile.getString("family")))
-      throw new IllegalArgumentException("Invalid profile " + family);
     List<TlvDefinition> combined = new ArrayList<>(base.entries);
-    for (Object item : profile.getJSONArray("attachments")) {
+    for (Object item : references) {
       JSONObject attachment = (JSONObject) item;
       List<Integer> parent = path(attachment.getJSONArray("parentPath"));
       TlvDefinition container = base.find(parent);
@@ -235,10 +240,8 @@ public final class TlvRegistry {
               document.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8))) {
         service = read(input, serviceFamily, name);
       }
-      for (Object selected : attachment.getJSONArray("includedPaths")) {
-        List<Integer> relative = path((JSONArray) selected);
-        TlvDefinition entry = service.find(relative);
-        if (entry == null) throw new IllegalArgumentException("Missing service path " + relative);
+      for (TlvDefinition entry : service.entries) {
+        List<Integer> relative = entry.path();
         List<Integer> full = new ArrayList<>(parent);
         full.addAll(relative);
         combined.add(

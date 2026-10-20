@@ -152,43 +152,80 @@ class EmbeddedProfileTest {
     assertNull(TlvRegistry.forFamily("docsis40").find(List.of(201)));
   }
 
+  @ParameterizedTest
+  @ValueSource(ints = {201, 216, 219, 220, 221})
+  void opaqueServicesPreservePayloadBytes(int type) throws Exception {
+    var definition = TlvRegistry.forFamily("docsis").find(List.of(type));
+    String text = "Docsis { " + definition.name() + " 0102aaff; }";
+    var parsed = new ConfigurationFileImport(new StringBuilder(text));
+    byte[] expected = {(byte) type, 4, 1, 2, (byte) 0xaa, (byte) 0xff};
+    assertArrayEquals(expected, parsed.toByteArray());
+    String decoded =
+        new ConfigurationFileExport(parsed.getTlvBuilder(), parsed.getConfigurationFileType())
+            .toPrettyPrint(false, true);
+    assertArrayEquals(
+        expected, new ConfigurationFileImport(new StringBuilder(decoded)).toByteArray());
+    for (String bad : List.of("xyz", "abc", "aa".repeat(255))) {
+      assertThrows(
+          IllegalArgumentException.class,
+          () ->
+              new ConfigurationFileImport(
+                  new StringBuilder("Docsis { " + definition.name() + " " + bad + "; }")));
+    }
+    var maximum =
+        new ConfigurationFileImport(
+            new StringBuilder("Docsis { " + definition.name() + " " + "aa".repeat(254) + "; }"));
+    assertEquals(256, maximum.toByteArray().length);
+  }
+
   @Test
-  void rejectsInvalidAttachmentsBeforePublishingRegistry() throws Exception {
+  void rejectsServiceCyclesAndDuplicateDefinitions() throws Exception {
     Path directory = Path.of("res/tlv-registry");
-    TlvRegistry base;
-    try (var input = Files.newInputStream(directory.resolve("docsis40.json"))) {
-      base = TlvRegistry.read(input, "docsis40", "test base");
+    for (boolean cycle : new boolean[] {true, false}) {
+      JSONObject service = new JSONObject(Files.readString(directory.resolve("erouter.json")));
+      if (cycle)
+        service.getJSONArray("definitions").getJSONObject(0).put("reference", "erouter.json");
+      else
+        service
+            .getJSONArray("definitions")
+            .put(service.getJSONArray("definitions").getJSONObject(0));
+      try (var input = Files.newInputStream(directory.resolve("docsis40.json"))) {
+        assertThrows(
+            IllegalArgumentException.class,
+            () ->
+                TlvRegistry.read(
+                    input,
+                    "docsis40",
+                    "test",
+                    name ->
+                        new java.io.ByteArrayInputStream(
+                            service.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8))));
+      }
     }
-    for (String paths : List.of("[[4]]", "[[2,2]]", "[[1],[1]]", "[[250]]")) {
-      JSONObject profile = new JSONObject(Files.readString(directory.resolve("docsis40.json")));
-      profile
-          .getJSONArray("attachments")
-          .getJSONObject(0)
-          .put("includedPaths", new org.json.JSONArray(paths));
-      TlvRegistry baseRegistry = base;
-      assertThrows(
-          IllegalArgumentException.class,
-          () ->
-              TlvRegistry.compose(
-                  baseRegistry,
-                  profile,
-                  name -> Files.newInputStream(directory.resolve(name)),
-                  "docsis40"));
-    }
-    for (String catalog : List.of("../erouter.json", "/erouter.json")) {
-      JSONObject profile = new JSONObject(Files.readString(directory.resolve("docsis40.json")));
-      profile.getJSONArray("attachments").getJSONObject(0).put("reference", catalog);
-      TlvRegistry baseRegistry = base;
-      assertThrows(
-          IllegalArgumentException.class,
-          () ->
-              TlvRegistry.compose(
-                  baseRegistry,
-                  profile,
-                  name -> {
-                    throw new AssertionError("Must reject before opening a file");
-                  },
-                  "docsis40"));
+  }
+
+  @Test
+  void rejectsInvalidReferencesBeforePublishingRegistry() throws Exception {
+    Path directory = Path.of("res/tlv-registry");
+    for (String reference :
+        List.of("../erouter.json", "/erouter.json", "opencable.json", "docsis40.json")) {
+      JSONObject catalog = new JSONObject(Files.readString(directory.resolve("docsis40.json")));
+      for (Object value : catalog.getJSONArray("definitions")) {
+        JSONObject entry = (JSONObject) value;
+        if (entry.has("reference")) entry.put("reference", reference);
+      }
+      try (var input =
+          new java.io.ByteArrayInputStream(
+              catalog.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8))) {
+        assertThrows(
+            IllegalArgumentException.class,
+            () ->
+                TlvRegistry.read(
+                    input,
+                    "docsis40",
+                    "test",
+                    name -> Files.newInputStream(directory.resolve(name))));
+      }
     }
   }
 }

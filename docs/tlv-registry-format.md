@@ -10,22 +10,20 @@ or length vocabulary for embedded devices.
 
 Required fields: `formatVersion` (1), `family`, `edition`, `sourceSha256`, and
 `definitions`. The hash identifies the source artifact documented by the catalog's
-specification references. Two optional fields control attachment:
-
-- Base catalogs may contain `attachments`, with `parentPath`, `reference`,
-  `includedPaths`, and `omissions` for each attachment.
-- Embedded catalogs contain `parentPath` and use paths relative to that parent.
-  They cannot contain their own attachments. For example, OpenCable local `[39,1]`
-  becomes `[217,39,1]`; eRouter `[2,4]` becomes `[202,2,4]`.
-
-`reference` is a local catalog filename, not a URL or JSON Schema reference.
-Parent placement is verified against the embedded catalog. Explicit inclusion
-lists prevent unreviewed activation. The enclosing family supplies the applicable
-`supportedVersion` when composing an embedded definition.
+specification references. Embedded catalogs additionally declare `parentPath`.
+Base parent definitions have an optional `reference` filename, such as
+`"path": [202], "reference": "erouter.json"` or
+`"path": [217], "reference": "opencable.json"` (alongside the required fields).
+All definitions from the referenced catalog are included with relative paths
+prefixed by the parent. No `attachments` or `includedPaths` fields are used.
+Service catalogs cannot reference other catalogs; this also prevents cycles.
+References must stay within the registry directory and match the service's
+`parentPath`. The parent supplies the applicable `supportedVersion`.
 
 ## Definition fields
 
-Every definition requires exactly these fields. Extra fields are rejected.
+Every definition requires these fields. Only `reference` is additionally allowed
+on base container definitions; other extra fields are rejected.
 
 | Field | Meaning |
 | --- | --- |
@@ -69,8 +67,8 @@ Detailed defaults, sensitivity, enum constraints, unresolved encodings and
 unactivated definitions belong in the specification references:
 [eRouter notes](../skills/oscar-erouter-config-tlvs/references/tlv-notes.md) and
 [OpenCable notes](../skills/oscar-opencable-config-tlv/references/tlv-notes.md).
-Only reviewed, currently selected entries are present in embedded runtime catalogs.
-This is a representation change, not an expansion of supported TLVs.
+Only reviewed entries are present in embedded runtime catalogs.
+See the compatibility notes in [architecture](architecture.md).
 
 The JSON Schema describes structure. `TlvRegistry` additionally validates codec
 names, widths, unique paths and sibling names, parent existence and attachment
@@ -82,3 +80,19 @@ fields. Existing byte-vector, round-trip and MIC tests protect behavior.
 Run `tools/run-all.sh` after changing a catalog or its schema. Keep the schema,
 `TlvDefinition`, loader and tests synchronized when intentionally changing the
 format. Registry validation does not replace device-specific semantic validation.
+
+## Entering unsupported embedded-service payloads
+
+Regular DOCSIS exposes ePS (201), eMTAConfig (216), eTEAConfig (219),
+eDVAConfig (220), and eSGConfig (221) as opaque hexadecimal payloads.
+For example, this synthetic fragment encodes payload bytes `01 02 aa ff`:
+
+```text
+Docsis { eMTAConfig 0102aaff; }
+```
+
+Supply payload bytes only, without the outer type/length. Hex must contain
+complete byte pairs, with a maximum of 254 bytes per instance. Inner service
+semantics are not checked. This fragment is not a deployable voice configuration.
+See [architecture compatibility notes](architecture.md#compatibility-and-opaque-esafe-payloads)
+for removed legacy entries and deferred services.

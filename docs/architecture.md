@@ -9,27 +9,45 @@ eMTA remains subject to verification of its specification and provisioning forma
 ### Ownership and attachment
 
 Base family catalogs own outer embedded-device containers. Service catalogs own
-relative child paths. The base catalog carries an `attachments` array pointing to shared service catalogs.
-The attachment supplies the parent and an explicit allowlist of reviewed children.
-`reference` is an OSCAR-defined filename pointer, resolved within the registry
-directory (or bundled registry resources). It is not JSON Schema `$ref` and
-does not fetch remote URLs.
-For example, eRouter local path `2.4` becomes `202.2.4`. There is no separate
-profile file or new configuration-file family.
+relative child paths. Each base parent definition carries its own `reference`:
+`[202]` references `erouter.json`; regular DOCSIS `[217]` references
+`opencable.json`. All reviewed children are loaded. There is no attachment
+array, selection allowlist or separate profile file.
 
-Example section inside `docsis.json` or `docsis40.json` (allowlist shortened):
-
-```json
-"attachments": [
-  {"parentPath": [202], "reference": "erouter.json", "includedPaths": [[1]]}
-]
-```
-
-The base catalog owns applicability. The service's `attachment` metadata records its
-specification-defined placement and must agree with the attachment. Do not infer
-support from filenames, directory scanning, or reuse of legacy definitions.
+`reference` is a local filename, not a URL or JSON Schema `$ref`.
+The service's `parentPath` must match the referencing definition.
+For example, eRouter `[2,4]` becomes `[202,2,4]`. Base catalogs own applicability.
 DPoE, DPoG and DOCSIS 4.0 require separate applicability decisions. eMTA standalone
 PacketCable provisioning must not be conflated with embedded DOCSIS settings.
+
+```mermaid
+flowchart TD
+    D31["docsis.json"]
+    D40["docsis40.json"]
+    ER["erouter.json<br/>parentPath: [202]<br/>Reviewed relative child paths"]
+    STB["opencable.json<br/>parentPath: [217]<br/>Reviewed relative child paths"]
+    HEX["Opaque byte_array definitions<br/>201 ePS, 216 eMTA, 219 eTEA<br/>220 eDVA, 221 eSG"]
+    LOAD["TlvRegistry loader<br/>Validate references and parent paths<br/>Prefix child paths; reject duplicates"]
+    REG["Immutable registry for the selected family<br/>Full paths, names, codecs and bounds"]
+    API["Existing dictionary API<br/>Parser, assembler and disassembler"]
+
+    D31 -->|"202 reference"| ER
+    D40 -->|"202 reference"| ER
+    D31 -->|"217 reference"| STB
+    D31 -->|"Defined directly; no reference"| HEX
+    D31 -->|"Base definitions"| LOAD
+    D40 -->|"Base definitions"| LOAD
+    ER -->|"[2,4] becomes [202,2,4]"| LOAD
+    STB -->|"[43,8] becomes [217,43,8]"| LOAD
+    HEX -->|"Preserve payload bytes; do not decode children"| LOAD
+    LOAD --> REG
+    REG --> API
+```
+
+Each family is loaded separately; the diagram does not imply that DOCSIS and
+DOCSIS 4.0 definitions are merged. Only regular DOCSIS enables the eSTB reference
+and the five opaque placeholders. Composition resolves definitions, not the
+order of TLV instances in a configuration file.
 
 ### Service catalog contract
 
@@ -43,7 +61,7 @@ Embedded catalogs add only a `parentPath` header and relative paths. Their
 entries pass through the same strict deserializer and registry validation.
 Detailed specification notes and deferred definitions live in the corresponding
 skill's `references/tlv-notes.md`, not a second runtime JSON schema. Base
-attachment allowlists continue to control activation and family applicability.
+parent references control activation and family applicability.
 
 ### Loader composition and validation
 
@@ -55,8 +73,8 @@ not recursive service-to-service imports.
 
 Validate the attachment is a container, expand relative paths, and reject missing
 parents, duplicate paths, case-insensitive sibling-name collisions, invalid lengths
-and incompatible codecs. No last-definition-wins merging. Unresolved definitions remain in source notes, outside runtime catalogs; an
-attachment selecting a missing definition is rejected. Declare omitted settings
+and incompatible codecs. No last-definition-wins merging. Unresolved definitions remain in source notes, outside runtime catalogs; a
+missing referenced catalog is rejected. Declare omitted settings
 rather than claiming full coverage. Composition changes paths and the inherited
 family version, not codec names or payload widths.
 
@@ -85,8 +103,8 @@ for tests and published examples.
 - [x] Build the relative-path eRouter catalog with source constraints.
 - [x] Add structural and source-boundary catalog regression coverage.
 - [ ] Resolve ambiguous widths, access-view range and OID representation.
-- [x] Implement explicit profile subset composition and fail-fast validation.
-- [ ] Migrate legacy entries atomically and review text compatibility.
+- [x] Implement direct parent-reference composition and fail-fast validation.
+- [x] Remove base-owned service children and document compatibility below.
 - [ ] Verify codecs, parser/export integration and value constraints.
 - [x] Test subset wire bytes, repeated containers and complete-file MIC round trips.
 - [ ] Verify in-memory round trips for every existing family after activation.
@@ -100,10 +118,29 @@ for tests and published examples.
 ### Enabled eRouter subset
 
 Both base catalogs attach 202.1, 202.2.1–6, 202.3, 202.10, 202.12, 202.13 and
-202.42. DOCSIS retains its legacy 202.2 container because ACSOverride still uses
-it; D4 attaches that container from the service catalog. Other legacy DOCSIS
-202 entries remain for compatibility and are not enabled in D4. This is a staged
-migration, not full eRouter I21 conformance. DPoE is unchanged.
+202.42, with the 202.2 container owned by eRouter. Both families use the same
+reviewed subset. DPoE is unchanged.
+
+### Compatibility and opaque eSAFE payloads
+
+Legacy unverified DOCSIS definitions 202.43 (including .8/.11), 202.53
+(including .1–.4 and .2.1/.2.2), 202.54 (including .1–.4), and 202.2.7
+are deferred, not copied into the reviewed catalog. Inputs using these settings
+are unsupported and must fail rather than silently dropping their contents.
+This is an intentional compatibility restriction pending specification/codec
+verification. Standalone 217.8 is removed; the supported VendorID is 217.43.8.
+25.14 MaximumDownstreamLatency is grouped after 25.13 in catalog order.
+
+DOCSIS 201 (ePS), 216 (eMTA), 219 (eTEA), 220 (eDVA), and 221 (eSG)
+are opaque hex payloads, without invented child definitions. Users supply only
+payload bytes; OSCAR writes the outer type and length. Reserved 203–215, 218,
+and 222–231 are not assigned placeholder service names. This does not enable
+these services in DOCSIS 4.0.
+
+Authority: MULPI I21 C.3.2 delegates assignments to
+[CM-SP-eDOCSIS-I30-190213 section 5.2.8.1, Table 5](https://account.cablelabs.com/server/alfresco/2cc53697-0e59-4983-a5ae-c08d4ab70136),
+printed pp.46–47. Each opaque instance is bounded to 254 payload octets;
+child semantics are not validated. No automatic fragmentation is provided.
 
 D4 uses MULPI I12 Table 117 and C.3.2, p.848, for eSAFE applicability; eRouter
 I21 B.3–B.4 supplies type 202 and child encodings. Variable payloads are bounded

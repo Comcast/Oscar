@@ -383,10 +383,17 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
           "TlvConfigurationFileParser.enterSubTypeValue(): Value:  " + ctx.getStart().getText());
     }
 
-    DictionaryTLV.updateDictionaryValue(
-        aqsSubTypeHierarchyStack,
-        valueTarget(),
-        com.comcast.oscar.utilities.TlvTextString.decode(ctx.getStart().getText()));
+    String value = com.comcast.oscar.utilities.TlvTextString.decode(ctx.getStart().getText());
+    JSONObject target = valueTarget();
+    if (iConfigurationFileType == ConfigurationFile.DOCSIS_VER_31
+        && java.util.Set.of(201, 216, 219, 220, 221).contains(target.getInt(Dictionary.TYPE))) {
+      String hex = value.replace(":", "");
+      if (!hex.matches("(?:[0-9a-fA-F]{2})*")
+          || hex.length() / 2 > target.getInt(Dictionary.LENGTH_MAX)) {
+        throw new IllegalArgumentException("Invalid opaque eSAFE hexadecimal payload");
+      }
+    }
+    DictionaryTLV.updateDictionaryValue(aqsSubTypeHierarchyStack, target, value);
   }
 
   /**

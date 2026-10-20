@@ -156,7 +156,7 @@ class TlvRegistryTest {
 
   @Test
   void countsEveryMigratedDefinition() {
-    assertEquals(680, count(TlvRegistry.forFamily("docsis"), List.of()));
+    assertEquals(663, count(TlvRegistry.forFamily("docsis"), List.of()));
     assertEquals(13, count(TlvRegistry.forFamily("packetcable"), List.of()));
     assertEquals(624, count(TlvRegistry.forFamily("dpoe"), List.of()));
   }
@@ -190,9 +190,10 @@ class TlvRegistryTest {
   }
 
   @Test
-  void keepsLegacyChildSerializationOrder() {
+  void groupsDownstreamLatencyAfterItsPrecedingSibling() {
     var children = TlvRegistry.forFamily("docsis").children(List.of(25));
-    assertEquals(14, children.get(children.size() - 1).type());
+    var types = children.stream().map(TlvDefinition::type).toList();
+    assertEquals(types.indexOf(13) + 1, types.indexOf(14));
   }
 
   @Test

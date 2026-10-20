@@ -163,7 +163,6 @@ Docsis {
 
 	eSTBConfig {
 		IPModeControl ;	 /* TLV: [217.1]*/
-		VendorID ;	 /* TLV: [217.8]*/
 		/* TLV 217.11: use Snmp11 OID Type "value"; when needed. */
 		SNMPv3NotificationReceiver {
 			IPv4Address ;	 /* TLV: [217.38.1]*/

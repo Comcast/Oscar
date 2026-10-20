@@ -25,8 +25,10 @@ class EmbeddedServiceCatalogTest {
         Arrays.stream(TlvDefinition.class.getRecordComponents())
             .map(component -> component.getName())
             .collect(Collectors.toSet());
+    Set<String> schemaFields = new HashSet<>(fields);
+    schemaFields.add("reference");
     assertEquals(
-        fields,
+        schemaFields,
         schema
             .getJSONObject("$defs")
             .getJSONObject("definition")
@@ -44,14 +46,20 @@ class EmbeddedServiceCatalogTest {
         assertFalse(catalog.has("parentPath") && catalog.has("attachments"));
         for (Object value : catalog.getJSONArray("definitions")) {
           JSONObject entry = (JSONObject) value;
-          assertEquals(fields, entry.keySet(), path + " " + entry.getJSONArray("path"));
+          Set<String> actual = new HashSet<>(entry.keySet());
+          actual.remove("reference");
+          assertEquals(fields, actual, path + " " + entry.getJSONArray("path"));
         }
         catalog.remove("parentPath");
         try (var input =
             new ByteArrayInputStream(catalog.toString().getBytes(StandardCharsets.UTF_8))) {
           // Strict shared deserialization checks types, widths, codecs, parents, names and
           // duplicates.
-          TlvRegistry.read(input, catalog.getString("family"), path.toString());
+          TlvRegistry.read(
+              input,
+              catalog.getString("family"),
+              path.toString(),
+              name -> Files.newInputStream(Path.of("res/tlv-registry", name)));
         }
       }
     }
