@@ -113,3 +113,22 @@ production is needed: the existing Snmp11 production already accepts the
 OID, type and value fields. DPoE 1.0 and 2.0 share this catalog; regression
 coverage verifies both export routes. This naming correction does not claim
 new DPoE provisioning conformance or change the legacy support scope.
+
+## All-TLV template coverage
+
+`AllTlvTemplateCoverageTest` compares the fully composed registry with the
+all-TLV text export for every supported configuration type (DOCSIS 1.0–4.0,
+PacketCable 1.0/1.5/2.0, DPoE 1.0/2.0, and DPoG 1.0). It checks containers
+and leaves under their own parent hierarchy, so an identical name elsewhere
+or in the syntax banner cannot hide a missing entry. Failures list the missing
+numeric paths. The registry is the inventory. The only omission exception is
+an empty VarBind with codec `oid` and the exact name `Snmp11` or `Snmp64`,
+because its statement requires an OID, type and value. Bare OID fields and
+other SNMP-related settings are still required. If a VarBind is emitted, its
+parent location is still checked. Populated VarBinds remain covered by the
+separate byte-for-byte round-trip tests.
+
+This is a template-completeness check, separate from byte-for-byte round trips
+and from configuration validity. Empty template values are not deployment values.
+Run it directly with `mvn -B -Dtest=AllTlvTemplateCoverageTest test`, or as part
+of `tools/run-all.sh`.
