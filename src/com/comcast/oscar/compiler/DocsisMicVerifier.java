@@ -8,14 +8,11 @@ import static com.comcast.oscar.cablelabsdefinitions.Constants.*;
 
 import com.comcast.oscar.dictionary.TlvRegistry;
 import java.io.ByteArrayOutputStream;
-import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 /** Read-only DOCSIS configuration MIC verification against original wire bytes. */
 public final class DocsisMicVerifier {
@@ -31,8 +28,18 @@ public final class DocsisMicVerifier {
 
   /** Selects length-field definitions; a binary does not identify its DOCSIS edition. */
   public enum Profile {
-    DOCSIS_31,
-    DOCSIS_40
+    DOCSIS_31("docsis", DocsisMicRules.Coverage.DOCSIS_31_AND_40),
+    DOCSIS_40("docsis40", DocsisMicRules.Coverage.DOCSIS_31_AND_40),
+    /** Historical OSCAR DOCSIS 1.0-3.0 coverage, not a new conformance claim. */
+    LEGACY_DOCSIS("docsis", DocsisMicRules.Coverage.LEGACY_COMPATIBILITY);
+
+    private final String family;
+    private final DocsisMicRules.Coverage coverage;
+
+    Profile(String family, DocsisMicRules.Coverage coverage) {
+      this.family = family;
+      this.coverage = coverage;
+    }
   }
 
   /** Independent digest outcome; NOT_PRESENT is not successful verification. */
@@ -116,7 +123,7 @@ public final class DocsisMicVerifier {
   }
 
   private static Result check(byte[] bytes, Profile profile, byte[] legacy, byte[] extended) {
-    var registry = TlvRegistry.forFamily(profile == Profile.DOCSIS_40 ? "docsis40" : "docsis");
+    var registry = TlvRegistry.forFamily(profile.family);
     List<Element> elements = parse(bytes, 0, bytes.length, registry);
     Element cm = unique(elements, CM_MIC);
     Element cmts = unique(elements, CMTS_MIC);
@@ -178,7 +185,7 @@ public final class DocsisMicVerifier {
         append(cmInput, bytes, element);
       }
     }
-    Status cmStatus = compare(bytes, cm, md5(cmInput.toByteArray()));
+    Status cmStatus = compare(bytes, cm, DocsisMicRules.md5(cmInput.toByteArray()));
     boolean implicit = params != null && explicit == null;
     Status cmtsStatus = Status.NOT_PRESENT;
     Reason reason = Reason.NONE;
@@ -189,14 +196,11 @@ public final class DocsisMicVerifier {
         reason = Reason.MISSING_SECRET;
       } else {
         var input = new ByteArrayOutputStream();
-        for (int type : DocsisMicFinalizer.LEGACY_MIC_ORDER) {
-          for (Element element : elements) {
-            if (element.type() == type) {
-              append(input, bytes, element);
-            }
-          }
+        for (Element element :
+            DocsisMicRules.orderLegacyParameters(elements, Element::type, profile.coverage)) {
+          append(input, bytes, element);
         }
-        cmtsStatus = compare(bytes, cmts, hmac(legacy, input.toByteArray()));
+        cmtsStatus = compare(bytes, cmts, DocsisMicRules.hmac(legacy, input.toByteArray()));
       }
     }
     if (params == null) {
@@ -236,7 +240,7 @@ public final class DocsisMicVerifier {
       byte[] digest =
           algorithm == MMH
               ? DocsisMmh.digest(extended, input.toByteArray())
-              : hmac(extended, input.toByteArray());
+              : DocsisMicRules.hmac(extended, input.toByteArray());
       if (implicit) {
         digest = Arrays.copyOf(digest, MD5_BYTES);
       }
@@ -326,23 +330,5 @@ public final class DocsisMicVerifier {
     return stored == null
         ? Status.NOT_PRESENT
         : MessageDigest.isEqual(value(bytes, stored), calculated) ? Status.MATCH : Status.MISMATCH;
-  }
-
-  private static byte[] hmac(byte[] secret, byte[] input) {
-    try {
-      Mac mac = Mac.getInstance("HmacMD5");
-      mac.init(new SecretKeySpec(secret, "HmacMD5"));
-      return mac.doFinal(input);
-    } catch (GeneralSecurityException failure) {
-      throw new IllegalStateException("HMAC-MD5 unavailable", failure);
-    }
-  }
-
-  private static byte[] md5(byte[] input) {
-    try {
-      return MessageDigest.getInstance("MD5").digest(input);
-    } catch (GeneralSecurityException failure) {
-      throw new IllegalStateException("MD5 unavailable", failure);
-    }
   }
 }

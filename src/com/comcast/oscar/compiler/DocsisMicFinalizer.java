@@ -7,20 +7,13 @@ package com.comcast.oscar.compiler;
 import com.comcast.oscar.dictionary.TlvRegistry;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.GeneralSecurityException;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 /** Shared generation per MULPI 3.1 I21 and 4.0 I12, D.1.3 and D.2.1. */
 final class DocsisMicFinalizer {
-  static final List<Integer> LEGACY_MIC_ORDER =
-      List.of(1, 2, 3, 17, 43, 6, 18, 19, 20, 59, 22, 23, 24, 25, 28, 29, 35, 36, 37, 40);
-
   private DocsisMicFinalizer() {}
 
   private record Element(int type, byte[] value, int lengthBytes) {
@@ -40,6 +33,11 @@ final class DocsisMicFinalizer {
   }
 
   static byte[] finish(byte[] binary, TlvRegistry registry, String secret) {
+    return finish(binary, registry, secret, DocsisMicRules.Coverage.DOCSIS_31_AND_40);
+  }
+
+  static byte[] finish(
+      byte[] binary, TlvRegistry registry, String secret, DocsisMicRules.Coverage coverage) {
     if (secret == null || secret.isEmpty()) {
       throw new IllegalArgumentException("MIC generation requires a nonempty CMTS key");
     }
@@ -101,20 +99,15 @@ final class DocsisMicFinalizer {
         replaceExtension(parameters, replaceDigest(extension, digest));
       }
     }
-    parameters.add(new Element(6, md5(encode(parameters))));
+    parameters.add(new Element(6, DocsisMicRules.md5(encode(parameters))));
     byte[] cmts;
     if (bitmap != null && !explicit) {
       cmts = Arrays.copyOf(extendedDigest(select(parameters, bitmap), algorithm, secret), 16);
     } else {
-      var selected = new ByteArrayOutputStream();
-      for (int type : LEGACY_MIC_ORDER) {
-        for (Element element : parameters) {
-          if (element.type() == type) {
-            selected.writeBytes(element.encoded());
-          }
-        }
-      }
-      cmts = hmac(selected.toByteArray(), secret);
+      cmts =
+          DocsisMicRules.hmac(
+              secret.getBytes(StandardCharsets.UTF_8),
+              encode(DocsisMicRules.orderLegacyParameters(parameters, Element::type, coverage)));
     }
     parameters.add(new Element(7, cmts));
     var output = new ByteArrayOutputStream();
@@ -211,27 +204,9 @@ final class DocsisMicFinalizer {
                 : element);
   }
 
-  private static byte[] hmac(byte[] bytes, String secret) {
-    try {
-      Mac mac = Mac.getInstance("HmacMD5");
-      mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacMD5"));
-      return mac.doFinal(bytes);
-    } catch (GeneralSecurityException failure) {
-      throw new IllegalStateException("HMAC-MD5 unavailable", failure);
-    }
-  }
-
   private static byte[] extendedDigest(byte[] bytes, int algorithm, String secret) {
     return algorithm == 2
         ? DocsisMmh.digest(secret.getBytes(StandardCharsets.UTF_8), bytes)
-        : hmac(bytes, secret);
-  }
-
-  private static byte[] md5(byte[] bytes) {
-    try {
-      return MessageDigest.getInstance("MD5").digest(bytes);
-    } catch (GeneralSecurityException failure) {
-      throw new IllegalStateException("MD5 unavailable", failure);
-    }
+        : DocsisMicRules.hmac(secret.getBytes(StandardCharsets.UTF_8), bytes);
   }
 }

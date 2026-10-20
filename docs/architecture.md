@@ -297,3 +297,33 @@ compare both JAR manifests/resources with the POM; JUnit checks runtime banners.
 - [ ] Finish repository-wide legacy API documentation and strict compiler lint.
 
 See [audit findings and limits](qa-hygiene-audit.md).
+
+## One MIC generation path
+
+`DocsisMicFinalizer` owns MIC insertion and End/padding for every DOCSIS compiler
+revision. `DocsisMicRules` owns ordered legacy coverage and the MD5/HMAC-MD5
+primitives; generation and `DocsisMicVerifier` share those rules. The verifier
+still hashes original byte slices, never compiled replacement data. Family
+validation stays in the compilers; DPoE uses the shared generation path with its
+historical coverage, and DPoG retains its optional unsigned output.
+
+Coverage is explicit: `LEGACY_COMPATIBILITY` preserves OSCAR's existing
+DOCSIS 1.0-3.0/DPoE selection. `DOCSIS_31_AND_40` applies the separately reviewed
+MULPI 3.1 I21 and 4.0 I12 Annex D.2.1 rules. The latter removes legacy types 4/26
+and adds type 59 after type 20. This refactor does not certify the historical
+profile against older specifications. There is one base ordering plus these
+explicit differences, not independently maintained duplicate lists.
+
+The old public MIC list remains a deprecated immutable alias; `getCmMIC(byte[])`
+remains a compatibility delegate. Callers can no longer mutate the global list.
+Standard MIC compilation retains parameter order; the existing extended-MIC
+ordering behavior is unchanged. Complete output has one End byte and only the
+zero padding needed for four-byte alignment. All string keys use UTF-8.
+
+- [x] Remove duplicate compiler digest, stripping and trailer code.
+- [x] Share selection and cryptographic primitives with verification.
+- [x] Keep legacy/current coverage explicit and preserve public entry points.
+- [x] Test independent digest inputs for all six DOCSIS revisions and repeated TLVs.
+- [x] Retain explicit/implicit HMAC-MD5 and MMH regression coverage.
+
+See [MIC API and compatibility notes](mic-verification.md#shared-generation-and-compatibility).

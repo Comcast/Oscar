@@ -108,62 +108,15 @@ public class Constants {
   public static final Integer END_OF_FILE = 255;
 
   /**
-   * D.2.1 CMTS MIC Calculation652 The CMTS MUST calculate a CMTS MIC Digest value on TLVs of the
-   * REG-REQ/REG-REQ-MP message and compare it to the CMTS Message Integrity Check configuration
-   * setting in TLV7. If the Extended CMTS MIC Encoding is present but does not include an Explicit
-   * E-MIC Digest subtype, it indicates that the Extended CMTS MIC digest is implicitly provided in
-   * the CMTS MIC Configuration Setting of TLV7. In this case, the CMTS calculates only an Extended
-   * CMTS MIC digest using the TLVs indicated in the E-MIC Bitmap and compares it to the CMTS MIC
-   * Configuration Setting in TLV7. When the Extended CMTS MIC is implicitly provided in TLV7, the
-   * CMTS MUST confirm that the calculated Extended CMTS MIC digest matches the implicit digest in
-   * TLV7 in order to authorize the CM for registration. If the Extended CMTS MIC Encoding is
-   * present and provides an Explicit E-MIC Digest subtype, the CMTS calculates both an Extended MIC
-   * Digest value and a "pre-3.0 DOCSIS" CMTS MIC digest value using the TLVs reported in REG-REQ or
-   * REG-REQ-MP. When both the Extended MIC digest and the pre-3.0 DOCSIS CMTS Digest are checked,
-   * the CMTS MUST consider a CM to be authorized when only the pre-3.0 DOCSIS CMTS Digest matches.
-   * If the pre-3.0 DOCSIS CMTS MIC digest matches but the explicit Extended CMTS MIC does not, the
-   * CMTS MUST silently ignore TLVs in REG-REQ and REG-REQ-MP which were marked as protected by the
-   * Extended CMTS MIC Bitmap and are not one of the pre-3.0 DOCSIS CMTS MIC TLVs provided in the
-   * Pre-3.0 DOCSIS CMTS MIC TLV List below. If the Extended CMTS MIC Encoding TLV is not present,
-   * or if the Extended CMTS MIC Encoding TLV is present and includes an Explicit E-MIC Digest
-   * Subtype, then the CMTS MUST calculate the message integrity check configuration setting by
-   * performing an MD5 digest over the following configuration setting fields when present in the
-   * REG-REQ or REG-REQ-MP messages, in the order shown:
+   * Historical OSCAR MIC ordering retained as an immutable compatibility alias. New callers should
+   * select a coverage profile through DocsisMicRules.
    *
-   * <p>Downstream Frequency Configuration Setting Upstream Channel ID Configuration Setting Network
-   * Access Configuration Setting DOCSIS 1.0 Class of Service Configuration Setting Baseline Privacy
-   * Configuration Setting DOCSIS Extension Field Configuration Settings (including Extended CMTS
-   * MIC Params) CM MIC Configuration Setting Maximum Number of CPEs TFTP Server Timestamp TFTP
-   * Server Provisioned Modem Address Upstream Packet Classification Setting Downstream Packet
-   * Classification Setting Upstream Service Flow Configuration Setting Downstream Service Flow
-   * Configuration Setting Maximum Number of Classifiers Privacy Enable Configuration Setting
-   * Payload Header Suppression Subscriber Management Control Subscriber Management CPE IP Table
-   * Subscriber Management Filter Groups Enable Test Modes
+   * @deprecated use DocsisMicRules.orderedTypes with an explicit coverage profile
    */
+  @Deprecated
   public static final List<Integer> DOCSIS_CMTS_MIC_TLV_LIST =
-      new ArrayList<Integer>(
-          Arrays.asList(
-              DS_FREQUENCY,
-              US_CHANN_ID,
-              NETWORK_ACC_CTRL_OBJ,
-              DOC_10_CLASS_OF_SERV,
-              BPI,
-              DOC_EXT_FIELD,
-              CM_MIC,
-              MAX_CPES,
-              TFTP_SRV_TIMESTAMP,
-              TFTP_SRV_PROV_MODEM_IPV4_ADDR,
-              US_PKT_CLASS,
-              DS_PKT_CLASS,
-              US_SERVICE_FLOW,
-              DS_SERVICE_FLOW,
-              MAX_NUM_CLASS,
-              PRIVACY_ENABLE,
-              PHS,
-              SUB_MGMT_CTRL,
-              SUB_MGMT_CPE_IPV4_LIST,
-              SUB_MGMT_FILTER_GROUPS,
-              ENABLE_TEST_MODES));
+      com.comcast.oscar.compiler.DocsisMicRules.orderedTypes(
+          com.comcast.oscar.compiler.DocsisMicRules.Coverage.LEGACY_COMPATIBILITY);
 
   /**
    * D.1.2 Configuration File Settings The following configuration settings are included in the

@@ -8,7 +8,7 @@ It does not search for keys and does not require Net-SNMP.
 ## Availability
 
 Build OSCAR from a revision containing `DocsisMicVerifier` and the shared
-D3.1/D4.0 finalizer. These changes do not imply that a new release has been
+DOCSIS finalizer. These changes do not imply that a new release has been
 published. Verification is currently a Java API only, with no CLI flag or UI
 control. Never compile with a candidate key and then verify that new output as
 a check of the original file: compilation replaces the MICs.
@@ -33,8 +33,10 @@ try {
 ```
 
 Use `Profile.DOCSIS_40` for the DOCSIS 4.0 TLV length definitions. The binary
-itself does not identify the edition. PacketCable and DPoE are outside this API's
-scope. No changes to OSCAR-UI or the existing CLI are included in this API feature.
+itself does not identify the edition. Use `Profile.LEGACY_DOCSIS` when checking
+historical OSCAR DOCSIS 1.0-3.0 coverage. Do not select that profile merely
+because a file lacks extended MIC parameters: ordinary DOCSIS 3.1/4.0 TLV 7
+uses the newer coverage list. PacketCable and DPoE are outside this API's scope. No changes to OSCAR-UI or the existing CLI are included in this API feature.
 
 For separate secrets, call `verify(binary, profile, legacySecret, extendedSecret)`.
 The three-argument overload uses the supplied secret for both. Key bytes are not
@@ -99,13 +101,13 @@ The implementation follows these separately pinned sources:
   [Bundled source](../skills/oscar-docsis-40-config-tlvs/references/sources/CM-SP-SEC3.0-C01-171207.txt).
 
 Tests construct HMAC fixtures independently of OSCAR's compiler, exercise both
-profiles, both extended algorithms, separate keys, self-coverage, repeated TLVs,
+current DOCSIS profiles, both extended algorithms, separate keys, self-coverage, repeated TLVs,
 wrong keys, altered bytes, missing fields/keys, malformed/truncated input, and
 two-byte lengths. Additional integration tests verify DOCSIS 4.0 compiler output.
 No live CM/CMTS interoperability testing has been performed.
 
 ```bash
-mvn -B -Dtest=DocsisMicVerifierTest,Docsis40Test test
+mvn -B -Dtest=DocsisMicConsolidationTest,DocsisMicVerifierTest,Docsis40Test test
 mvn -B test
 ```
 
@@ -144,11 +146,9 @@ extended parameters, input parameter order is retained. Verification always uses
 the supplied binary bytes. D3.1 uses the pinned pre-3.0 MIC selection order,
 including the IPv6 provisioning address, for standard/explicit TLV 7.
 
-The catalogs are currently **independent**, not an inherited overlay:
-`TlvRegistry` loads `docsis.json` and `docsis40.json` separately. Removing D4.0
-43.6 definitions would remove D4.0 support. Shared calculation code eliminates
-algorithm duplication; catalog inheritance would require a separate loader and
-compatibility change, particularly because the names differ.
+Registry composition and MIC generation are separate concerns. The finalizer
+uses the selected registry's length widths and retains repeated instances;
+see [registry architecture](architecture.md) for DOCSIS 4.0 composition.
 
 Source: MULPI 3.1 I21 §C.1.1.18, printed pp. 596-597 (VendorId first, FF:FF:FF),
 §C.1.1.18.1.6, pp. 598-599 (43.6 children), and §D.1.3/D.2.1; corresponding
@@ -156,9 +156,34 @@ MULPI 4.0 I12 sections are cited above. Tests cover independently calculated
 D3.1 generation bytes, text import, both algorithms/modes, repeated commits,
 invalid parameters, and existing D4.0 generation cases.
 
-## Remaining legacy compiler follow-up
+## Shared generation and compatibility
 
-Older DOCSIS versions still use the historical MIC selection code, whose DEBUG
-output can include the shared secret. That previously reported path remains
-unchanged. D3.1 and D4.0 now use the shared finalizer, which does not log keys.
-No CM/CMTS interoperability claim follows from the automated tests.
+All DOCSIS compiler revisions now delegate to `DocsisMicFinalizer`.
+`DocsisMicRules` supplies the shared coverage order and cryptographic primitives:
+
+| Coverage | Compiler users | Selection differences |
+| --- | --- | --- |
+| `LEGACY_COMPATIBILITY` | DOCSIS 1.0-3.0 and DPoE | Preserves the historical OSCAR list, including Class of Service (4) and PHS (26). |
+| `DOCSIS_31_AND_40` | DOCSIS 3.1/4.0; existing signed DPoG path | Excludes 4/26; includes IPv6 provisioning address (59) after IPv4 address (20). |
+
+The legacy profile preserves implementation behavior, not a newly verified
+older-specification compliance claim. DOCSIS 3.1 I21 and 4.0 I12 Annex D.2.1
+are the sources for the current profile. Repeated occurrences retain their
+relative order in each digest input. Verification never changes the supplied file.
+
+`Constants.DOCSIS_CMTS_MIC_TLV_LIST` remains a deprecated, immutable alias for
+the compatibility list. Use `DocsisMicRules.orderedTypes(coverage)` for new code.
+The public `DocsisCompiler.getCmMIC(byte[])` method delegates to the common MD5
+primitive and still hashes exactly its input; callers exclude MICs and trailers.
+
+Compared with the retired legacy generator, finalization now uses registry
+length widths, reports invalid inputs/keys through exceptions, uses UTF-8 for
+string keys, and emits End plus only the padding needed for four-byte alignment.
+Previously, the legacy path always appended a zero after End and could add an
+unnecessary four bytes. These trailer bytes do not contribute to the MIC.
+No secrets or digests are logged by shared MIC generation or verification.
+
+Tests check independent digest expectations, both coverage profiles, all six
+DOCSIS revisions, repeat commits, original-byte verification and registry length
+widths. Existing extended-MIC HMAC-MD5/MMH and other-family round trips remain
+regression gates. No live CM/CMTS interoperability claim follows from these tests.
