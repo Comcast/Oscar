@@ -63,3 +63,6 @@ JSON registry; no database setup or dictionary export is needed.
 `DictionaryTLV.getTypeHierarchyStack(path, dictionary)` accepts this lookup API.
 The old SQL query classes and database helpers are removed in this revamp;
 clients using those APIs must migrate and recompile.
+
+See [data type formats](../data-type-formats.md) for accepted literals, named
+pattern groups, byte examples and malformed-input behavior.

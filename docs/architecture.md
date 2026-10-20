@@ -266,3 +266,15 @@ database-only demos have been removed.
 
 - [x] Remove database implementation and obsolete setup from examples.
 - [x] Route remaining dictionary references through the JSON registry.
+
+## Data type pattern validation
+
+`DataTypeFormatConversion` shares octet/port fragments and precompiles its patterns.
+IPv6 alternatives bound the number of explicit words, including dotted tails;
+transport encoders read named captures from a single whole-input match.
+Pair/MAC list repetition is possessive to avoid stack growth on large lists.
+Mapped IPv6 transports retain 16 address bytes, and accepted MAC separators are
+normalized before encoding. See [format contracts](data-type-formats.md).
+
+- [x] Document pattern examples and remove the external regex reference.
+- [x] Test range boundaries, malformed inputs, large lists and binary round trips.

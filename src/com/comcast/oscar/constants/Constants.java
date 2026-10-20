@@ -25,29 +25,11 @@ public class Constants {
   public static final String APACHE_20_LICENCE_DISCLAIMER =
       TAB
           + OSCAR_BANNER
-          + "\n\n\n\n"
+          + "\n\n"
           + TAB
           + "Copyright 2015 - 2026 Comcast Cable Communications Management, LLC\n"
           + TAB
-          + "___________________________________________________________________\n"
-          + TAB
-          + "Licensed under the Apache License, Version 2.0 (the \"License\")\n"
-          + TAB
-          + "you may not use this file except in compliance with the License.\n"
-          + TAB
-          + "You may obtain a copy of the License at\n"
-          + TAB
-          + "http://www.apache.org/licenses/LICENSE-2.0\n"
-          + TAB
-          + "Unless required by applicable law or agreed to in writing, software\n"
-          + TAB
-          + "distributed under the License is distributed on an \"AS IS\" BASIS,\n"
-          + TAB
-          + "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n"
-          + TAB
-          + "See the License for the specific language governing permissions and\n"
-          + TAB
-          + "limitations under the License.\n\n"
+          + "SPDX-License-Identifier: Apache-2.0\n\n"
           + TAB
           + "Author: Maurice Garcia (mgarcia01752@outlook.com)\n"
           + TAB

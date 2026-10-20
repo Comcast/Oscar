@@ -8,6 +8,10 @@ import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.Inet6Address;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
@@ -29,60 +33,92 @@ public class DataTypeFormatConversion {
   public static final Integer IPV4_TRANSPORT_ADDRESS_MAX_BYTE_LENGTH =
       (IPV4_ADDRESS_BYTE_LENGTH + IP_PORT_BYTE_LENGTH);
 
+  /** Decimal port 0..65535. Matches "0", "161", "65535"; rejects "65536". */
   public static final String IP_PORT_RANGE =
       "(?:[0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])";
 
-  // http://www.pretechsol.com/2013/05/ipv6-java-regular-expression-example.html#.UnujD_lwp8E
-  public static final Pattern IPV6_ADDRESS_REGEX =
-      Pattern.compile(
-          ""
-              + "(^(((?=(?>.*?::)(?!.*::)))(::)?([0-9A-F]{1,4}::?){0,5}"
-              + "|([0-9A-F]{1,4}:){6})(\\2([0-9A-F]{1,4}(::?|$)){0,2}|((25[0-5]"
-              + "|(2[0-4]|1\\d|[1-9])?\\d)(\\.|$)){4}|[0-9A-F]{1,4}:[0-9A-F]{1,"
-              + "4})(?<![^:]:|\\.)\\z)",
-          Pattern.CASE_INSENSITIVE);
+  // Decimal bytes retain legacy leading-zero support, e.g. "001" means decimal 1.
+  private static final String DECIMAL_BYTE = "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9]{1,2})";
+  private static final String IPV4_LITERAL = "(?:" + DECIMAL_BYTE + "\\.){3}" + DECIMAL_BYTE;
+  private static final int IPV6_WORD_COUNT = IPV6_ADDRESS_BYTE_LENGTH / Short.BYTES;
+  private static final int IPV4_WORD_COUNT = IPV4_ADDRESS_BYTE_LENGTH / Short.BYTES;
+  private static final String HEX_WORD = "[0-9a-fA-F]{1,4}";
+  private static final String IPV6_LITERAL = ipv6LiteralPattern();
 
+  /**
+   * Full IPv6 literal: eight hex words, one optional :: compression, or a dotted IPv4 tail
+   * occupying two words. matches() accepts "::", "2001:db8::1", "::ffff:192.0.2.1"; rejects
+   * "1::2::3", zone IDs, brackets, whitespace and hostnames. No capture groups.
+   */
+  public static final Pattern IPV6_ADDRESS_REGEX = Pattern.compile(IPV6_LITERAL);
+
+  /**
+   * IPv6(port), with named groups address and port. "2001:db8::1(161)" yields address "2001:db8::1"
+   * and port "161"; conversion produces 16 address bytes then 00:A1. Requires a full matches()
+   * match; ports outside 0..65535 are rejected.
+   */
   public static final Pattern IPV6_TRANSPORT_REGEX =
-      Pattern.compile(
-          ""
-              + "(^(((?=(?>.*?::)(?!.*::)))(::)?([0-9A-F]{1,4}::?){0,5}"
-              + "|([0-9A-F]{1,4}:){6})(\\2([0-9A-F]{1,4}(::?|$)){0,2}|((25[0-5]"
-              + "|(2[0-4]|1\\d|[1-9])?\\d)(\\.|$)){4}|[0-9A-F]{1,4}:[0-9A-F]{1,"
-              + "4})(?<![^:]:|\\.))"
-              + "\\(("
-              + IP_PORT_RANGE
-              + ")\\)",
-          Pattern.CASE_INSENSITIVE);
+      Pattern.compile("(?<address>" + IPV6_LITERAL + ")\\((?<port>" + IP_PORT_RANGE + ")\\)");
 
-  public static final Pattern IPV4_ADDRESS_REGEX =
-      Pattern.compile(
-          ""
-              + "(^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-              + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-              + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-              + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$)");
+  /**
+   * Four decimal octets 0..255; matches() accepts "192.0.2.1" and "001.002.003.004", rejects
+   * "256.0.0.1", short forms, whitespace and trailing text. No capture groups.
+   */
+  public static final Pattern IPV4_ADDRESS_REGEX = Pattern.compile(IPV4_LITERAL);
 
+  /**
+   * IPv4(port), with named groups address and port. "192.0.2.1(161)" yields address "192.0.2.1" and
+   * port "161"; conversion produces C0:00:02:01:00:A1. Requires a full matches() match; ports
+   * outside 0..65535 are rejected.
+   */
   public static final Pattern IPV4_TRANSPORT_REGEX =
-      Pattern.compile(
-          ""
-              + "(^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-              + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-              + "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\."
-              + "([01]?\\d\\d?|2[0-4]\\d|25[0-5]))"
-              + "\\(("
-              + IP_PORT_RANGE
-              + ")\\)");
+      Pattern.compile("(?<address>" + IPV4_LITERAL + ")\\((?<port>" + IP_PORT_RANGE + ")\\)");
 
-  /** Format: (0,0)(0,0)(0,0)(0,0)(0,0)(0,0)(0,0).... */
+  /**
+   * One or more adjacent decimal byte pairs, each component 0..255. matches() accepts
+   * "(0,255)(1,2)" (bytes 00:FF:01:02); rejects empty text, spaces and "(256,0)". Possessive
+   * repetition prevents backtracking over an already complete pair.
+   */
   public static final Pattern DOUBLE_BYTE_ARRAY_REGEX =
-      Pattern.compile(
-          "" + "(\\(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\,([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\))+");
+      Pattern.compile("(?:\\(" + DECIMAL_BYTE + "," + DECIMAL_BYTE + "\\))++");
 
-  /** Format: (01:FF:FF:FF:FF:FF)(02:FF:FF:FF:FF:FF)(03:FF:FF:FF:FF:FF).... */
+  /**
+   * One or more parenthesized six-byte MACs, with two hex digits per byte, any case. Separators may
+   * be colon, dot or hyphen (mixed separators remain accepted). matches() accepts
+   * "(00:11:22:33:44:ff)" (bytes 00:11:22:33:44:FF), rejects empty text and missing/extra bytes.
+   * Possessive repetition handles long lists.
+   */
   public static final Pattern MAC_ADDRESS_REGEX =
-      Pattern.compile(
-          "" + "(" + "(" + "\\(([0-9A-F]{2}[\\.:-]){5}" + "([0-9A-F]{2})" + "(\\)))+)",
-          Pattern.CASE_INSENSITIVE);
+      Pattern.compile("(?:\\((?:[0-9a-fA-F]{2}[.:-]){5}[0-9a-fA-F]{2}\\))++");
+
+  // Enumerate the bounded word counts instead of lookarounds or backreferences.
+  // A dotted tail occupies two of the eight words; :: must replace at least one.
+  private static String ipv6LiteralPattern() {
+    var alternatives = new ArrayList<String>();
+    alternatives.add("(?:" + HEX_WORD + ":){" + (IPV6_WORD_COUNT - 1) + "}" + HEX_WORD);
+    alternatives.add(
+        "(?:" + HEX_WORD + ":){" + (IPV6_WORD_COUNT - IPV4_WORD_COUNT) + "}" + IPV4_LITERAL);
+    for (int leftWords = 0; leftWords < IPV6_WORD_COUNT; leftWords++) {
+      String left = "";
+      if (leftWords > 0) left = HEX_WORD + "(?::" + HEX_WORD + "){" + (leftWords - 1) + "}";
+      int remainingWords = IPV6_WORD_COUNT - 1 - leftWords;
+      String right =
+          remainingWords == 0
+              ? ""
+              : "(?:" + HEX_WORD + "(?::" + HEX_WORD + "){0," + (remainingWords - 1) + "})?";
+      alternatives.add(left + "::" + right);
+      if (remainingWords >= IPV4_WORD_COUNT)
+        alternatives.add(
+            left
+                + "::(?:"
+                + HEX_WORD
+                + ":){0,"
+                + (remainingWords - IPV4_WORD_COUNT)
+                + "}"
+                + IPV4_LITERAL);
+    }
+    return "(?:" + String.join("|", alternatives) + ")";
+  }
 
   public static final String DOUBLE_BYTE_ARRAY_FORMAT =
       "(0,0)(0,0)(0,0)(0,0) = (Integer < 256,Integer < 256)(Integer < 256,Integer < 256)....";
@@ -97,13 +133,14 @@ public class DataTypeFormatConversion {
   public static final String MAC_ADDRESS_FORMAT = "(xx:xx:xx:xx:xx:xx)";
 
   /**
-   * Expected Format:
+   * Formats 16 address bytes plus a two-byte big-endian port as IPv6(port). For example 15 zero
+   * bytes, 01:00:A1 produce "0:0:0:0:0:0:0:1(161)". IPv4-mapped addresses remain IPv6 text. The
+   * input is not mutated.
    *
-   * <p>XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX(PORT ADDRESS)
-   *
-   * @param bIPv6TransportAddress byte[]
-   * @return String
-   * @throws DataTypeFormatException
+   * @param bIPv6TransportAddress non-null 18-byte transport address
+   * @return expanded lowercase IPv6(port) text
+   * @throws DataTypeFormatException if length is not 18
+   * @throws NullPointerException if the input is null
    */
   public static String byteArrayToIPv6TransportAddress(byte[] bIPv6TransportAddress)
       throws DataTypeFormatException {
@@ -116,7 +153,7 @@ public class DataTypeFormatConversion {
 
     baosIpv6Address.write(bIPv6TransportAddress, 0, IPV6_ADDRESS_BYTE_LENGTH);
 
-    String sIPv6Address = HexString.toInetAddress(baosIpv6Address.toByteArray());
+    String sIPv6Address = ipv6AddressText(baosIpv6Address.toByteArray());
 
     ByteArrayOutputStream baosTransport = new ByteArrayOutputStream();
 
@@ -133,89 +170,52 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * Convert : XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX:XXXX(PORT ADDRESS) to ByteArray
+   * Encodes a literal IPv6(port) as 16 address bytes and a two-byte big-endian port. For example
+   * "::1(161)" ends in 00:01:00:A1 and has length 18. Mapped IPv4 addresses retain the IPv6 width.
+   * No DNS lookup or caller mutation occurs.
    *
-   * @param sIPv6TransportAddress String
-   * @return byte[]
+   * @param sIPv6TransportAddress non-null IPv6(port) text
+   * @return encoded bytes, or an empty array for malformed text (legacy behavior)
+   * @throws NullPointerException if the input is null
    */
   public static byte[] ipv6TransportAddressToByteArray(String sIPv6TransportAddress) {
-
-    ByteArrayOutputStream baosIPv6TransportAddress = new ByteArrayOutputStream();
-
-    logger.debug(
-        "DataTypeFormatConversion.IPv6TransportAddressToByteArray() -> sIPv6TransportAddress: {}",
-        sIPv6TransportAddress);
-
-    if (verifyIPv6TransportAddressFormat(sIPv6TransportAddress)) {
-
-      Matcher mIPv6TransportAddress = IPV6_TRANSPORT_REGEX.matcher(sIPv6TransportAddress);
-
-      mIPv6TransportAddress.find();
-
-      /* ***************************************************
-       *					Group 1 = IP Address
-       * ****************************************************/
-      try {
-        baosIPv6TransportAddress.write(
-            HexString.inetAddressToByteArray(mIPv6TransportAddress.group(1)));
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-
-      /* ***************************************************
-       *					Group 14 = Port Address
-       * ****************************************************/
-      // MUST END WITH 2 BYTES
-      HexString hsInteger = new HexString();
-
-      // Clean up response
-      hsInteger.add(
-          Integer.parseInt(
-              sIPv6TransportAddress.substring(
-                  sIPv6TransportAddress.lastIndexOf('(') + 1, sIPv6TransportAddress.length() - 1)));
-      hsInteger.prefixNullPaddToLength(IP_PORT_BYTE_LENGTH);
-
-      try {
-        baosIPv6TransportAddress.write(hsInteger.toByteArray());
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    Matcher matcher = IPV6_TRANSPORT_REGEX.matcher(sIPv6TransportAddress);
+    if (!matcher.matches()) return new byte[0];
+    String literal = matcher.group("address");
+    if (literal.indexOf('.') >= 0) {
+      int tailOffset = literal.lastIndexOf(':') + 1;
+      String[] octets = literal.substring(tailOffset).split("\\.");
+      int highWord = (Integer.parseInt(octets[0]) << Byte.SIZE) | Integer.parseInt(octets[1]);
+      int lowWord = (Integer.parseInt(octets[2]) << Byte.SIZE) | Integer.parseInt(octets[3]);
+      literal =
+          literal.substring(0, tailOffset)
+              + Integer.toHexString(highWord)
+              + ":"
+              + Integer.toHexString(lowWord);
     }
-
-    logger.debug(
-        () ->
-            "DataTypeFormatConversion.IPv6TransportAddressToByteArray() -> "
-                + "Input: "
-                + sIPv6TransportAddress
-                + " -> "
-                + "HEX: "
-                + new HexString(baosIPv6TransportAddress.toByteArray()).toString(":"));
-
-    return baosIPv6TransportAddress.toByteArray();
+    byte[] address = HexString.inetAddressToByteArray(literal);
+    if (address.length == IPV4_ADDRESS_BYTE_LENGTH) {
+      // InetAddress collapses IPv4-mapped IPv6 literals; restore the wire prefix.
+      byte[] mapped = new byte[IPV6_ADDRESS_BYTE_LENGTH];
+      int tailOffset = IPV6_ADDRESS_BYTE_LENGTH - IPV4_ADDRESS_BYTE_LENGTH;
+      mapped[tailOffset - 2] = (byte) 0xff;
+      mapped[tailOffset - 1] = (byte) 0xff;
+      System.arraycopy(address, 0, mapped, tailOffset, address.length);
+      address = mapped;
+    }
+    return appendPort(address, Integer.parseInt(matcher.group("port")));
   }
 
   /**
-   * @param sIPv6TransportAddress
-   * @return boolean
+   * Validates the entire input without conversion or mutation. "2001:db8::1(161)" returns true;
+   * empty text, whitespace, trailing text and out-of-range fields return false.
+   *
+   * @param sIPv6TransportAddress non-null text in the corresponding pattern's documented format
+   * @return true only when the whole input matches
+   * @throws NullPointerException if the input is null
    */
   public static boolean verifyIPv6TransportAddressFormat(String sIPv6TransportAddress) {
-
-    if (IPV6_TRANSPORT_REGEX.matcher(sIPv6TransportAddress).matches()) {
-
-      logger.debug(
-          "DataTypeFormatConversion.verifyIPv6TransportAddressFormat() -> GOOD: {}",
-          sIPv6TransportAddress);
-
-      return true;
-    } else {
-
-      logger.debug(
-          "DataTypeFormatConversion.verifyIPv6TransportAddressFormat() -> BAD: {}",
-          sIPv6TransportAddress);
-
-      return false;
-    }
+    return IPV6_TRANSPORT_REGEX.matcher(sIPv6TransportAddress).matches();
   }
 
   /**
@@ -255,63 +255,47 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * @param sIpv4TransportAddress
-   * @return byte[]
+   * Encodes IPv4(port) as four address bytes and a two-byte big-endian port. For example
+   * "192.0.2.1(161)" produces C0:00:02:01:00:A1. Leading-zero octets are decimal. No DNS lookup or
+   * caller mutation occurs.
+   *
+   * @param sIpv4TransportAddress non-null IPv4(port) text
+   * @return encoded bytes, or an empty array for malformed text (legacy behavior)
+   * @throws NullPointerException if the input is null
    */
   public static byte[] ipv4TransportAddressToByteArray(String sIpv4TransportAddress) {
+    Matcher matcher = IPV4_TRANSPORT_REGEX.matcher(sIpv4TransportAddress);
+    if (!matcher.matches()) return new byte[0];
+    String[] octets = matcher.group("address").split("\\.");
+    byte[] address = new byte[IPV4_ADDRESS_BYTE_LENGTH];
+    for (int index = 0; index < address.length; index++)
+      address[index] = (byte) Integer.parseInt(octets[index]);
+    return appendPort(address, Integer.parseInt(matcher.group("port")));
+  }
 
-    ByteArrayOutputStream baosIPv4TransportAddress = new ByteArrayOutputStream();
-
-    logger.debug(
-        "DataTypeFormatConversion.ipv4TransportAddressToByteArray() -> sIpv4TransportAddress: {}",
-        sIpv4TransportAddress);
-
-    if (verifyIPv4TransportAddressFormat(sIpv4TransportAddress)) {
-
-      Matcher mIPv4TransportAddress = IPV4_TRANSPORT_REGEX.matcher(sIpv4TransportAddress);
-
-      mIPv4TransportAddress.find();
-
-      // Group 1 = IPv6 Address
-      try {
-        baosIPv4TransportAddress.write(
-            HexString.inetAddressToByteArray(mIPv4TransportAddress.group(1)));
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-
-      // Group 6 = Port Address
-
-      HexString hsInteger = new HexString();
-      hsInteger.add(
-          Integer.parseInt(mIPv4TransportAddress.group(6).replaceAll("\\(|\\)|\\s+", "")));
-      hsInteger.prefixNullPaddToLength(IP_PORT_BYTE_LENGTH);
-
-      try {
-        baosIPv4TransportAddress.write(hsInteger.toByteArray());
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-    } else {
-
+  private static String ipv6AddressText(byte[] address) {
+    try {
+      return Inet6Address.getByAddress(null, address, -1).getHostAddress();
+    } catch (UnknownHostException e) {
+      throw new IllegalArgumentException("IPv6 requires 16 address bytes", e);
     }
+  }
 
-    logger.debug(
-        () ->
-            "DataTypeFormatConversion.IPv4TransportAddressToByteArray() -> "
-                + "Input: "
-                + sIpv4TransportAddress
-                + " -> "
-                + "HEX: "
-                + new HexString(baosIPv4TransportAddress.toByteArray()).toString(":"));
-
-    return baosIPv4TransportAddress.toByteArray();
+  private static byte[] appendPort(byte[] address, int port) {
+    byte[] result = Arrays.copyOf(address, address.length + IP_PORT_BYTE_LENGTH);
+    result[address.length] = (byte) (port >>> Byte.SIZE);
+    result[address.length + 1] = (byte) port;
+    return result;
   }
 
   /**
-   * @param bInetTransportAddress
-   * @return String
-   * @throws DataTypeFormatException
+   * Formats an IPv4 or IPv6 transport, selected by its length, without mutating input.
+   * C0:00:02:01:00:A1 produces "192.0.2.1(161)"; IPv6 remains IPv6 even when mapped.
+   *
+   * @param bInetTransportAddress non-null 6-byte IPv4 or 18-byte IPv6 transport
+   * @return address(port), with the unsigned big-endian port in decimal
+   * @throws DataTypeFormatException if length is neither 6 nor 18
+   * @throws NullPointerException if the input is null
    */
   public static String byteArrayToInetTransportAddress(byte[] bInetTransportAddress)
       throws DataTypeFormatException {
@@ -328,7 +312,7 @@ public class DataTypeFormatConversion {
 
       baosInetAddress.write(bInetTransportAddress, 0, IPV6_ADDRESS_BYTE_LENGTH);
 
-      sInetAddress = HexString.toInetAddress(baosInetAddress.toByteArray());
+      sInetAddress = ipv6AddressText(baosInetAddress.toByteArray());
 
       baosTransport.write(bInetTransportAddress, IPV6_ADDRESS_BYTE_LENGTH, IP_PORT_BYTE_LENGTH);
 
@@ -382,27 +366,15 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * @param sIPv4TransportAddress
-   * @return boolean
+   * Validates the entire input without conversion or mutation. "192.0.2.1(161)" returns true; empty
+   * text, whitespace, trailing text and out-of-range fields return false.
+   *
+   * @param sIPv4TransportAddress non-null text in the corresponding pattern's documented format
+   * @return true only when the whole input matches
+   * @throws NullPointerException if the input is null
    */
   public static boolean verifyIPv4TransportAddressFormat(String sIPv4TransportAddress) {
-
-    if (IPV4_TRANSPORT_REGEX.matcher(sIPv4TransportAddress).matches()) {
-
-      logger.debug(
-          "DataTypeFormatConversion.verifyIPv4TransportAddressFormat() -> GOOD: {}",
-          sIPv4TransportAddress);
-
-      return true;
-
-    } else {
-
-      logger.debug(
-          "DataTypeFormatConversion.verifyIPv4TransportAddressFormat() -> BAD: {}",
-          sIPv4TransportAddress);
-
-      return false;
-    }
+    return IPV4_TRANSPORT_REGEX.matcher(sIPv4TransportAddress).matches();
   }
 
   /**
@@ -440,11 +412,13 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * Format: (0,0)(0,0)(0,0)(0,0)(0,0)(0,0)(0,0)....
+   * Converts adjacent decimal pairs to bytes in source order; "(0,255)(1,2)" gives 00:FF:01:02.
+   * Each component is 0..255; leading zeroes remain decimal.
    *
-   * @param sDoubleByteArray
-   * @return byte[]
-   * @throws IllegalArgumentException
+   * @param sDoubleByteArray non-null text containing at least one pair
+   * @return two bytes per pair
+   * @throws IllegalArgumentException if the input does not match DOUBLE_BYTE_ARRAY_REGEX
+   * @throws NullPointerException if the input is null
    */
   public static byte[] doubleByteArray(String sDoubleByteArray) throws IllegalArgumentException {
 
@@ -453,7 +427,7 @@ public class DataTypeFormatConversion {
           "DataTypeFormatConversion.doubleByteArray() Invalid String Format: " + sDoubleByteArray);
     }
 
-    sDoubleByteArray = sDoubleByteArray.replaceAll("\\)\\(", ",").replaceAll("\\)|\\(", "");
+    sDoubleByteArray = sDoubleByteArray.replace(")(", ",").replace(")", "").replace("(", "");
 
     ByteArrayOutputStream baosDoubleByteArray = new ByteArrayOutputStream();
 
@@ -482,24 +456,15 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * @param sDoubleByteArray
-   * @return boolean
+   * Validates the entire input without conversion or mutation. "(0,255)(1,2)" returns true; empty
+   * text, whitespace, trailing text and out-of-range fields return false.
+   *
+   * @param sDoubleByteArray non-null text in the corresponding pattern's documented format
+   * @return true only when the whole input matches
+   * @throws NullPointerException if the input is null
    */
   public static boolean doubleByteArrayValidate(String sDoubleByteArray) {
-
-    if (DOUBLE_BYTE_ARRAY_REGEX.matcher(sDoubleByteArray).matches()) {
-
-      logger.debug(
-          "DataTypeFormatConversion.doubleByteArrayValidate() -> GOOD: {}", sDoubleByteArray);
-
-      return true;
-    } else {
-
-      logger.debug(
-          "DataTypeFormatConversion.doubleByteArrayValidate() -> BAD: {}", sDoubleByteArray);
-
-      return false;
-    }
+    return DOUBLE_BYTE_ARRAY_REGEX.matcher(sDoubleByteArray).matches();
   }
 
   /**
@@ -592,9 +557,13 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * @param sMacAddressFormatList
-   * @return byte[]
-   * @throws IllegalArgumentException
+   * Encodes adjacent parenthesized MACs, accepting colon, dot or hyphen separators.
+   * "(00-11-22-33-44-ff)" produces 00:11:22:33:44:FF. Case is ignored.
+   *
+   * @param sMacAddressFormatList non-null text containing at least one six-byte MAC
+   * @return six bytes per MAC in source order
+   * @throws IllegalArgumentException if the whole input does not match MAC_ADDRESS_REGEX
+   * @throws NullPointerException if the input is null
    */
   public static byte[] macAddressFormatToByteArray(String sMacAddressFormatList)
       throws IllegalArgumentException {
@@ -603,30 +572,19 @@ public class DataTypeFormatConversion {
       throw new IllegalArgumentException("Invalid MacAddress Format: " + sMacAddressFormatList);
     }
 
-    return HexString.toByteArray(sMacAddressFormatList);
+    return HexString.toByteArray(sMacAddressFormatList.replace('.', ':').replace('-', ':'));
   }
 
   /**
-   * @param sMacAddress
-   * @return boolean
+   * Validates the entire input without conversion or mutation. "(00:11:22:33:44:55)" returns true;
+   * empty text, whitespace, trailing text and out-of-range fields return false.
+   *
+   * @param sMacAddress non-null text in the corresponding pattern's documented format
+   * @return true only when the whole input matches
+   * @throws NullPointerException if the input is null
    */
   public static boolean macAddressFormatValidation(String sMacAddress) {
-
-    Matcher mMacAddress = MAC_ADDRESS_REGEX.matcher(sMacAddress);
-
-    if (MAC_ADDRESS_REGEX.matcher(sMacAddress).matches()) {
-
-      logger.debug(
-          "DataTypeFormatConversion.macAddressFormatValidation() -> GOOD: {}", mMacAddress);
-
-      return true;
-
-    } else {
-
-      logger.debug("DataTypeFormatConversion.macAddressFormatValidation() -> BAD: {}", mMacAddress);
-
-      return false;
-    }
+    return MAC_ADDRESS_REGEX.matcher(sMacAddress).matches();
   }
 
   /**
