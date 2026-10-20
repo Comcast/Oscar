@@ -101,6 +101,7 @@ for tests and published examples.
 - [x] Extract and verify the eRouter I21 source and provenance.
 - [x] Define embedded-service ownership and attachment architecture.
 - [x] Build the relative-path eRouter catalog with source constraints.
+- [x] Allow repeated eRouter parents in both DOCSIS families; verify order and MICs.
 - [x] Add structural and source-boundary catalog regression coverage.
 - [ ] Resolve ambiguous widths, access-view range and OID representation.
 - [x] Implement direct parent-reference composition and fail-fast validation.
@@ -117,6 +118,13 @@ for tests and published examples.
 - [ ] Review eMTA specifications before adding its catalog.
 
 ### Enabled eRouter subset
+
+Both DOCSIS families declare parent 202 with `maxInstances: -1`. eRouter I21
+Annex B.3, printed p.87 explicitly permits repeated containers and treats their
+children as one configuration in encounter order. Child-specific repetition
+rules still apply. `EmbeddedProfileTest` checks this registry contract, independent
+wire bytes, interleaved containers and complete-file MIC round trips for both
+families.
 
 Both base catalogs attach 202.1, 202.2.1–6, 202.3, 202.10, 202.12, 202.13 and
 202.42, with the 202.2 container owned by eRouter. Both families use the same

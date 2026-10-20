@@ -20,6 +20,8 @@ class EmbeddedProfileTest {
   @ParameterizedTest
   @ValueSource(strings = {"Docsis", "Docsis-4.0"})
   void preservesRepeatedContainersAndIndependentWireBytes(String header) throws Exception {
+    String family = header.equals("Docsis") ? "docsis" : "docsis40";
+    assertEquals(-1, TlvRegistry.forFamily(family).find(List.of(202)).maxInstances());
     String text =
         header
             + """
