@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.ber;
@@ -19,20 +19,6 @@ import org.snmp4j.asn1.BERInputStream;
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.VariableBinding;
 
-/**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class BEROIDConversion {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(BEROIDConversion.class);
@@ -112,11 +98,9 @@ public class BEROIDConversion {
    */
   public String getOidName() {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("BEROIDConversion.getOidName() - BER: " + new HexString(bBER).toString());
-      logger.debug("BEROIDConversion.getOidName() - OID.toString(): " + oOID.toString());
-      logger.debug("BEROIDConversion.getOidName() - OID.format(): " + oOID.format());
-    }
+    logger.debug(() -> "BEROIDConversion.getOidName() - BER: " + new HexString(bBER).toString());
+    logger.debug(() -> "BEROIDConversion.getOidName() - OID.toString(): " + oOID.toString());
+    logger.debug(() -> "BEROIDConversion.getOidName() - OID.format(): " + oOID.format());
 
     return oOID.format();
   }
@@ -179,8 +163,7 @@ public class BEROIDConversion {
         /* Checks to see if the HEX String Contains and Values that are outside of the Typical ASCII Chars*/
         (!HexString.verifyAsciiPlainText(HexString.toByteArray(vbBER.getVariable().toString())))) {
 
-      if (logger.isDebugEnabled())
-        logger.debug("BEROIDConversion.toMap() - Found a NON-ASCII Plain Text Characters");
+      logger.debug("BEROIDConversion.toMap() - Found a NON-ASCII Plain Text Characters");
 
       mssReturn.put(
           DATA_TYPE, Integer.toString(BinaryConversion.byteToUnsignedInteger(BERService.HEX)));
@@ -193,8 +176,7 @@ public class BEROIDConversion {
         && (!HexString.verifyAsciiPlainText(
             HexString.toByteArray(vbBER.getVariable().toString())))) {
 
-      if (logger.isDebugEnabled())
-        logger.debug("BEROIDConversion.toMap() - Found a NON-ASCII Plain Text Characters");
+      logger.debug("BEROIDConversion.toMap() - Found a NON-ASCII Plain Text Characters");
 
       mssReturn.put(
           DATA_TYPE, Integer.toString(BinaryConversion.byteToUnsignedInteger(BERService.HEX)));
@@ -205,11 +187,11 @@ public class BEROIDConversion {
         && (HexString.containAsciiWhiteSpace(
             HexString.toByteArray(HexString.asciiToHex(getOidValue()))))) {
 
-      if (logger.isDebugEnabled())
-        logger.debug(
-            "BEROIDConversion.toMap() - Found a ASCII Plain Text Characters: \""
-                + getOidValue()
-                + "\"");
+      logger.debug(
+          () ->
+              "BEROIDConversion.toMap() - Found a ASCII Plain Text Characters: \""
+                  + getOidValue()
+                  + "\"");
 
       mssReturn.put(DATA_TYPE, getDataType().toString());
 

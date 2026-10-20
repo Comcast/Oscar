@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.dictionary;
@@ -21,20 +21,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class DictionarySQLQueries extends SqlConnection {
 
   private static final Logger logger = LogManager.getLogger(DictionarySQLQueries.class);
@@ -73,8 +59,7 @@ public class DictionarySQLQueries extends SqlConnection {
    */
   public DictionarySQLQueries(Connection commSqlConnection, String sDictionaryTableName) {
 
-    if (logger.isDebugEnabled())
-      logger.debug("DictionarySQLQueries(comm,s) -> " + sDictionaryTableName);
+    logger.debug("DictionarySQLQueries(comm,s) -> {}", sDictionaryTableName);
 
     this.commSqlConnection = commSqlConnection;
 
@@ -88,7 +73,7 @@ public class DictionarySQLQueries extends SqlConnection {
    */
   public DictionarySQLQueries(String sDictionaryTableName) {
 
-    if (logger.isDebugEnabled()) logger.debug("DictionarySQLQueries(s) -> " + sDictionaryTableName);
+    logger.debug("DictionarySQLQueries(s) -> {}", sDictionaryTableName);
 
     this.commSqlConnection = super.getConnectionID();
 
@@ -100,7 +85,7 @@ public class DictionarySQLQueries extends SqlConnection {
   /** */
   public DictionarySQLQueries() {
 
-    if (logger.isDebugEnabled()) logger.debug("DictionarySQLQueries() -> " + sDictionaryTableName);
+    logger.debug("DictionarySQLQueries() -> {}", sDictionaryTableName);
 
     this.commSqlConnection = super.getConnectionID();
 
@@ -141,8 +126,7 @@ public class DictionarySQLQueries extends SqlConnection {
             + " AND "
             + "PARENT_ID = '0'";
 
-    if (logger.isDebugEnabled())
-      logger.debug("DictionarySQLQueries.getMajorTlvDefinition() SQL_QUERY: " + sqlQuery);
+    logger.debug("DictionarySQLQueries.getMajorTlvDefinition() SQL_QUERY: {}", sqlQuery);
 
     try {
       statement = commSqlConnection.createStatement();
@@ -175,8 +159,7 @@ public class DictionarySQLQueries extends SqlConnection {
    */
   public JSONObject getTlvDefinition(int iType) {
 
-    if (logger.isDebugEnabled())
-      logger.debug("DictionarySQLQueries.getTlvDefinition() -> TLV-TYPE: " + iType);
+    logger.debug("DictionarySQLQueries.getTlvDefinition() -> TLV-TYPE: {}", iType);
 
     JSONObject jsonObj = null;
 
@@ -190,8 +173,7 @@ public class DictionarySQLQueries extends SqlConnection {
       e.printStackTrace();
     }
 
-    if (logger.isDebugEnabled())
-      logger.debug("DictionarySQLQueries.getTlvDefinition() -> JSON-Object: " + jsonObj);
+    logger.debug("DictionarySQLQueries.getTlvDefinition() -> JSON-Object: {}", jsonObj);
 
     return jsonObj;
   }
@@ -323,8 +305,7 @@ public class DictionarySQLQueries extends SqlConnection {
             + Dictionary.DB_TBL_COL_PARENT_ID
             + " = '0'";
 
-    if (logger.isDebugEnabled())
-      logger.debug("DictionarySQLQueries.getTopLevelTLV() SQL_QUERY: " + sqlQuery);
+    logger.debug("DictionarySQLQueries.getTopLevelTLV() SQL_QUERY: {}", sqlQuery);
 
     try {
       statement = commSqlConnection.createStatement();
@@ -368,8 +349,7 @@ public class DictionarySQLQueries extends SqlConnection {
     String sqlQuery =
         "SELECT * " + "FROM " + this.sDictionaryTableName + " " + "WHERE " + "PARENT_ID = '0'";
 
-    if (logger.isDebugEnabled())
-      logger.debug("DictionarySQLQueries.getTopLevelByteLength() SQL_QUERY: " + sqlQuery);
+    logger.debug("DictionarySQLQueries.getTopLevelByteLength() SQL_QUERY: {}", sqlQuery);
 
     try {
       statement = commSqlConnection.createStatement();
@@ -419,8 +399,7 @@ public class DictionarySQLQueries extends SqlConnection {
     String sqlQuery =
         "SELECT * " + "FROM " + this.sDictionaryTableName + " " + "WHERE " + "PARENT_ID = '0'";
 
-    if (logger.isDebugEnabled())
-      logger.debug("DictionarySQLQueries.getAllTopLevelTypeNameToType() SQL_QUERY: " + sqlQuery);
+    logger.debug("DictionarySQLQueries.getAllTopLevelTypeNameToType() SQL_QUERY: {}", sqlQuery);
 
     try {
       statement = commSqlConnection.createStatement();
@@ -484,8 +463,7 @@ public class DictionarySQLQueries extends SqlConnection {
             + " AND "
             + "PARENT_ID = '0'";
 
-    if (logger.isDebugEnabled())
-      logger.debug("DictionarySQLQueries.getMajorParentTlvRowId() SQL_QUERY: " + sqlQuery);
+    logger.debug("DictionarySQLQueries.getMajorParentTlvRowId() SQL_QUERY: {}", sqlQuery);
 
     try {
       statement = commSqlConnection.createStatement();
@@ -505,9 +483,8 @@ public class DictionarySQLQueries extends SqlConnection {
       e.printStackTrace();
     }
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "DictionarySQLQueries.getMajorParentTlvRowId() SQL_QUERY-PRI-KEY-RTN: " + iPrimaryKey);
+    logger.debug(
+        "DictionarySQLQueries.getMajorParentTlvRowId() SQL_QUERY-PRI-KEY-RTN: {}", iPrimaryKey);
 
     return iPrimaryKey;
   }
@@ -536,8 +513,7 @@ public class DictionarySQLQueries extends SqlConnection {
             + iRowID
             + "'";
 
-    if (logger.isDebugEnabled())
-      logger.debug("DictionarySQLQueries.getTypeFromRowID() SQL_QUERY: " + sqlQuery);
+    logger.debug("DictionarySQLQueries.getTypeFromRowID() SQL_QUERY: {}", sqlQuery);
 
     try {
       statement = commSqlConnection.createStatement();
@@ -594,11 +570,9 @@ public class DictionarySQLQueries extends SqlConnection {
 
     ResultSet resultSetParentCheck = null, resultSetGetRowDefinition = null;
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "DictionarySQLQueries.recursiveTlvDefinitionBuilder(START) -> "
-              + "aliTlvEncodeHistory: "
-              + aliTlvEncodeHistory);
+    logger.debug(
+        "DictionarySQLQueries.recursiveTlvDefinitionBuilder(START) -> aliTlvEncodeHistory: {}",
+        aliTlvEncodeHistory);
 
     String sqlQuery;
 
@@ -643,11 +617,9 @@ public class DictionarySQLQueries extends SqlConnection {
         // This query will check for child rows that belong to a parent row
         sqlQuery = "SELECT * FROM " + this.sDictionaryTableName + " 	WHERE ID = '" + iRowID + "'";
 
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "DictionarySQLQueries.recursiveTlvDefinitionBuilder(SUB-TLV-BEFORE) -> "
-                  + "ROW-ID: "
-                  + iRowID);
+        logger.debug(
+            "DictionarySQLQueries.recursiveTlvDefinitionBuilder(SUB-TLV-BEFORE) -> ROW-ID: {}",
+            iRowID);
 
         // Create statement to get Rows from ROW ID's
         getRowDefinitionStatement = commSqlConnection.createStatement();
@@ -691,49 +663,40 @@ public class DictionarySQLQueries extends SqlConnection {
 
         if (checkForChild(iRowID)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionarySQLQueries.recursiveTlvDefinitionBuilder(SUB-TLV-BEFORE) -> "
-                    + "ROW-ID: "
-                    + iRowID
-                    + " -> CHILD-FOUND");
+          logger.debug(
+              "DictionarySQLQueries.recursiveTlvDefinitionBuilder(SUB-TLV-BEFORE) -> ROW-ID: {} ->"
+                  + " CHILD-FOUND",
+              iRowID);
 
           aliTlvEncodeHistory.add(resultSetGetRowDefinition.getInt("TYPE"));
 
         } else {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionarySQLQueries.recursiveTlvDefinitionBuilder(SUB-TLV-BEFORE) -> "
-                    + "ROW-ID: "
-                    + iRowID
-                    + " -> CHILD-NOT-FOUND");
+          logger.debug(
+              "DictionarySQLQueries.recursiveTlvDefinitionBuilder(SUB-TLV-BEFORE) -> ROW-ID: {} ->"
+                  + " CHILD-NOT-FOUND",
+              iRowID);
 
           tlvJsonObj.put(Dictionary.PARENT_TYPE_LIST, aliTlvEncodeHistory);
 
           return tlvJsonObj;
         }
 
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "DictionarySQLQueries.recursiveTlvDefinitionBuilder(SUB-TLV-BEFORE) -> "
-                  + "aliTlvEncodeHistory: "
-                  + aliTlvEncodeHistory);
+        logger.debug(
+            "DictionarySQLQueries.recursiveTlvDefinitionBuilder(SUB-TLV-BEFORE) ->"
+                + " aliTlvEncodeHistory: {}",
+            aliTlvEncodeHistory);
 
         tlvJsonObj.put(Dictionary.PARENT_TYPE_LIST, aliTlvEncodeHistory);
 
         aliTlvEncodeHistory.remove(aliTlvEncodeHistory.size() - 1);
 
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "DictionarySQLQueries.recursiveTlvDefinitionBuilder(SUB-TLV-AFTER) -> "
-                  + " aliTlvEncodeHistory: "
-                  + aliTlvEncodeHistory);
+        logger.debug(
+            "DictionarySQLQueries.recursiveTlvDefinitionBuilder(SUB-TLV-AFTER) -> "
+                + " aliTlvEncodeHistory: {}",
+            aliTlvEncodeHistory);
 
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "DictionarySQLQueries.recursiveTlvDefinitionBuilder(SUB-TLV) "
-                  + tlvJsonObj.toString());
+        logger.debug("DictionarySQLQueries.recursiveTlvDefinitionBuilder(SUB-TLV) {}", tlvJsonObj);
 
       } else if (iParentID == TOP_LEVEL_TLV) {
 
@@ -782,10 +745,8 @@ public class DictionarySQLQueries extends SqlConnection {
         aliTlvEncodeHistory.add(resultSetGetRowDefinition.getInt(Dictionary.DB_TBL_COL_TYPE));
         tlvJsonObj.put(Dictionary.PARENT_TYPE_LIST, aliTlvEncodeHistory);
 
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "DictionarySQLQueries.recursiveTlvDefinitionBuilder(TOP_LEVEL_TLV) "
-                  + tlvJsonObj.toString());
+        logger.debug(
+            "DictionarySQLQueries.recursiveTlvDefinitionBuilder(TOP_LEVEL_TLV) {}", tlvJsonObj);
       }
 
       if ((SqlConnection.getRowCount(sParentCheckQuery) > 0)) {
@@ -876,8 +837,7 @@ public class DictionarySQLQueries extends SqlConnection {
             + iRowID
             + "'";
 
-    if (logger.isDebugEnabled())
-      logger.debug("DictionarySQLQueries.checkForChild() -> SQL: " + sqlQuery);
+    logger.debug("DictionarySQLQueries.checkForChild() -> SQL: {}", sqlQuery);
 
     try {
       parentCheckStatement = commSqlConnection.createStatement();
@@ -887,14 +847,12 @@ public class DictionarySQLQueries extends SqlConnection {
       resultSetParentCheck.next();
 
       if (resultSetParentCheck.getRow() == 0) {
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "DictionarySQLQueries.checkForChild() -> NO-CHILD-FOUND FOR ROW-ID: " + iRowID);
+        logger.debug(
+            "DictionarySQLQueries.checkForChild() -> NO-CHILD-FOUND FOR ROW-ID: {}", iRowID);
         return false;
       } else {
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "DictionarySQLQueries.checkForChild() -> NO-CHILD-FOUND FOR ROW-ID: " + iRowID);
+        logger.debug(
+            "DictionarySQLQueries.checkForChild() -> NO-CHILD-FOUND FOR ROW-ID: {}", iRowID);
       }
 
     } catch (SQLException e) {
@@ -959,7 +917,7 @@ public class DictionarySQLQueries extends SqlConnection {
           Dictionary.BYTE_LENGTH,
           resultSetParentCheck.getString(Dictionary.DB_TBL_COL_BYTE_LENGTH));
 
-      if (logger.isDebugEnabled()) logger.debug(tlvJsonObj.toString());
+      logger.debug("{}", tlvJsonObj);
 
     } catch (SQLException e) {
       e.printStackTrace();
@@ -973,10 +931,8 @@ public class DictionarySQLQueries extends SqlConnection {
    */
   public void updateDictionaryTablename(String sCableLabsDictionaryTableName) {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "DictionarySQLQueries.updateDictionaryTablename() -> " + sCableLabsDictionaryTableName);
-    }
+    logger.debug(
+        "DictionarySQLQueries.updateDictionaryTablename() -> {}", sCableLabsDictionaryTableName);
 
     this.sDictionaryTableName = sCableLabsDictionaryTableName;
   }
@@ -994,8 +950,7 @@ public class DictionarySQLQueries extends SqlConnection {
 
     String sqlQuery = "SELECT * " + "FROM " + sQueryType + " " + "WHERE " + "PARENT_ID = '0'";
 
-    if (logger.isDebugEnabled())
-      logger.debug("DictionarySQLQueries.getTypeToByteLengthMap() SQL_QUERY: " + sqlQuery);
+    logger.debug("DictionarySQLQueries.getTypeToByteLengthMap() SQL_QUERY: {}", sqlQuery);
 
     try {
       statement = commSqlConnection.createStatement();

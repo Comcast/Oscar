@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.tlv;
@@ -19,20 +19,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.snmp4j.smi.OID;
 
-/**
- * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class TlvBuilder implements TlvBuild {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(TlvBuilder.class);
@@ -84,7 +70,7 @@ public class TlvBuilder implements TlvBuild {
    */
   public void add(HexString hsObject) throws TlvException {
 
-    if (logger.isDebugEnabled()) logger.debug("TlvBuilder.add(hs) " + hsObject.toString(":"));
+    logger.debug(() -> "TlvBuilder.add(hs) " + hsObject.toString(":"));
 
     if (hsObject == null) {
       throw new NullPointerException("HexString.add(hs): hsObject is a NULL");
@@ -106,8 +92,7 @@ public class TlvBuilder implements TlvBuild {
    */
   public void add(int iTlvType, Integer iValue) throws TlvException {
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvBuilder.add(i,i) " + "Type: " + iTlvType + " - Value: " + iValue);
+    logger.debug("TlvBuilder.add(i,i) Type: {} - Value: {}", iTlvType, iValue);
 
     if (iTlvType < 0) throw new TlvException("TlvBuilder.add() Type Less than 0");
 
@@ -130,8 +115,7 @@ public class TlvBuilder implements TlvBuild {
    */
   public void add(int iTlvType, HexString hsValue) throws TlvException {
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvBuilder.add(i,hs) " + "Type: " + iTlvType + " - Value: " + hsValue);
+    logger.debug("TlvBuilder.add(i,hs) Type: {} - Value: {}", iTlvType, hsValue);
 
     if (iTlvType < 0) throw new TlvException("TlvBuilder.add() Type Must be greater than 0");
 
@@ -152,40 +136,37 @@ public class TlvBuilder implements TlvBuild {
    */
   public void add(TlvBuilder tbObject) {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "TlvBuilder.add(tb) " + "TlvBuilder: " + tbObject + " - Size: " + tbObject.length());
-      logger.debug("TlvBuilder.add(tb) " + "TlvBuilder: " + tbObject + " - Size: " + length());
-      logger.debug(
-          "TlvBuilder.add(tb) "
-              + "TlvBuilder.lsTlvBuffer: "
-              + tbObject
-              + " - Size: "
-              + lsTlvBuffer.size());
-    }
+    logger.debug(
+        () -> "TlvBuilder.add(tb) " + "TlvBuilder: " + tbObject + " - Size: " + tbObject.length());
+    logger.debug(() -> "TlvBuilder.add(tb) " + "TlvBuilder: " + tbObject + " - Size: " + length());
+    logger.debug(
+        () ->
+            "TlvBuilder.add(tb) "
+                + "TlvBuilder.lsTlvBuffer: "
+                + tbObject
+                + " - Size: "
+                + lsTlvBuffer.size());
 
     lsTlvBuffer.add(tbObject.toString());
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("TlvBuilder.add(tb) " + "TlvBuilder: " + tbObject + " - Size: " + length());
-      logger.debug(
-          "TlvBuilder.add(tb) - AFTER "
-              + "TlvBuilder.lsTlvBuffer: "
-              + tbObject
-              + " - Size: "
-              + lsTlvBuffer.size());
-    }
+    logger.debug(() -> "TlvBuilder.add(tb) " + "TlvBuilder: " + tbObject + " - Size: " + length());
+    logger.debug(
+        () ->
+            "TlvBuilder.add(tb) - AFTER "
+                + "TlvBuilder.lsTlvBuffer: "
+                + tbObject
+                + " - Size: "
+                + lsTlvBuffer.size());
 
     updateMapTypeToByteLength(tbObject);
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "TlvBuilder.add(tb) - AFTER "
-              + "TlvBuilder.lsTlvBuffer: "
-              + tbObject
-              + " - Size: "
-              + lsTlvBuffer.size());
-    }
+    logger.debug(
+        () ->
+            "TlvBuilder.add(tb) - AFTER "
+                + "TlvBuilder.lsTlvBuffer: "
+                + tbObject
+                + " - Size: "
+                + lsTlvBuffer.size());
   }
 
   /**
@@ -225,19 +206,18 @@ public class TlvBuilder implements TlvBuild {
    */
   public void add(int iTlvType, byte[] bValue) throws TlvException {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "+===============================================================================================+");
-      logger.debug(
-          "TlvBuilder.add(i,b) "
-              + "Type: "
-              + iTlvType
-              + " - Length: "
-              + bValue.length
-              + " - Value: "
-              + new HexString(bValue).toString(":"));
-      // Thread.dumpStack();
-    }
+    logger.debug(
+        "+===============================================================================================+");
+    logger.debug(
+        () ->
+            "TlvBuilder.add(i,b) "
+                + "Type: "
+                + iTlvType
+                + " - Length: "
+                + bValue.length
+                + " - Value: "
+                + new HexString(bValue).toString(":"));
+    // Thread.dumpStack();
 
     if (iTlvType < 0) throw new TlvException("TlvBuilder.add() Type Less than 0");
 
@@ -263,12 +243,12 @@ public class TlvBuilder implements TlvBuild {
       // Advance pointer to the next 255 position
       iIndex += MAX_TLV_LENGTH;
 
-      if (logger.isDebugEnabled())
-        logger.debug(
-            "TlvBuilder.add(i,b) - Type: "
-                + iTlvType
-                + " - Hex: "
-                + new HexString(baosTopLevelTlvList.toByteArray()).toString(":"));
+      logger.debug(
+          () ->
+              "TlvBuilder.add(i,b) - Type: "
+                  + iTlvType
+                  + " - Hex: "
+                  + new HexString(baosTopLevelTlvList.toByteArray()).toString(":"));
     }
 
     // if there are no more bytes, skip this part
@@ -282,12 +262,12 @@ public class TlvBuilder implements TlvBuild {
       // Add last segmented TLV
       add(iTlvType, new HexString(baosTopLevelTlvList.toByteArray()));
 
-      if (logger.isDebugEnabled())
-        logger.debug(
-            "TlvBuilder.add(i,b) - Single Entry - Type: "
-                + iTlvType
-                + " - Hex: "
-                + new HexString(baosTopLevelTlvList.toByteArray()).toString(":"));
+      logger.debug(
+          () ->
+              "TlvBuilder.add(i,b) - Single Entry - Type: "
+                  + iTlvType
+                  + " - Hex: "
+                  + new HexString(baosTopLevelTlvList.toByteArray()).toString(":"));
     }
 
     updateMapTypeToByteLength(iTlvType, ONE_BYTE_LENGTH);
@@ -313,7 +293,6 @@ public class TlvBuilder implements TlvBuild {
               + bValue.length
               + " - Value: "
               + new HexString(bValue).toString(":"));
-      Thread.dumpStack();
     }
 
     // Strip Incoming TLV
@@ -430,17 +409,17 @@ public class TlvBuilder implements TlvBuild {
    */
   public void add(TlvVariableBinding tvbObject) {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "+-------------------------------------------------------------------------------------------------+");
-      logger.debug(
-          "TlvBuilder.add(tvb) -> Size: "
-              + tvbObject.length()
-              + " - TlvVariableBinding: "
-              + tvbObject);
-      logger.debug(
-          "TlvBuilder.add(tvb) -> TlvVariableBinding-Map: " + tvbObject.getMapTypeToByteLength());
-    }
+    logger.debug(
+        "+-------------------------------------------------------------------------------------------------+");
+    logger.debug(
+        () ->
+            "TlvBuilder.add(tvb) -> Size: "
+                + tvbObject.length()
+                + " - TlvVariableBinding: "
+                + tvbObject);
+    logger.debug(
+        () ->
+            "TlvBuilder.add(tvb) -> TlvVariableBinding-Map: " + tvbObject.getMapTypeToByteLength());
 
     this.lsTlvBuffer.add(new HexString(tvbObject.toByteArray()).toString());
 
@@ -448,14 +427,13 @@ public class TlvBuilder implements TlvBuild {
 
     this.lbTlvBuilder.addAll(tvbObject.getByteListTlvBuffer());
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("TlvBuilder.add(tvb) -> TlvBuilder.lsTlvBuffer: " + lsTlvBuffer);
-      logger.debug(
-          "TlvBuilder.add(tvb) -> TlvBuilder.miiTlvTypeTpByteLength: " + miiTlvTypeTpByteLength);
-      logger.debug(
-          "TlvBuilder.add(tvb) -> TlvVariableBinding.byteArray: "
-              + new HexString(tvbObject.toByteArray()).toString());
-    }
+    logger.debug("TlvBuilder.add(tvb) -> TlvBuilder.lsTlvBuffer: {}", lsTlvBuffer);
+    logger.debug(
+        "TlvBuilder.add(tvb) -> TlvBuilder.miiTlvTypeTpByteLength: {}", miiTlvTypeTpByteLength);
+    logger.debug(
+        () ->
+            "TlvBuilder.add(tvb) -> TlvVariableBinding.byteArray: "
+                + new HexString(tvbObject.toByteArray()).toString());
   }
 
   /**
@@ -497,8 +475,7 @@ public class TlvBuilder implements TlvBuild {
    */
   public void encapsulateTlv(int iTlvType) throws TlvException {
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvBuilder.encapsulateTlv(i) " + "Type: " + iTlvType);
+    logger.debug("TlvBuilder.encapsulateTlv(i) Type: {}", iTlvType);
 
     if (iTlvType < 0) throw new TlvException("TlvBuilder.encapsulateTlv() Type Less than 0");
 
@@ -516,9 +493,7 @@ public class TlvBuilder implements TlvBuild {
    */
   public void encapsulateTlv(int iTlvType, int iLength) throws TlvException {
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "TlvBuilder.encapsulateTlv(i,i) " + "Type: " + iTlvType + " -> Length: " + iLength);
+    logger.debug("TlvBuilder.encapsulateTlv(i,i) Type: {} -> Length: {}", iTlvType, iLength);
 
     if (iTlvType < 0) throw new TlvException("TlvBuilder.encapsulateTlv() Type Less than 0");
 
@@ -612,8 +587,7 @@ public class TlvBuilder implements TlvBuild {
       }
     }
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvBuilder.getTopLevelTlvList() : " + miiTypeByteLength);
+    logger.debug("TlvBuilder.getTopLevelTlvList() : {}", miiTypeByteLength);
 
     // Create a list of found TopLevel TLV's
     List<Integer> liTopLevelTlvList = new ArrayList<Integer>();
@@ -761,7 +735,6 @@ public class TlvBuilder implements TlvBuild {
   public List<byte[]> sortByTopLevelTlv(Map<Integer, Integer> miiTopLevelTLVByteLength) {
 
     if (logger.isDebugEnabled()) {
-      Thread.dumpStack();
       logger.debug(
           "+==============================sortByTopLevelTlv(Map)=========================================================+");
       logger.debug(
@@ -781,12 +754,12 @@ public class TlvBuilder implements TlvBuild {
 
     int iByteLength = 1;
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("TlvBuilder.sortByTopLevelTlv(Map) -> bMajorTlv.length: " + bMajorTlv.length);
-      logger.debug(
-          "TlvBuilder.sortByTopLevelTlv(Map) -> HEX-bMajorTlv.length: "
-              + new HexString(bMajorTlv).toString());
-    }
+    logger.debug(
+        () -> "TlvBuilder.sortByTopLevelTlv(Map) -> bMajorTlv.length: " + bMajorTlv.length);
+    logger.debug(
+        () ->
+            "TlvBuilder.sortByTopLevelTlv(Map) -> HEX-bMajorTlv.length: "
+                + new HexString(bMajorTlv).toString());
 
     // Cycle thru Byte Array
     while (iIndex < bMajorTlv.length) {
@@ -815,33 +788,26 @@ public class TlvBuilder implements TlvBuild {
       // Workaround for building Default Configuration File Default Settings
       if (!miiTopLevelTLVByteLength.containsKey(iTypeFound)) {
 
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "TlvBuilder.sortByTopLevelTlv(Map) - Type Found: "
-                  + iTypeFound
-                  + " - No Key Map Match");
+        logger.debug(
+            "TlvBuilder.sortByTopLevelTlv(Map) - Type Found: {} - No Key Map Match", iTypeFound);
 
         iIndex += TLV_TYPE_LENGTH_OVERHEAD;
         continue;
 
       } else {
 
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "TlvBuilder.sortByTopLevelTlv(Map) - Type Found: " + iTypeFound + " - Key Map Match");
+        logger.debug(
+            "TlvBuilder.sortByTopLevelTlv(Map) - Type Found: {} - Key Map Match", iTypeFound);
       }
 
       iByteLength = miiTopLevelTLVByteLength.get(iTypeFound);
 
-      if (logger.isDebugEnabled())
-        logger.debug(
-            "TlvBuilder.sortByTopLevelTlv(Map) - PRE-NEXT-TLV()"
-                + " -> Type: "
-                + iTypeFound
-                + " -> iIndex: "
-                + iIndex
-                + " -> iByteLength: "
-                + iByteLength);
+      logger.debug(
+          "TlvBuilder.sortByTopLevelTlv(Map) - PRE-NEXT-TLV() -> Type: {} -> iIndex: {} ->"
+              + " iByteLength: {}",
+          iTypeFound,
+          iIndex,
+          iByteLength);
 
       // Find the next TLV Index
       try {
@@ -850,17 +816,13 @@ public class TlvBuilder implements TlvBuild {
         e.printStackTrace();
       }
 
-      if (logger.isDebugEnabled())
-        logger.debug(
-            "TlvBuilder.sortByTopLevelTlv(Map) "
-                + " -> Type: "
-                + iTypeFound
-                + " -> iIndex: "
-                + iIndex
-                + " -> iByteLength: "
-                + iByteLength
-                + " -> NEXT-INDEX:  "
-                + iNextIndex);
+      logger.debug(
+          "TlvBuilder.sortByTopLevelTlv(Map)  -> Type: {} -> iIndex: {} -> iByteLength: {} ->"
+              + " NEXT-INDEX:  {}",
+          iTypeFound,
+          iIndex,
+          iByteLength,
+          iNextIndex);
 
       // Write only the Major TLV in this Cycle
       baosTopLevelTlvList.write(
@@ -900,8 +862,7 @@ public class TlvBuilder implements TlvBuild {
    */
   public Map<Integer, Integer> getMapTypeToByteLength() {
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvBuilder.getMapTypeToByteLength(): " + miiTlvTypeTpByteLength);
+    logger.debug("TlvBuilder.getMapTypeToByteLength(): {}", miiTlvTypeTpByteLength);
 
     return miiTlvTypeTpByteLength;
   }
@@ -971,16 +932,6 @@ public class TlvBuilder implements TlvBuild {
     // The -1 is so that this loops assume that there is no next final type
     while (iIndex < bTlvByteArray.length - 1) {
 
-      if (logger.isDebugEnabled()) {
-        logger.debug(
-            "+--------------------------------------------------------------------------------------------+");
-        logger.debug(
-            "TlvBuilder.stripTlv(i,b) - Type: "
-                + BinaryConversion.byteToUnsignedInteger(bTlvByteArray[iIndex]));
-        logger.debug("TlvBuilder.stripTlv(i,b) - INDEX: " + iIndex);
-        logger.debug("TlvBuilder.stripTlv(i,b) - ByteArrayLen: " + bTlvByteArray.length);
-      }
-
       iTypeLength =
           (BinaryConversion.byteToUnsignedInteger(bTlvByteArray[iIndex + TLV_LENGTH_POS_OFFSET]))
               + TLV_TYPE_LENGTH_OVERHEAD;
@@ -988,25 +939,8 @@ public class TlvBuilder implements TlvBuild {
       // If no type match, Copy TLV to ByteArray
       if (BinaryConversion.byteToUnsignedInteger(bTlvByteArray[iIndex]) != iType) {
 
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-              "TlvBuilder.stripTlv(i,b) - Adding-Type: "
-                  + BinaryConversion.byteToUnsignedInteger(bTlvByteArray[iIndex]));
-          logger.debug("TlvBuilder.stripTlv(i,b) - INDEX: " + iIndex);
-          logger.debug("TlvBuilder.stripTlv(i,b) - bTlvByteArray.size: " + bTlvByteArray.length);
-        }
-
         /*if (bTlvByteArray != null)*/
         baosStripedTlvByteArray.write(bTlvByteArray, iIndex, iTypeLength);
-
-      } else {
-
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-              "TlvBuilder.stripTlv(i,b) - Skipping-Type: "
-                  + BinaryConversion.byteToUnsignedInteger(bTlvByteArray[iIndex]));
-          logger.debug("TlvBuilder.stripTlv(i,b) - INDEX: " + iIndex);
-        }
       }
 
       // Goto Next TLV Index
@@ -1047,16 +981,6 @@ public class TlvBuilder implements TlvBuild {
 
       iTypeFound = BinaryConversion.byteToUnsignedInteger(bTlvByteArray[iIndex]);
 
-      if (logger.isDebugEnabled()) {
-        logger.debug(
-            "+--------------------------------------------------------------------------------------------+");
-        logger.debug(
-            "TlvBuilder.stripTlv(i,b) - Type: "
-                + BinaryConversion.byteToUnsignedInteger(bTlvByteArray[iIndex]));
-        logger.debug("TlvBuilder.stripTlv(i,b) - INDEX: " + iIndex);
-        logger.debug("TlvBuilder.stripTlv(i,b) - ByteArrayLen: " + bTlvByteArray.length);
-      }
-
       if (miiTypeToByteLength.containsKey(iTypeFound)) {
         iTypeByteLength = miiTypeToByteLength.get(iTypeFound);
 
@@ -1075,26 +999,8 @@ public class TlvBuilder implements TlvBuild {
       // If no type match, Copy TLV to ByteArray
       if (iTypeFound != iType) {
 
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-              "TlvBuilder.stripTlv(i,b) - Adding-Type: "
-                  + BinaryConversion.byteToUnsignedInteger(bTlvByteArray[iIndex]));
-          logger.debug("TlvBuilder.stripTlv(i,b) - INDEX: " + iIndex);
-          logger.debug("TlvBuilder.stripTlv(i,b) - NUM-OF-BYTES: " + iTypeLength);
-          logger.debug("TlvBuilder.stripTlv(i,b) - bTlvByteArray.size: " + bTlvByteArray.length);
-        }
-
         /*if (bTlvByteArray != null)*/
         baosStripedTlvByteArray.write(bTlvByteArray, iIndex, iTypeLength);
-
-      } else {
-
-        if (logger.isDebugEnabled()) {
-          logger.debug(
-              "TlvBuilder.stripTlv(i,b) - Skipping-Type: "
-                  + BinaryConversion.byteToUnsignedInteger(bTlvByteArray[iIndex]));
-          logger.debug("TlvBuilder.stripTlv(i,b) - INDEX: " + iIndex);
-        }
       }
 
       // Goto Next TLV Index
@@ -1114,12 +1020,10 @@ public class TlvBuilder implements TlvBuild {
 
     ByteArrayOutputStream baosStripedTlvByteArray = new ByteArrayOutputStream();
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "+------------------------------------------------------------------------------------------------+");
-      logger.debug("TlvBuilder.fetchTlv(LIST): Find: " + liType);
-      logger.debug("TlvBuilder.fetchTlv(LIST): " + new HexString(bTlvByteArray).toString());
-    }
+    logger.debug(
+        "+------------------------------------------------------------------------------------------------+");
+    logger.debug("TlvBuilder.fetchTlv(LIST): Find: {}", liType);
+    logger.debug(() -> "TlvBuilder.fetchTlv(LIST): " + new HexString(bTlvByteArray).toString());
 
     for (int iType : liType) {
 
@@ -1131,8 +1035,7 @@ public class TlvBuilder implements TlvBuild {
         // Look ahead to see if we exceed Byte Array Length
         if ((iIndex + TLV_LENGTH_POS_OFFSET) >= bTlvByteArray.length) {
 
-          if (logger.isDebugEnabled())
-            logger.debug("TlvBuilder.fetchTlv(l,b): - Look Ahead Exceeds Index");
+          logger.debug("TlvBuilder.fetchTlv(l,b): - Look Ahead Exceeds Index");
 
           break;
         }
@@ -1197,29 +1100,25 @@ public class TlvBuilder implements TlvBuild {
   public static byte[] fetchTlv(
       List<Integer> liType, Map<Integer, Integer> _miiTypeByteLength, byte[] bTlvByteArray) {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "+===================================TlvBuilder.fetchTlv(list,m,b)====================================================+");
-      logger.debug("TlvBuilder.fetchTlv(list,m,b): TypeList:" + liType);
-      logger.debug("TlvBuilder.fetchTlv(list,m,b): Map<Integer,Integer>:" + _miiTypeByteLength);
-    }
+    logger.debug(
+        "+===================================TlvBuilder.fetchTlv(list,m,b)====================================================+");
+    logger.debug("TlvBuilder.fetchTlv(list,m,b): TypeList:{}", liType);
+    logger.debug("TlvBuilder.fetchTlv(list,m,b): Map<Integer,Integer>:{}", _miiTypeByteLength);
 
     ByteArrayOutputStream baosStripedTlvByteArray = new ByteArrayOutputStream();
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "TlvBuilder.fetchTlv(list,m,b): TypeList:"
-              + liType
-              + " - VALUE: "
-              + new HexString(bTlvByteArray).toString());
+    logger.debug(
+        () ->
+            "TlvBuilder.fetchTlv(list,m,b): TypeList:"
+                + liType
+                + " - VALUE: "
+                + new HexString(bTlvByteArray).toString());
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvBuilder.fetchTlv(list,m,b): TypeByteLength: " + _miiTypeByteLength);
+    logger.debug("TlvBuilder.fetchTlv(list,m,b): TypeByteLength: {}", _miiTypeByteLength);
 
     for (int iType : liType) {
 
-      if (logger.isDebugEnabled())
-        logger.debug("TlvBuilder.fetchTlv(list,m,b) -> Fetching Type: " + iType);
+      logger.debug("TlvBuilder.fetchTlv(list,m,b) -> Fetching Type: {}", iType);
 
       int iIndex = 0;
       int iTypeLength = 0, iTypeByteLength = 0, iTypeFound = 0;
@@ -1227,12 +1126,12 @@ public class TlvBuilder implements TlvBuild {
       // This Will Assume 1 byte if no Type has need registered in Map
       if (_miiTypeByteLength.containsKey(iType)) {
 
-        if (logger.isDebugEnabled())
-          logger.debug(
-              "TlvBuilder.fetchTlv(list,m,b) -> FoundMapKey: "
-                  + iType
-                  + " - Length: "
-                  + _miiTypeByteLength.get(iType));
+        logger.debug(
+            () ->
+                "TlvBuilder.fetchTlv(list,m,b) -> FoundMapKey: "
+                    + iType
+                    + " - Length: "
+                    + _miiTypeByteLength.get(iType));
 
         iTypeByteLength = _miiTypeByteLength.get(iType);
 
@@ -1240,12 +1139,10 @@ public class TlvBuilder implements TlvBuild {
         iTypeByteLength = TLV_LENGTH_POS_OFFSET;
       }
 
-      if (logger.isDebugEnabled())
-        logger.debug(
-            "TlvBuilder.fetchTlv(list,m,b) -> Type: "
-                + iType
-                + " -> NumOfByteLength: "
-                + iTypeByteLength);
+      logger.debug(
+          "TlvBuilder.fetchTlv(list,m,b) -> Type: {} -> NumOfByteLength: {}",
+          iType,
+          iTypeByteLength);
 
       while (iIndex < bTlvByteArray.length - 1) {
 
@@ -1284,56 +1181,43 @@ public class TlvBuilder implements TlvBuild {
         // If no type match, Copy TLV to ByteArray
         if (iTypeFound == iType) {
 
-          if (logger.isDebugEnabled()) {
-            logger.debug(
-                "TlvBuilder.fetchTlv(list,m,b) "
-                    + " -> Found TLV: ("
-                    + iType
-                    + ") "
-                    + " -> Index: "
-                    + iIndex);
-          }
+          logger.debug(
+              "TlvBuilder.fetchTlv(list,m,b)  -> Found TLV: ({})  -> Index: {}", iType, iIndex);
 
           baosStripedTlvByteArray.write(
               bTlvByteArray,
               iIndex,
               (iTypeLength + TLV_TYPE_LENGTH_OVERHEAD + (iTypeByteLength - 1)));
 
-          if (logger.isDebugEnabled()) {
-            logger.debug(
-                "TlvBuilder.fetchTlv(list,m,b) "
-                    + " -> ByteLength: "
-                    + baosStripedTlvByteArray.size());
-
-            logger.debug(
-                "TlvBuilder.fetchTlv(list,m,b) "
-                    + " -> TLV Hex : "
-                    + new HexString(baosStripedTlvByteArray.toByteArray()).toString(":"));
-          }
-        }
-
-        if (logger.isDebugEnabled()) {
           logger.debug(
-              "TlvBuilder.fetchTlv(list,m,b) "
-                  + " -> No Type Match - Found: "
-                  + iTypeFound
-                  + " - Searching For: "
-                  + iType);
+              () ->
+                  "TlvBuilder.fetchTlv(list,m,b) "
+                      + " -> ByteLength: "
+                      + baosStripedTlvByteArray.size());
+
+          logger.debug(
+              () ->
+                  "TlvBuilder.fetchTlv(list,m,b) "
+                      + " -> TLV Hex : "
+                      + new HexString(baosStripedTlvByteArray.toByteArray()).toString(":"));
         }
+
+        logger.debug(
+            "TlvBuilder.fetchTlv(list,m,b)  -> No Type Match - Found: {} - Searching For: {}",
+            iTypeFound,
+            iType);
 
         // Goto Next TLV Index
         iIndex += (iTypeLength + iTypeByteLength + TLV_TYPE_OVERHEAD);
 
-        if (logger.isDebugEnabled())
-          logger.debug("TlvBuilder.fetchTlv(list,m,b) -> Next-Index: " + iIndex);
+        logger.debug("TlvBuilder.fetchTlv(list,m,b) -> Next-Index: {}", iIndex);
       }
     }
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "TlvBuilder.fetchTlv(list,m,b) -> BAOS: "
-              + new HexString(baosStripedTlvByteArray.toByteArray()).toString(":"));
-    }
+    logger.debug(
+        () ->
+            "TlvBuilder.fetchTlv(list,m,b) -> BAOS: "
+                + new HexString(baosStripedTlvByteArray.toByteArray()).toString(":"));
 
     return baosStripedTlvByteArray.toByteArray();
   }
@@ -1350,13 +1234,12 @@ public class TlvBuilder implements TlvBuild {
     if (bTlvBuffer == null) throw new TlvException("TlvBuilder.nextTLVIndex() Byte Array is NULL");
 
     if ((iInitalPosition + TLV_LENGTH_POS_OFFSET) >= bTlvBuffer.length) {
-      if (logger.isDebugEnabled()) {
-        logger.debug(
-            "TlvBuilder.nextTLVIndex(b,i) - BAD - : bTlvBuffer.length: " + bTlvBuffer.length);
-        logger.debug("TlvBuilder.nextTLVIndex(b,i): iInitalPosition: " + iInitalPosition);
-        logger.debug(
-            "TlvBuilder.nextTLVIndex(b,i): Hex: " + new HexString(bTlvBuffer).toString(":"));
-      }
+
+      logger.debug(
+          () -> "TlvBuilder.nextTLVIndex(b,i) - BAD - : bTlvBuffer.length: " + bTlvBuffer.length);
+      logger.debug("TlvBuilder.nextTLVIndex(b,i): iInitalPosition: {}", iInitalPosition);
+      logger.debug(
+          () -> "TlvBuilder.nextTLVIndex(b,i): Hex: " + new HexString(bTlvBuffer).toString(":"));
 
       // Added this to indicate that pointer exceeded byte array
       return END_OF_BYTE_ARRAY_INDEX;
@@ -1378,17 +1261,16 @@ public class TlvBuilder implements TlvBuild {
   public static int nextTLVIndex(byte[] bTlvBuffer, int iInitalPosition, int iByteLength)
       throws TlvException {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "+================================TlvBuilder.nextTLVIndex(b,i,i)========================================+");
-      logger.debug(
-          "TlvBuilder.nextTLVIndex(b,i,i) -> TLV-TYPE: "
-              + BinaryConversion.byteToUnsignedInteger(bTlvBuffer[iInitalPosition]));
-      logger.debug("TlvBuilder.nextTLVIndex(b,i,i) -> NUM-BYTE-LEN: " + iByteLength);
-      logger.debug("TlvBuilder.nextTLVIndex(b,i,i) -> STARTINDEX: " + iInitalPosition);
-      logger.debug(
-          "TlvBuilder.nextTLVIndex(b,i,i) -> HEX: " + new HexString(bTlvBuffer).toString(":"));
-    }
+    logger.debug(
+        "+================================TlvBuilder.nextTLVIndex(b,i,i)========================================+");
+    logger.debug(
+        () ->
+            "TlvBuilder.nextTLVIndex(b,i,i) -> TLV-TYPE: "
+                + BinaryConversion.byteToUnsignedInteger(bTlvBuffer[iInitalPosition]));
+    logger.debug("TlvBuilder.nextTLVIndex(b,i,i) -> NUM-BYTE-LEN: {}", iByteLength);
+    logger.debug("TlvBuilder.nextTLVIndex(b,i,i) -> STARTINDEX: {}", iInitalPosition);
+    logger.debug(
+        () -> "TlvBuilder.nextTLVIndex(b,i,i) -> HEX: " + new HexString(bTlvBuffer).toString(":"));
 
     if (iInitalPosition < 0) throw new TlvException("TlvBuilder.nextTLVIndex() Type Less than 0");
 
@@ -1403,20 +1285,21 @@ public class TlvBuilder implements TlvBuild {
 
     int iTlvLength = new HexString(baosTlvByteLength.toByteArray()).toInteger();
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "TlvBuilder.nextTLVIndex(b,i,i) -> TLV-TYPE: "
-              + BinaryConversion.byteToUnsignedInteger(bTlvBuffer[iInitalPosition]));
-      logger.debug("TlvBuilder.nextTLVIndex(b,i,i) -> NUM-BYTE-LEN: " + iByteLength);
-      logger.debug(
-          "TlvBuilder.nextTLVIndex(b,i,i) -> LENGTH-HEX: "
-              + new HexString(baosTlvByteLength.toByteArray()).toString(":"));
-      logger.debug("TlvBuilder.nextTLVIndex(b,i,i) -> TLV-LENGTH: " + iTlvLength);
-      logger.debug("TlvBuilder.nextTLVIndex(b,i,i) -> STARTINDEX: " + iInitalPosition);
-      logger.debug(
-          "TlvBuilder.nextTLVIndex(b,i,i) -> NEXT-INDEX: "
-              + (iInitalPosition + (iTlvLength + iByteLength) + TLV_TYPE_OVERHEAD));
-    }
+    logger.debug(
+        () ->
+            "TlvBuilder.nextTLVIndex(b,i,i) -> TLV-TYPE: "
+                + BinaryConversion.byteToUnsignedInteger(bTlvBuffer[iInitalPosition]));
+    logger.debug("TlvBuilder.nextTLVIndex(b,i,i) -> NUM-BYTE-LEN: {}", iByteLength);
+    logger.debug(
+        () ->
+            "TlvBuilder.nextTLVIndex(b,i,i) -> LENGTH-HEX: "
+                + new HexString(baosTlvByteLength.toByteArray()).toString(":"));
+    logger.debug("TlvBuilder.nextTLVIndex(b,i,i) -> TLV-LENGTH: {}", iTlvLength);
+    logger.debug("TlvBuilder.nextTLVIndex(b,i,i) -> STARTINDEX: {}", iInitalPosition);
+    logger.debug(
+        () ->
+            "TlvBuilder.nextTLVIndex(b,i,i) -> NEXT-INDEX: "
+                + (iInitalPosition + (iTlvLength + iByteLength) + TLV_TYPE_OVERHEAD));
 
     return (iInitalPosition + (iTlvLength + iByteLength) + TLV_TYPE_OVERHEAD);
   }
@@ -1438,17 +1321,17 @@ public class TlvBuilder implements TlvBuild {
 
     ByteArrayOutputStream baosTlvTypeIndexList = new ByteArrayOutputStream();
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "TlvBuilder.findTLVIndex(b,b) " + new HexString(bParentChildTlvEncodeList).toString());
+    logger.debug(
+        () ->
+            "TlvBuilder.findTLVIndex(b,b) " + new HexString(bParentChildTlvEncodeList).toString());
 
     // Need to make sure that length is at least 2 bytes
     if (bTlvBuffer.length < TLV_TYPE_LENGTH_OVERHEAD) {
       return baosTlvTypeIndexList.toByteArray();
     }
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvBuilder.findTLVIndex(b,b) bParentChildTlvEncodeList: " + bTlvBuffer.length);
+    logger.debug(
+        () -> "TlvBuilder.findTLVIndex(b,b) bParentChildTlvEncodeList: " + bTlvBuffer.length);
 
     // Jump ahead to the second TLV Type
     int iStartIndexEncodeList = 0;
@@ -1537,10 +1420,10 @@ public class TlvBuilder implements TlvBuild {
     if (bTlvBuffer == null)
       throw new TlvException("TlvBuilder.findTLVIndex() TLV Byte Array is NULL");
 
-    if (logger.isDebugEnabled()) logger.debug("TlvBuilder.findTLVIndex(b,i) Type " + iType);
+    logger.debug("TlvBuilder.findTLVIndex(b,i) Type {}", iType);
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvBuilder.findTLVIndex(b,i) bParentChildTlvEncodeList: " + bTlvBuffer.length);
+    logger.debug(
+        () -> "TlvBuilder.findTLVIndex(b,i) bParentChildTlvEncodeList: " + bTlvBuffer.length);
 
     // Jump ahead to the second TLV Type
     int iStartIndexEncodeList = 0;
@@ -1597,18 +1480,18 @@ public class TlvBuilder implements TlvBuild {
 
     ByteArrayOutputStream baosTlvTypeIndexList = new ByteArrayOutputStream();
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "TlvBuilder.findTLVIndex(b,b,m) " + new HexString(bParentChildTlvEncodeList).toString());
+    logger.debug(
+        () ->
+            "TlvBuilder.findTLVIndex(b,b,m) "
+                + new HexString(bParentChildTlvEncodeList).toString());
 
     // Need to make sure that length is at least 2 bytes
     if (bTlvBuffer.length < TLV_TYPE_LENGTH_OVERHEAD) {
       return baosTlvTypeIndexList.toByteArray();
     }
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "TlvBuilder.findTLVIndex(b,b,m).bParentChildTlvEncodeList: " + bTlvBuffer.length);
+    logger.debug(
+        () -> "TlvBuilder.findTLVIndex(b,b,m).bParentChildTlvEncodeList: " + bTlvBuffer.length);
 
     // Jump ahead to the second TLV Type
     int iStartIndexEncodeList = 0;
@@ -1706,12 +1589,12 @@ public class TlvBuilder implements TlvBuild {
 
     ByteArrayOutputStream baosTlvBuffer = new ByteArrayOutputStream();
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "TlvBuilder.getTlvValue(b).bTlvBuffer-Length: "
-              + bTlvBuffer.length
-              + " HEX: "
-              + new HexString(bTlvBuffer).toString(":"));
+    logger.debug(
+        () ->
+            "TlvBuilder.getTlvValue(b).bTlvBuffer-Length: "
+                + bTlvBuffer.length
+                + " HEX: "
+                + new HexString(bTlvBuffer).toString(":"));
 
     baosTlvBuffer.write(
         bTlvBuffer,
@@ -1734,12 +1617,12 @@ public class TlvBuilder implements TlvBuild {
     if (iInitalPosition < 0)
       throw new TlvException("TlvBuilder.getTlvValue() iInitalPosition than 0");
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "getTlvLength(b,i) - bTlvBuffer.length: "
-              + bTlvBuffer.length
-              + " - iInitalPosition: "
-              + iInitalPosition);
+    logger.debug(
+        () ->
+            "getTlvLength(b,i) - bTlvBuffer.length: "
+                + bTlvBuffer.length
+                + " - iInitalPosition: "
+                + iInitalPosition);
 
     ByteArrayOutputStream baosTlvBuffer = new ByteArrayOutputStream();
 
@@ -1777,26 +1660,25 @@ public class TlvBuilder implements TlvBuild {
     // Determine TLV Length
     int iTlvValueLength = getTlvLength(bTlvBuffer, iInitalPosition, iByteLength);
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "+---------------------------------------------------------------------------------------------------------+");
-      logger.debug(
-          "TlvBuilder.getTlvValue(b,i,i) - "
-              + "bTlvBuffer.length: "
-              + bTlvBuffer.length
-              + " - Type: "
-              + BinaryConversion.byteToUnsignedInteger(bTlvBuffer[iInitalPosition])
-              + " - iTlvValueLength: "
-              + iTlvValueLength
-              + " - iInitalPosition: "
-              + iInitalPosition
-              + " - iByteLength: "
-              + iByteLength
-              + " - TLV_TYPE_OVERHEAD: "
-              + TLV_TYPE_OVERHEAD
-              + " - Hex: "
-              + new HexString(bTlvBuffer).toString(":"));
-    }
+    logger.debug(
+        "+---------------------------------------------------------------------------------------------------------+");
+    logger.debug(
+        () ->
+            "TlvBuilder.getTlvValue(b,i,i) - "
+                + "bTlvBuffer.length: "
+                + bTlvBuffer.length
+                + " - Type: "
+                + BinaryConversion.byteToUnsignedInteger(bTlvBuffer[iInitalPosition])
+                + " - iTlvValueLength: "
+                + iTlvValueLength
+                + " - iInitalPosition: "
+                + iInitalPosition
+                + " - iByteLength: "
+                + iByteLength
+                + " - TLV_TYPE_OVERHEAD: "
+                + TLV_TYPE_OVERHEAD
+                + " - Hex: "
+                + new HexString(bTlvBuffer).toString(":"));
 
     // Write the value to OutputStream
     baosTlvBuffer.write(
@@ -1828,19 +1710,19 @@ public class TlvBuilder implements TlvBuild {
 
     baosTlvByteLength.write(bTlvBuffer, iInitalPosition + 1, iByteLength);
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "TlvBuilder.getTlvLength(b,i,i) "
-              + " - bTlvBuffer.length: "
-              + bTlvBuffer.length
-              + " - iInitalPosition: "
-              + iInitalPosition
-              + " - iByteLength: "
-              + iByteLength
-              + " - Hex: "
-              + new HexString(baosTlvByteLength.toByteArray())
-              + " - Length: "
-              + new HexString(baosTlvByteLength.toByteArray()).toInteger());
+    logger.debug(
+        () ->
+            "TlvBuilder.getTlvLength(b,i,i) "
+                + " - bTlvBuffer.length: "
+                + bTlvBuffer.length
+                + " - iInitalPosition: "
+                + iInitalPosition
+                + " - iByteLength: "
+                + iByteLength
+                + " - Hex: "
+                + new HexString(baosTlvByteLength.toByteArray())
+                + " - Length: "
+                + new HexString(baosTlvByteLength.toByteArray()).toInteger());
 
     return new HexString(baosTlvByteLength.toByteArray()).toInteger();
   }
@@ -1866,8 +1748,7 @@ public class TlvBuilder implements TlvBuild {
       }
     }
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvBuilder.coupleMultipleTopLevelTlvValues()" + hsTLV.toString(":"));
+    logger.debug(() -> "TlvBuilder.coupleMultipleTopLevelTlvValues()" + hsTLV.toString(":"));
 
     return hsTLV.toByteArray();
   }
@@ -1881,8 +1762,7 @@ public class TlvBuilder implements TlvBuild {
    */
   public static List<byte[]> getTlvHexByType(byte[] bTLV) throws TlvException {
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvBuilder.getTlvHexByType(): " + new HexString(bTLV).toString(":"));
+    logger.debug(() -> "TlvBuilder.getTlvHexByType(): " + new HexString(bTLV).toString(":"));
 
     List<byte[]> lbTLV = new ArrayList<byte[]>();
 
@@ -1896,8 +1776,7 @@ public class TlvBuilder implements TlvBuild {
 
       // Added this to make sure index does not excess byteArray and cause a NPE
       if (iNextIndex == END_OF_BYTE_ARRAY_INDEX) {
-        if (logger.isDebugEnabled())
-          logger.debug("TlvBuilder.getTlvHexByType() - END_OF_BYTE_ARRAY_INDEX - Exit For Loop: ");
+        logger.debug("TlvBuilder.getTlvHexByType() - END_OF_BYTE_ARRAY_INDEX - Exit For Loop: ");
         break;
       }
 
@@ -1936,8 +1815,7 @@ public class TlvBuilder implements TlvBuild {
   public static List<byte[]> getTlvHexByType(byte[] bTLV, Map<Integer, Integer> miiTypeToByteLength)
       throws TlvException {
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvBuilder.getTlvHexByType(): " + new HexString(bTLV).toString(":"));
+    logger.debug(() -> "TlvBuilder.getTlvHexByType(): " + new HexString(bTLV).toString(":"));
 
     List<byte[]> lbTLV = new ArrayList<byte[]>();
 
@@ -1949,8 +1827,7 @@ public class TlvBuilder implements TlvBuild {
 
       // Added this to make sure index does not excess byteArray and cause a NPE
       if (iNextIndex == END_OF_BYTE_ARRAY_INDEX) {
-        if (logger.isDebugEnabled())
-          logger.debug("TlvBuilder.getTlvHexByType() - END_OF_BYTE_ARRAY_INDEX - Exit For Loop: ");
+        logger.debug("TlvBuilder.getTlvHexByType() - END_OF_BYTE_ARRAY_INDEX - Exit For Loop: ");
         break;
       }
 
@@ -1958,8 +1835,7 @@ public class TlvBuilder implements TlvBuild {
 
       li.add(BinaryConversion.byteToUnsignedInteger(bTLV[iNextIndex]));
 
-      if (logger.isDebugEnabled())
-        logger.debug("TlvBuilder.getTlvHexByType(): TypeToByteLength: " + miiTypeToByteLength);
+      logger.debug("TlvBuilder.getTlvHexByType(): TypeToByteLength: {}", miiTypeToByteLength);
 
       // Get TLV from Type
       bFetchTLV = fetchTlv(li, miiTypeToByteLength, bTLV);
@@ -1995,14 +1871,12 @@ public class TlvBuilder implements TlvBuild {
     // Check to see of there is any length
     if (bTLV.length == 0) {
 
-      if (logger.isDebugEnabled())
-        logger.debug("TlvBuilder.isTLVConstruct() -> ByteArray is of 0 Length");
+      logger.debug("TlvBuilder.isTLVConstruct() -> ByteArray is of 0 Length");
 
       return false;
     }
 
-    if (logger.isDebugEnabled())
-      logger.debug("+========================================================================+");
+    logger.debug("+========================================================================+");
 
     // cycle thru Byte Array
     while (iIndex < bTLV.length) {
@@ -2041,7 +1915,7 @@ public class TlvBuilder implements TlvBuild {
       // Check for EOF for DOCSIS due to PADDING
       if ((iIndex < bTLV.length) && (BinaryConversion.byteToUnsignedInteger(bTLV[iIndex]) == 255)) {
 
-        if (logger.isDebugEnabled()) logger.debug("TlvBuilder.isTLVConstruct() -> FOUND-EOF");
+        logger.debug("TlvBuilder.isTLVConstruct() -> FOUND-EOF");
 
         return true;
 
@@ -2095,8 +1969,7 @@ public class TlvBuilder implements TlvBuild {
     // Check to see of there is any length
     if (bTLV.length == 0) {
 
-      if (logger.isDebugEnabled())
-        logger.debug("TlvBuilder.isTLVConstruct() -> ByteArray is of 0 Length");
+      logger.debug("TlvBuilder.isTLVConstruct() -> ByteArray is of 0 Length");
 
       return Boolean.FALSE;
     }
@@ -2138,7 +2011,7 @@ public class TlvBuilder implements TlvBuild {
       // Check for EOF for DOCSIS due to PADDING
       if ((iIndex < bTLV.length) && (BinaryConversion.byteToUnsignedInteger(bTLV[iIndex]) == 255)) {
 
-        if (logger.isDebugEnabled()) logger.debug("TlvBuilder.isTLVConstruct() -> FOUND-EOF");
+        logger.debug("TlvBuilder.isTLVConstruct() -> FOUND-EOF");
 
         return true;
 
@@ -2181,8 +2054,7 @@ public class TlvBuilder implements TlvBuild {
    */
   public static byte[] encapsulateTlv(int iTlvType, byte[] baValue) throws TlvException {
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvBuilder.encapsulateTlv(i) " + "Type: " + iTlvType);
+    logger.debug("TlvBuilder.encapsulateTlv(i) Type: {}", iTlvType);
 
     if (iTlvType < 0) throw new TlvException("TlvBuilder.encapsulateTlv() Type Less than 0");
 
@@ -2296,10 +2168,10 @@ public class TlvBuilder implements TlvBuild {
       iIndex += (iTypeLength + iTypeByteLength + TLV_TYPE_OVERHEAD);
     }
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "TlvBuilder.stripZeroByteTLV(b,mii): "
-              + new HexString(baosStripZeroByteTLV.toByteArray()).toString(":"));
+    logger.debug(
+        () ->
+            "TlvBuilder.stripZeroByteTLV(b,mii): "
+                + new HexString(baosStripZeroByteTLV.toByteArray()).toString(":"));
 
     return baosStripZeroByteTLV.toByteArray();
   }
@@ -2346,7 +2218,7 @@ public class TlvBuilder implements TlvBuild {
    */
   private void updateMapTypeToByteLength(int iType, int iTypeLength) {
 
-    if (logger.isDebugEnabled()) logger.debug("TlvBuilder.updateMapTypeToByteLength(tb)");
+    logger.debug("TlvBuilder.updateMapTypeToByteLength(tb)");
 
     if (!miiTlvTypeTpByteLength.containsKey(iType)) {
       miiTlvTypeTpByteLength.put(iType, iTypeLength);
@@ -2358,7 +2230,7 @@ public class TlvBuilder implements TlvBuild {
    */
   private void updateMapTypeToByteLength(TlvBuilder tbObject) {
 
-    if (logger.isDebugEnabled()) logger.debug("TlvBuilder.updateMapTypeToByteLength(tb)");
+    logger.debug("TlvBuilder.updateMapTypeToByteLength(tb)");
 
     HashMap<Integer, Integer> hmTlvTypeTpByteLength = new HashMap<Integer, Integer>();
 
@@ -2393,8 +2265,7 @@ public class TlvBuilder implements TlvBuild {
     // Check to see of there is any length
     if (bTLV.length == 0) {
 
-      if (logger.isDebugEnabled())
-        logger.debug("TlvBuilder.isTLVConstruct() -> ByteArray is of 0 Length");
+      logger.debug("TlvBuilder.isTLVConstruct() -> ByteArray is of 0 Length");
 
       return Boolean.FALSE;
     }
@@ -2440,7 +2311,7 @@ public class TlvBuilder implements TlvBuild {
       // Check for EOF for DOCSIS due to PADDING
       if ((iIndex < bTLV.length) && (BinaryConversion.byteToUnsignedInteger(bTLV[iIndex]) == 255)) {
 
-        if (logger.isDebugEnabled()) logger.debug("TlvBuilder.isTLVConstruct() -> FOUND-EOF");
+        logger.debug("TlvBuilder.isTLVConstruct() -> FOUND-EOF");
 
         return true;
 

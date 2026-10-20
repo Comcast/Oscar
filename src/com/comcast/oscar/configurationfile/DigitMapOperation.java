@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.configurationfile;
@@ -23,20 +23,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class DigitMapOperation {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(DigitMapOperation.class);
@@ -89,7 +75,7 @@ public class DigitMapOperation {
 
       joTLV64 = jaTLV64.getJSONObject(0);
 
-      if (logger.isDebugEnabled()) logger.debug("DigitMapOperation.getDigitMap()" + joTLV64);
+      logger.debug("DigitMapOperation.getDigitMap(){}", joTLV64);
 
       JSONArray jaDigitMap = joTLV64.getJSONArray(Dictionary.VALUE);
 
@@ -175,9 +161,8 @@ public class DigitMapOperation {
     }
 
     // Validate: http://www.jsoneditoronline.org/
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "DigitMapOperation.getDigitMapTlvBuilder() - Snmp64 - JSON-DICTIONARY: " + joDictSnmp64);
+    logger.debug(
+        "DigitMapOperation.getDigitMapTlvBuilder() - Snmp64 - JSON-DICTIONARY: {}", joDictSnmp64);
 
     /* Convert to TLV */
 
@@ -208,13 +193,14 @@ public class DigitMapOperation {
     // Add TlvVariable to TlvBuilder
     tb.add(tvb);
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder: " + tb.toStringSeperation(":"));
-      logger.debug(
-          "DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder-Map: "
-              + tb.getMapTypeToByteLength());
-    }
+    logger.debug(
+        () ->
+            "DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder: "
+                + tb.toStringSeperation(":"));
+    logger.debug(
+        () ->
+            "DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder-Map: "
+                + tb.getMapTypeToByteLength());
 
     // Return TlvBuilder
     return tb;
@@ -243,9 +229,8 @@ public class DigitMapOperation {
     }
 
     // Validate: http://www.jsoneditoronline.org/
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "DigitMapOperation.getDigitMapTlvBuilder() - Snmp64 - JSON-DICTIONARY: " + joDictSnmp64);
+    logger.debug(
+        "DigitMapOperation.getDigitMapTlvBuilder() - Snmp64 - JSON-DICTIONARY: {}", joDictSnmp64);
 
     /* Convert to TLV */
 
@@ -276,13 +261,14 @@ public class DigitMapOperation {
     // Add TlvVariable to TlvBuilder
     tb.add(tvb);
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder: " + tb.toStringSeperation(":"));
-      logger.debug(
-          "DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder-Map: "
-              + tb.getMapTypeToByteLength());
-    }
+    logger.debug(
+        () ->
+            "DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder: "
+                + tb.toStringSeperation(":"));
+    logger.debug(
+        () ->
+            "DigitMapOperation.getDigitMapTlvBuilder() - TlvBuilder-Map: "
+                + tb.getMapTypeToByteLength());
 
     // Return TlvBuilder
     return tb;

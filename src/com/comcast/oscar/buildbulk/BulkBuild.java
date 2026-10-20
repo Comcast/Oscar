@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.buildbulk;
@@ -23,20 +23,6 @@ import java.util.Map.Entry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class BulkBuild {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(BulkBuild.class);
@@ -101,7 +87,7 @@ public class BulkBuild {
     // Loops thur all the files found in the input directory
     for (File fInput : getInputFiles()) {
 
-      if (logger.isDebugEnabled()) logger.debug("BulkBuild.start() - File: " + fInput.toString());
+      logger.debug(() -> "BulkBuild.start() - File: " + fInput.toString());
 
       byte[] bInput = HexString.fileToByteArray(fInput);
 
@@ -115,12 +101,12 @@ public class BulkBuild {
 
           if (HexString.verifyAsciiPlainText(bInput)) {
 
-            if (logger.isDebugEnabled())
-              logger.debug(
-                  "BulkBuild.start() - Building From Text File: ("
-                      + fInput.getName()
-                      + ") To Binary File: "
-                      + fInput.getName());
+            logger.debug(
+                () ->
+                    "BulkBuild.start() - Building From Text File: ("
+                        + fInput.getName()
+                        + ") To Binary File: "
+                        + fInput.getName());
 
             textToBinary(
                 fInput, buildNewFilePath(fOutputDirectory, fInput.getName()), sSharedSecretKey);
@@ -132,24 +118,24 @@ public class BulkBuild {
 
         if (iCompilingMethod == TEXT_OUTPUT) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "BulkBuild.start() - Building From Binary File: ("
-                    + fInput.getName()
-                    + ") To Text File: "
-                    + fInput.getName());
+          logger.debug(
+              () ->
+                  "BulkBuild.start() - Building From Binary File: ("
+                      + fInput.getName()
+                      + ") To Text File: "
+                      + fInput.getName());
 
           binaryToText(
               fInput, buildNewFilePath(fOutputDirectory, fInput.getName()), sSharedSecretKey);
 
         } else if (iCompilingMethod == BINARY_OUTPUT) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "BulkBuild.start() - Building From Binary File: ("
-                    + fInput.toString()
-                    + ") To Binary File: "
-                    + fInput.getName());
+          logger.debug(
+              () ->
+                  "BulkBuild.start() - Building From Binary File: ("
+                      + fInput.toString()
+                      + ") To Binary File: "
+                      + fInput.getName());
 
           binaryToBinary(
               fInput, buildNewFilePath(fOutputDirectory, fInput.getName()), sSharedSecretKey);
@@ -255,9 +241,8 @@ public class BulkBuild {
 
     boolean boolStripFinalize = true;
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "BulkBuild.binaryToText(f,f,s) +------------------------------------------------------+");
+    logger.debug(
+        "BulkBuild.binaryToText(f,f,s) +------------------------------------------------------+");
 
     ConfigurationFileExport cfe = null;
 
@@ -317,7 +302,7 @@ public class BulkBuild {
    */
   public boolean binaryToBinary(File fBinInput, File fBinOutput, String sSharedSecretKey) {
 
-    if (logger.isDebugEnabled()) logger.debug("BulkBuild.binaryToBinary(f,f,s)");
+    logger.debug("BulkBuild.binaryToBinary(f,f,s)");
 
     @SuppressWarnings("deprecation")
     ConfigurationFileExport cfe = new ConfigurationFileExport(fBinInput);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.dictionary;
@@ -19,20 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * @bannerLicense Copyright 2015 - 2026 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class DictionaryTLV implements Dictionary {
 
   private static final Logger logger = LogManager.getLogger(DictionaryTLV.class);
@@ -97,8 +83,7 @@ public class DictionaryTLV implements Dictionary {
 
     lsTlvDotNotation = Arrays.asList(sTlvDotNotation.split("\\."));
 
-    if (logger.isDebugEnabled())
-      logger.debug("ConfigrationFileExport.getTlvDefintion(): " + lsTlvDotNotation.toString());
+    logger.debug("ConfigrationFileExport.getTlvDefintion(): {}", lsTlvDotNotation);
 
     // Search for TLV Definition
     if (lsTlvDotNotation.size() == 1) {
@@ -121,8 +106,7 @@ public class DictionaryTLV implements Dictionary {
 
       while (iRecursiveSearch < lsTlvDotNotation.size()) {
 
-        if (logger.isDebugEnabled())
-          logger.debug("ConfigrationFileExport.getTlvDefintion(): WHILE-LOOP");
+        logger.debug("ConfigrationFileExport.getTlvDefintion(): WHILE-LOOP");
 
         try {
 
@@ -137,8 +121,7 @@ public class DictionaryTLV implements Dictionary {
 
                 for (int iIndex = 0; iIndex < jaTlvDictionary.length(); iIndex++) {
 
-                  if (logger.isDebugEnabled())
-                    logger.debug("ConfigrationFileExport.getTlvDefintion(): FOR-LOOP");
+                  logger.debug("ConfigrationFileExport.getTlvDefintion(): FOR-LOOP");
 
                   JSONObject joTlvDictionaryTemp = jaTlvDictionary.getJSONObject(iIndex);
 
@@ -222,9 +205,8 @@ public class DictionaryTLV implements Dictionary {
 
     Map<String, Integer> msiTypeNameToType = new HashMap<String, Integer>();
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "DictionaryTLV.getAllTopLevelTypeNameToTypeViaDictionary(): JA-DICT: -> " + jaDictionary);
+    logger.debug(
+        "DictionaryTLV.getAllTopLevelTypeNameToTypeViaDictionary(): JA-DICT: -> {}", jaDictionary);
 
     for (int iJsonArrayIndex = 0; iJsonArrayIndex < jaDictionary.length(); iJsonArrayIndex++) {
 
@@ -245,10 +227,10 @@ public class DictionaryTLV implements Dictionary {
       }
     }
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "DictionaryTLV.getAllTopLevelTypeNameToTypeViaDictionary(): Map ->  "
-              + msiTypeNameToType.toString());
+    logger.debug(
+        () ->
+            "DictionaryTLV.getAllTopLevelTypeNameToTypeViaDictionary(): Map ->  "
+                + msiTypeNameToType.toString());
 
     return msiTypeNameToType;
   }
@@ -266,19 +248,16 @@ public class DictionaryTLV implements Dictionary {
     // Create a local copy
     ArrayDeque<String> adqsTypeHierarchyStackLocal = adqsTypeHierarchyStack.clone();
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "DictionaryTLV.updateDictionaryValue(ad,jo,s): adqsTypeHierarchyStackLocal: "
-              + adqsTypeHierarchyStackLocal);
-      logger.debug("DictionaryTLV.updateDictionaryValue(ad,jo,s): sValue: " + sValue);
-    }
+    logger.debug(
+        "DictionaryTLV.updateDictionaryValue(ad,jo,s): adqsTypeHierarchyStackLocal: {}",
+        adqsTypeHierarchyStackLocal);
+    logger.debug("DictionaryTLV.updateDictionaryValue(ad,jo,s): sValue: {}", sValue);
 
     try {
 
       if (joDictionary.get(Dictionary.DATA_TYPE) == DataTypeDictionaryReference.DATA_TYPE_OID) {
 
-        if (logger.isDebugEnabled())
-          logger.debug("DictionaryTLV.updateDictionaryValue(ad,jo,s): DATA_TYPE_OID: " + sValue);
+        logger.debug("DictionaryTLV.updateDictionaryValue(ad,jo,s): DATA_TYPE_OID: {}", sValue);
 
       } else if (joDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
 
@@ -312,18 +291,18 @@ public class DictionaryTLV implements Dictionary {
     // Create a local copy
     ArrayDeque<String> adqsTypeHierarchyStackLocal = adqsTypeHierarchyStack.clone();
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "DictionaryTLV.updateDictionaryValue(ad,jo,ctx): adqsTypeHierarchyStackLocal: "
-              + adqsTypeHierarchyStackLocal);
-      logger.debug(
-          "DictionaryTLV.updateDictionaryValue(ad,jo,ctx): OID ------> " + ctx.oid().getText());
-      logger.debug(
-          "DictionaryTLV.updateDictionaryValue(ad,jo,ctx): DATA-TYPE-> "
-              + ctx.dataType().getText());
-      logger.debug(
-          "DictionaryTLV.updateDictionaryValue(ad,jo,ctx): VALUE-----> " + ctx.value().getText());
-    }
+    logger.debug(
+        "DictionaryTLV.updateDictionaryValue(ad,jo,ctx): adqsTypeHierarchyStackLocal: {}",
+        adqsTypeHierarchyStackLocal);
+    logger.debug(
+        () -> "DictionaryTLV.updateDictionaryValue(ad,jo,ctx): OID ------> " + ctx.oid().getText());
+    logger.debug(
+        () ->
+            "DictionaryTLV.updateDictionaryValue(ad,jo,ctx): DATA-TYPE-> "
+                + ctx.dataType().getText());
+    logger.debug(
+        () ->
+            "DictionaryTLV.updateDictionaryValue(ad,jo,ctx): VALUE-----> " + ctx.value().getText());
 
     try {
 
@@ -333,9 +312,7 @@ public class DictionaryTLV implements Dictionary {
       e.printStackTrace();
     }
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("DictionaryTLV.updateDictionaryValue(ad,jo,s)" + joDictionary);
-    }
+    logger.debug("DictionaryTLV.updateDictionaryValue(ad,jo,s){}", joDictionary);
 
     return joDictionary;
   }
@@ -354,11 +331,9 @@ public class DictionaryTLV implements Dictionary {
     // Cycle thru JSON Array and inspect each JSON Object
     for (int iJsonArrayIndex = 0; iJsonArrayIndex < jaTlvDictionary.length(); iJsonArrayIndex++) {
 
-      if (logger.isDebugEnabled())
-        logger.debug(
-            "DictionaryTLV.searchAndUpdateDictionaryValue(ad,ja,s) +-----INDEX: "
-                + iJsonArrayIndex
-                + "-----+");
+      logger.debug(
+          "DictionaryTLV.searchAndUpdateDictionaryValue(ad,ja,s) +-----INDEX: {}-----+",
+          iJsonArrayIndex);
 
       JSONObject joTlvDictionary = null;
 
@@ -376,14 +351,13 @@ public class DictionaryTLV implements Dictionary {
                 .getString(Dictionary.TLV_NAME)
                 .equalsIgnoreCase(adqsTypeHierarchyStackLocal.peekLast()))) {
 
-          if (logger.isDebugEnabled()) {
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,ja,s) SUB-TYPE-ARRAY-TRUE: "
-                    + joTlvDictionary);
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,ja,s) -> TLV-SUB-NAME: -> "
-                    + adqsTypeHierarchyStackLocal.peekLast());
-          }
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,ja,s) SUB-TYPE-ARRAY-TRUE: {}",
+              joTlvDictionary);
+          logger.debug(
+              () ->
+                  "DictionaryTLV.searchAndUpdateDictionaryValue(ad,ja,s) -> TLV-SUB-NAME: -> "
+                      + adqsTypeHierarchyStackLocal.peekLast());
 
           adqsTypeHierarchyStackLocal.removeLast();
 
@@ -394,10 +368,9 @@ public class DictionaryTLV implements Dictionary {
 
         } else if (adqsTypeHierarchyStackLocal.size() == 1) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,ja,s) SUB-TYPE-ARRAY-FALSE: "
-                    + joTlvDictionary);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,ja,s) SUB-TYPE-ARRAY-FALSE: {}",
+              joTlvDictionary);
 
           searchAndUpdateDictionaryValue(adqsTypeHierarchyStackLocal, joTlvDictionary, sValue);
         }
@@ -417,10 +390,10 @@ public class DictionaryTLV implements Dictionary {
   private static JSONObject searchAndUpdateDictionaryValue(
       ArrayDeque<String> adqsTypeHierarchyStack, JSONObject joTlvDictionary, final String sValue) {
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s): Peek: "
-              + adqsTypeHierarchyStack.peek());
+    logger.debug(
+        () ->
+            "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s): Peek: "
+                + adqsTypeHierarchyStack.peek());
 
     try {
       if (joTlvDictionary
@@ -440,8 +413,7 @@ public class DictionaryTLV implements Dictionary {
           joTlvDictionary.put(Dictionary.VALUE, value);
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug("DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s): " + sValue);
+          logger.debug("DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s): {}", sValue);
 
           // Get Value
           int iValue = Integer.parseInt(sValue);
@@ -449,51 +421,46 @@ public class DictionaryTLV implements Dictionary {
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, iValue);
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_INTEGER: "
-                    + iValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_INTEGER: {}",
+              iValue);
 
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID)) {
           /* DO NOTHING */
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_BYTE_ARRAY: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_BYTE_ARRAY: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
 
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
-                    + " DATA_TYPE_STRING_NULL_TERMINATED: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
+                  + " DATA_TYPE_STRING_NULL_TERMINATED: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
 
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_STRING: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_STRING: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
 
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_MULTI_TLV_BYTE_ARRAY)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
-                    + " DATA_TYPE_MULTI_TLV_BYTE_ARRAY: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
+                  + " DATA_TYPE_MULTI_TLV_BYTE_ARRAY: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
@@ -501,11 +468,10 @@ public class DictionaryTLV implements Dictionary {
         } else if (sDataType.equals(
             DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
-                    + " DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
+                  + " DATA_TYPE_TRANSPORT_ADDR_IPV4_ADDR: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
@@ -513,11 +479,10 @@ public class DictionaryTLV implements Dictionary {
         } else if (sDataType.equals(
             DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
-                    + " DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
+                  + " DATA_TYPE_TRANSPORT_ADDR_IPV6_ADDR: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
@@ -525,42 +490,38 @@ public class DictionaryTLV implements Dictionary {
         } else if (sDataType.equals(
             DataTypeDictionaryReference.DATA_TYPE_TRANSPORT_ADDR_INET_ADDR)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
-                    + " DATA_TYPE_TRANSPORT_ADDR_INET_ADDR: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
+                  + " DATA_TYPE_TRANSPORT_ADDR_INET_ADDR: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
 
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_DOUBLE_BYTE_ARRAY)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
-                    + " DATA_TYPE_DOUBLE_BYTE_ARRAY: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
+                  + " DATA_TYPE_DOUBLE_BYTE_ARRAY: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
 
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING_BITS)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_STRING_BITS: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_STRING_BITS: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
 
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_MAC_ADDRESS)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_MAC_ADDRESS: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_MAC_ADDRESS: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
@@ -568,42 +529,38 @@ public class DictionaryTLV implements Dictionary {
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV4_ADDR)
             || sDataType.equals("byte_array_inet_address")) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
-                    + " DATA_TYPE_BYTE_ARRAY_IPV4_ADDR: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
+                  + " DATA_TYPE_BYTE_ARRAY_IPV4_ADDR: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
 
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY_IPV6_ADDR)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
-                    + " DATA_TYPE_BYTE_ARRAY_IPV6_ADDR: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) ->"
+                  + " DATA_TYPE_BYTE_ARRAY_IPV6_ADDR: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
 
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_BYTE)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_BYTE: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_BYTE: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
 
         } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_OID_ASN1_OBJECT_6)) {
 
-          if (logger.isDebugEnabled())
-            logger.debug(
-                "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_BYTE: "
-                    + sValue);
+          logger.debug(
+              "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s) -> DATA_TYPE_BYTE: {}",
+              sValue);
 
           // Insert Value into JSON Object
           joTlvDictionary.put(Dictionary.VALUE, sValue);
@@ -614,9 +571,8 @@ public class DictionaryTLV implements Dictionary {
       e.printStackTrace();
     }
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s): RETURN: " + joTlvDictionary);
+    logger.debug(
+        "DictionaryTLV.searchAndUpdateDictionaryValue(ad,jo,s): RETURN: {}", joTlvDictionary);
 
     return joTlvDictionary;
   }

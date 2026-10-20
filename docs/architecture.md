@@ -239,3 +239,18 @@ import/export remains available for editor drafts and codec tests.
 See [minimum validation](docsis-minimum-validation.md) for source boundaries,
 API usage and limitations. Requiredness is separate from repetition, fragmentation,
 child semantics and MIC authentication; this change does not implement those checks.
+
+## Diagnostic logging
+
+Log4j owns level filtering for simple parameterized messages. Expensive hex/JSON
+formatting uses lazy suppliers where practical. Guards remain for diagnostic-only
+loops, database iteration/checked operations and mutable state where unwrapping
+would change evaluation or side effects. Shared-secret values are not logged.
+
+- [x] Remove redundant guards and route debug-only console output through Log4j.
+- [x] Remove legacy regex-group, parser/export hex, strip-loop and disassembly
+  buffer traces, plus normal-operation stack dumps; preserve matcher state and
+  processing loops.
+- [x] Verify DOCSIS 3.1/4.0 compile/export/recompile bytes with DEBUG on and off.
+
+Follow the [QA logging guidance](../skills/qa-hygiene/SKILL.md#debug-logging).

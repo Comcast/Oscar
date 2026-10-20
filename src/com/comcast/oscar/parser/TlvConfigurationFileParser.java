@@ -12,7 +12,6 @@ import com.comcast.oscar.dictionary.TlvDictionary;
 import com.comcast.oscar.tlv.TlvAssembler;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
-import com.comcast.oscar.utilities.HexString;
 import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,8 +95,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
       iConfigurationFileType = ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE;
     }
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvConfigurationFileParser.enterConfigType() " + ctx.getText());
+    logger.debug(() -> "TlvConfigurationFileParser.enterConfigType() " + ctx.getText());
 
     // Create a Map of String TypeName -> Type
     hmsiTopLevelTypeNameToType = dsqTlvDictionary.getAllTopLevelTypeNameToType();
@@ -113,9 +111,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   @Override
   public void enterStartTLV(@NotNull tlvParser.StartTLVContext ctx) {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("TlvConfigurationFileParser.enterStartTLV() " + ctx.getStart().getText());
-    }
+    logger.debug(() -> "TlvConfigurationFileParser.enterStartTLV() " + ctx.getStart().getText());
 
     Integer type = hmsiTopLevelTypeNameToType.get(ctx.getStart().getText());
     if (type == null) {
@@ -131,8 +127,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     if (openCableTemplate != null)
       joWorkingTLVDictionary.put(Dictionary.SUBTYPE_ARRAY, new JSONArray());
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvConfigurationFileParser.enterStartTLV() " + joWorkingTLVDictionary);
+    logger.debug("TlvConfigurationFileParser.enterStartTLV() {}", joWorkingTLVDictionary);
 
     jaTlvDictionary.put(joWorkingTLVDictionary);
 
@@ -155,8 +150,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   @Override
   public void enterTlv(@NotNull tlvParser.TlvContext ctx) {
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvConfigurationFileParser.enterTlv() " + ctx.getStart().getText());
+    logger.debug(() -> "TlvConfigurationFileParser.enterTlv() " + ctx.getStart().getText());
 
     validateTlvName(ctx.getStart().getText());
     aqsSubTypeHierarchyStack.push(ctx.getStart().getText());
@@ -172,15 +166,13 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   @Override
   public void enterSnmp(@NotNull tlvParser.SnmpContext ctx) {
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvConfigurationFileParser.enterSnmp() " + ctx.getStart().getText());
+    logger.debug(() -> "TlvConfigurationFileParser.enterSnmp() " + ctx.getStart().getText());
 
     JSONObject definition = validateTlvName(ctx.getStart().getText());
     aqsSubTypeHierarchyStack.push(ctx.getStart().getText());
 
-    if (logger.isDebugEnabled())
-      logger.debug(
-          "TlvConfigurationFileParser.enterSnmp(): ArrayDeque:  " + aqsSubTypeHierarchyStack);
+    logger.debug(
+        "TlvConfigurationFileParser.enterSnmp(): ArrayDeque:  {}", aqsSubTypeHierarchyStack);
 
     DictionaryTLV.updateDictionaryValue(aqsSubTypeHierarchyStack, definition, ctx);
 
@@ -351,13 +343,13 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   @Override
   public void enterSubTypeValue(@NotNull tlvParser.SubTypeValueContext ctx) {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "TlvConfigurationFileParser.enterSubTypeValue(): ArrayDeque:  "
-              + aqsSubTypeHierarchyStack);
-      logger.debug(
-          "TlvConfigurationFileParser.enterSubTypeValue(): SubValue:  " + ctx.getStart().getText());
-    }
+    logger.debug(
+        "TlvConfigurationFileParser.enterSubTypeValue(): ArrayDeque:  {}",
+        aqsSubTypeHierarchyStack);
+    logger.debug(
+        () ->
+            "TlvConfigurationFileParser.enterSubTypeValue(): SubValue:  "
+                + ctx.getStart().getText());
 
     DictionaryTLV.updateDictionaryValue(
         aqsSubTypeHierarchyStack,
@@ -375,13 +367,12 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   @Override
   public void enterTypeValue(@NotNull tlvParser.TypeValueContext ctx) {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "TlvConfigurationFileParser.enterSubTypeValue(): ArrayDeque:  "
-              + aqsSubTypeHierarchyStack);
-      logger.debug(
-          "TlvConfigurationFileParser.enterSubTypeValue(): Value:  " + ctx.getStart().getText());
-    }
+    logger.debug(
+        "TlvConfigurationFileParser.enterSubTypeValue(): ArrayDeque:  {}",
+        aqsSubTypeHierarchyStack);
+    logger.debug(
+        () ->
+            "TlvConfigurationFileParser.enterSubTypeValue(): Value:  " + ctx.getStart().getText());
 
     String value = com.comcast.oscar.utilities.TlvTextString.decode(ctx.getStart().getText());
     JSONObject target = valueTarget();
@@ -427,8 +418,7 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 
     byte[] baTlvAssembler = null;
 
-    if (logger.isDebugEnabled())
-      logger.debug("TlvConfigurationFileParser.toByteArray() " + jaTlvDictionary);
+    logger.debug("TlvConfigurationFileParser.toByteArray() {}", jaTlvDictionary);
 
     if (iConfigurationFileType == ConfigurationFileTypeConstants.DPOG_10_CONFIGURATION_TYPE) {
       validateDpogNumbers(jaTlvDictionary);
@@ -440,12 +430,6 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     } catch (TlvException e) {
       e.printStackTrace();
     }
-
-    if (logger.isDebugEnabled())
-      for (HexString hs :
-          TlvBuilder.topLevelTlvToHexStringList(baTlvAssembler, getTopLevelTypeToNumByteLength())) {
-        logger.debug("TlvConfigurationFileParser.toByteArray() " + hs.toString(":"));
-      }
 
     return baTlvAssembler;
   }

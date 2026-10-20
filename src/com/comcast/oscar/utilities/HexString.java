@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.utilities;
@@ -17,20 +17,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class HexString {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(HexString.class);
@@ -285,8 +271,7 @@ public class HexString {
 
     ByteArrayOutputStream baosByteArray = new ByteArrayOutputStream();
 
-    if (logger.isDebugEnabled())
-      logger.debug("HexString.prefixNullPaddToLength().itotalLength: " + iTotalLength);
+    logger.debug("HexString.prefixNullPaddToLength().itotalLength: {}", iTotalLength);
 
     // PADD Nulls in first for prefix
     while ((toByteArray().length + baosByteArray.size()) < iTotalLength) {
@@ -599,15 +584,10 @@ public class HexString {
 
     while (iIndex < bByteArray.length) {
 
-      if (logger.isDebugEnabled()) {
-        logger.debug(
-            "HexString.byteArrayGroup() -> "
-                + "iIndex: "
-                + iIndex
-                + " -> "
-                + "iNumBytesInGroupCount: "
-                + iNumBytesInGroupCount);
-      }
+      logger.debug(
+          "HexString.byteArrayGroup() -> iIndex: {} -> iNumBytesInGroupCount: {}",
+          iIndex,
+          iNumBytesInGroupCount);
 
       if (iNumBytesInGroup != iNumBytesInGroupCount) {
         baosByteArrayGroup.write(bByteArray[iIndex++]);
@@ -623,12 +603,11 @@ public class HexString {
       lbByteArrayGroup.add(baosByteArrayGroup.toByteArray());
     }
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "HexString.byteArrayGroup() -> "
-              + "lbByteArrayGroup.List.Size: "
-              + lbByteArrayGroup.size());
-    }
+    logger.debug(
+        () ->
+            "HexString.byteArrayGroup() -> "
+                + "lbByteArrayGroup.List.Size: "
+                + lbByteArrayGroup.size());
 
     return lbByteArrayGroup;
   }

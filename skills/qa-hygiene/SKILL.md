@@ -166,3 +166,18 @@ For validation, explicitly distinguish minimum presence, syntax, full conformanc
 and MIC authentication. For an override, inherit documentation only when it fully
 states the contract; document changed behavior locally. QA must check that banners
 match implementation and examples still use the actual API.
+
+## Debug logging
+
+Use Log4j parameterized messages for constants and readily available values:
+`logger.debug("Adding {} padding bytes", paddingBytes)`. Do not surround these
+calls with `isDebugEnabled()`; Log4j already checks the level and defers formatting.
+Pass objects directly instead of eagerly calling their `toString()`.
+
+Use a Log4j message/argument supplier for expensive conversion when captured locals
+are effectively final. Preserve a guard for diagnostic-only loops, checked-exception
+operations, mutable loop state or other work that cannot safely move into a supplier.
+Do not remove a guard if that would make debug-only side effects run unconditionally.
+Keep diagnostic output in Log4j rather than guarded `System.out.println` calls.
+Never log shared secrets. Verify representative binary round trips with DEBUG both
+on and off when changing logging across parser/compiler paths.

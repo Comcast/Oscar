@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.buildbulk;
@@ -16,20 +16,6 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class MergeBulkBuild {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(MergeBulkBuild.class);
@@ -105,7 +91,7 @@ public class MergeBulkBuild {
     /*Load the first part of the configuration*/
     alcfTemp.addAll(alalcf.get(0));
 
-    if (logger.isDebugEnabled()) logger.debug("MergeBulkBuild.start() -> Files: " + alcfTemp);
+    logger.debug("MergeBulkBuild.start() -> Files: {}", alcfTemp);
 
     for (int iIndex = 1; iIndex < alalcf.size(); iIndex++) {
       try {
@@ -119,8 +105,7 @@ public class MergeBulkBuild {
     if (logger.isDebugEnabled())
       logger.debug("MergeBulkBuild.start() -> Number of Configurations: " + alcfTemp.size());
 
-    if (logger.isDebugEnabled())
-      logger.debug("MergeBulkBuild.start() -> Number of Configurations: " + alcfTemp.toString());
+    logger.debug("MergeBulkBuild.start() -> Number of Configurations: {}", alcfTemp);
 
     for (ConfigurationFile cf : alcfTemp) {
 
@@ -179,8 +164,7 @@ public class MergeBulkBuild {
                 + NOMENCLATURE_SEPERATOR
                 + TrimFileExtention(cf2.getConfigurationFileName());
 
-        if (logger.isDebugEnabled())
-          logger.debug("MergeBulkBuild.mergerDirectories() -> " + sMergeFileName);
+        logger.debug("MergeBulkBuild.mergerDirectories() -> {}", sMergeFileName);
 
         /* Add Configuration file to list */
         alcf.add(new ConfigurationFile(sMergeFileName, iConfigurationFileType, tb, sSharedSecret));
@@ -199,8 +183,7 @@ public class MergeBulkBuild {
 
     for (File fConfigurationFile : fInputDirectory.listFiles()) {
 
-      if (logger.isDebugEnabled())
-        logger.debug("MergeBulkBuild.getInputConfigurationFiles() " + fConfigurationFile);
+      logger.debug("MergeBulkBuild.getInputConfigurationFiles() {}", fConfigurationFile);
 
       byte[] bConfigurationFile = HexString.fileToByteArray(fConfigurationFile);
 

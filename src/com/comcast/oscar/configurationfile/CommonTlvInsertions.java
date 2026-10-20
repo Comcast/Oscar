@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.configurationfile;
@@ -18,20 +18,6 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class CommonTlvInsertions {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(CommonTlvInsertions.class);
@@ -152,8 +138,7 @@ public class CommonTlvInsertions {
       throw new ConfigurationFileException(
           "Invalid ConfigurationFileType: " + cf.getConfigurationFileType());
 
-    if (logger.isDebugEnabled())
-      logger.debug("CommonTlvInsertions.insertDownstreamFrequency() - DS: " + iDownstreamFrequency);
+    logger.debug("CommonTlvInsertions.insertDownstreamFrequency() - DS: {}", iDownstreamFrequency);
 
     TlvBuilder tb = new TlvBuilder();
 
@@ -163,20 +148,17 @@ public class CommonTlvInsertions {
       e.printStackTrace();
     }
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "CommonTlvInsertions.insertDownstreamFrequency() - Hex: "
-              + new HexString(tb.toByteArray()).toString(":"));
-      logger.debug(
-          "CommonTlvInsertions.insertDownstreamFrequency() - ConfigFileSize: " + cf.size());
-    }
+    logger.debug(
+        () ->
+            "CommonTlvInsertions.insertDownstreamFrequency() - Hex: "
+                + new HexString(tb.toByteArray()).toString(":"));
+    logger.debug(
+        () -> "CommonTlvInsertions.insertDownstreamFrequency() - ConfigFileSize: " + cf.size());
 
     cf.add(tb);
 
-    if (logger.isDebugEnabled()) {
-      logger.debug(
-          "CommonTlvInsertions.insertDownstreamFrequency() - ConfigFileSize: " + cf.size());
-    }
+    logger.debug(
+        () -> "CommonTlvInsertions.insertDownstreamFrequency() - ConfigFileSize: " + cf.size());
 
     if (boolFinalize) cf.commit();
   }
@@ -245,10 +227,8 @@ public class CommonTlvInsertions {
       File fCertificate, ConfigurationFile cf, boolean boolFinalize)
       throws ConfigurationFileException {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("CommonTlvInsertions.insertManufactureCVC(ba,cf,bool)");
-      // Thread.dumpStack();
-    }
+    logger.debug("CommonTlvInsertions.insertManufactureCVC(ba,cf,bool)");
+    // Thread.dumpStack();
 
     if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31)
       throw new ConfigurationFileException(
@@ -282,10 +262,8 @@ public class CommonTlvInsertions {
       byte[] bCertificate, ConfigurationFile cf, boolean boolFinalize)
       throws ConfigurationFileException {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("CommonTlvInsertions.insertManufactureCVC(ba,cf,bool)");
-      // Thread.dumpStack();
-    }
+    logger.debug("CommonTlvInsertions.insertManufactureCVC(ba,cf,bool)");
+    // Thread.dumpStack();
 
     if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31)
       throw new ConfigurationFileException(
@@ -318,10 +296,8 @@ public class CommonTlvInsertions {
   public static void insertCoSignCVC(File fCertificate, ConfigurationFile cf, boolean boolFinalize)
       throws ConfigurationFileException {
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("CommonTlvInsertions.insertCoSignCVC(f,cf,bool)");
-      // Thread.dumpStack();
-    }
+    logger.debug("CommonTlvInsertions.insertCoSignCVC(f,cf,bool)");
+    // Thread.dumpStack();
 
     if (cf.getConfigurationFileType() > ConfigurationFile.DOCSIS_VER_31)
       throw new ConfigurationFileException(
