@@ -114,16 +114,8 @@ class EmbeddedProfileTest {
   @ValueSource(strings = {"3.1", "4.0"})
   void completeLabFilesWithErouterRoundTrip(String version) throws Exception {
     Path root = Path.of("examples/docsis");
-    String base = Files.readString(root.resolve(version + "/DOCSIS-" + version + "-LAB.txt"));
     for (String name : List.of("disabled", "dual-stack", "tr069-lab")) {
-      String fragment = Files.readString(root.resolve("3.1/erouter/" + name + ".txt"));
-      String children =
-          fragment
-              .substring(fragment.indexOf('{') + 1, fragment.lastIndexOf('}'))
-              .replace("NetworkAccess 1;", "");
-      String text = base.substring(0, base.lastIndexOf('}')) + children + "}";
-      if (version.equals("4.0"))
-        text = Files.readString(root.resolve("4.0/erouter/" + name + ".txt"));
+      String text = Files.readString(root.resolve(version + "/erouter/" + name + ".txt"));
       var imported = new ConfigurationFileImport(new StringBuilder(text));
       var file =
           new com.comcast.oscar.configurationfile.ConfigurationFile(

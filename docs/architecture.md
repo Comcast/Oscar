@@ -217,3 +217,25 @@ VarBind names. Cover independent wire bytes and binary/text round trips.
 The UI presents OID, Type and Value fields for supported VarBind statements.
 Validation must wrap nested statements in their actual registry ancestors before
 compiling with OSCAR; validating a nested statement at the root is incorrect.
+
+## Complete-file minimum validation
+
+`DocsisMinimumRequirements` owns top-level minimum checks as a public, stateless
+module shared by compilers and UI/API callers. It accepts text or binary files
+with explicit `InputFormat` and `DocsisVersion` enums, or in-memory text/bytes.
+Legacy file-type integers are converted through `DocsisVersion.fromConfigurationFileType`
+at compiler/API boundaries; validation never accepts an ambiguous integer version. Parsing and complete
+assembly precede validation; missing parameters prevent finalization and writing.
+Compilers validate generated integrity fields and End after finalization. Fragment
+import/export remains available for editor drafts and codec tests.
+
+- [x] Share one minimum validator across regular DOCSIS and DOCSIS 4.0 compilation.
+- [x] Require 3/24/25 before finalization; preserve legacy DOCSIS 1.0 Class of Service.
+- [x] Require 6/7/255 in finalized output; fix inverted legacy presence check.
+- [x] Test text/binary inputs, missing settings, framing and valid shipped profiles.
+- [x] Supply positive/negative examples and complete eRouter lab profiles.
+- [ ] Integrate explicit minimum-validation feedback in OSCAR-UI after dependency update.
+
+See [minimum validation](docsis-minimum-validation.md) for source boundaries,
+API usage and limitations. Requiredness is separate from repetition, fragmentation,
+child semantics and MIC authentication; this change does not implement those checks.

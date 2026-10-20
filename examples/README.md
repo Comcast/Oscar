@@ -6,7 +6,7 @@ public lab material, not operator-approved production profiles.
 
 | Family | Directory | Contents and status |
 | --- | --- | --- |
-| DOCSIS 3.1 | [docsis/3.1](docsis/3.1/README.md) | Text/binary pair: 1 Gbit/s downstream, 100 Mbit/s upstream; [eRouter fragments](docsis/3.1/erouter/README.md) |
+| DOCSIS 3.1 | [docsis/3.1](docsis/3.1/README.md) | Text/binary pair: 1 Gbit/s downstream, 100 Mbit/s upstream; [eRouter lab profiles](docsis/3.1/erouter/README.md) |
 | DOCSIS 4.0 | [docsis/4.0](docsis/4.0/README.md) | Text/binary pair: 10 Gbit/s downstream, 1 Gbit/s upstream; partial D4 support; [eRouter lab profiles](docsis/4.0/erouter/README.md) |
 | DPoE 2.0 | [dpoe/2.0](dpoe/2.0/README.md) | Public-lab VLAN 1501 classifier/QoS adaptation plus minimal fragment; full L2VPN profile pending |
 | PacketCable 1.0 | [packetcable/1.0](packetcable/1.0/README.md) | Opening-delimiter fragment; not a complete voice profile |
@@ -37,3 +37,6 @@ Use `examples/<family>/<version>/`. Update this index and the local README with
 purpose, source/provenance, required inputs, exact commands, validation performed,
 and whether the file is a fragment or a complete lab profile. Include only
 synthetic/public lab values; keep generated output out of the example directory.
+
+DOCSIS [minimum-validation examples](docsis/3.1/minimum/README.md) include a valid
+profile and intentionally incomplete inputs that must fail complete-file compilation.

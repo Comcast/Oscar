@@ -192,6 +192,7 @@ class DocsisMicVerifierTest {
                             tlv(1, new byte[] {(byte) algorithm}),
                             tlv(2, hex("100020000010")),
                             explicit ? tlv(3, new byte[digestLength]) : new byte[0]))));
+        byte[] flows = hex("180701020001060107190701020002060107");
         byte[] sorted = hex("030101030100120105");
         byte[] covered = concat(sorted, extension);
         byte[] digest = algorithm == 2 ? DocsisMmh.digest(KEY, covered) : hmac(KEY, covered);
@@ -202,17 +203,18 @@ class DocsisMicVerifierTest {
                     .DOCSIS_31_CONFIGURATION_TYPE);
         compiler.add(
             new com.comcast.oscar.utilities.HexString(
-                concat(hex("120105030101030100"), extension)));
+                concat(hex("120105030101030100"), flows, extension)));
         compiler.commit();
         if (explicit) {
           System.arraycopy(digest, 0, extension, extension.length - digestLength, digestLength);
         }
-        byte[] cm = tlv(6, MessageDigest.getInstance("MD5").digest(concat(sorted, extension)));
+        byte[] cm =
+            tlv(6, MessageDigest.getInstance("MD5").digest(concat(sorted, flows, extension)));
         byte[] cmts =
             explicit
-                ? hmac(KEY, concat(hex("030101030100"), extension, cm, hex("120105")))
+                ? hmac(KEY, concat(hex("030101030100"), extension, cm, hex("120105"), flows))
                 : Arrays.copyOf(digest, 16);
-        byte[] expected = concat(sorted, extension, cm, tlv(7, cmts), hex("ff"));
+        byte[] expected = concat(sorted, flows, extension, cm, tlv(7, cmts), hex("ff"));
         expected = Arrays.copyOf(expected, (expected.length + 3) / 4 * 4);
         assertArrayEquals(expected, compiler.toByteArray());
         compiler.commit();
@@ -228,8 +230,10 @@ class DocsisMicVerifierTest {
       for (boolean explicit : new boolean[] {false, true}) {
         String zeros = "00:".repeat(algorithm == 2 ? 7 : 15) + "00";
         String source =
-            "Docsis { NetworkAccess 1; VendorSpecific { VendorId [FF:FF:FF]; "
-                + "ExtCmtsMicConf { ExtCmtsMicHMACType "
+            "Docsis { NetworkAccess 1; UpstreamServiceFlow { ServiceFlowReference 1;"
+                + " QualityOfServiceParameterSetType 07; } DownstreamServiceFlow {"
+                + " ServiceFlowReference 2; QualityOfServiceParameterSetType 07; } VendorSpecific {"
+                + " VendorId [FF:FF:FF]; ExtCmtsMicConf { ExtCmtsMicHMACType "
                 + algorithm
                 + "; ExtCmtsMicBitmap 000100000000000000000000000000000000000000010000; "
                 + (explicit ? "ExpExtCmtsMicDigest [" + zeros + "]; " : "")

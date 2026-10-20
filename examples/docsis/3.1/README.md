@@ -19,7 +19,8 @@ java -jar oscar.jar -d -s d 3.1 -i output/DOCSIS-3.1-LAB.bin > output/DOCSIS-3.1
 The compiler supplies integrity fields and file finalization. The key is public
 lab data. Successful compilation does not establish device interoperability.
 
-## eRouter fragments
+## eRouter lab profiles
 
-See [eRouter examples](erouter/README.md) for verified initialization-mode
-fragments and a TR-069 scenario verified with the quoted-string parser fix.
+See [eRouter examples](erouter/README.md) for initialization-mode and TR-069 lab profiles
+with both service flows. See [minimum-validation examples](minimum/README.md) for
+valid and intentionally incomplete configurations and expected errors.

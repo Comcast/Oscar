@@ -1,6 +1,6 @@
 ---
 name: qa-hygiene
-description: Check Oscar Java source license headers, TLV registry and parser hygiene, and related tests when changing project-owned source or performing a QA hygiene review.
+description: Check Oscar Java source license headers, descriptive domain types, public API documentation, TLV registry and parser hygiene, and related tests when changing project-owned source or performing a QA hygiene review.
 ---
 
 # Oscar QA hygiene
@@ -114,3 +114,55 @@ current shell is already in the correct project. Use `cd /absolute/repo &&`
 as the first line so a failed directory change prevents the following command.
 Provide push/release commands for the user to execute unless explicitly asked
 to execute them.
+
+## Shared validation modules
+
+OSCAR is an object-oriented, modular library consumed by OSCAR-UI and the CLI.
+Put reusable validation rules in a focused public class with documented inputs,
+results/errors and version scope. Compilers, CLI and UI adapters must call that
+owner rather than copy rules or require a CLI subprocess. Keep parsing, validation,
+MIC generation and presentation separate; avoid dependencies on GUI state.
+
+For complete-file rules, test both text and binary entry points, incomplete drafts,
+negative examples and valid shipped profiles. Apply requiredness after assembly,
+not while an editor is adding individual TLVs. Report exactly what a successful
+check establishes; minimum presence is not full specification conformance.
+
+## Descriptive domain types
+
+Limit primitive obsession in public APIs. Represent a domain choice with an enum
+or a focused value type when its meaning or valid values are not evident from the
+primitive type. For example, prefer a `DocsisVersion docsisVersion` parameter over
+`int version`: the latter could mean an OSCAR release, DOCSIS revision or internal
+configuration-family code. A clearer parameter name alone does not make an integer
+type-safe. Reuse an existing domain type before introducing another representation.
+
+- Use enums for closed choices such as DOCSIS revision or input format, and small
+  immutable value types where units or invariants need enforcement.
+- Keep primitives for actual numeric quantities, offsets, lengths and wire bytes
+  when their meaning is clear. Do not wrap every counter or byte unnecessarily.
+- Convert legacy integer constants at a documented compatibility boundary; reject
+  unsupported values there. Keep wire IDs separate from enum ordinals.
+- Preserve established public APIs when migrating consumers; do not silently
+  change binary encodings or remove methods used by OSCAR-UI.
+- Review newly added or changed signatures for ambiguous `int`, `String` and
+  boolean parameters. Do not expand a focused task into a whole-codebase migration.
+
+## Public method banners
+
+Every new or changed public method and constructor needs descriptive Javadoc.
+Explain the caller-visible contract, rather than merely repeating the method name
+or leaving empty `@param` tags. For each applicable part, document:
+
+- Purpose and when to use the operation, including supported families/versions.
+- Each parameter's domain meaning, units, allowed values and null handling.
+- Return value or, for `void`, the successful outcome and observable side effects.
+- Exceptions and the conditions that cause them.
+- Whether input is mutated, files are written, or compiler state is changed.
+- A short example with expected output/result for validation, parsing, formatting
+  or other non-obvious behavior; use synthetic values, never real secrets.
+
+For validation, explicitly distinguish minimum presence, syntax, full conformance
+and MIC authentication. For an override, inherit documentation only when it fully
+states the contract; document changed behavior locally. QA must check that banners
+match implementation and examples still use the actual API.

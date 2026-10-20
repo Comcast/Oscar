@@ -5,6 +5,7 @@
 package com.comcast.oscar.compiler;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
+import com.comcast.oscar.configurationfile.DocsisVersion;
 import com.comcast.oscar.dictionary.TlvDefinition;
 import com.comcast.oscar.dictionary.TlvRegistry;
 import com.comcast.oscar.utilities.HexString;
@@ -78,7 +79,18 @@ public final class Docsis40Compiler extends DocsisCompiler {
     }
   }
 
-  /** Finalizes validated DOCSIS 4.0 parameters with shared MIC generation. */
+  /**
+   * Validates the current DOCSIS 4.0 parameters and generates MICs, End and padding. Includes the
+   * shared top-level minimum and this compiler's D4-specific checks. Replaces cached finalized
+   * bytes; does not write a file or modify the caller's source text.
+   *
+   * <p>Example: missing upstream TLV 24 prevents finalization; valid parameters produce a complete
+   * binary returned by toByteArray().
+   *
+   * @throws IllegalArgumentException if required settings are missing, values/framing are invalid,
+   *     or MIC generation lacks a valid key or required E-MIC coverage
+   * @throws UnsupportedOperationException if parameters use an unsupported D4 encoding
+   */
   @Override
   public void commit() {
     finalized = null;
@@ -96,15 +108,14 @@ public final class Docsis40Compiler extends DocsisCompiler {
       }
     }
     finalized = DocsisMicFinalizer.finish(encode(parameters), registry, secret);
+    DocsisMinimumRequirements.validateComplete(finalized, DocsisVersion.DOCSIS_4_0);
   }
 
   private List<Element> parameters() {
     List<Element> parameters = parse(super.toByteArray(), true);
     parameters.removeIf(element -> element.type() == 6 || element.type() == 7);
     validate(parameters, List.of());
-    required(parameters, 3);
-    required(parameters, 24);
-    required(parameters, 25);
+    DocsisMinimumRequirements.validateParameters(encode(parameters), DocsisVersion.DOCSIS_4_0);
     Map<Integer, Integer> directions = new HashMap<>();
     Map<Integer, Integer> qosSets = new HashMap<>();
     for (Element element : parameters) {

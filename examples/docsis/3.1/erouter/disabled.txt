@@ -1,6 +1,19 @@
-/* Synthetic eRouter fragment; see README.md. */
+/* Synthetic eRouter lab profile; see README.md. */
 Docsis {
     NetworkAccess 1;
+    UpstreamServiceFlow {
+        ServiceFlowReference 1;
+        QualityOfServiceParameterSetType 07;
+        MaxSubstainedTrafficRate 100000000;
+        MaxTrafficBurst 3044;
+    }
+    DownstreamServiceFlow {
+        ServiceFlowReference 2;
+        QualityOfServiceParameterSetType 07;
+        MaxSubstainedTrafficRate 1000000000;
+        MaxTrafficBurst 3044;
+    }
+
     eRouterConfig {
         InitializationMode 0;
     }

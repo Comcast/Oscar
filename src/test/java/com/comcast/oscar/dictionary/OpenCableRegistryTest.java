@@ -33,8 +33,11 @@ class OpenCableRegistryTest {
     var imported =
         new ConfigurationFileImport(
             new StringBuilder(
-                "Docsis { NetworkAccess 1; eSTBConfig { VendorSpecificInformation { VendorID"
-                    + " 001122; } } eSTBConfig { IPModeControl 2; } }"));
+                "Docsis { NetworkAccess 1; UpstreamServiceFlow { ServiceFlowReference 1;"
+                    + " QualityOfServiceParameterSetType 07; } DownstreamServiceFlow {"
+                    + " ServiceFlowReference 2; QualityOfServiceParameterSetType 07; } eSTBConfig {"
+                    + " VendorSpecificInformation { VendorID 001122; } } eSTBConfig { IPModeControl"
+                    + " 2; } }"));
     var original =
         new com.comcast.oscar.configurationfile.ConfigurationFile(
             imported.getConfigurationFileType(), imported.getTlvBuilder(), "public-lab-key");

@@ -1,0 +1,5 @@
+/* Synthetic top-level minimum validation example; see README.md. */
+Docsis {
+    NetworkAccess 1;
+    DownstreamServiceFlow { ServiceFlowReference 2; QualityOfServiceParameterSetType 07; }
+}

@@ -48,3 +48,9 @@ shows the D3.1 names and bitmap syntax. D4.0 retains its separate catalog names.
 
 See [Binary TLV diagnostics](Binary-TLV-Diagnostics.md) for bounded, read-only
 partial inspection through `TlvDisassemble.diagnose`.
+
+## Complete DOCSIS file validation
+
+Use the public [minimum validator](../docsis-minimum-validation.md) for text or
+binary files and in-memory editor content. It checks top-level required settings
+without generating MICs or requiring a secret. Compilation enforces the same rule.

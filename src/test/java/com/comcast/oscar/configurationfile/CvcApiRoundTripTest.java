@@ -29,7 +29,12 @@ class CvcApiRoundTripTest {
   @MethodSource("certificates")
   void preservesCvcFragmentsAndCompleteBinary(
       String label, int payloadLength, int[] certificateTypes) throws Exception {
-    var imported = new ConfigurationFileImport(new StringBuilder("Docsis { NetworkAccess 1; }"));
+    var imported =
+        new ConfigurationFileImport(
+            new StringBuilder(
+                "Docsis { NetworkAccess 1; UpstreamServiceFlow { ServiceFlowReference 1;"
+                    + " QualityOfServiceParameterSetType 07; } DownstreamServiceFlow {"
+                    + " ServiceFlowReference 2; QualityOfServiceParameterSetType 07; } }"));
     var configuration =
         new ConfigurationFile(DOCSIS_31_CONFIGURATION_TYPE, imported.getTlvBuilder(), LAB_KEY);
     var certificates = new TlvBuilder();

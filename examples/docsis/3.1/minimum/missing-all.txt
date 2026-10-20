@@ -1,0 +1,4 @@
+/* Synthetic top-level minimum validation example; see README.md. */
+Docsis {
+    PrivacyEnable 1;
+}

@@ -1,11 +1,12 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.compiler;
 
 import com.comcast.oscar.cablelabsdefinitions.Constants;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
+import com.comcast.oscar.configurationfile.DocsisVersion;
 import com.comcast.oscar.dictionary.TlvRegistry;
 import com.comcast.oscar.tlv.TlvBuilder;
 import com.comcast.oscar.tlv.TlvException;
@@ -16,26 +17,11 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * @bannerLicense Copyright 2015 Comcast Cable Communications Management, LLC<br>
- *     ___________________________________________________________________<br>
- *     Licensed under the Apache License, Version 2.0 (the "License")<br>
- *     you may not use this file except in compliance with the License.<br>
- *     You may obtain a copy of the License at<br>
- *     http://www.apache.org/licenses/LICENSE-2.0<br>
- *     Unless required by applicable law or agreed to in writing, software<br>
- *     distributed under the License is distributed on an "AS IS" BASIS,<br>
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<br>
- *     See the License for the specific language governing permissions and<br>
- *     limitations under the License.<br>
- * @author Maurice Garcia (mgarcia01752@outlook.com)
- */
 public class DocsisCompiler extends TlvBuilder {
   // Log4J2 logging
   private static final Logger logger = LogManager.getLogger(DocsisCompiler.class);
@@ -123,6 +109,17 @@ public class DocsisCompiler extends TlvBuilder {
   }
 
   /**
+   * Clears editable parameters and cached finalized bytes without writing files. After clear(),
+   * toByteArray() returns an empty array and a DOCSIS minimum check fails until the required
+   * parameters are added again.
+   */
+  @Override
+  public void clear() {
+    super.clear();
+    baosTlvFinalizeArray.reset();
+  }
+
+  /**
    * @return DOCSIS Version
    */
   public int getDocsisVersion() {
@@ -130,8 +127,17 @@ public class DocsisCompiler extends TlvBuilder {
   }
 
   /**
-   * When commit() is called this process will: + calculate the CM/CMTS MIC + Add EOF Marker + Add
-   * Null Pad so that the byte array is divisible by 4
+   * Finalizes the assembled configuration using this compiler's selected family and shared secret.
+   * For DOCSIS, checks required top-level parameters before generating CM/CMTS MICs, End and
+   * padding, then verifies finalized minimum presence. Legacy DPoE subclasses retain their own
+   * family rules. Does not write a file; successful output is available through toByteArray().
+   * Previous finalized bytes are discarded before validating the current parameters.
+   *
+   * <p>Example: a DOCSIS 3.1 draft with only NetworkAccess fails with missing TLVs 24 and 25; a
+   * complete parameter set produces binary bytes containing MICs and End.
+   *
+   * @throws IllegalArgumentException if required DOCSIS parameters are absent or finalization fails
+   *     its framing, integrity-parameter or key checks
    */
   public void commit() {
 
@@ -144,10 +150,19 @@ public class DocsisCompiler extends TlvBuilder {
       logger.debug("DocsisCompiler.commit() LengthOfConfig: " + toByteArray().length);
     }
 
+    if (iDocsisVersion <= ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE) {
+      DocsisMinimumRequirements.validateParameters(
+          HexString.toByteArray(super.toString()),
+          DocsisVersion.fromConfigurationFileType(iDocsisVersion));
+    }
+
     if (iDocsisVersion == ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE) {
       baosTlvFinalizeArray.writeBytes(
           DocsisMicFinalizer.finish(
               super.toByteArray(), TlvRegistry.forFamily("docsis"), sSharedSecretKey));
+      DocsisMinimumRequirements.validateComplete(
+          baosTlvFinalizeArray.toByteArray(),
+          DocsisVersion.fromConfigurationFileType(iDocsisVersion));
       return;
     }
 
@@ -162,6 +177,10 @@ public class DocsisCompiler extends TlvBuilder {
     }
 
     try {
+      if (iDocsisVersion <= ConfigurationFileTypeConstants.DOCSIS_40_CONFIGURATION_TYPE) {
+        DocsisMinimumRequirements.validateComplete(
+            bTlvFinalizeArray, DocsisVersion.fromConfigurationFileType(iDocsisVersion));
+      }
       this.baosTlvFinalizeArray.write(bTlvFinalizeArray);
     } catch (IOException e) {
       e.printStackTrace();
@@ -169,24 +188,27 @@ public class DocsisCompiler extends TlvBuilder {
   }
 
   /**
-   * @param boolReportStdOut
-   * @return boolean
+   * Checks the current provisioned DOCSIS parameters without generating MICs or changing state.
+   * This is a minimum-presence/framing check, not full conformance or MIC authentication.
+   *
+   * <p>Example: a DOCSIS 3.1 draft with only NetworkAccess returns false; after adding nonempty
+   * upstream and downstream service flows it returns true.
+   *
+   * @param boolReportStdOut true to log validation failure at debug level; false or null to stay
+   *     silent
+   * @return true when current parameters meet the selected DOCSIS minimum; false for incomplete,
+   *     malformed or non-DOCSIS input
    */
   public boolean checkSpecification(Boolean boolReportStdOut) {
-
-    boolean boolStatus = true;
-
-    List<Integer> liTopLevelTLV = super.getTopLevelTlvList();
-
-    for (Integer iTopLevel : Constants.DOCSIS_MIN_TLV)
-      if (liTopLevelTLV.contains(iTopLevel)) {
-
-        if (boolReportStdOut) logger.debug("Missing Required TLV: " + iTopLevel);
-
-        return false;
-      }
-
-    return boolStatus;
+    try {
+      DocsisMinimumRequirements.validateParameters(
+          HexString.toByteArray(super.toString()),
+          DocsisVersion.fromConfigurationFileType(iDocsisVersion));
+      return true;
+    } catch (IllegalArgumentException failure) {
+      if (Boolean.TRUE.equals(boolReportStdOut)) logger.debug(failure.getMessage());
+      return false;
+    }
   }
 
   /**

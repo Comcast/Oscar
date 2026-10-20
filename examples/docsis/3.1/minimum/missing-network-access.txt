@@ -1,0 +1,5 @@
+/* Synthetic top-level minimum validation example; see README.md. */
+Docsis {
+    UpstreamServiceFlow { ServiceFlowReference 1; QualityOfServiceParameterSetType 07; }
+    DownstreamServiceFlow { ServiceFlowReference 2; QualityOfServiceParameterSetType 07; }
+}
