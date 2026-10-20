@@ -22,6 +22,10 @@ editor, codec, and file-integrity changes:
   pinned to **DPoG-SP-MULPIv1.0-C01-160830**. Use its applicability and
   delegated-source checks before revisiting the DPoG editor.
 
+- eRouter: [oscar-erouter-config-tlvs](skills/oscar-erouter-config-tlvs/SKILL.md),
+  pinned to **CM-SP-eRouter-I21-220209**. Use for type-202 settings together
+  with the target-family skill; check source ambiguities before encoding.
+
 Current DOCSIS 4.0 implementation scope excludes L2VPN-specific settings and
 eDOCSIS/eSAFE settings. Record them as deferred rather than claiming coverage.
 Generated configuration tests use a public lab key, not production credentials;

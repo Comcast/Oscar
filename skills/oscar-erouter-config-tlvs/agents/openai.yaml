@@ -1,0 +1,4 @@
+interface:
+  display_name: "OSCAR eRouter Configuration TLVs"
+  short_description: "Source-backed eRouter type 202 TLVs for OSCAR"
+  default_prompt: "Use $oscar-erouter-config-tlvs to review or implement OSCAR eRouter configuration TLVs with exact source citations."

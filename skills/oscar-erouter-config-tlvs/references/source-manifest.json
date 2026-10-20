@@ -1,0 +1,26 @@
+{
+  "document": "CM-SP-eRouter-I21-220209",
+  "origin": "User-provided CM-SP-eRouter-I21-220209.pdf",
+  "acquired": "2026-10-20",
+  "files": [
+    {
+      "file": "CM-SP-eRouter-I21-220209.txt",
+      "bytes": 438635,
+      "sha256": "105c204eaa9eee972c13c0dd9e9d4a0db14b60bc291ca637f19d46f57b3f4c2f"
+    }
+  ],
+  "removedOriginals": [
+    {
+      "file": "CM-SP-eRouter-I21-220209.pdf",
+      "bytes": 1738829,
+      "sha256": "b8fb48b26fe6724aee272dd929436a9065cb3e182eb26d7f560b55c81db57aa8"
+    }
+  ],
+  "extraction": {
+    "command": "pdftotext -layout -enc UTF-8 INPUT.pdf OUTPUT.txt",
+    "tool": "pdftotext version 22.02.0",
+    "pages": 125,
+    "verification": "125 nonempty page segments; no Unicode replacement characters; pages 93 and 95 visually compared."
+  },
+  "note": "Original PDF removed after extraction verification under repository AGENTS.md policy. Original notices remain in text. Delegated specifications are not bundled."
+}
