@@ -29,7 +29,7 @@ edges of 0.1, 1 and 10 ms. This is not a Dual Queue aggregate service-flow profi
 
 Neither example promises the configured bandwidth is available. D4.0 coverage
 remains [partial](../../development/docsis40-implementation.md), with L2VPN and
-eDOCSIS/eSAFE excluded. Real deployment requires an operator-reviewed profile,
+eDOCSIS/eSAFE excluded except the reviewed eRouter subset. Real deployment requires an operator-reviewed profile,
 private keys and hardware interoperability testing.
 
 ## Compile the Lab Files
@@ -121,3 +121,10 @@ java -jar oscar.jar -td 22.10.1
 java -jar oscar.jar -s d 3 -b txt InputDir OutputDir
 java -jar oscar.jar -s d 3 -mbb InputDir1 InputDir2 InputDir3 o=OutputDir e=.bin b
 ```
+
+## eRouter scope update
+
+The reviewed type-202 subset is now shared by DOCSIS and DOCSIS 4.0 through
+explicit registry profiles. The enabled settings are initialization, TR-069 fields other than ACS Override, RA interval,
+multicast server, Link-ID and topology. Remaining eSAFE settings and unresolved
+eRouter encodings remain deferred. See `docs/architecture.md` in the repository.

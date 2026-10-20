@@ -50,10 +50,12 @@ public final class TlvRegistry {
       String sourceSha256,
       List<TlvDefinition> definitions) {}
 
+  private final List<TlvDefinition> entries;
   private final Map<List<Integer>, TlvDefinition> definitions;
   private final Map<List<Integer>, List<TlvDefinition>> children;
 
   private TlvRegistry(List<TlvDefinition> entries, String source) {
+    this.entries = List.copyOf(entries);
     Map<List<Integer>, TlvDefinition> byPath = new LinkedHashMap<>();
     Map<List<Integer>, List<TlvDefinition>> byParent = new HashMap<>();
     Map<List<Integer>, Set<String>> names = new HashMap<>();
@@ -131,7 +133,16 @@ public final class TlvRegistry {
             ? TlvRegistry.class.getResourceAsStream(source)
             : Files.newInputStream(Path.of(source))) {
       if (input == null) throw new IOException("Missing catalog " + source);
-      return read(input, family, source);
+      TlvRegistry base = read(input, family, source);
+      if (!family.equals("docsis40") && !family.equals("docsis")) return base;
+      try (InputStream profile = openCatalog(family + ".profile.json")) {
+        return compose(
+            base,
+            new JSONObject(
+                new String(profile.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8)),
+            TlvRegistry::openCatalog,
+            family);
+      }
     } catch (IOException | IllegalArgumentException e) {
       throw new IllegalStateException("Cannot load TLV catalog " + source, e);
     }
@@ -153,6 +164,115 @@ public final class TlvRegistry {
       throw new IllegalArgumentException(source + ": invalid catalog header");
     }
     return new TlvRegistry(catalog.definitions(), source);
+  }
+
+  @FunctionalInterface
+  interface CatalogSource {
+    InputStream open(String name) throws IOException;
+  }
+
+  private static InputStream openCatalog(String name) throws IOException {
+    if (!name.matches("[a-zA-Z0-9.-]+") || name.contains("..")) {
+      throw new IOException("Invalid catalog filename: " + name);
+    }
+    String directory = System.getProperty("oscar.tlv.directory");
+    if (directory != null) {
+      Path root = Path.of(directory).toRealPath();
+      if (!root.resolve(name).toRealPath().startsWith(root))
+        throw new IOException("Catalog escapes configured root: " + name);
+    }
+    InputStream input =
+        directory == null
+            ? TlvRegistry.class.getResourceAsStream("/tlv-registry/" + name)
+            : Files.newInputStream(Path.of(directory, name));
+    if (input == null) throw new IOException("Missing catalog " + name);
+    return input;
+  }
+
+  /** Attach an explicitly reviewed service subset without changing configuration instance order. */
+  static TlvRegistry compose(
+      TlvRegistry base, JSONObject profile, CatalogSource source, String family)
+      throws IOException {
+    if (profile.getInt("formatVersion") != 1 || !family.equals(profile.getString("profile")))
+      throw new IllegalArgumentException("Invalid profile " + family);
+    List<TlvDefinition> combined = new ArrayList<>(base.entries);
+    for (Object item : profile.getJSONArray("attachments")) {
+      JSONObject attachment = (JSONObject) item;
+      List<Integer> parent = path(attachment.getJSONArray("parentPath"));
+      TlvDefinition container = base.find(parent);
+      if (container == null || container.lengthMin() != 0)
+        throw new IllegalArgumentException("Attachment requires a base container: " + parent);
+      String name = attachment.getString("catalog");
+      if (!name.matches("[a-zA-Z0-9.-]+") || name.contains(".."))
+        throw new IllegalArgumentException("Invalid catalog filename: " + name);
+      JSONObject service;
+      try (InputStream input = source.open(name)) {
+        service =
+            new JSONObject(
+                new String(input.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8));
+      }
+      if (service.has("attachments")
+          || service.has("includes")
+          || service.getInt("formatVersion") != 1
+          || !service.getString("catalogType").equals("embedded-service")
+          || !service.getString("pathMode").equals("relative")
+          || !parent.equals(path(service.getJSONObject("attachment").getJSONArray("parentPath"))))
+        throw new IllegalArgumentException("Invalid service attachment " + name);
+      Map<List<Integer>, JSONObject> available = new LinkedHashMap<>();
+      for (Object definition : service.getJSONArray("definitions")) {
+        JSONObject entry = (JSONObject) definition;
+        if (available.putIfAbsent(path(entry.getJSONArray("path")), entry) != null)
+          throw new IllegalArgumentException("Duplicate service path in " + name);
+      }
+      for (Object selected : attachment.getJSONArray("includedPaths")) {
+        List<Integer> relative = path((JSONArray) selected);
+        JSONObject entry = available.get(relative);
+        if (entry == null) throw new IllegalArgumentException("Missing service path " + relative);
+        JSONObject length = entry.getJSONObject("length");
+        if (length.optString("status").equals("unresolved")
+            || entry.optString("encodingStatus").equals("unresolved"))
+          throw new IllegalArgumentException("Unresolved service encoding " + relative);
+        String kind = entry.getString("kind");
+        String codec =
+            switch (kind) {
+              case "container", "unsignedInteger" -> "integer";
+              case "string", "ascii" -> "string";
+              default -> throw new IllegalArgumentException("Unreviewed service codec " + kind);
+            };
+        if (kind.equals("unsignedInteger") && !length.has("bytes"))
+          throw new IllegalArgumentException("Integer requires a fixed width " + relative);
+        List<Integer> full = new ArrayList<>(parent);
+        full.addAll(relative);
+        combined.add(
+            new TlvDefinition(
+                full,
+                entry.getString("name"),
+                codec,
+                length.optInt("bytes", 0),
+                length.optInt("bytes", 255),
+                1,
+                container.supportedVersion(),
+                entry.optInt("maxInstances", -1),
+                service.getString("edition")
+                    + " "
+                    + entry.getString("sourceSection")
+                    + ": "
+                    + entry.getString("description")));
+      }
+    }
+    return new TlvRegistry(combined, family + " composed profile");
+  }
+
+  private static List<Integer> path(JSONArray values) {
+    List<Integer> path = new ArrayList<>();
+    for (int i = 0; i < values.length(); i++) {
+      Object value = values.get(i);
+      if (!(value instanceof Integer number) || number < 0 || number > 255)
+        throw new IllegalArgumentException("Invalid path " + values);
+      path.add((Integer) value);
+    }
+    if (path.isEmpty()) throw new IllegalArgumentException("Empty path");
+    return List.copyOf(path);
   }
 
   public TlvDefinition find(List<Integer> path) {

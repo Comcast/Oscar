@@ -2,27 +2,29 @@
 
 ## Embedded-device catalogs
 
-Status: architecture and eRouter source catalog prepared; runtime composition
-and migration are pending. Existing family loaders and catalogs are unchanged.
+Status: explicit DOCSIS and DOCSIS 4.0 profiles now attach a reviewed eRouter
+subset. Selected legacy leaves have moved to the shared source catalog.
 The first service is eRouter. eSTB and eMTA are future candidates, subject to
 verification of their own specifications and provisioning formats.
 
 ### Ownership and attachment
 
 Base family catalogs own outer embedded-device containers. Service catalogs own
-relative child paths. A profile manifest will explicitly select base catalogs
-and attach service catalogs to containers for a supported family/version.
+relative child paths. A profile manifest explicitly selects base catalogs
+and attaches service catalogs to containers for a supported family/version.
 For example, an eRouter local path `2.4` attaches beneath DOCSIS `202`, producing
 public path `202.2.4`. A service is not a new configuration-file family.
 
-Proposed profile shape (not yet consumed by the loader):
+Profile files are `res/tlv-registry/docsis.profile.json` and
+`docsis40.profile.json`. The family selects its base catalog. Actual attachment
+shape (shortened; `includedPaths` is an explicit reviewed allowlist):
 
 ```json
 {
-  "profile": "docsis31",
-  "baseCatalog": "docsis.json",
+  "formatVersion": 1,
+  "profile": "docsis40",
   "attachments": [
-    {"parentPath": [202], "catalog": "erouter.json"}
+    {"parentPath": [202], "catalog": "erouter.json", "includedPaths": [[1]]}
   ]
 }
 ```
@@ -35,10 +37,9 @@ PacketCable provisioning must not be conflated with embedded DOCSIS settings.
 
 ### Service catalog contract
 
-[erouter.json](../res/tlv-registry/erouter.json) is a source-backed design catalog,
+[erouter.json](../res/tlv-registry/erouter.json) is a source-backed service catalog,
 not the existing `TlvDefinition` runtime schema. Its `catalogType` distinguishes
-it from family catalogs; `status: design-not-loaded` prevents any claim of active
-support. It uses relative paths, explicit semantic kinds, length constraints,
+it from family catalogs; `status: reviewed-subset-active` means only profile-selected paths are enabled. It uses relative paths, explicit semantic kinds, length constraints,
 section citations, values, defaults, repetition rules where established, and
 sensitivity markers. Missing multiplicity metadata means unspecified, not one.
 The edition and SHA-256 identify the extracted source text.
@@ -50,7 +51,7 @@ See the [eRouter source map](../skills/oscar-erouter-config-tlvs/references/sour
 
 ### Loader composition and validation
 
-The future loader must validate the profile and every service before publishing
+The loader validates the profile and every service before publishing
 an immutable registry. Resolve catalog references only within the configured
 catalog root; reject traversal, missing files, unsupported schema versions and
 recursive includes. This initial design permits attachments to base containers,
@@ -89,13 +90,28 @@ for tests and published examples.
 - [x] Build the relative-path eRouter catalog with source constraints.
 - [x] Add structural and source-boundary catalog regression coverage.
 - [ ] Resolve ambiguous widths, access-view range and OID representation.
-- [ ] Implement profile composition and fail-fast validation.
+- [x] Implement explicit profile subset composition and fail-fast validation.
 - [ ] Migrate legacy entries atomically and review text compatibility.
 - [ ] Verify codecs, parser/export integration and value constraints.
-- [ ] Test literal wire bytes, repeated-container order and MIC behavior.
+- [x] Test subset wire bytes, repeated containers and complete-file MIC round trips.
 - [ ] Verify in-memory round trips for every existing family after activation.
-- [ ] Add user examples and editor documentation for enabled functionality.
+- [x] Add DOCSIS 4.0 user examples for the enabled subset.
+- [ ] Integrate editor-specific applicability and sensitivity metadata.
 - [ ] Review eSTB/eMTA specifications before adding their catalogs.
+
+### Enabled eRouter subset
+
+Both profiles share 202.1, 202.2.1–6, 202.3, 202.10, 202.12, 202.13 and
+202.42. DOCSIS retains its legacy 202.2 container because ACSOverride still uses
+it; D4 attaches that container from the service catalog. Other legacy DOCSIS
+202 entries remain for compatibility and are not enabled in D4. This is a staged
+migration, not full eRouter I21 conformance. DPoE is unchanged.
+
+D4 uses MULPI I12 Table 117 and C.3.2, p.848, for eSAFE applicability; eRouter
+I21 B.3–B.4 supplies type 202 and child encodings. Variable payloads are bounded
+by one-octet TLV lengths; no automatic fragmentation is introduced. Registry
+metadata describes value constraints; this change does not add a general
+cross-field/device-behavior validator.
 
 ## Configuration text strings
 

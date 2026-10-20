@@ -35,7 +35,7 @@ class EmbeddedServiceCatalogTest {
     JSONObject catalog = catalog();
     assertEquals("embedded-service", catalog.getString("catalogType"));
     assertEquals("relative", catalog.getString("pathMode"));
-    assertEquals("design-not-loaded", catalog.getString("status"));
+    assertEquals("reviewed-subset-active", catalog.getString("status"));
     assertEquals(
         "[202]", catalog.getJSONObject("attachment").getJSONArray("parentPath").toString());
     Set<String> paths = new HashSet<>();

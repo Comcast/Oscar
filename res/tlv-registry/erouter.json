@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "catalogType": "embedded-service",
   "service": "erouter",
-  "status": "design-not-loaded",
+  "status": "reviewed-subset-active",
   "pathMode": "relative",
   "edition": "CM-SP-eRouter-I21-220209",
   "sourceSha256": "105c204eaa9eee972c13c0dd9e9d4a0db14b60bc291ca637f19d46f57b3f4c2f",

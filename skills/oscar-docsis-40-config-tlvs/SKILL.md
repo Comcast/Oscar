@@ -20,7 +20,7 @@ from MULPI citations and verify each definition before claiming support.
 
 The current Oscar implementation milestone defers L2VPN-specific settings,
 including top-level TLV 65 and L2VPN-specific nested extensions, and
-eDOCSIS/eSAFE settings (top-level TLVs 201-231). List these exclusions in coverage
+eDOCSIS/eSAFE settings other than the reviewed type-202 profile subset. List remaining exclusions in coverage
 reports; do not invent their encodings or count them as supported. Lab-generated
 files use a public test key and are not evidence of production interoperability.
 This scope does not require removing existing legacy catalog entries.
@@ -44,3 +44,10 @@ Cite findings and new registry definitions as `CM-SP-MULPIv4.0-I12-261014, §C.x
 Report each requested setting as **verified**, **invalid in this context**, or **unverified**. Separate normative requirements, recommendations, Oscar design choices, and inferred behavior. If the source text is inconsistent or poorly extracted, quote only the necessary short fragment, identify the conflict, and consult the original matching PDF; do not silently repair it by guessing.
 
 Deliver the requested explanation or code with concise evidence, checks performed, and any unresolved limits. Do not claim whole-spec coverage from a few verified settings.
+
+## eRouter scope update
+
+The reviewed type-202 subset is now shared by DOCSIS and DOCSIS 4.0 through
+explicit registry profiles. The enabled settings are initialization, TR-069 fields other than ACS Override, RA interval,
+multicast server, Link-ID and topology. Remaining eSAFE settings and unresolved
+eRouter encodings remain deferred. See `docs/architecture.md` in the repository.

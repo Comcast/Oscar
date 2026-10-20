@@ -32,7 +32,7 @@ selected dependencies, and generates CM/CMTS MICs using HMAC-MD5 or MMH E-MIC
 settings. Text syntax and unknown nested names are checked before assembly.
 
 The D4.0 catalog is intentionally separate from legacy DOCSIS. Its coverage is
-[partial](../../development/docsis40-implementation.md); L2VPN and eDOCSIS/eSAFE
+[partial](../../development/docsis40-implementation.md); L2VPN and eDOCSIS/eSAFE other than the reviewed eRouter subset
 are deferred. For runnable text/binary pairs and build, compile, decompile and
 recompile commands, see [CLI Examples](./CLI-Examples.md).
 
@@ -89,3 +89,10 @@ For full command syntax and practical examples, see [CLI Examples](./CLI-Example
 
 Use `--diagnose-binary FILE` for read-only partial TLV inspection. See
 [Binary TLV diagnostics](Binary-TLV-Diagnostics.md) for output and exit codes.
+
+## eRouter scope update
+
+The reviewed type-202 subset is now shared by DOCSIS and DOCSIS 4.0 through
+explicit registry profiles. The enabled settings are initialization, TR-069 fields other than ACS Override, RA interval,
+multicast server, Link-ID and topology. Remaining eSAFE settings and unresolved
+eRouter encodings remain deferred. See `docs/architecture.md` in the repository.

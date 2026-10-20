@@ -1,7 +1,7 @@
 # OSCAR implementation workflow
 
 The source-backed relative-path catalog is `res/tlv-registry/erouter.json`.
-It is staged and not loaded by runtime profiles. See `docs/architecture.md`
+DOCSIS and DOCSIS 4.0 profiles load an explicit reviewed subset. See `docs/architecture.md`
 for composition, unresolved encoding gates and the activation checklist.
 
 ## Trace points

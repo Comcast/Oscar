@@ -70,7 +70,7 @@ those sections. Capability reports 5/105 and FDX MAC-message-only fields 85-87
 are not configuration-file controls.
 
 For the current Oscar milestone, defer L2VPN-specific settings (including TLV
-65 and L2VPN-specific nested extensions) and eDOCSIS/eSAFE TLVs 201-231. These
+65 and L2VPN-specific nested extensions) and eDOCSIS/eSAFE TLVs except the reviewed type-202 profile subset. These
 are scope exclusions, not claims that the fields are invalid in configuration
 files. Report other unresolved external definitions as unverified; excluding
 L2VPN and eDOCSIS does not verify DOCSIS SYNC or other referenced specifications.
@@ -78,3 +78,10 @@ L2VPN and eDOCSIS does not verify DOCSIS SYNC or other referenced specifications
 Generate lab fixtures using a public test key only. Supporting an I12 reference
 does not itself implement a DOCSIS 4.0 runtime mode or demonstrate CM/CMTS
 interoperability.
+
+## eRouter scope update
+
+The reviewed type-202 subset is now shared by DOCSIS and DOCSIS 4.0 through
+explicit registry profiles. The enabled settings are initialization, TR-069 fields other than ACS Override, RA interval,
+multicast server, Link-ID and topology. Remaining eSAFE settings and unresolved
+eRouter encodings remain deferred. See `docs/architecture.md` in the repository.

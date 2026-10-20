@@ -211,6 +211,21 @@ class Docsis40Test {
   }
 
   private static String sample(List<Integer> path) {
+    if (path.getFirst() == 202)
+      return """
+             eRouterConfig {
+               InitializationMode 3;
+               TR-069ManagementServer {
+                 EnableCWMP 1; URL "https://acs.example.test/cwmp";
+                 Username lab; Password "lab password";
+                 ConnectionRequestUsername request; ConnectionRequestPassword "request password";
+               }
+               InitializationModeOverride 0;
+               RouterAdvertisementTransInterval 30;
+               IPMulticastConfigurationServer multicast.example.test;
+               LinkIDControl 1; TopologyMode 1;
+             }
+             """;
     return switch (path.get(0)) {
       case 1 -> "DownstreamFrequency 100000000;";
       case 2 -> "UpstreamChannelId 7;";

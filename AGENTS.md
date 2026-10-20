@@ -27,7 +27,8 @@ editor, codec, and file-integrity changes:
   with the target-family skill; check source ambiguities before encoding.
 
 Current DOCSIS 4.0 implementation scope excludes L2VPN-specific settings and
-eDOCSIS/eSAFE settings. Record them as deferred rather than claiming coverage.
+eDOCSIS/eSAFE settings except the reviewed eRouter profile subset. Record
+remaining settings as deferred rather than claiming coverage.
 Generated configuration tests use a public lab key, not production credentials;
 passing them is not proof of CM/CMTS interoperability.
 
@@ -100,3 +101,10 @@ create tags or releases. See `tools/git/README.md`; keep that guide current
 when changing helpers. Never push merely to validate a helper; use temporary
 repositories for tests. Provide the command rather than executing a push
 unless the user explicitly authorizes execution.
+
+## eRouter scope update
+
+The reviewed type-202 subset is now shared by DOCSIS and DOCSIS 4.0 through
+explicit registry profiles. The enabled settings are initialization, TR-069 fields other than ACS Override, RA interval,
+multicast server, Link-ID and topology. Remaining eSAFE settings and unresolved
+eRouter encodings remain deferred. See `docs/architecture.md` in the repository.

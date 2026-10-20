@@ -72,7 +72,8 @@ they appear in a legacy catalog or a bundled source:
   Vendor-specific E-MIC algorithm 43 remains unverified and rejected.
 
 **Deferred by agreement:** L2VPN-specific settings, including TLV 65 and nested
-L2VPN extensions, and eDOCSIS/eSAFE TLVs 201-231. These are scope exclusions,
+L2VPN extensions, and eDOCSIS/eSAFE TLVs other than the reviewed type-202
+profile subset. These are scope exclusions,
 not declarations that those settings are forbidden in configuration files.
 
 ## Resume and Verify
@@ -109,3 +110,10 @@ java -jar target/oscar-3.2.0-all.jar -d -s d4 4.0 \
   `tools/markdown-check.sh` could not run because `npx` is not installed; the
   README's existing inline-HTML warnings remain unchanged.
 
+
+## eRouter scope update
+
+The reviewed type-202 subset is now shared by DOCSIS and DOCSIS 4.0 through
+explicit registry profiles. The enabled settings are initialization, TR-069 fields other than ACS Override, RA interval,
+multicast server, Link-ID and topology. Remaining eSAFE settings and unresolved
+eRouter encodings remain deferred. See `docs/architecture.md` in the repository.

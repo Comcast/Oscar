@@ -4,6 +4,7 @@
   "edition": "CM-SP-MULPIv4.0-I12-261014",
   "sourceSha256": "9c875d90a800a59aa0adf3663d771fe06f8f4426e5886d31cde09a5e6328f935",
   "definitions": [
+    {"path":[202],"name":"eRouterConfig","codec":"integer","lengthMin":0,"lengthMax":255,"lengthBytes":1,"supportedVersion":"4.0","maxInstances":-1,"description":"CM-SP-MULPIv4.0-I12-261014 C.3.2 p.848 and CM-SP-eRouter-I21-220209 B.3 p.87: repeated eRouter containers form one configuration in encounter order."},
     {"path":[1],"name":"DownstreamFrequency","codec":"integer","lengthMin":4,"lengthMax":4,"lengthBytes":1,"supportedVersion":"4.0","maxInstances":1,"description":"CM-SP-MULPIv4.0-I12-261014, C.1.1.1, printed p. 695; frequency in Hz, network byte order."},
     {"path":[2],"name":"UpstreamChannelId","codec":"integer","lengthMin":1,"lengthMax":1,"lengthBytes":1,"supportedVersion":"4.0","maxInstances":1,"description":"CM-SP-MULPIv4.0-I12-261014, C.1.1.2, printed p. 695."},
     {"path":[3],"name":"NetworkAccess","codec":"integer","lengthMin":1,"lengthMax":1,"lengthBytes":1,"supportedVersion":"4.0","maxInstances":1,"description":"CM-SP-MULPIv4.0-I12-261014, C.1.1.3, printed p. 695; 0 disabled, 1 enabled."},

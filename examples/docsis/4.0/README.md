@@ -18,3 +18,7 @@ java -jar oscar.jar -d -s d4 4.0 -i output/DOCSIS-4.0-LAB.bin > output/DOCSIS-4.
 
 The compiler supplies integrity fields and file finalization. The key is public
 lab data. Successful compilation does not establish device interoperability.
+
+## eRouter
+
+See [eRouter lab profiles](erouter/README.md) for shared DOCSIS/D4 scenarios and verification.

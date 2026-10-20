@@ -1,0 +1,41 @@
+/*
+ * DOCSIS 4.0 lab example: 1 Gbit/s upstream, 10 Gbit/s downstream.
+ * CM-SP-MULPIv4.0-I12-261014, C.2.2.9.15-16 and Annex D.
+ * Select -s d4 4.0; pass the adjacent DOCSIS-LAB.key file with -k.
+ * Public test key only; key-file bytes are used verbatim.
+ * Per-flow AQM, not a Dual Queue aggregate service-flow configuration.
+ * Lab fixture, not a production provisioning profile.
+ */
+Docsis-4.0 {
+    NetworkAccess 1;
+    UpstreamServiceFlow {
+        ServiceFlowReference 1;
+        QosParameterSetType 7;
+        MaxSustainedTrafficRate 1;
+        MaxTrafficBurst 3044;
+        DataRateUnitSetting 3;
+        AqmEncodings {
+            SfAqmDisable 0;
+            ClassicAqmLatencyTarget 10;
+            AqmAlgorithm 1;
+        }
+    }
+    DownstreamServiceFlow {
+        ServiceFlowReference 2;
+        QosParameterSetType 7;
+        MaxSustainedTrafficRate 10;
+        MaxTrafficBurst 3044;
+        DataRateUnitSetting 3;
+        AqmEncodings {
+            SfAqmDisable 0;
+            ClassicAqmLatencyTarget 10;
+            AqmAlgorithm 1;
+            LatencyHistogramEncodings [00:0A:00:64:03:E8];
+        }
+    }
+
+    
+    eRouterConfig {
+        InitializationMode 3;
+    }
+}
