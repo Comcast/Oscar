@@ -47,6 +47,34 @@ Validate changed headers with `tools/code-hygene-checker.sh --copyright-only`.
 For header-only edits, verify executable code is unchanged and run diff checks;
 run the Java checks below when behavior changes.
 
+## Generated ANTLR sources
+
+Exclude ANTLR-generated Java (`src/com/comcast/oscar/parser/tlv*.java`, marked
+`// Generated from ... by ANTLR`) from manual cleanup, SPDX/header rewrites,
+public-Javadoc audits and source formatting. Do not treat generated style as a QA
+defect. Keep generated sources in compilation and parser/round-trip tests.
+Change the grammar and regenerate when parser behavior must change; do not hand
+patch generated output. Handwritten parser adapters remain in scope.
+
+## Release version ownership
+
+Keep OSCAR's release version only in the project version of `pom.xml`.
+Maven filters `res/oscar-build.properties`; `BuildInfo.version()` reads the
+packaged metadata and `Constants.OSCAR_VERSION` is a compatibility alias.
+Never add a Java release-version literal or fallback, or update source versions
+with release-script regexes. Missing/unfiltered metadata must fail clearly.
+Dependency versions and historical examples are separate from the application
+version. Check both thin and shaded JAR metadata after packaging, and test release
+bumps in temporary repositories without invoking Git publication.
+
+## Audit reporting
+
+State the files reviewed, automated checks run, corrections made and remaining
+legacy gaps. Passing formatting/compilation is not proof that every public API
+banner or domain type meets this skill. Use descriptive local names, avoid
+reassigning input parameters, and keep blank lines between logical steps rather
+than directly inside method openings when changing handwritten code.
+
 ## Common registry contract
 
 All base and embedded catalogs must use `docs/tlv-registry.schema.json` and

@@ -278,3 +278,22 @@ normalized before encoding. See [format contracts](data-type-formats.md).
 
 - [x] Document pattern examples and remove the external regex reference.
 - [x] Test range boundaries, malformed inputs, large lists and binary round trips.
+
+## QA enforcement and build identity
+
+The release number has one owner: the Maven project version. Resource filtering
+is limited to `oscar-build.properties`; registries, MIB data and other resources
+are copied verbatim. `BuildInfo` reads that metadata and fails explicitly when it
+is missing or unfiltered. `Constants.OSCAR_VERSION` remains an API alias rather
+than an independent literal; callers should rebuild to avoid old inlined constants.
+Release tooling changes only the POM and applicable documentation. Packaging checks
+compare both JAR manifests/resources with the POM; JUnit checks runtime banners.
+
+- [x] Centralize the runtime version and test missing/unfiltered metadata.
+- [x] Enforce SPDX headers on changed handwritten Java; test missing headers.
+- [x] Exclude generated ANTLR files from formatting/manual hygiene, not compilation.
+- [x] Complete reviewed datatype/dictionary API banners and remove byte-pair waste.
+- [x] Replace the always-true bit-mask validator with tested complete-byte validation.
+- [ ] Finish repository-wide legacy API documentation and strict compiler lint.
+
+See [audit findings and limits](qa-hygiene-audit.md).

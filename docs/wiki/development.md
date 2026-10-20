@@ -106,8 +106,14 @@ interoperability.
 
 ## Version bumps
 
-Use Python 3 and the bump-only helper to keep the Maven version, CLI banner,
-and current documentation references synchronized:
+The release version is defined only in `pom.xml`. Maven generates
+`oscar-build.properties`; `BuildInfo.version()` and the CLI banners read it.
+Run Maven `process-resources` before launching compiled classes from an IDE;
+the legacy Ant build is not a supported version-metadata build path.
+Missing or unfiltered metadata fails explicitly instead of reporting a stale version.
+
+Use Python 3 and the bump-only helper to update the POM and current documentation
+references. Java source is not rewritten:
 
 ```bash
 tools/bump-version.sh --bump minor --dry-run
@@ -208,3 +214,11 @@ for clean-checkout requirements, validation, and retry behavior.
 
 See [embedded-device catalog architecture](../architecture.md#embedded-device-catalogs)
 for eRouter composition and the planned eSTB/eMTA extension model.
+
+## QA hygiene scope
+
+`tools/run-all.sh` formats handwritten Java, checks changed SPDX headers and years,
+runs quality/release helper tests, compiles/packages, verifies both JAR versions,
+and runs JUnit. Generated ANTLR sources are excluded from manual formatting and
+header checks, but remain compiled and tested. See the
+[QA audit](../qa-hygiene-audit.md) for manual checks and remaining legacy gaps.

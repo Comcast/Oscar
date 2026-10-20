@@ -93,6 +93,12 @@
     <resources>
       <resource>
         <directory>res</directory>
+        <excludes><exclude>oscar-build.properties</exclude></excludes>
+      </resource>
+      <resource>
+        <directory>res</directory>
+        <filtering>true</filtering>
+        <includes><include>oscar-build.properties</include></includes>
       </resource>
     </resources>
     <plugins>
@@ -122,6 +128,7 @@
           <archive>
             <manifest>
               <mainClass>com.comcast.oscar.cli.Main</mainClass>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
           </archive>
         </configuration>

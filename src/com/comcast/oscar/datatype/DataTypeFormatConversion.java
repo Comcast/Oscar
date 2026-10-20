@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 import org.snmp4j.smi.OID;
 
 public class DataTypeFormatConversion {
-
   private static final Logger logger = LogManager.getLogger(DataTypeFormatConversion.class);
 
   public static final Integer IPV4_ADDRESS_BYTE_LENGTH = 4;
@@ -91,6 +90,14 @@ public class DataTypeFormatConversion {
   public static final Pattern MAC_ADDRESS_REGEX =
       Pattern.compile("(?:\\((?:[0-9a-fA-F]{2}[.:-]){5}[0-9a-fA-F]{2}\\))++");
 
+  /**
+   * Complete bytes as raw bits or adjacent parenthesized groups. matches() accepts
+   * "0000000011111111" and "(00000000)(11111111)" (00:FF); rejects empty text, partial bytes, mixed
+   * grouping, signs and non-binary characters.
+   */
+  public static final Pattern BINARY_BIT_MASK_REGEX =
+      Pattern.compile("(?:(?:[01]{8})++|(?:\\([01]{8}\\))++)");
+
   // Enumerate the bounded word counts instead of lookarounds or backreferences.
   // A dotted tail occupies two of the eight words; :: must replace at least one.
   private static String ipv6LiteralPattern() {
@@ -144,7 +151,6 @@ public class DataTypeFormatConversion {
    */
   public static String byteArrayToIPv6TransportAddress(byte[] bIPv6TransportAddress)
       throws DataTypeFormatException {
-
     if (bIPv6TransportAddress.length != (IPV6_ADDRESS_BYTE_LENGTH + IP_PORT_BYTE_LENGTH)) {
       throw new DataTypeFormatException("Invalid bIpv6TransportAddress Byte Length");
     }
@@ -219,17 +225,16 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * Expected Format:
+   * Formats four IPv4 bytes and a two-byte big-endian port without modifying input.
+   * C0:00:02:01:00:A1 yields "192.0.2.1(161)".
    *
-   * <p>XXX.XXX.XXX.XXX(PORT ADDRESS)
-   *
-   * @param bIPv4TransportAddress byte[]
-   * @return String
-   * @throws DataTypeFormatException
+   * @param bIPv4TransportAddress non-null six-byte transport address
+   * @return IPv4(port) text
+   * @throws DataTypeFormatException if length is not six
+   * @throws NullPointerException if input is null
    */
   public static String byteArrayToIPv4TransportAddress(byte[] bIPv4TransportAddress)
       throws DataTypeFormatException {
-
     if (bIPv4TransportAddress.length != (IPV4_ADDRESS_BYTE_LENGTH + IP_PORT_BYTE_LENGTH)) {
       throw new DataTypeFormatException("Invalid bIPv4TransportAddress Byte Length");
     }
@@ -299,7 +304,6 @@ public class DataTypeFormatConversion {
    */
   public static String byteArrayToInetTransportAddress(byte[] bInetTransportAddress)
       throws DataTypeFormatException {
-
     String sInetAddress = null;
 
     String sInetTransportAddress = null;
@@ -309,7 +313,6 @@ public class DataTypeFormatConversion {
     ByteArrayOutputStream baosTransport = new ByteArrayOutputStream();
 
     if (bInetTransportAddress.length == IPV6_TRANSPORT_ADDRESS_MAX_BYTE_LENGTH) {
-
       baosInetAddress.write(bInetTransportAddress, 0, IPV6_ADDRESS_BYTE_LENGTH);
 
       sInetAddress = ipv6AddressText(baosInetAddress.toByteArray());
@@ -317,7 +320,6 @@ public class DataTypeFormatConversion {
       baosTransport.write(bInetTransportAddress, IPV6_ADDRESS_BYTE_LENGTH, IP_PORT_BYTE_LENGTH);
 
     } else if (bInetTransportAddress.length == IPV4_TRANSPORT_ADDRESS_MAX_BYTE_LENGTH) {
-
       baosInetAddress.write(bInetTransportAddress, 0, IPV4_ADDRESS_BYTE_LENGTH);
 
       sInetAddress = HexString.toInetAddress(baosInetAddress.toByteArray());
@@ -342,21 +344,23 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * @param sInetTransportAddress
-   * @return byte[]
+   * Encodes a literal IPv4(port) or IPv6(port), preserving address family and source order.
+   * "192.0.2.1(161)" yields C0:00:02:01:00:A1; IPv6 produces eighteen bytes. No DNS lookup is
+   * performed.
+   *
+   * @param sInetTransportAddress non-null literal transport text
+   * @return six IPv4 or eighteen IPv6 transport bytes
+   * @throws IllegalArgumentException if the whole input is malformed
+   * @throws NullPointerException if input is null
    */
   public static byte[] inetTransportAddressToByteArray(String sInetTransportAddress) {
-
     if (verifyIPv6TransportAddressFormat(sInetTransportAddress)) {
-
       return ipv6TransportAddressToByteArray(sInetTransportAddress);
 
     } else if (verifyIPv4TransportAddressFormat(sInetTransportAddress)) {
-
       return ipv4TransportAddressToByteArray(sInetTransportAddress);
 
     } else {
-
       logger.debug(
           "DataTypeFormatConversion.inetTransportAddressToByteArray() IncorrectFormat: {}",
           sInetTransportAddress);
@@ -378,81 +382,50 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * Format: (0,0)(0,0)(0,0)(0,0)(0,0)(0,0)(0,0)....
+   * Formats bytes as unsigned decimal pairs without modifying input. 00:FF:01:02 yields
+   * "(0,255)(1,2)". Empty bytes retain the legacy "()" representation, which the text validator
+   * intentionally rejects.
    *
-   * @param bDoubleByteArray byte[]
-   * @return String
-   * @throws IllegalArgumentException
+   * @param bytes non-null array with even length
+   * @return adjacent parenthesized decimal pairs
+   * @throws IllegalArgumentException if byte count is odd
+   * @throws NullPointerException if input is null
    */
-  public static String doubleByteArray(byte[] bDoubleByteArray) throws IllegalArgumentException {
-
-    if ((bDoubleByteArray.length % 2) != 0) {
-      throw new IllegalArgumentException(
-          "DataTypeFormatConversion.doubleByteArray() ByteArray Must be a Multiple of 2 Bytes");
+  public static String doubleByteArray(byte[] bytes) throws IllegalArgumentException {
+    if ((bytes.length % 2) != 0)
+      throw new IllegalArgumentException("Decimal pairs require an even byte count");
+    if (bytes.length == 0) return "()"; // Preserve the legacy empty representation.
+    StringBuilder output = new StringBuilder();
+    for (int index = 0; index < bytes.length; index += 2) {
+      output
+          .append('(')
+          .append(Byte.toUnsignedInt(bytes[index]))
+          .append(',')
+          .append(Byte.toUnsignedInt(bytes[index + 1]))
+          .append(')');
     }
-
-    String sDoubleByteArray = "(";
-
-    for (int iIndex = 0; iIndex < bDoubleByteArray.length; iIndex++) {
-
-      sDoubleByteArray += BinaryConversion.byteToUnsignedInteger(bDoubleByteArray[iIndex]);
-
-      if ((iIndex % 2) == 0) {
-        sDoubleByteArray += ",";
-      } else if (iIndex == (bDoubleByteArray.length - 1)) {
-
-      } else if ((iIndex % 1) == 0) {
-        sDoubleByteArray += ")(";
-      }
-    }
-
-    sDoubleByteArray += ")";
-
-    return sDoubleByteArray;
+    return output.toString();
   }
 
   /**
    * Converts adjacent decimal pairs to bytes in source order; "(0,255)(1,2)" gives 00:FF:01:02.
    * Each component is 0..255; leading zeroes remain decimal.
    *
-   * @param sDoubleByteArray non-null text containing at least one pair
+   * @param input non-null text containing at least one pair
    * @return two bytes per pair
    * @throws IllegalArgumentException if the input does not match DOUBLE_BYTE_ARRAY_REGEX
    * @throws NullPointerException if the input is null
    */
-  public static byte[] doubleByteArray(String sDoubleByteArray) throws IllegalArgumentException {
-
-    if (!doubleByteArrayValidate(sDoubleByteArray)) {
-      throw new IllegalArgumentException(
-          "DataTypeFormatConversion.doubleByteArray() Invalid String Format: " + sDoubleByteArray);
+  public static byte[] doubleByteArray(String input) throws IllegalArgumentException {
+    if (!doubleByteArrayValidate(input)) {
+      throw new IllegalArgumentException("Invalid decimal byte pairs: " + input);
     }
-
-    sDoubleByteArray = sDoubleByteArray.replace(")(", ",").replace(")", "").replace("(", "");
-
-    ByteArrayOutputStream baosDoubleByteArray = new ByteArrayOutputStream();
-
-    logger.debug("DataTypeFormatConversion.doubleByteArray() : {}", sDoubleByteArray);
-
-    for (String sNumber : sDoubleByteArray.split(",")) {
-
-      logger.debug(
-          () ->
-              "DataTypeFormatConversion.doubleByteArray() : "
-                  + sNumber
-                  + " -> "
-                  + new HexString(HexString.intToByteArray(Integer.parseInt(sNumber))).toString(":")
-                  + " -> "
-                  + new HexString(HexString.intToByteArray(Integer.parseInt(sNumber)))
-                      .toAsciiBinary());
-
-      try {
-        baosDoubleByteArray.write(HexString.intToByteArray(Integer.parseInt(sNumber)));
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    String numbers = input.replace(")(", ",").replace(")", "").replace("(", "");
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    for (String number : numbers.split(",")) {
+      output.write(Integer.parseInt(number));
     }
-
-    return baosDoubleByteArray.toByteArray();
+    return output.toByteArray();
   }
 
   /**
@@ -468,27 +441,45 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * @param sBinaryBitMask
-   * @return byte[]
+   * Encodes complete binary bytes in most-significant-bit order. "(00000000)(11111111)" and
+   * "0000000011111111" both produce 00:FF.
+   *
+   * @param input non-null, nonempty binary text, either raw bytes or parenthesized bytes
+   * @return one byte per eight bits
+   * @throws IllegalArgumentException for malformed grouping, partial bytes or non-binary digits
+   * @throws NullPointerException if input is null
    */
-  public static byte[] binaryBitMaskToByteArray(String sBinaryBitMask) {
-    return BinaryConversion.binaryMSBMaskToByteArray(sBinaryBitMask);
+  public static byte[] binaryBitMaskToByteArray(String input) {
+    if (!binaryBitMaskValidate(input))
+      throw new IllegalArgumentException("Expected complete binary bytes, raw or parenthesized");
+    return BinaryConversion.binaryMSBMaskToByteArray(input);
   }
 
   /**
-   * @param bBinaryBitMask
-   * @return StringBuilder
+   * Returns the legacy reversed bit sequence without modifying input. A single 01 byte yields
+   * "10000000". Use the overload with a group size for MSB-first text.
+   *
+   * @param bBinaryBitMask non-null bytes; an empty array is allowed
+   * @return a new builder containing the reversed, ungrouped binary string
+   * @throws NullPointerException if input is null
    */
   public static StringBuilder byteArrayBinaryBitMaskToString(byte[] bBinaryBitMask) {
     return new StringBuilder(new HexString(bBinaryBitMask).toAsciiBinary()).reverse();
   }
 
   /**
-   * @param bBinaryBitMask
-   * @param iBitGroup
-   * @return StringBuilder
+   * Formats MSB-first bits into parenthesized groups without modifying input. For 00:FF and group
+   * size 8, returns "(00000000)(11111111)". A final short group is retained; empty input produces
+   * "()".
+   *
+   * @param bBinaryBitMask non-null bytes
+   * @param iBitGroup positive number of bits per output group
+   * @return a new builder containing the grouped binary string
+   * @throws IllegalArgumentException if the group size is not positive
+   * @throws NullPointerException if input is null
    */
   public static StringBuilder byteArrayBinaryBitMaskToString(byte[] bBinaryBitMask, int iBitGroup) {
+    if (iBitGroup <= 0) throw new IllegalArgumentException("Bit group size must be positive");
 
     logger.debug(
         () ->
@@ -507,7 +498,6 @@ public class DataTypeFormatConversion {
     sbBinaryBitMaskUpdate.append('(');
 
     for (int iIndex = 0; iIndex < sbBinaryBitMask.length(); iIndex++) {
-
       if (((iIndex % (iBitGroup)) == 0) && (iIndex != 0)) sbBinaryBitMaskUpdate.append(")(");
 
       sbBinaryBitMaskUpdate.append(sbBinaryBitMask.charAt(iIndex));
@@ -519,25 +509,28 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * Format: (00000000)(11111111)(00000000)(11111111) = 32Bits in * Bits Per Byte
+   * Validates complete raw or parenthesized binary bytes without conversion. "(00000001)" returns
+   * true; "(1)", empty text and malformed parentheses return false.
    *
-   * @param sBinaryBitMask
-   * @return boolean
+   * @param input non-null binary text
+   * @return true for a whole-string match
+   * @throws NullPointerException if input is null
    */
-  public static boolean binaryBitMaskValidate(String sBinaryBitMask) {
-    return true;
+  public static boolean binaryBitMaskValidate(String input) {
+    return BINARY_BIT_MASK_REGEX.matcher(input).matches();
   }
 
   /**
-   * Format: (00:00:00:00:00:00)(00:00:00:00:00:00)...
+   * Formats six-byte MAC addresses in source order without modifying input. 00:11:22:33:44:FF
+   * produces "(00:11:22:33:44:FF)".
    *
-   * @param bMacAddressFormatList byte[]
-   * @return String
-   * @throws IllegalArgumentException
+   * @param bMacAddressFormatList non-null bytes, with a length divisible by six
+   * @return adjacent parenthesized MACs, or empty text for empty bytes
+   * @throws IllegalArgumentException if the byte count is not divisible by six
+   * @throws NullPointerException if input is null
    */
   public static String byteArrayToMacAddressFormat(byte[] bMacAddressFormatList)
       throws IllegalArgumentException {
-
     if ((bMacAddressFormatList.length % MAC_ADDRESS_LENGTH) != 0) {
       throw new IllegalArgumentException(
           "DataTypeFormatConversion.byteArrayToMacAddress() ByteArray Must be a Multiple of 6"
@@ -567,7 +560,6 @@ public class DataTypeFormatConversion {
    */
   public static byte[] macAddressFormatToByteArray(String sMacAddressFormatList)
       throws IllegalArgumentException {
-
     if (!macAddressFormatValidation(sMacAddressFormatList)) {
       throw new IllegalArgumentException("Invalid MacAddress Format: " + sMacAddressFormatList);
     }
@@ -588,35 +580,51 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * @param sInetAddress
-   * @return byte[]
+   * Delegates address conversion to HexString. Unlike transport parsing, this legacy API may
+   * perform DNS resolution for hostnames.
+   *
+   * @param sInetAddress address literal or resolvable hostname; null uses Java loopback semantics
+   * @return four IPv4 or sixteen IPv6 bytes; mapped literals may collapse to IPv4
+   * @throws NullPointerException if the legacy helper cannot resolve the input
    */
   public static byte[] inetAddressToByteArray(String sInetAddress) {
     return HexString.inetAddressToByteArray(sInetAddress);
   }
 
   /**
-   * @param bInetAddress
-   * @return String
+   * Formats address bytes without modifying input. C0:00:02:01 produces "192.0.2.1"; IPv4-mapped
+   * IPv6 may display as IPv4.
+   *
+   * @param bInetAddress non-null array of four or sixteen bytes
+   * @return numeric IP address text
+   * @throws NullPointerException if the legacy helper cannot decode the byte array
    */
   public static String inetAddressToString(byte[] bInetAddress) {
     return HexString.toInetAddress(bInetAddress);
   }
 
   /**
-   * @param sHexByte
-   * @return byte
+   * Returns the first decoded byte using HexString syntax. "FF" produces the signed Java byte -1;
+   * additional bytes are ignored.
+   *
+   * @param sHexByte non-null hex text decoding to at least one byte
+   * @return the first decoded byte
+   * @throws ArrayIndexOutOfBoundsException if no byte is decoded
+   * @throws NullPointerException if input is null
    */
   public static byte hexStringToByte(String sHexByte) {
     return HexString.toByteArray(sHexByte)[0];
   }
 
   /**
-   * @param sDisplayHelp
-   * @return The display help of the DataType
+   * Returns the display hint for a supported datatype name, compared without case sensitivity. For
+   * example the IPv4 transport datatype returns the IPv4_Address(Port) hint.
+   *
+   * @param sDisplayHelp non-null datatype identifier
+   * @return the format hint, or the legacy "No Display Help Avaliable" message
+   * @throws NullPointerException if input is null
    */
   public static String getDataTypeDisplayHelp(String sDisplayHelp) {
-
     if (sDisplayHelp.equalsIgnoreCase(DataTypeDictionaryReference.DATA_TYPE_DOUBLE_BYTE_ARRAY)) {
       return DOUBLE_BYTE_ARRAY_FORMAT;
     } else if (sDisplayHelp.equalsIgnoreCase(
@@ -639,11 +647,14 @@ public class DataTypeFormatConversion {
   }
 
   /**
-   * @param sOidObj6
-   * @return byte array of the OID Object 6
+   * Encodes an SNMP OID as an ASN.1 OBJECT IDENTIFIER including tag and length. "1.3.6.1" produces
+   * 06:03:2B:06:01. No files or caller state are modified.
+   *
+   * @param sOidObj6 non-null dotted OID accepted by SNMP4J
+   * @return BER bytes; the legacy error path logs an IOException and returns bytes written so far
+   * @throws IllegalArgumentException if SNMP4J rejects the OID text
    */
   public static byte[] oidObj6ToByteArray(String sOidObj6) {
-
     OID oid = new OID(sOidObj6);
 
     ByteArrayOutputStream baosOID = new ByteArrayOutputStream();

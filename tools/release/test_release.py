@@ -1,3 +1,5 @@
+# Copyright 2026 Comcast Cable Communications Management, LLC
+# SPDX-License-Identifier: Apache-2.0
 import contextlib
 import io
 from pathlib import Path
@@ -20,9 +22,9 @@ class BumpVersionTest(unittest.TestCase):
             '<version>3.1.0</version></dependency></dependencies></project>',
             encoding="utf-8",
         )
-        constants = self.root / release.CONSTANTS_FILE_PATH
+        constants = self.root / Path("src/com/comcast/oscar/constants/Constants.java")
         constants.parent.mkdir(parents=True)
-        constants.write_text('public static final String OSCAR_VERSION = "3.1.0";\n')
+        constants.write_text('public static final String OSCAR_VERSION = BuildInfo.version();\n')
         for relative_path in release.VERSION_DOCUMENTATION_PATHS:
             path = self.root / relative_path
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -46,8 +48,8 @@ class BumpVersionTest(unittest.TestCase):
         self.assertEqual(release.read_version(self.root / "pom.xml"), "3.2.0")
         self.assertIn('<version>3.1.0</version></dependency>',
                       (self.root / "pom.xml").read_text())
-        self.assertIn('OSCAR_VERSION = "3.2.0"',
-                      (self.root / release.CONSTANTS_FILE_PATH).read_text())
+        self.assertIn('OSCAR_VERSION = BuildInfo.version()',
+                      (self.root / Path("src/com/comcast/oscar/constants/Constants.java")).read_text())
         for relative_path in release.VERSION_DOCUMENTATION_PATHS:
             self.assertEqual((self.root / relative_path).read_bytes(),
                              b"Custom notes\r\noscar-3.2.0-all.jar v3.2.0 13.1.0 3.1.01\r\n")
@@ -58,12 +60,10 @@ class BumpVersionTest(unittest.TestCase):
         self.assertEqual(self.snapshot(), before)
         self.assertIn("Preview: 3.1.0 -> 3.2.0", self.output.getvalue())
 
-    def test_mismatched_constants_fail_before_writing(self):
-        (self.root / release.CONSTANTS_FILE_PATH).write_text('OSCAR_VERSION = "2.0.0";\n')
-        before = self.snapshot()
-        with self.assertRaisesRegex(RuntimeError, "OSCAR_VERSION"):
-            release.bump_project_version(self.root, "3.2.0")
-        self.assertEqual(self.snapshot(), before)
+    def test_bump_does_not_require_a_java_source_edit(self):
+        (self.root / "src/com/comcast/oscar/constants/Constants.java").unlink()
+        release.bump_project_version(self.root, "3.2.0")
+        self.assertEqual(release.read_version(self.root / "pom.xml"), "3.2.0")
 
     def test_missing_documentation_fails_before_writing(self):
         (self.root / release.VERSION_DOCUMENTATION_PATHS[-1]).unlink()

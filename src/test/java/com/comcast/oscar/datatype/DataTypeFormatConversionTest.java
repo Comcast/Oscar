@@ -14,6 +14,37 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class DataTypeFormatConversionTest {
+  @Test
+  void validatesAndConvertsCompleteBinaryBytes() {
+    for (String value : new String[] {"0000000011111111", "(00000000)(11111111)"}) {
+      assertTrue(binaryBitMaskValidate(value));
+      assertArrayEquals(new byte[] {0, (byte) 255}, binaryBitMaskToByteArray(value));
+    }
+    for (String value :
+        new String[] {
+          "",
+          "()",
+          "(1)",
+          "0000000",
+          "(00000000",
+          "00000000)",
+          "(00000000)11111111",
+          "00000002",
+          "-0000001"
+        }) {
+      assertFalse(binaryBitMaskValidate(value));
+      assertThrows(IllegalArgumentException.class, () -> binaryBitMaskToByteArray(value));
+    }
+    assertThrows(
+        IllegalArgumentException.class, () -> byteArrayBinaryBitMaskToString(new byte[] {1}, 0));
+    assertThrows(
+        IllegalArgumentException.class, () -> byteArrayBinaryBitMaskToString(new byte[] {1}, -1));
+    assertEquals(
+        "(00000000)(11111111)",
+        byteArrayBinaryBitMaskToString(new byte[] {0, (byte) 255}, 8).toString());
+    assertEquals("()", doubleByteArray(new byte[0]));
+  }
+
   @ParameterizedTest
   @ValueSource(
       strings = {

@@ -19,6 +19,8 @@ copyright_files() {
   fi
 }
 
+python3 tools/quality/check-java-headers.py "$@"
+
 COPYRIGHT_FAILED=0
 while IFS= read -r -d '' file; do
   case "$file" in
