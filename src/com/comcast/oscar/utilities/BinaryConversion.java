@@ -5,7 +5,7 @@
 package com.comcast.oscar.utilities;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class BinaryConversion {
 
@@ -23,43 +23,28 @@ public class BinaryConversion {
   }
 
   /**
-   * @param sBitMask - (00000000)(11111111)...(10101010)..N
-   * @return byte array of BitString * @throws IllegalArgumentException
+   * Converts eight-bit groups to bytes in most-significant-bit order. For example,
+   * "(10000000)(00000001)" produces 80:01.
+   *
+   * @param bitMask non-null binary text; parentheses are ignored for legacy compatibility
+   * @return a new array with one byte per eight characters after removing parentheses; empty input
+   *     produces an empty array
+   * @throws IllegalArgumentException if the remaining length is not a multiple of eight or a group
+   *     cannot be parsed as a base-two integer
+   * @throws NullPointerException if bitMask is null
    */
-  public static byte[] binaryMSBMaskToByteArray(String sBitMask) throws IllegalArgumentException {
-
-    // Clean up any separation of bit array
-    sBitMask = sBitMask.replaceAll("\\(|\\)", "");
-
-    // Convert to string builder
-    StringBuilder sbBitMask = new StringBuilder(sBitMask);
-
-    // Make sure that bits are in groups of 8 bits per byte
-    if ((sbBitMask.length() % 8) != 0) {
-      throw new IllegalArgumentException(
-          "BinaryConversion.binaryMSBMaskToByteArray() Binary String not Diviable by 8");
+  public static byte[] binaryMSBMaskToByteArray(String bitMask) {
+    String bits = bitMask.replace("(", "").replace(")", "");
+    if (bits.length() % Byte.SIZE != 0) {
+      throw new IllegalArgumentException("Binary mask length must be divisible by " + Byte.SIZE);
     }
 
-    ByteArrayOutputStream baosBitMask = new ByteArrayOutputStream();
-
-    for (int iEightBitGroup = 0;
-        iEightBitGroup < sbBitMask.length();
-        iEightBitGroup += BITS_PER_BYTE) {
-
-      HexString hsEightBitGroup = new HexString();
-
-      hsEightBitGroup.add(
-          Integer.parseInt(
-              sbBitMask.substring(iEightBitGroup, (iEightBitGroup + BITS_PER_BYTE)), BASE_2));
-
-      try {
-        baosBitMask.write(hsEightBitGroup.toByteArray());
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+    byte[] result = new byte[bits.length() / Byte.SIZE];
+    for (int index = 0, offset = 0; index < result.length; index++, offset += Byte.SIZE) {
+      // Parse the existing string range without allocating a substring or hexadecimal wrapper.
+      result[index] = (byte) Integer.parseInt(bits, offset, offset + Byte.SIZE, BASE_2);
     }
-
-    return baosBitMask.toByteArray();
+    return result;
   }
 
   /**
@@ -79,28 +64,22 @@ public class BinaryConversion {
   }
 
   /**
-   * @param bByteArray
-   * @return int
+   * Reads a big-endian integer without modifying the input. Short arrays are zero-extended on the
+   * left; arrays longer than four bytes use only their first four bytes. For example, FF becomes
+   * 255, while FF:FF:FF:FF becomes -1.
+   *
+   * @param bytes non-null bytes; empty input is allowed
+   * @return the signed 32-bit result, or zero for empty input
+   * @throws NullPointerException if bytes is null
    */
-  public static int byteArrayToInteger(byte[] bByteArray) {
-
-    ByteArrayOutputStream baosByteToInt = new ByteArrayOutputStream();
-
-    while ((baosByteToInt.size() + bByteArray.length) < 4) {
-      baosByteToInt.write(0x00);
+  public static int byteArrayToInteger(byte[] bytes) {
+    if (bytes.length >= Integer.BYTES) {
+      return ByteBuffer.wrap(bytes).getInt();
     }
-
-    try {
-      baosByteToInt.write(bByteArray);
-    } catch (IOException e) {
-      e.printStackTrace();
+    int result = 0;
+    for (byte value : bytes) {
+      result = (result << Byte.SIZE) | Byte.toUnsignedInt(value);
     }
-
-    byte[] bByteToInt = baosByteToInt.toByteArray();
-
-    return bByteToInt[0] << 24
-        | (bByteToInt[1] & 0xFF) << 16
-        | (bByteToInt[2] & 0xFF) << 8
-        | (bByteToInt[3] & 0xFF);
+    return result;
   }
 }

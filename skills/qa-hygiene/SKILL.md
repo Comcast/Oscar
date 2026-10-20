@@ -1,6 +1,6 @@
 ---
 name: qa-hygiene
-description: Check Oscar Java source license headers, descriptive domain types, public API documentation, TLV registry and parser hygiene, and related tests when fixing defects, changing project-owned source or performing a QA hygiene review.
+description: Check Oscar Java source license headers, descriptive domain types, public API documentation, TLV registry and parser hygiene, and related tests when optimizing code, fixing defects, changing project-owned source or performing a QA hygiene review.
 ---
 
 # Oscar QA hygiene
@@ -137,6 +137,38 @@ exists, demonstrate the regression against the old code in an isolated temporary
 checkout when feasible, without reverting or overwriting the user's work.
 Do not modify generated ANTLR Java to create or repair a reproduction; test its
 public parser behavior and change the grammar when required.
+
+## Benchmark before optimizing
+
+When the user requests optimization of a method or class, measure performance
+before editing the implementation. Fewer lines or allocations alone do not
+establish a speed improvement.
+
+1. Create a repeatable benchmark for the requested operation with synthetic,
+   representative small, typical and large inputs. Establish correctness tests
+   first and keep input generation outside the timed region unless it is the
+   operation being measured.
+2. Run the benchmark against the original implementation and retain the baseline
+   results before changing it. Record the source revision and any local changes,
+   command, JDK/JVM flags, OS/CPU, input sizes, warm-up, iterations and forks.
+3. Optimize, then rerun the same benchmark with the same inputs, measurement
+   settings and environment. Consume results to prevent dead-code elimination;
+   use warm-up and multiple independent JVM runs. Prefer JMH if available. Keep
+   benchmark dependencies out of the shipped runtime artifact.
+4. Compare per-scenario timing or throughput with explicit units, sample count
+   and variability. Report regressions as well as gains; do not claim a speedup
+   when differences are within measurement noise. Measure allocation separately
+   if making allocation claims. Do not invent performance thresholds.
+5. Retain the benchmark source, commands and before/after results with the
+   development documentation, and rerun correctness and round-trip tests.
+   Use [the optimization QA checklist](../../docs/optimization-qa.md).
+
+Do not replace correctness assertions with timing assertions. Ordinary JUnit
+runs must remain deterministic; performance tests run separately under controlled
+conditions. If a reliable baseline cannot be obtained, report the limitation
+and do not present the change as a measured performance improvement. If work
+has already started, recover the original implementation in an isolated checkout
+without reverting the user's files, and label the baseline as reconstructed.
 
 ## Validation
 
