@@ -1,6 +1,6 @@
 ---
 name: qa-hygiene
-description: Check Oscar Java source license headers, descriptive domain types, public API documentation, TLV registry and parser hygiene, and related tests when changing project-owned source or performing a QA hygiene review.
+description: Check Oscar Java source license headers, descriptive domain types, public API documentation, TLV registry and parser hygiene, and related tests when fixing defects, changing project-owned source or performing a QA hygiene review.
 ---
 
 # Oscar QA hygiene
@@ -115,6 +115,28 @@ legacy serializers rely on it. Do not add duplicate tests for existing coverage.
 For a new defect, add a regression that fails on the faulty input and verifies
 observable parser/loader behavior. For identifier fixes, exercise text import,
 export, and preserved binary bytes where the codec supports them.
+
+## Reproduce defects before fixing them
+
+For an identified defect, use this sequence before claiming it is fixed:
+
+1. Add a focused automated regression test that expresses the correct observable
+   behavior using synthetic inputs. Keep expected results independent of the
+   faulty implementation; for wire formats include known bytes where practical.
+2. Run that test against the unfixed code. Confirm it fails for the identified
+   defect, not a compilation problem, missing dependency or unrelated failure.
+   Record the test command and the relevant failure.
+3. Fix the implementation without weakening the expected behavior or deleting
+   the failing assertion. Keep the regression test in the repository.
+4. Rerun the same test and confirm it passes, then run relevant adjacent tests
+   and the required repository checks. Report the before/after results.
+
+If the defect cannot be reproduced in the available environment, state the
+limitation explicitly; do not claim verified resolution. If a fix already
+exists, demonstrate the regression against the old code in an isolated temporary
+checkout when feasible, without reverting or overwriting the user's work.
+Do not modify generated ANTLR Java to create or repair a reproduction; test its
+public parser behavior and change the grammar when required.
 
 ## Validation
 

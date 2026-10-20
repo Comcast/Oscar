@@ -4,8 +4,8 @@
  */
 package com.comcast.oscar.tlv;
 
-import com.comcast.oscar.ber.BERService;
 import com.comcast.oscar.cablelabsdefinitions.Constants;
+import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.configurationfile.ConfigurationFileImport;
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
@@ -17,7 +17,17 @@ import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.snmp4j.asn1.BER;
+import org.snmp4j.smi.Counter32;
+import org.snmp4j.smi.Counter64;
+import org.snmp4j.smi.Gauge32;
+import org.snmp4j.smi.Integer32;
+import org.snmp4j.smi.IpAddress;
 import org.snmp4j.smi.OID;
+import org.snmp4j.smi.OctetString;
+import org.snmp4j.smi.TimeTicks;
+import org.snmp4j.smi.Variable;
+import org.snmp4j.smi.VariableBinding;
 
 public class TlvBuilder implements TlvBuild {
   // Log4J2 logging
@@ -35,6 +45,10 @@ public class TlvBuilder implements TlvBuild {
   public static final byte TLV_LENGTH_POS_OFFSET = 0x01;
   public static final byte TLV_TYPE_OVERHEAD = 0x01;
   public static final byte TLV_TYPE_LENGTH_OVERHEAD = (TLV_LENGTH_POS_OFFSET + TLV_TYPE_OVERHEAD);
+
+  /** Largest unsigned one-byte TLV type, including reserved marker types. */
+  public static final int MAX_TLV_TYPE = 255;
+
   public static final int MAX_TLV_LENGTH = 254;
   public static final int END_OF_BYTE_ARRAY_INDEX = -1;
   public static final byte TLV_ONE_BYTE_LENGTH = 0x01;
@@ -96,7 +110,7 @@ public class TlvBuilder implements TlvBuild {
 
     if (iTlvType < 0) throw new TlvException("TlvBuilder.add() Type Less than 0");
 
-    if (iTlvType > 255) throw new TlvException("TlvBuilder.add() Type MUST be less than 256");
+    if (iTlvType > MAX_TLV_TYPE) throw new TlvException("TLV type must not exceed " + MAX_TLV_TYPE);
 
     String sValue = HexString.toHexString(iValue);
 
@@ -119,7 +133,7 @@ public class TlvBuilder implements TlvBuild {
 
     if (iTlvType < 0) throw new TlvException("TlvBuilder.add() Type Must be greater than 0");
 
-    if (iTlvType > 255) throw new TlvException("TlvBuilder.add() Type MUST be less than 256");
+    if (iTlvType > MAX_TLV_TYPE) throw new TlvException("TLV type must not exceed " + MAX_TLV_TYPE);
 
     String sValue = hsValue.hexCompressed();
 
@@ -183,7 +197,7 @@ public class TlvBuilder implements TlvBuild {
 
     byte[] bReorderTLV = null;
 
-    for (int iIndex = 1; iIndex < 255; iIndex++) {
+    for (int iIndex = 1; iIndex < MAX_TLV_TYPE; iIndex++) {
       liType.add(iIndex);
     }
 
@@ -223,7 +237,7 @@ public class TlvBuilder implements TlvBuild {
 
     if (bValue == null) throw new TlvException("TlvBuilder.add() Byte Array is NULL");
 
-    if (iTlvType > 255) throw new TlvException("TlvBuilder.add() Type MUST be less than 256");
+    if (iTlvType > MAX_TLV_TYPE) throw new TlvException("TLV type must not exceed " + MAX_TLV_TYPE);
 
     // Set the index to 0
     int iIndex = 0;
@@ -313,93 +327,107 @@ public class TlvBuilder implements TlvBuild {
   }
 
   /**
-   * @param iSnmpTlvType Must be 0>Type<256
-   * @param oObjectID OID object from SNMP4J
-   * @param bBerDataType BER Datatype
-   * @param lNumber Number of Long Type
+   * Appends a numeric SNMP VarBind without changing the requested TLV type.
+   *
+   * @param snmpTlvType Snmp11 or Snmp64 wire type; selects one or two length bytes
+   * @param objectId non-null valid SNMP OID; never modified
+   * @param berDataType INTEGER, COUNTER32, COUNTER64, GAUGE32 or TIMETICKS
+   * @param number signed Integer32, unsigned 32-bit value, or Counter64 raw long bits
+   * @throws IllegalArgumentException if inputs or encoded size are invalid; builder is unchanged
    */
-  public void add(int iSnmpTlvType, OID oObjectID, byte bBerDataType, long lNumber) {
-
-    String sTlvObjectID = "";
-
-    try {
-
-      sTlvObjectID = BERService.setOIDEncoding(oObjectID.format(), bBerDataType, lNumber);
-
-      lsTlvBuffer.add(
-          HexString.toHexString(iSnmpTlvType)
-              + HexString.toHexString((sTlvObjectID.length() / 2))
-              + sTlvObjectID);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    updateMapTypeToByteLength(iSnmpTlvType, ONE_BYTE_LENGTH);
-  }
-
-  /**
-   * @param iSnmpTlvType Must be 0>Type<256
-   * @param oObjectID OID object from SNMP4J
-   * @param bBerDataType BER Datatype
-   * @param sValue String value
-   */
-  public void add(int iSnmpTlvType, OID oObjectID, byte bBerDataType, String sValue) {
-
-    String sTlvObjectID = "";
-
-    // This Will need to use a SNMP VarBinding
-    // I m hard coding this the Number of Byte Length, need to go back and fix this
-    if (sValue.length() > 254) {
-      updateMapTypeToByteLength(iSnmpTlvType, 2);
-    }
-
-    try {
-
-      sTlvObjectID = BERService.setOIDEncoding(oObjectID.format(), bBerDataType, sValue);
-
-      lsTlvBuffer.add(
-          HexString.toHexString(iSnmpTlvType)
-              + HexString.toHexString((sTlvObjectID.length() / 2))
-              + sTlvObjectID);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
-    updateMapTypeToByteLength(iSnmpTlvType, ONE_BYTE_LENGTH);
-  }
-
-  /**
-   * @param iSnmpTlvType Must be 0>Type<256
-   * @param oObjectID OID object from SNMP4J
-   * @param bBerDataType BER Datatype
-   * @param bValue byteArray Value
-   */
-  public void add(int iSnmpTlvType, OID oObjectID, byte bBerDataType, byte[] bValue) {
-
-    String sTlvObjectID = "";
-
-    // This Will need to use a SNMP VarBinding
-    // I m hard coding this the Number of Byte Length, need to go back and fix this
-    if (bValue.length > 254) {
-      updateMapTypeToByteLength(iSnmpTlvType, 2);
+  public void add(int snmpTlvType, OID objectId, byte berDataType, long number) {
+    Variable value;
+    if (berDataType == BER.INTEGER) {
+      if (number < Integer.MIN_VALUE || number > Integer.MAX_VALUE) {
+        throw new IllegalArgumentException("SNMP Integer32 is outside its signed range");
+      }
+      value = new Integer32((int) number);
+    } else if (berDataType == BER.COUNTER64) {
+      value = new Counter64(number);
     } else {
-      updateMapTypeToByteLength(iSnmpTlvType, ONE_BYTE_LENGTH);
+      if (number < 0 || number > Integer.toUnsignedLong(-1)) {
+        throw new IllegalArgumentException("SNMP value is outside its unsigned 32-bit range");
+      }
+      value =
+          switch (berDataType) {
+            case BER.COUNTER32 -> new Counter32(number);
+            case BER.GAUGE32 -> new Gauge32(number);
+            case BER.TIMETICKS -> new TimeTicks(number);
+            default -> throw new IllegalArgumentException("Unsupported numeric SNMP BER type");
+          };
     }
+    appendSnmpBinding(snmpTlvType, objectId, value);
+  }
 
+  /**
+   * Appends a text/IP SNMP VarBind, counting the complete encoded BER bytes rather than characters.
+   * For example, Snmp64 always emits a two-byte length even for a one-character value.
+   *
+   * @param snmpTlvType Snmp11 or Snmp64 wire type; never automatically promoted
+   * @param objectId non-null valid SNMP OID; never modified
+   * @param berDataType OCTETSTRING or IPADDRESS
+   * @param value non-null text using SNMP4J's OctetString encoding or IPv4 address syntax
+   * @throws IllegalArgumentException if inputs or encoded size are invalid; builder is unchanged
+   */
+  public void add(int snmpTlvType, OID objectId, byte berDataType, String value) {
+    if (value == null) throw new IllegalArgumentException("SNMP value must not be null");
+    Variable variable =
+        switch (berDataType) {
+          case BER.OCTETSTRING -> new OctetString(value);
+          case BER.IPADDRESS -> new IpAddress(value);
+          default -> throw new IllegalArgumentException("Unsupported text SNMP BER type");
+        };
+    appendSnmpBinding(snmpTlvType, objectId, variable);
+  }
+
+  /**
+   * Appends an octet-string VarBind without splitting or modifying the supplied bytes.
+   *
+   * @param snmpTlvType Snmp11 or Snmp64 wire type; selects one or two length bytes
+   * @param objectId non-null valid SNMP OID; never modified
+   * @param berDataType must be OCTETSTRING
+   * @param value non-null octets, including empty arrays
+   * @throws IllegalArgumentException if inputs or encoded size are invalid; builder is unchanged
+   */
+  public void add(int snmpTlvType, OID objectId, byte berDataType, byte[] value) {
+    if (value == null) throw new IllegalArgumentException("SNMP value must not be null");
+    if (berDataType != BER.OCTETSTRING) {
+      throw new IllegalArgumentException("Byte-array SNMP values require OCTETSTRING");
+    }
+    appendSnmpBinding(snmpTlvType, objectId, new OctetString(value));
+  }
+
+  // Encode and validate locally before committing bytes or length metadata to this builder.
+  private void appendSnmpBinding(int snmpTlvType, OID objectId, Variable value) {
+    int lengthWidth =
+        switch (snmpTlvType) {
+          case PacketCableConstants.SNMP_TLV_11 ->
+              PacketCableConstants.PACKET_CABLE_STANDARD_BYTE_LENGTH;
+          case PacketCableConstants.SNMP_TLV_64 -> PacketCableConstants.SNMP_TLV_64_BYTE_LENGTH;
+          default -> throw new IllegalArgumentException("SNMP TLV type must be Snmp11 or Snmp64");
+        };
+    if (objectId == null || !objectId.isValid()) {
+      throw new IllegalArgumentException("A valid SNMP OID is required");
+    }
+    var encoded = new ByteArrayOutputStream();
     try {
-
-      sTlvObjectID = BERService.setOIDEncoding(oObjectID.format(), bBerDataType, bValue);
-
-      lsTlvBuffer.add(
-          HexString.toHexString(iSnmpTlvType)
-              + HexString.toHexString((sTlvObjectID.length() / 2))
-              + sTlvObjectID);
-
-    } catch (Exception e) {
-      e.printStackTrace();
+      new VariableBinding(objectId, value).encodeBER(encoded);
+    } catch (IOException exception) {
+      throw new IllegalArgumentException("Unable to encode SNMP VarBind");
     }
+    byte[] payload = encoded.toByteArray();
+    int maximumLength = (1 << (Byte.SIZE * lengthWidth)) - 1;
+    if (payload.length > maximumLength) {
+      throw new IllegalArgumentException("SNMP VarBind exceeds the selected TLV length capacity");
+    }
+    var entry = new ByteArrayOutputStream();
+    entry.write(snmpTlvType);
+    for (int shift = Byte.SIZE * (lengthWidth - 1); shift >= 0; shift -= Byte.SIZE) {
+      entry.write(payload.length >>> shift);
+    }
+    entry.writeBytes(payload);
+    lsTlvBuffer.add(new HexString(entry.toByteArray()).hexCompressed());
+    updateMapTypeToByteLength(snmpTlvType, lengthWidth);
   }
 
   /**
@@ -479,7 +507,7 @@ public class TlvBuilder implements TlvBuild {
 
     if (iTlvType < 0) throw new TlvException("TlvBuilder.encapsulateTlv() Type Less than 0");
 
-    if (iTlvType > 255) throw new TlvException("TlvBuilder.add() Type MUST be less than 256");
+    if (iTlvType > MAX_TLV_TYPE) throw new TlvException("TLV type must not exceed " + MAX_TLV_TYPE);
 
     lsTlvBuffer.add(0, HexString.toHexString(iTlvType) + HexString.toHexString(length()));
   }
@@ -499,7 +527,7 @@ public class TlvBuilder implements TlvBuild {
 
     if (iLength < 0) throw new TlvException("TlvBuilder.encapsulateTlv() Length is less than 0");
 
-    if (iTlvType > 255) throw new TlvException("TlvBuilder.add() Type MUST be less than 256");
+    if (iTlvType > MAX_TLV_TYPE) throw new TlvException("TLV type must not exceed " + MAX_TLV_TYPE);
 
     lsTlvBuffer.add(0, HexString.toHexString(iTlvType) + HexString.toHexString(iLength));
   }
@@ -892,7 +920,7 @@ public class TlvBuilder implements TlvBuild {
 
     List<HexString> lhs = new ArrayList<HexString>();
 
-    for (int iIndex = 1; iIndex <= 255; iIndex++) {
+    for (int iIndex = 1; iIndex <= MAX_TLV_TYPE; iIndex++) {
 
       List<Integer> liType = new ArrayList<Integer>();
 
@@ -922,7 +950,7 @@ public class TlvBuilder implements TlvBuild {
 
     if (bTlvByteArray == null) throw new TlvException("TlvBuilder.stripTlv() Byte Array is NULL");
 
-    if (iType > 255) throw new TlvException("TlvBuilder.add() Type MUST be less than 256");
+    if (iType > MAX_TLV_TYPE) throw new TlvException("TLV type must not exceed " + MAX_TLV_TYPE);
 
     ByteArrayOutputStream baosStripedTlvByteArray = new ByteArrayOutputStream();
 
@@ -961,8 +989,9 @@ public class TlvBuilder implements TlvBuild {
       int iType, byte[] bTlvByteArray, Map<Integer, Integer> miiTypeToByteLength)
       throws TlvException {
 
-    if ((iType < 0) && (iType > 255))
-      throw new TlvException("TlvBuilder.stripTlv() Type Less than 0 or Greater than 255");
+    if ((iType < 0) && (iType > MAX_TLV_TYPE))
+      throw new TlvException(
+          "TlvBuilder.stripTlv() Type Less than 0 or Greater than " + MAX_TLV_TYPE);
 
     if (bTlvByteArray == null) throw new TlvException("TlvBuilder.stripTlv() Byte Array is NULL");
 

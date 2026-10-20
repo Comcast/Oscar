@@ -67,3 +67,14 @@ certificate text, quote-safe comment suppression and family headers. It also
 checks bounded lookup, constructor errors and disk-write behavior. See
 [text export](text-export.md) and the fixed fixtures under
 `src/test/resources/export-text/`.
+
+## Raw SNMP builder regression
+
+`TlvBuilderSnmpTest` tests the public OID-based builder overloads directly.
+It checks a literal Snmp64 byte fixture, both length widths, complete BER payloads
+at 255/256 and 65535/65536 bytes, multibyte strings, numeric ranges, IP addresses,
+and unchanged builder state after rejected input. These are synthetic TLV
+fragments, not complete provisionable configuration files.
+
+Run with `mvn -B -Dtest=TlvBuilderSnmpTest test`. The initial nine regression
+cases produced eight failures against the old implementation before the fix.

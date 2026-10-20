@@ -351,3 +351,24 @@ and per-instance option persistence remain compatible.
 - [x] Bound definition lookup and reject incomplete rendering; report write failures.
 
 See [text export](text-export.md) for the output and error contracts.
+
+### Raw SNMP builder encoding
+
+The three OID-based `TlvBuilder.add` overloads share one VarBind encoder.
+The caller selects Snmp11 (one length byte) or Snmp64 (two length bytes);
+short Snmp64 values retain the leading zero length byte. Limits apply to the
+complete BER payload, including the OID and BER headers, not string characters.
+Snmp11's 255-byte VarBind limit follows CM-SP-MULPIv3.1-I21-201020,
+C.1.2.5, printed pp. 617–618. Snmp64 uses the existing PacketCable two-byte
+wire contract; this does not make type 64 a DOCSIS SNMP definition.
+
+Invalid inputs and oversized payloads throw `IllegalArgumentException` without
+changing bytes or metadata. No automatic type promotion or fragmentation occurs.
+SNMP4J encodes the VarBind directly, avoiding BERService's value logging on this
+API path. Counter64 accepts the raw unsigned 64-bit pattern in a Java long;
+Integer32 and unsigned 32-bit values are range-checked before conversion.
+
+`TlvBuilderSnmpTest` locks down fixed headers, all three overloads, full BER
+length boundaries, multibyte text, numeric types and failure atomicity. Its first
+nine cases reproduced eight failures before the fix. An independent literal
+Snmp64 fixture protects against using the same encoder as the sole test oracle.

@@ -62,7 +62,9 @@ and `tools/run-all.sh` after changes.
 ## QA hygiene
 
 Use [qa-hygiene](skills/qa-hygiene/SKILL.md) for TLV catalog naming,
-registry/parser hygiene changes, and QA hygiene reviews. Exclude ANTLR-generated
+registry/parser hygiene changes, defect fixes, and QA hygiene reviews.
+For defects, first demonstrate a failing regression test against the unfixed
+code, then fix and rerun it; retain the test and report both outcomes. Exclude ANTLR-generated
 Java from manual style/header cleanup and formatting; retain compilation and
 parser tests as specified by that skill. Reuse the existing
 JUnit checks for whitespace-free TLV identifiers across all catalogs.
