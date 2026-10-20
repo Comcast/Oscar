@@ -26,8 +26,7 @@ Follow `docs/architecture.md`: use relative service paths and a base-catalog
 The OpenCable/eSTB reference attaches beneath 217, not eRouter's 202.
 Do not create a separate profile file or copy children across family catalogs.
 Activate only a reviewed subset; unresolved entries remain excluded explicitly.
-The shared loader maps VarBind, BER OID, transport-address and byte kinds to
-tested codecs. Preserve instance boundaries when reading or writing 217.
+The shared loader reads the same codec fields as every other registry. Preserve instance boundaries when reading or writing 217.
 
 ## Remaining acceptance checklist
 
@@ -45,3 +44,10 @@ tested codecs. Preserve instance boundaries when reading or writing 217.
 
 Do not change assembly/disassembly merely to mirror device discard behavior.
 Report confirmed OSCAR defects before choosing an upstream or UI integration fix.
+
+## Common registry format
+
+Follow `docs/tlv-registry-format.md` and `docs/tlv-registry.schema.json`.
+Use the same flat `TlvDefinition` fields as DOCSIS, with relative paths and a
+`parentPath` header. Do not add `kind` or a nested `length` object. Preserve
+source constraints and deferred definitions in [TLV notes](tlv-notes.md).

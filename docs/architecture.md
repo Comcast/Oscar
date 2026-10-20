@@ -33,17 +33,17 @@ PacketCable provisioning must not be conflated with embedded DOCSIS settings.
 
 ### Service catalog contract
 
-[erouter.json](../res/tlv-registry/erouter.json) is a source-backed service catalog,
-not the existing `TlvDefinition` runtime schema. Its `catalogType` distinguishes
-it from family catalogs; `status: reviewed-subset-active` means only profile-selected paths are enabled. It uses relative paths, explicit semantic kinds, length constraints,
-section citations, values, defaults, repetition rules where established, and
-sensitivity markers. Missing multiplicity metadata means unspecified, not one.
-The edition and SHA-256 identify the extracted source text.
+All registries use the [common TLV JSON format](tlv-registry-format.md) and
+[JSON Schema](tlv-registry.schema.json), including eRouter and OpenCable.
+Definitions contain the same `TlvDefinition` fields as DOCSIS: `path`, `name`,
+`codec`, `lengthMin`, `lengthMax`, `lengthBytes`, `supportedVersion`,
+`maxInstances`, and `description`. No separate `kind`/`length` translation exists.
 
-Variable source length `N`/`n` is distinct from a fixed width. Unresolved integer
-widths, the printed access-view range, and the OID encoding conflict are recorded
-explicitly. No zero-length placeholder stands for an unresolved scalar encoding.
-See the [eRouter source map](../skills/oscar-erouter-config-tlvs/references/source-map.md).
+Embedded catalogs add only a `parentPath` header and relative paths. Their
+entries pass through the same strict deserializer and registry validation.
+Detailed specification notes and deferred definitions live in the corresponding
+skill's `references/tlv-notes.md`, not a second runtime JSON schema. Base
+attachment allowlists continue to control activation and family applicability.
 
 ### Loader composition and validation
 
@@ -55,11 +55,10 @@ not recursive service-to-service imports.
 
 Validate the attachment is a container, expand relative paths, and reject missing
 parents, duplicate paths, case-insensitive sibling-name collisions, invalid lengths
-and incompatible codecs. No last-definition-wins merging. Reject an activation
-that includes unresolved encodings; do not silently drop those entries. A future
-explicit reviewed subset must declare omissions rather than claim full coverage.
-Translate semantic kinds and constraints to runtime codec metadata only after
-wire widths, byte order and validation behavior have been established.
+and incompatible codecs. No last-definition-wins merging. Unresolved definitions remain in source notes, outside runtime catalogs; an
+attachment selecting a missing definition is rejected. Declare omitted settings
+rather than claiming full coverage. Composition changes paths and the inherited
+family version, not codec names or payload widths.
 
 Keep the public dictionary API based on full numeric paths. Migrate existing
 202 children out of base catalogs atomically with loader activation so definitions

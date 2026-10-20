@@ -215,79 +215,43 @@ public final class TlvRegistry {
       String name = attachment.getString("reference");
       if (!name.matches("[a-zA-Z0-9.-]+") || name.contains(".."))
         throw new IllegalArgumentException("Invalid catalog filename: " + name);
-      JSONObject service;
+      com.fasterxml.jackson.databind.node.ObjectNode document;
       try (InputStream input = source.open(name)) {
-        service =
-            new JSONObject(
-                new String(input.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8));
+        document =
+            new ObjectMapper()
+                .enable(JsonParser.Feature.STRICT_DUPLICATE_DETECTION)
+                .readValue(input, com.fasterxml.jackson.databind.node.ObjectNode.class);
       }
-      if (service.has("attachments")
-          || service.has("includes")
-          || service.getInt("formatVersion") != 1
-          || !service.getString("catalogType").equals("embedded-service")
-          || !service.getString("pathMode").equals("relative")
-          || !parent.equals(path(service.getJSONObject("attachment").getJSONArray("parentPath"))))
+      var declaredParent = document.remove("parentPath");
+      if (declaredParent == null
+          || !declaredParent.isArray()
+          || !parent.equals(path(new JSONArray(declaredParent.toString())))
+          || document.has("attachments"))
         throw new IllegalArgumentException("Invalid service attachment " + name);
-      Map<List<Integer>, JSONObject> available = new LinkedHashMap<>();
-      for (Object definition : service.getJSONArray("definitions")) {
-        JSONObject entry = (JSONObject) definition;
-        if (available.putIfAbsent(path(entry.getJSONArray("path")), entry) != null)
-          throw new IllegalArgumentException("Duplicate service path in " + name);
+      String serviceFamily = document.path("family").asText();
+      TlvRegistry service;
+      try (InputStream input =
+          new java.io.ByteArrayInputStream(
+              document.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8))) {
+        service = read(input, serviceFamily, name);
       }
       for (Object selected : attachment.getJSONArray("includedPaths")) {
         List<Integer> relative = path((JSONArray) selected);
-        JSONObject entry = available.get(relative);
+        TlvDefinition entry = service.find(relative);
         if (entry == null) throw new IllegalArgumentException("Missing service path " + relative);
-        JSONObject length = entry.getJSONObject("length");
-        if (length.optString("status").equals("unresolved")
-            || entry.optString("encodingStatus").equals("unresolved"))
-          throw new IllegalArgumentException("Unresolved service encoding " + relative);
-        String kind = entry.getString("kind");
-        String codec =
-            switch (kind) {
-              case "container", "unsignedInteger" -> "integer";
-              case "string", "ascii" -> "string";
-              case "ipv4" -> "byte_array_ipv4_address";
-              case "ipv6" -> "byte_array_ipv6_address";
-              case "snmpVarBind" -> "oid";
-              case "objectIdentifier" -> "oid_asn1_object6";
-              case "transportAddress" -> "byte_array_inet_transport_address";
-              case "bytes" -> "byte_array";
-              default -> throw new IllegalArgumentException("Unreviewed service codec " + kind);
-            };
-        if (kind.equals("unsignedInteger") && !length.has("bytes"))
-          throw new IllegalArgumentException("Integer requires a fixed width " + relative);
         List<Integer> full = new ArrayList<>(parent);
         full.addAll(relative);
         combined.add(
             new TlvDefinition(
                 full,
-                entry.getString("name"),
-                codec,
-                length.optInt(
-                    "bytes",
-                    length.optInt(
-                        "min",
-                        length.has("allowedBytes")
-                            ? length.getJSONArray("allowedBytes").getInt(0)
-                            : 0)),
-                length.optInt(
-                    "bytes",
-                    length.optInt(
-                        "max",
-                        length.has("allowedBytes")
-                            ? length
-                                .getJSONArray("allowedBytes")
-                                .getInt(length.getJSONArray("allowedBytes").length() - 1)
-                            : 255)),
-                1,
+                entry.name(),
+                entry.codec(),
+                entry.lengthMin(),
+                entry.lengthMax(),
+                entry.lengthBytes(),
                 container.supportedVersion(),
-                entry.optInt("maxInstances", -1),
-                service.getString("edition")
-                    + " "
-                    + entry.getString("sourceSection")
-                    + ": "
-                    + entry.getString("description")));
+                entry.maxInstances(),
+                entry.description()));
       }
     }
     return new TlvRegistry(combined, family + " composed profile");

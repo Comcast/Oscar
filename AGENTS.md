@@ -49,6 +49,16 @@ bundled source, cite the exact issue and section, and test serialized bytes and
 decoded meaning against source-derived expectations. Mark unresolved definitions
 as unverified rather than inventing standard encodings.
 
+## TLV registry format
+
+Every catalog in `res/tlv-registry/` must follow
+[the common format](docs/tlv-registry-format.md) and
+[JSON Schema](docs/tlv-registry.schema.json). Embedded services use the same
+TLV fields as base families; only their paths and parent attachment differ.
+Keep unverified definitions and detailed source notes in skill references.
+Do not introduce another runtime TLV schema. Run the catalog contract tests
+and `tools/run-all.sh` after changes.
+
 ## QA hygiene
 
 Use [qa-hygiene](skills/qa-hygiene/SKILL.md) for TLV catalog naming,

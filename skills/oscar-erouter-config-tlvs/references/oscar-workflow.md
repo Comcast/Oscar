@@ -43,3 +43,10 @@ rather than hashing an independently reordered child list.
 Explicitly resolve the source-map ambiguities before asserting coverage. Avoid
 customer configuration files and real credentials in fixtures. Keep user-facing
 examples and documentation synchronized only when functionality is implemented.
+
+## Common registry format
+
+Follow `docs/tlv-registry-format.md` and `docs/tlv-registry.schema.json`.
+Use the same flat `TlvDefinition` fields as DOCSIS, with relative paths and a
+`parentPath` header. Do not add `kind` or a nested `length` object. Preserve
+source constraints and deferred definitions in [TLV notes](tlv-notes.md).

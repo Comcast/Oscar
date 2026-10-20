@@ -47,6 +47,14 @@ Validate changed headers with `tools/code-hygene-checker.sh --copyright-only`.
 For header-only edits, verify executable code is unchanged and run diff checks;
 run the Java checks below when behavior changes.
 
+## Common registry contract
+
+All base and embedded catalogs must use `docs/tlv-registry.schema.json` and
+`docs/tlv-registry-format.md`. Keep the JSON Schema aligned with `TlvDefinition`.
+Run `EmbeddedServiceCatalogTest` along with the registry checks; it discovers
+all catalogs, including eRouter and OpenCable. Do not add an alternative
+`kind`/nested-length schema for new services.
+
 ## TLV identifiers
 
 - In `res/tlv-registry/*.json`, `name` is a parser identifier, not a display

@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OSCAR TLV registry format v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "formatVersion",
+    "family",
+    "edition",
+    "sourceSha256",
+    "definitions"
+  ],
+  "properties": {
+    "formatVersion": {
+      "const": 1
+    },
+    "family": {
+      "type": "string",
+      "minLength": 1
+    },
+    "edition": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourceSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "parentPath": {
+      "$ref": "#/$defs/path"
+    },
+    "definitions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/definition"
+      }
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/attachment"
+      }
+    }
+  },
+  "not": {
+    "required": [
+      "parentPath",
+      "attachments"
+    ]
+  },
+  "$defs": {
+    "path": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 255
+      }
+    },
+    "definition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "name",
+        "codec",
+        "lengthMin",
+        "lengthMax",
+        "lengthBytes",
+        "supportedVersion",
+        "maxInstances",
+        "description"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/path"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^\\S+$"
+        },
+        "codec": {
+          "enum": [
+            "integer",
+            "unsigned_integer",
+            "string",
+            "string_bits",
+            "string_null_terminated",
+            "byte_array",
+            "double_byte_array",
+            "multi_tlv_byte_array",
+            "oid",
+            "oid_asn1_object6",
+            "byte_array_ipv4_address",
+            "byte_array_ipv6_address",
+            "byte",
+            "mac_address",
+            "transport_address_ipv4_address",
+            "transport_address_ipv6_address",
+            "byte_array_inet_transport_address",
+            "byte_array_inet_address"
+          ]
+        },
+        "lengthMin": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lengthMax": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "lengthBytes": {
+          "type": "integer",
+          "enum": [
+            1,
+            2
+          ]
+        },
+        "supportedVersion": {
+          "type": "string"
+        },
+        "maxInstances": {
+          "type": "integer",
+          "anyOf": [
+            {
+              "const": -1
+            },
+            {
+              "minimum": 1
+            }
+          ]
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "attachment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parentPath",
+        "reference",
+        "includedPaths",
+        "omissions"
+      ],
+      "properties": {
+        "parentPath": {
+          "$ref": "#/$defs/path"
+        },
+        "reference": {
+          "type": "string",
+          "pattern": "^(?!.*\\.\\.)[a-zA-Z0-9.-]+\\.json$"
+        },
+        "includedPaths": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/path"
+          }
+        },
+        "omissions": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
