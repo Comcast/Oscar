@@ -14,7 +14,16 @@ permissions:
   contents: write
 
 jobs:
+  security:
+    name: CodeQL
+    permissions:
+      contents: read
+      security-events: write
+    uses: ./.github/workflows/security.yml
+    with:
+      ref: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag || github.ref }}
   build-and-upload:
+    needs: security
     runs-on: ubuntu-24.04
 
     steps:

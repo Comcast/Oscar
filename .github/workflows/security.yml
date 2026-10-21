@@ -1,0 +1,35 @@
+name: CodeQL
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Revision to analyze; empty uses the triggering revision
+        required: false
+        type: string
+        default: ''
+permissions:
+  contents: read
+  security-events: write
+jobs:
+  codeql:
+    name: Analyze Java
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: java-kotlin
+          build-mode: manual
+      - name: Build for CodeQL
+        run: mvn -B -DskipTests clean package
+      - name: Analyze and upload results
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:java-kotlin

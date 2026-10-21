@@ -222,3 +222,40 @@ runs quality/release helper tests, compiles/packages, verifies both JAR versions
 and runs JUnit. Generated ANTLR sources are excluded from manual formatting and
 header checks, but remain compiled and tested. See the
 [QA audit](../qa-hygiene-audit.md) for manual checks and remaining legacy gaps.
+
+
+## CodeQL before CI and release builds
+
+The reusable `.github/workflows/security.yml` analyzes Java using a manual
+Maven build with Java 21. Linux, macOS, and Windows CI wait for their CodeQL job
+before running OS checks. The release workflow also requires CodeQL before
+building and uploading JARs; manual dispatch scans the selected release tag,
+not the default branch. Each workflow invokes its own prerequisite scan.
+
+Analysis failure or cancellation blocks downstream jobs. Findings are uploaded
+to GitHub Security; a completed scan with alerts does not automatically fail
+this gate. Alert severity policy is separate. Disable GitHub default CodeQL
+setup if enabled to avoid duplicating this advanced setup.
+
+The release workflow starts after publication, so this gates JAR asset uploads,
+not creation of the release page itself. Actual CodeQL execution requires GitHub
+CI; local workflow lint does not establish a clean security scan.
+
+```mermaid
+flowchart LR
+    Event[CI or release event] --> Scan[CodeQL Java analysis]
+    Scan -->|Success| Build[OS checks or release JAR build]
+    Scan -->|Failure| Stop[Block downstream jobs]
+    Build --> Assets[Release workflow only: upload JARs]
+```
+
+
+### Windows CI
+
+`ci-windows.yml` runs on Windows 11 ARM with x64 Temurin Java 21 under
+emulation. After CodeQL succeeds, `mvn -B clean verify` builds the JARs and
+runs JUnit tests. Surefire reports are retained even on failure. The README's
+Windows badge links to this workflow; it does not claim native x64 hardware
+testing or MSI coverage (OSCAR distributes JARs). Unix shell quality checks
+remain in Linux/macOS CI. This workflow runs on pushes, pull requests, and
+manual dispatch; it does not publish releases.

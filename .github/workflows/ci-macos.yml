@@ -5,7 +5,14 @@ on:
   pull_request:
 
 jobs:
+  security:
+    name: CodeQL
+    permissions:
+      contents: read
+      security-events: write
+    uses: ./.github/workflows/security.yml
   build-macos:
+    needs: security
     runs-on: macos-14
 
     steps:

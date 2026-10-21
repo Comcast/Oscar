@@ -5,7 +5,14 @@ on:
   pull_request:
 
 jobs:
+  security:
+    name: CodeQL
+    permissions:
+      contents: read
+      security-events: write
+    uses: ./.github/workflows/security.yml
   build-linux:
+    needs: security
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
