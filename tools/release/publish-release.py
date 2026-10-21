@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish an existing GitHub tag without building or changing Git refs."""
+"""Request gated CI publication for an existing tag without changing Git refs."""
 import argparse
 import json
 from pathlib import Path
@@ -19,7 +19,7 @@ def gh(*arguments):
 
 
 def publish(tag, dry_run=False):
-    """Require a remote tag, then create at most one published release."""
+    """Check the remote tag and request CI; never publish ahead of its gates."""
     if not re.fullmatch(r"v\d+\.\d+\.\d+", tag):
         raise ValueError("Tag must use vMAJOR.MINOR.PATCH")
     repository = gh("repo", "view", "--json", "nameWithOwner", "--jq", ".nameWithOwner")
@@ -36,11 +36,10 @@ def publish(tag, dry_run=False):
         print(f"Release already published: {release['html_url']}")
         return
     if dry_run:
-        print(f"Would publish {repository} {tag} with generated release notes.")
+        print(f"Would run ci.yml for {repository} {tag}; publication requires all checks.")
         return
-    print(gh("release", "create", tag, "--repo", repository,
-             "--title", f"OSCAR {tag}", "--generate-notes"))
-    print("Release published. GitHub Actions builds and uploads the JAR assets.")
+    gh("workflow", "run", "ci.yml", "--ref", tag, "--repo", repository)
+    print("CI requested. CodeQL and all OS checks must pass before JAR publication.")
 
 
 def main():

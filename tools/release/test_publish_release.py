@@ -14,11 +14,11 @@ class PublishReleaseTest(unittest.TestCase):
         return subprocess.CalledProcessError(1, "gh", stderr="gh: Not Found (HTTP 404)")
 
     @patch.object(publisher, "gh")
-    def test_creates_only_after_remote_tag_check(self, gh):
+    def test_dispatches_gated_workflow_after_remote_tag_check(self, gh):
         gh.side_effect = ["Comcast/Oscar", "{}", self.missing(), "release-url"]
         publisher.publish("v3.2.0")
         self.assertEqual(gh.call_args_list[1].args, ("api", "repos/Comcast/Oscar/git/ref/tags/v3.2.0"))
-        self.assertEqual(gh.call_args.args, ("release", "create", "v3.2.0", "--repo", "Comcast/Oscar", "--title", "OSCAR v3.2.0", "--generate-notes"))
+        self.assertEqual(gh.call_args.args, ("workflow", "run", "ci.yml", "--ref", "v3.2.0", "--repo", "Comcast/Oscar"))
 
     @patch.object(publisher, "gh")
     def test_missing_tag_does_not_create(self, gh):

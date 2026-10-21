@@ -1,57 +1,155 @@
-name: CI
+name: OSCAR CI and release
 
 on:
   push:
+    branches: [master, main]
+    tags: ['v*']
   pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oscar-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
-  security:
+  codeql:
     name: CodeQL
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     permissions:
       contents: read
       security-events: write
-    uses: ./.github/workflows/security.yml
-  build-linux:
-    needs: security
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-22.04, ubuntu-24.04, ubuntu-26.04]
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Java 21
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
-
-      - name: Setup Maven cache
-        uses: actions/cache@v4
+      - uses: github/codeql-action/init@v4
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2-
+          languages: java-kotlin
+          build-mode: manual
+      - name: Build for CodeQL
+        run: mvn -B -DskipTests clean package
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:java-kotlin
 
-      - name: Setup formatter
-        run: tools/setup-formatter.sh
-
-      - name: Run all checks
-        run: tools/run-all.sh
-
-      - name: Test Git helpers
-        run: python3 -m unittest discover -s tools/git -p 'test_*.py'
-
-      - name: Run JUnit tests
-        run: mvn -B test
-
-      - name: Upload test reports on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
+  os-checks:
+    name: Java 21 / ${{ matrix.os }}
+    needs: codeql
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            architecture: x64
+          - os: ubuntu-24.04
+            architecture: x64
+          - os: ubuntu-26.04
+            architecture: x64
+          - os: macos-14
+            architecture: aarch64
+          - os: windows-11-arm
+            architecture: x64
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          architecture: ${{ matrix.architecture }}
+          cache: maven
+      - uses: actions/setup-python@v6
+        if: runner.os != 'Windows'
+        with:
+          python-version: '3.12'
+      - name: Unix quality and tooling checks
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          tools/setup-formatter.sh
+          tools/run-all.sh
+          python3 -m unittest discover -s tools/git -p 'test_*.py'
+      - name: Build JARs and run JUnit tests
+        run: mvn -B clean verify
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v6
         with:
           name: surefire-reports-${{ matrix.os }}
           path: target/surefire-reports/
+          if-no-files-found: warn
+
+  release:
+    name: Publish tagged JARs
+    needs: [codeql, os-checks]
+    if: startsWith(github.ref, 'refs/tags/v') && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Verify release tag matches POM
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          python3 - <<'PYTHON'
+          import os
+          import re
+          import xml.etree.ElementTree as ET
+          tag = os.environ['RELEASE_TAG']
+          version = ET.parse('pom.xml').findtext('{*}version')
+          if not re.fullmatch(r'v[0-9]+\.[0-9]+\.[0-9]+', tag) or tag != f'v{version}':
+              raise SystemExit(f'Release tag {tag} does not match stable POM version {version}')
+          PYTHON
+      - name: Build thin and all JARs
+        run: |
+          mvn -B -DskipTests clean package
+          all_jar="$(find target -maxdepth 1 -type f -name 'oscar-*-all.jar')"
+          thin_jar="$(find target -maxdepth 1 -type f -name 'oscar-*.jar' ! -name '*-all.jar')"
+          if [[ ! -f "${all_jar}" || ! -f "${thin_jar}" ]]; then
+            echo "Expected exactly one thin JAR and one all JAR in target/." >&2
+            exit 1
+          fi
+          for source_jar in "${thin_jar}" "${all_jar}"; do
+            if jar tf "${source_jar}" | grep -E '^com/comcast/oscar/(examples|test)/|^test/'; then
+              echo "Release JAR contains Oscar examples or tests: ${source_jar}" >&2
+              exit 1
+            fi
+          done
+          cp "${thin_jar}" oscar-thin.jar
+          cp "${all_jar}" oscar-all.jar
+          cp oscar-all.jar oscar.jar
+
+      - name: Generate checksums
+        run: |
+          for artifact in oscar.jar oscar-all.jar oscar-thin.jar; do
+            sha256sum "${artifact}" > "${artifact}.sha256"
+          done
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          make_latest: true
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            oscar.jar
+            oscar.jar.sha256
+            oscar-all.jar
+            oscar-all.jar.sha256
+            oscar-thin.jar
+            oscar-thin.jar.sha256

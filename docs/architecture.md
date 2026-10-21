@@ -376,3 +376,11 @@ Integer32 and unsigned 32-bit values are range-checked before conversion.
 length boundaries, multibyte text, numeric types and failure atomicity. Its first
 nine cases reproduced eight failures before the fix. An independent literal
 Snmp64 fixture protects against using the same encoder as the sole test oracle.
+
+## CI and release gate
+
+A single `ci.yml` pipeline runs CodeQL before the supported OS matrix. Branch
+pushes validate only. Version tags matching the POM publish JARs and checksums
+only after every OS passes. Manual publication requests use the same gate.
+See [development workflow](wiki/development.md#codeql-before-ci-and-release-builds)
+for the matrix, permissions, recovery procedure and flow diagram.

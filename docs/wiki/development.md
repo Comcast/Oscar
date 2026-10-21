@@ -179,11 +179,15 @@ python3 tools/release/publish-release.py --tag v3.2.1 --dry-run
 python3 tools/release/publish-release.py --tag v3.2.1
 ```
 
-This checks the tag on GitHub and creates a published release with generated
-notes. The release workflow then builds and uploads the JAR assets. An existing
-published release is left unchanged; an existing draft must be reviewed and
-published on GitHub. Authentication, network and missing-tag failures stop the
-script. `--dry-run` reads GitHub state without publishing.
+Pushing a version tag automatically starts the unified `ci.yml` pipeline.
+No separate publish command is needed for new tags. The helper above is a manual
+recovery command: it checks the remote tag, then dispatches the same pipeline
+at that tag. It never creates a release ahead of validation. An existing
+published release is left unchanged; an existing draft requires review.
+`--dry-run` checks GitHub state without dispatching a workflow.
+
+For an old tag that predates the unified workflow, use the original run's
+GitHub rerun controls; dispatch requires `ci.yml` to support it at that tag.
 
 This publisher does not bump versions, commit, push tags, or build locally.
 Use `tools/release/release.py` for local release preparation and
@@ -226,40 +230,40 @@ header checks, but remain compiled and tested. See the
 
 ## CodeQL before CI and release builds
 
-The reusable `.github/workflows/security.yml` analyzes Java using a manual
-Maven build with Java 21. Linux, macOS, and Windows CI wait for their CodeQL job
-before running OS checks. The release workflow also requires CodeQL before
-building and uploading JARs; manual dispatch scans the selected release tag,
-not the default branch. Each workflow invokes its own prerequisite scan.
+`.github/workflows/ci.yml` owns one pipeline for master/main pushes, version-tag
+pushes, pull requests and manual dispatch. One CodeQL Java analysis gates a
+matrix of Ubuntu 22.04/24.04/26.04, macOS 14 Apple Silicon and Windows 11 ARM
+(x64 Temurin Java under emulation). Unix jobs retain the formatting, hygiene
+and Python tooling checks. Every OS builds JARs and runs JUnit with
+`mvn -B clean verify`; reports are retained even on failure.
 
-Analysis failure or cancellation blocks downstream jobs. Findings are uploaded
-to GitHub Security; a completed scan with alerts does not automatically fail
-this gate. Alert severity policy is separate. Disable GitHub default CodeQL
-setup if enabled to avoid duplicating this advanced setup.
+Only a version-tag push or manual dispatch at a version tag can publish.
+All OS jobs must succeed, and the tag must be `vMAJOR.MINOR.PATCH` matching
+the POM version. The final job builds thin/all JARs, checks their contents,
+generates SHA-256 checksums and publishes the release assets with generated
+notes. Master/main pushes and pull requests run validation only; they never
+publish a JAR release. Failed or cancelled prerequisites block publication.
+Runs for the same ref are serialized to avoid overlapping publication.
 
-The release workflow starts after publication, so this gates JAR asset uploads,
-not creation of the release page itself. Actual CodeQL execution requires GitHub
-CI; local workflow lint does not establish a clean security scan.
+CodeQL findings go to GitHub Security. A successful analysis containing alerts
+does not itself fail this gate; alert severity policy is separate. Disable
+GitHub default CodeQL setup if enabled to avoid duplicate analysis. Local lint
+and tests do not replace the GitHub OS matrix or the security scan.
 
 ```mermaid
-flowchart LR
-    Event[CI or release event] --> Scan[CodeQL Java analysis]
-    Scan -->|Success| Build[OS checks or release JAR build]
+flowchart TD
+    Event[Branch push, PR, tag push or manual run] --> Scan[CodeQL]
+    Scan --> OS[Ubuntu + macOS + Windows checks]
+    OS --> Gate{All pass and version tag?}
+    Gate -->|Branch or PR| Done[Validation complete; no release]
+    Gate -->|Tag matches POM| Jars[Build JARs and checksums]
+    Jars --> Publish[Publish GitHub release and assets]
     Scan -->|Failure| Stop[Block downstream jobs]
-    Build --> Assets[Release workflow only: upload JARs]
+    OS -->|Failure| Stop
 ```
 
-
-### Windows CI
-
-`ci-windows.yml` runs on Windows 11 ARM with x64 Temurin Java 21 under
-emulation. After CodeQL succeeds, `mvn -B clean verify` builds the JARs and
-runs JUnit tests. Surefire reports are retained even on failure. The README's
-Windows badge links to this workflow; it does not claim native x64 hardware
-testing or MSI coverage (OSCAR distributes JARs). Unix shell quality checks
-remain in Linux/macOS CI. This workflow runs on pushes, pull requests, and
-manual dispatch; it does not publish releases.
-
+The README's unified status badge covers the complete pipeline. Windows tests
+use x64 emulation on ARM, not native x64 hardware; no MSI is built by OSCAR.
 
 ### Recheck an up-to-date branch
 
