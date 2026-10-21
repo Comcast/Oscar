@@ -3,16 +3,26 @@ set -euo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)"
 die() { echo "[git-push] ERROR: $*" >&2; exit 1; }
-case "${1:-}" in
-  --help|-h)
-    echo 'Usage: tools/git/git-push.sh --master | --branch'
-    echo 'Push the current main/master branch to origin after local checks.'
-    echo 'Requires a clean checkout. No-op pushes skip checks.'
-    echo 'Never creates tags, bumps versions, or publishes releases.'
-    exit 0 ;;
-  --master|--branch) [[ $# -eq 1 ]] || die 'Choose exactly one mode.' ;;
-  *) die 'Use --master or --branch (see --help).' ;;
-esac
+MODE=""
+FORCE_PUSH=false
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --force-push) FORCE_PUSH=true ;;
+    --master|--branch)
+      [[ -z "$MODE" ]] || die 'Choose exactly one mode.'
+      MODE=branch ;;
+    --help|-h)
+      echo 'Usage: tools/git/git-push.sh --master [--force-push]'
+      echo '--branch is an alias for --master.'
+      echo '--force-push reruns checks for an up-to-date branch.'
+      echo 'Requires a clean checkout. Never rewrites remote history.'
+      echo 'Never creates tags, bumps versions, or publishes releases.'
+      exit 0 ;;
+    *) die 'Use --master or --branch (see --help).' ;;
+  esac
+  shift
+done
+[[ -n "$MODE" ]] || die 'Choose --master or --branch.'
 cd "$ROOT"
 [[ "$(git rev-parse --show-toplevel)" == "$ROOT" ]] || die 'Helper must belong to the checkout root.'
 [[ -z "$(git status --porcelain)" ]] || die 'Commit or stash changes before pushing.'
@@ -29,8 +39,12 @@ REMOTE_REF="$(git ls-remote --refs origin "$REF")"
 if [[ -n "$REMOTE_REF" ]]; then
   REMOTE_OID="${REMOTE_REF%%$'\t'*}"
   if [[ "$REMOTE_OID" == "$LOCAL_OID" ]]; then
-    echo '[git-push] Nothing to push; checks skipped.'
-    exit 0
+    if [[ "$FORCE_PUSH" == false ]]; then
+      echo '[git-push] Nothing to push; checks skipped.'
+      echo 'Use --force-push to run checks again without rewriting history.'
+      exit 0
+    fi
+    echo '[git-push] Origin is current; rerunning checks as requested.'
   fi
   git fetch --no-tags origin "$REF"
   git merge-base --is-ancestor FETCH_HEAD HEAD || die 'Branch is behind or diverged; reconcile it first.'

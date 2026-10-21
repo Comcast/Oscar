@@ -259,3 +259,12 @@ Windows badge links to this workflow; it does not claim native x64 hardware
 testing or MSI coverage (OSCAR distributes JARs). Unix shell quality checks
 remain in Linux/macOS CI. This workflow runs on pushes, pull requests, and
 manual dispatch; it does not publish releases.
+
+
+### Recheck an up-to-date branch
+
+Use `tools/git/git-push.sh --master --force-push` to run local checks even
+when origin already has the current commit. This option never passes Git's
+force flag, overwrites tags, bypasses checks, or permits uncommitted changes.
+The no-change message suggests this option; dirty checkouts still require
+committing or stashing first.

@@ -45,6 +45,18 @@ class GitPushTest(unittest.TestCase):
         self.assertEqual(result.returncode == 0, success, result.stdout + result.stderr)
         return result
 
+    def test_force_push_rechecks_noop_without_changing_remote(self):
+        self.run_helper()
+        original = self.git('ls-remote', 'origin')
+        self.run_helper(True, '--master', '--force-push')
+        self.assertEqual(original, self.git('ls-remote', 'origin'))
+        self.assertEqual((self.base / 'checks').read_text(), 'checked\nchecked\n')
+
+    def test_force_push_rejects_dirty_checkout(self):
+        (self.root / 'dirty').write_text('pending')
+        self.run_helper(False, '--master', '--force-push')
+        self.assertFalse((self.base / 'checks').exists())
+
     def test_push_and_noop_skip_checks(self):
         self.git('tag', '-a', 'v1.0.0', '-m', 'Tag')
         self.git('config', 'push.followTags', 'true')

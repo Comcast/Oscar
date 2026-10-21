@@ -38,3 +38,12 @@ in `target/surefire-reports/*-output.txt`. Maven test failures still fail the
 push checks and display failure summaries. Inspect those output files and the
 corresponding test reports when troubleshooting. To stream test output during a manual diagnostic run, use
 `mvn -Dmaven.test.redirectTestOutputToFile=false test`.
+
+
+### Recheck an up-to-date branch
+
+Use `tools/git/git-push.sh --master --force-push` to run local checks even
+when origin already has the current commit. This option never passes Git's
+force flag, overwrites tags, bypasses checks, or permits uncommitted changes.
+The no-change message suggests this option; dirty checkouts still require
+committing or stashing first.

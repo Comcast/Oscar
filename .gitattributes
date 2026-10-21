@@ -1,0 +1,2 @@
+# Exact exporter fixtures must match canonical LF output on every OS.
+/src/test/resources/export-text/*.txt text eol=lf
