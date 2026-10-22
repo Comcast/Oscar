@@ -4,7 +4,7 @@
 
 ## Checkout and prerequisites
 
-Install Git, a **Java 21 JDK** (including `javac`), Maven, and Python 3.
+Install Git, a **Java 21 JDK** (including `javac`), Maven 3.6.3 or later, and Python 3.
 Use a JDK matching the host architecture. Windows and macOS Java instructions
 are in the [installation guide](Installation.md); install Maven separately
 using its [official instructions](https://maven.apache.org/install.html).
