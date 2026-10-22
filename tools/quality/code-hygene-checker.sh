@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright 2026 Comcast Cable Communications Management, LLC
+# SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
 
 REPO_ROOT="$(git -C "$(dirname "$0")" rev-parse --show-toplevel)"
@@ -52,14 +54,8 @@ if [[ "$COPYRIGHT_ONLY" == true ]]; then
   exit 0
 fi
 
-MAVEN_VERSION="3.9.9"
-MAVEN_BASE="${HOME}/.local/apache-maven-${MAVEN_VERSION}"
 JAVA_HOME_DEFAULT="${JAVA_HOME:-}"
 LOCAL_JAVA_HOME="${HOME}/.local/temurin-21"
-
-if [ -x "${MAVEN_BASE}/bin/mvn" ]; then
-  PATH="${MAVEN_BASE}/bin:${PATH}"
-fi
 
 if [ -n "${JAVA_HOME_DEFAULT}" ]; then
   PATH="${JAVA_HOME_DEFAULT}/bin:${PATH}"
@@ -68,4 +64,4 @@ elif [ -x "${LOCAL_JAVA_HOME}/bin/javac" ]; then
   PATH="${JAVA_HOME}/bin:${PATH}"
 fi
 
-mvn -DskipTests compile -DcompilerArgs="-Xlint:all -Werror"
+./mvnw -DskipTests compile -DcompilerArgs="-Xlint:all -Werror"

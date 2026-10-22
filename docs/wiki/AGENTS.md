@@ -5,7 +5,7 @@ Use these guidelines when working in this codebase.
 
 ## Environment
 - Java: `21`
-- Build tool: `mvn` (primary), `build.xml` is legacy
+- Build tool: `./mvnw` (`./mvnw.cmd` on Windows); `build.xml` is legacy
 - Entry point: `com.comcast.oscar.cli.Main`
 
 ## Required Workflow
@@ -28,7 +28,7 @@ Use these guidelines when working in this codebase.
 - `scripts/verify.sh`: compile + test.
 
 ## Tests
-- Use JUnit 5 (Jupiter).
+- Use JUnit Jupiter at the version declared in `pom.xml`.
 - Place tests under `src/test/java` following package structure.
 - Name tests `*Test.java` and keep them deterministic.
 

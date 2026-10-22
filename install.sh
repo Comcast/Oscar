@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
+# Copyright 2026 Comcast Cable Communications Management, LLC
+# SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
+
+REPO_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cd "$REPO_ROOT"
 
 BUILD_OSCAR_JAR=0
 DEVELOPMENT_SETUP=0
@@ -93,13 +98,6 @@ if [ -d "${HOME}/.local/temurin-21/bin" ]; then
   esac
 fi
 
-if [ -d "${HOME}/.local/apache-maven-3.9.9/bin" ]; then
-  case ":${PATH}:" in
-    *":${HOME}/.local/apache-maven-3.9.9/bin:"*) ;;
-    *) export PATH="${HOME}/.local/apache-maven-3.9.9/bin:${PATH}" ;;
-  esac
-fi
-
 if [ -d "${HOME}/.local/node-20/bin" ]; then
   case ":${PATH}:" in
     *":${HOME}/.local/node-20/bin:"*) ;;
@@ -152,48 +150,8 @@ install_local_jdk21() {
   fi
 }
 
-install_local_maven() {
-  local maven_version="3.9.9"
-  local maven_base="${HOME}/.local/apache-maven-${maven_version}"
-  local maven_tgz="${HOME}/.local/maven.tgz"
-  local url="https://archive.apache.org/dist/maven/maven-3/${maven_version}/binaries/apache-maven-${maven_version}-bin.tar.gz"
-
-  if [ -x "${maven_base}/bin/mvn" ]; then
-    return 0
-  fi
-
-  mkdir -p "${HOME}/.local"
-  if command -v curl >/dev/null 2>&1; then
-    curl -fsSL "$url" -o "$maven_tgz"
-  else
-    wget -qO "$maven_tgz" "$url"
-  fi
-
-  tar -xzf "$maven_tgz" -C "${HOME}/.local"
-  rm -f "$maven_tgz"
-}
-
 ensure_maven() {
-  if command -v mvn >/dev/null 2>&1; then
-    mvn -v
-    return 0
-  fi
-
-  if [ "$(uname -s 2>/dev/null || echo "")" = "Linux" ]; then
-    if command -v sudo >/dev/null 2>&1; then
-      if sudo -n true 2>/dev/null; then
-        sudo apt-get update -y
-        sudo apt-get install -y maven
-      else
-        install_local_maven
-      fi
-    else
-      install_local_maven
-    fi
-  else
-    echo "Maven is not installed and this installer only supports auto-install on Linux."
-    return 1
-  fi
+  "$REPO_ROOT/mvnw" --version
 }
 
 ensure_snmptranslate() {
@@ -354,7 +312,7 @@ ensure_markdownlint() {
 
 build_oscar_jar() {
   echo "Building oscar.jar ..."
-  mvn -q -DskipTests package
+  ./mvnw -q -DskipTests package
 
   local source_jar=""
   source_jar="$(find dist target -maxdepth 1 -type f -name '*-all.jar' | head -n1 || true)"

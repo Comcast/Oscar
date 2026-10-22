@@ -4,105 +4,120 @@
  */
 package com.comcast.oscar.utilities;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.InputStream;
+import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.ZipParameters;
-import net.lingala.zip4j.model.enums.CompressionLevel;
-import net.lingala.zip4j.model.enums.CompressionMethod;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+/** Creates and updates ordinary, unencrypted ZIP archives using OpenJDK. */
 public class Zip {
+  private static final Logger logger = LogManager.getLogger(Zip.class);
 
   /**
-   * @param fFileName
-   * @param ba
-   * @param fZipFilename File
+   * Adds or replaces one entry while retaining other entries in an existing archive.
+   *
+   * <p>For example, archive {@code configs.zip}, entry {@code modem.bin}, and bytes {@code {1, 2}}
+   * produce an entry whose uncompressed contents are exactly those two bytes. I/O failures are
+   * logged, matching this legacy void API; an existing archive is not replaced until the complete
+   * new archive has been written. Inputs are not modified.
+   *
+   * @param archive destination archive, used as supplied without adding an extension
+   * @param entryName entry path within the archive; path separators become forward slashes
+   * @param contents uncompressed entry bytes
+   * @throws NullPointerException if any argument is null
    */
-  public static void ZipFile(File fZipFilename, File fFileName, byte[] ba) {
-
-    ZipFile zf = null;
-
-    // Create ZIP Build Folder and ZIP file
-    zf = new ZipFile(fZipFilename);
-
-    // Create a InputStream from memory
-    InputStream is = new ByteArrayInputStream(ba);
-
-    // This would be the name of the file for this entry in the ZIP file
-    ZipParameters zp = InitZipParametersFileName(fFileName);
-
-    try {
-      zf.addStream(is, zp);
-    } catch (ZipException e) {
-      e.printStackTrace();
-    }
+  public static void ZipFile(File archive, File entryName, byte[] contents) {
+    writeArchive(archive.toPath(), Map.of(entryName, contents));
   }
 
   /**
-   * @param fZipFileName
-   * @param mfba
+   * Adds or replaces several entries, appending {@code .zip} to the destination name.
+   *
+   * <p>For example, destination {@code configs} produces {@code configs.zip}. Existing entries not
+   * supplied in the map remain in the archive. An empty map leaves the filesystem unchanged. I/O
+   * failures are logged and an existing archive remains intact if writing fails. Entries use
+   * DEFLATE compression without encryption. Inputs are not modified.
+   *
+   * @param archiveBase destination name before the appended {@code .zip} suffix
+   * @param entries entry names and uncompressed contents, in the desired insertion order
+   * @throws NullPointerException if the destination, map, or an entry name/value is null
    */
-  public static void ZipFile(File fZipFileName, Map<File, byte[]> mfba) {
+  public static void ZipFile(File archiveBase, Map<File, byte[]> entries) {
+    writeArchive(Path.of(archiveBase.toString() + ".zip"), entries);
+  }
 
-    ZipFile zf = null;
-
-    // Create ZIP Build Folder and ZIP file
-    zf = new ZipFile(new File(fZipFileName + ".zip"));
-
-    // Cycle thru all the files and add them to the Zip File
-    for (Entry<File, byte[]> eEntry : mfba.entrySet()) {
-
-      File fFile = eEntry.getKey();
-
-      byte[] baByteArray = eEntry.getValue();
-
-      // Create a InputStream from memory
-      InputStream is = new ByteArrayInputStream(baByteArray);
-
-      // This would be the name of the file for this entry in the ZIP file
-      ZipParameters zp = InitZipParametersFileName(fFile);
-
+  private static void writeArchive(Path destination, Map<File, byte[]> entries) {
+    if (entries.isEmpty()) {
+      return;
+    }
+    Map<String, byte[]> replacements = new LinkedHashMap<>();
+    entries.forEach(
+        (name, bytes) ->
+            replacements.put(
+                name.toString().replace('\\', '/'), java.util.Objects.requireNonNull(bytes)));
+    Path archive = destination.toAbsolutePath();
+    Path temporary = null;
+    try {
+      Files.createDirectories(archive.getParent());
+      temporary = Files.createTempFile(archive.getParent(), "oscar-zip-", ".tmp");
+      // Rewrite existing entries once, rather than reopening the archive for each new entry.
+      try (var output = new ZipOutputStream(Files.newOutputStream(temporary))) {
+        if (Files.exists(archive)) {
+          copyExisting(archive, output, replacements);
+        }
+        for (var entry : replacements.entrySet()) {
+          output.putNextEntry(new ZipEntry(entry.getKey()));
+          output.write(entry.getValue());
+          output.closeEntry();
+        }
+      }
       try {
-        zf.addStream(is, zp);
-      } catch (ZipException e) {
-        e.printStackTrace();
+        Files.move(
+            temporary,
+            archive,
+            StandardCopyOption.REPLACE_EXISTING,
+            StandardCopyOption.ATOMIC_MOVE);
+      } catch (AtomicMoveNotSupportedException e) {
+        Files.move(temporary, archive, StandardCopyOption.REPLACE_EXISTING);
+      }
+    } catch (IOException e) {
+      logger.error("Cannot write ZIP archive {}", archive, e);
+    } finally {
+      if (temporary != null) {
+        try {
+          Files.deleteIfExists(temporary);
+        } catch (IOException e) {
+          logger.error("Cannot remove temporary ZIP file {}", temporary, e);
+        }
       }
     }
   }
 
-  /**
-   * @param f
-   * @return ZipParameters
-   */
-  private static ZipParameters InitZipParametersFileName(File f) {
-
-    // Initiate Zip Parameters which define various properties such
-    // as compression method, etc. More parameters are explained in other
-    // examples
-    ZipParameters zp = new ZipParameters();
-
-    // set compression method to deflate compression
-    zp.setCompressionMethod(CompressionMethod.DEFLATE);
-
-    /*
-     Set the compression level. This value has to be in between 0 to 9
-     Several predefined compression levels are available
-     DEFLATE_LEVEL_FASTEST - Lowest compression level but higher speed of compression
-     DEFLATE_LEVEL_FAST - Low compression level but higher speed of compression
-     DEFLATE_LEVEL_NORMAL - Optimal balance between compression level/speed
-     DEFLATE_LEVEL_MAXIMUM - High compression level with a compromise of speed
-     DEFLATE_LEVEL_ULTRA - Highest compression level but low speed
-    */
-    zp.setCompressionLevel(CompressionLevel.NORMAL);
-
-    zp.setRootFolderNameInZip(f.getPath() + File.separator);
-
-    zp.setFileNameInZip(f.toString());
-
-    return zp;
+  private static void copyExisting(
+      Path archive, ZipOutputStream output, Map<String, byte[]> replacements) throws IOException {
+    try (var existing = new java.util.zip.ZipFile(archive.toFile())) {
+      output.setComment(existing.getComment());
+      var entries = existing.entries();
+      while (entries.hasMoreElements()) {
+        var entry = entries.nextElement();
+        if (!replacements.containsKey(entry.getName())) {
+          var copy = new ZipEntry(entry);
+          copy.setCompressedSize(-1); // DEFLATE may produce a different compressed size.
+          output.putNextEntry(copy);
+          try (var input = existing.getInputStream(entry)) {
+            input.transferTo(output);
+          }
+          output.closeEntry();
+        }
+      }
+    }
   }
 }

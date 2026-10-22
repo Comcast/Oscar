@@ -1,0 +1,9 @@
+phase,files,elapsed_ns
+bulk-text-to-binary,10000,38845880835
+bulk-binary-to-text,10000,5304378093
+bulk-text-recompile,10000,39116983473
+bulk-binary-to-binary,10000,5603355702
+zip-create,10000,23774908290
+zip-verify,10000,56094017
+merge-binary,10000,4056523443
+merge-text,10000,8277777442

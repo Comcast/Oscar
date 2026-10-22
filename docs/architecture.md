@@ -163,7 +163,7 @@ The ANTLR grammar accepts quoted scalar strings and quoted SNMP values.
 `TlvTextString` owns escape decoding, export quoting and quote-aware comment
 suppression. This keeps URL punctuation and whitespace out of grammar syntax
 while preserving decoded bytes. Generated parser files are regenerated with
-ANTLR 4.1; they are not edited manually. Quoted-string JUnit tests cover literal
+ANTLR 4.13.2; they are not edited manually. Quoted-string JUnit tests cover literal
 URL bytes, escapes, nesting, SNMP, malformed input and binary/text round trips.
 This parser capability is independent of embedded-service catalog activation.
 
@@ -403,3 +403,67 @@ pushes validate only. Version tags matching the POM publish JARs and checksums
 only after every OS passes. Manual publication requests use the same gate.
 See [development workflow](wiki/development.md#codeql-before-ci-and-release-builds)
 for the matrix, permissions, recovery procedure and flow diagram.
+
+## ZIP utility dependency
+
+`utilities.Zip` uses OpenJDK `java.util.zip`; Zip4j is no longer a runtime
+or build dependency. The two existing `ZipFile` signatures remain available:
+the single-entry overload uses the given archive filename, while the map
+overload appends `.zip` to its base name. Both add/replace entries while keeping
+unrelated existing entries. Empty maps do nothing. Entry separators use `/`.
+
+The utility writes one complete temporary archive, closes it, then replaces the
+destination (atomic move when supported). Failed archive construction preserves
+the destination and removes the temporary file. Existing ordinary STORED and
+DEFLATED entries and archive comments are preserved; new entries use DEFLATE.
+The legacy void methods log I/O failures rather than returning a success flag.
+
+There is still no ZIP option in the bulk CLI. `ConfigurationFile.writeToZip()`
+remains a deprecated no-op solely for compatibility; its historical `true`
+return does not indicate that an archive was created. Its dead Zip4j helpers
+were removed. OSCAR-UI has no source callers of either ZIP API.
+
+`ZipTest` covers entry bytes, names, empty entries/maps, append/replacement,
+STORED entries, comments, failed updates and temporary cleanup. The opt-in
+[10,000-entry comparison](benchmarks/jdk-zip/README.md) records timings before
+and after replacing Zip4j.
+
+## Build toolchain security
+
+Local checks, the installer, release tooling and CI use the checked-in Apache
+Maven Wrapper. Its distribution URL and SHA-256 in
+`.mvn/wrapper/maven-wrapper.properties` own the Maven pin. Wrapper downloads stay
+in the user cache; system Maven and user credentials are not replaced. Use
+`./mvnw` on Unix and `./mvnw.cmd` in Windows PowerShell.
+
+The POM pins lifecycle plugins, including Clean, Resources, Install and Deploy,
+instead of inheriting Maven's defaults. Dependency inspection is also
+pinned. Clean, Resources, Shade and AntRun temporarily override Plexus Utils
+for CVE-2025-67030. The inspection plugin overrides BeanUtils for CVE-2025-48734;
+remove those overrides only after upstream plugins resolve
+patched versions and a fresh scan confirms them. Build-plugin dependencies are
+separate from application dependencies and are not included in the OSCAR JAR.
+
+Audit both resolved dependency trees and the plugin libraries actually loaded
+by the pinned Maven. Advisory matches require reachability review; no matches
+are not proof that a build or application has no vulnerabilities. Installation and
+deployment are separate from ordinary package/test checks. The unused Maven Site
+lifecycle is disabled in `.mvn/jvm.config`, avoiding its obsolete server stack;
+OSCAR documentation and wiki tooling do not use it. Re-enabling Site requires a
+separate dependency review.
+
+The 2026-10-22 OSV audit found no advisory matches across 164 distinct Maven
+coordinates from application/test dependencies, active plugin dependency graphs,
+observed package-time plugin class realms and the Maven distribution's embedded
+POM metadata. This is a point-in-time inventory check, not an exploitability
+assessment or a guarantee of security. Windows/macOS execution remains CI work.
+
+`dependency:resolve-plugins` also inventories the unused Site plugin. Its
+dependencies still have advisory matches; do not report those as fixed. For the
+active-build inventory, use
+`./mvnw dependency:resolve-plugins -DexcludeArtifactIds=maven-site-plugin`.
+Confirm Site is absent from the effective build plugins and `./mvnw site` rejects
+the disabled lifecycle before excluding it. Explicit plugin-goal invocation is
+still possible: this setting is not a plugin execution sandbox. See the
+[Maven release notes](https://maven.apache.org/docs/3.10.0/release-notes.html)
+for the lifecycle property.

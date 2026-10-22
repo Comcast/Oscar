@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright 2026 Comcast Cable Communications Management, LLC
+# SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
 
 ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd -P)"
@@ -51,7 +53,7 @@ if [[ -n "$REMOTE_REF" ]]; then
 fi
 echo '[git-push] Running format, hygiene, compile, and test checks...'
 bash tools/run-all.sh
-mvn -B test
+./mvnw -B test
 python3 -m unittest discover -s tools/git -p 'test_*.py'
 python3 -m unittest discover -s tools/release -p 'test_*.py'
 [[ -z "$(git status --porcelain)" ]] || die 'Checks changed files; review and commit before retrying.'

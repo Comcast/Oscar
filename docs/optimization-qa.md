@@ -40,3 +40,9 @@ State whether an improvement exceeds measurement noise. If the baseline was
 reconstructed after editing, say so. Do not claim allocation or memory savings
 from elapsed-time measurements alone. Keep benchmark inputs free of customer
 secrets and exclude generated binaries from source control.
+
+## Bulk CLI workload
+
+See the [10,000-file bulk CLI and ZIP baseline](benchmarks/bulk-cli/README.md)
+for opt-in scale checks, independent ZIP verification, timing boundaries,
+and cleanup behavior.

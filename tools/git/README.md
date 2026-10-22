@@ -37,7 +37,7 @@ JUnit stdout/stderr, including the intentional DEBUG round-trip test, is saved
 in `target/surefire-reports/*-output.txt`. Maven test failures still fail the
 push checks and display failure summaries. Inspect those output files and the
 corresponding test reports when troubleshooting. To stream test output during a manual diagnostic run, use
-`mvn -Dmaven.test.redirectTestOutputToFile=false test`.
+`./mvnw -Dmaven.test.redirectTestOutputToFile=false test`.
 
 
 ### Recheck an up-to-date branch

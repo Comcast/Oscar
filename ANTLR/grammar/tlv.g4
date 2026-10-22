@@ -4,18 +4,13 @@
  */
 grammar tlv;
 
-@lexer::header {
-package com.comcast.oscar.parser;
-}
-
-@parser::header {
+@header {
 package com.comcast.oscar.parser;
 }
 
 WS            : [ \t\r\n]+ -> skip;
 WS_NO_SKIP    : [ \t\r\n]+;
 SPACE         : ' ';
-NO_WS         : '';
 LBRACE        : '{';
 RBRACE        : '}';
 SEMICOLON     : ';';

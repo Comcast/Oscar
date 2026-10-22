@@ -27,11 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.lingala.zip4j.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.model.ZipParameters;
-import net.lingala.zip4j.model.enums.CompressionLevel;
-import net.lingala.zip4j.model.enums.CompressionMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -546,13 +541,14 @@ public class ConfigurationFile {
   }
 
   /**
-   * Need to work on this
+   * Retains the legacy no-op for binary compatibility; this method does not write an archive.
    *
-   * @return boolean
+   * @return the historical constant {@code true}, not an indication that a file was written
+   * @deprecated use {@link com.comcast.oscar.utilities.Zip#ZipFile(java.io.File, java.io.File,
+   *     byte[])} with an explicit archive destination and entry name
    */
+  @Deprecated
   public boolean writeToZip() {
-    @SuppressWarnings("unused")
-    ZipParameters zp = initZipParameters();
     return true;
   }
 
@@ -1024,53 +1020,5 @@ public class ConfigurationFile {
    */
   private void updateConfigurationFileTlvBuilder(TlvVariableBinding tvb) {
     this.tbConfigurationFile.add(tvb);
-  }
-
-  /**
-   * @return ZipParameters
-   */
-  private ZipParameters initZipParameters() {
-
-    // Initiate Zip Parameters which define various properties such
-    // as compression method, etc. More parameters are explained in other
-    // examples
-    ZipParameters zpParameters = new ZipParameters();
-
-    // set compression method to deflate compression
-    zpParameters.setCompressionMethod(CompressionMethod.DEFLATE);
-
-    /*
-     Set the compression level. This value has to be in between 0 to 9
-     Several predefined compression levels are available
-     DEFLATE_LEVEL_FASTEST - Lowest compression level but higher speed of compression
-     DEFLATE_LEVEL_FAST - Low compression level but higher speed of compression
-     DEFLATE_LEVEL_NORMAL - Optimal balance between compression level/speed
-     DEFLATE_LEVEL_MAXIMUM - High compression level with a compromise of speed
-     DEFLATE_LEVEL_ULTRA - Highest compression level but low speed
-    */
-    zpParameters.setCompressionLevel(CompressionLevel.NORMAL);
-
-    return zpParameters;
-  }
-
-  /**
-   * @param zp ZipParameters
-   * @param fFileRootDir File
-   */
-  @SuppressWarnings("unused")
-  private void setZipFolderRoot(ZipParameters zp, File fFileRootDir) {
-    zp.setRootFolderNameInZip(fFileRootDir.getPath() + File.separator);
-  }
-
-  /**
-   * Need to work on this
-   *
-   * @param f
-   * @return ZipFile
-   * @throws ZipException
-   */
-  @SuppressWarnings("unused")
-  private ZipFile ZipFileFactory(File f) throws ZipException {
-    return null;
   }
 }

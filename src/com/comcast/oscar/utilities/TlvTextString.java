@@ -68,7 +68,7 @@ public final class TlvTextString {
   private static boolean isPlainValue(String text) {
     if (!text.matches("[a-zA-Z0-9_'$.-]+")) return false;
     var lexer =
-        new com.comcast.oscar.parser.tlvLexer(new org.antlr.v4.runtime.ANTLRInputStream(text));
+        new com.comcast.oscar.parser.tlvLexer(org.antlr.v4.runtime.CharStreams.fromString(text));
     int type = lexer.nextToken().getType();
     return (type == com.comcast.oscar.parser.tlvLexer.IDENTIFIER
             || type == com.comcast.oscar.parser.tlvLexer.INT)

@@ -4,10 +4,14 @@
 
 ## Checkout and prerequisites
 
-Install Git, a **Java 21 JDK** (including `javac`), Maven, and Python 3.
+Install Git, a **Java 21 JDK** (including `javac`), and Python 3.
 Use a JDK matching the host architecture. Windows and macOS Java instructions
-are in the [installation guide](Installation.md); install Maven separately
-using its [official instructions](https://maven.apache.org/install.html).
+are in the [installation guide](Installation.md). Use the checked-in Maven Wrapper:
+`./mvnw` on Linux/macOS or `./mvnw.cmd` in Windows PowerShell. It downloads
+the checksum-pinned Maven distribution from `.mvn/wrapper/maven-wrapper.properties`
+into the user Maven cache on first use; later runs reuse it. No system Maven
+installation or administrator access is needed. On Unix, provide curl or wget,
+unzip, and sha256sum or shasum. Windows uses PowerShell.
 The repository installer is for Linux, not Windows or macOS.
 
 ```bash
@@ -15,7 +19,7 @@ git clone https://github.com/Comcast/Oscar.git
 cd Oscar
 java -version
 javac -version
-mvn -version
+./mvnw -version
 ```
 
 On supported Linux hosts, install development prerequisites with:
@@ -36,11 +40,11 @@ GitHub CLI; authentication and publication are separate actions.
 
 ## Build and test
 
-Run from the checkout root (Maven commands also work in PowerShell):
+Run from the checkout root (use `./mvnw.cmd` instead in PowerShell):
 
 ```bash
-mvn package
-mvn test
+./mvnw package
+./mvnw test
 ```
 
 See [in-memory API round-trip coverage](../api-roundtrip-tests.md) for the
@@ -75,7 +79,7 @@ Release assets include individual SHA-256 checksum files. Neither variant
 includes examples or test classes. Build a thin-JAR classpath locally with:
 
 ```bash
-mvn dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=target/lib
+./mvnw dependency:copy-dependencies -DincludeScope=runtime -DoutputDirectory=target/lib
 java -cp "target/oscar-3.2.1.jar:target/lib/*" com.comcast.oscar.cli.Main --help
 ```
 
@@ -235,7 +239,7 @@ pushes, pull requests and manual dispatch. One CodeQL Java analysis gates a
 matrix of Ubuntu 22.04/24.04/26.04, macOS 14 Apple Silicon and Windows 11 ARM
 (x64 Temurin Java under emulation). Unix jobs retain the formatting, hygiene
 and Python tooling checks. Every OS builds JARs and runs JUnit with
-`mvn -B clean verify`; reports are retained even on failure.
+`./mvnw -B clean verify`; reports are retained even on failure.
 
 Only a version-tag push or manual dispatch at a version tag can publish.
 All OS jobs must succeed, and the tag must be `vMAJOR.MINOR.PATCH` matching
