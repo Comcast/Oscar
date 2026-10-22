@@ -37,7 +37,7 @@
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
-      <version>20251224</version>
+      <version>20260814</version>
     </dependency>
     <dependency>
       <groupId>org.snmp4j</groupId>
