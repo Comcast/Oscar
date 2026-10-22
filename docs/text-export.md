@@ -38,6 +38,25 @@ explicit-type constructor.
 paths such as `25.1`, supports container definitions, and fails promptly for
 missing or malformed paths instead of repeatedly searching an absent child.
 
+## Banner level
+
+New exporters default to `TemplateBannerLevel.FULL`, preserving the existing
+version, copyright, SPDX, authors, and format instructions. Select a compact
+banner explicitly:
+
+```java
+exporter.setTemplateBannerLevel(TemplateBannerLevel.SPDX_AUTHOR);
+String text = exporter.toPrettyPrint(true, false);
+```
+
+`SPDX` includes copyright and the SPDX license identifier. `SPDX_AUTHOR` also
+includes both authors. Neither compact level includes the version or format
+instructions. The selection persists on that exporter for text and file output,
+independently of template contents and TLV comment suppression. Passing null
+throws `NullPointerException` without changing the current selection. Set `FULL`
+to restore the historical banner. This is a library API option; it does not add
+a CLI flag or change OSCAR-UI's selection automatically.
+
 ## Output regression tests
 
 ```bash

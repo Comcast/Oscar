@@ -45,6 +45,7 @@ public class ConfigurationFileExport {
 
   // Decoded instance state; export options retain their historical per-instance behavior.
   private byte[] binary;
+  private TemplateBannerLevel templateBannerLevel = TemplateBannerLevel.FULL;
 
   private ArrayList<JSONObject> decodedEntries;
   private static final int NO_PENDING_CERTIFICATE = -1;
@@ -287,6 +288,17 @@ public class ConfigurationFileExport {
     } else {
       throw new IllegalArgumentException("Unsupported configuration type: " + configurationType);
     }
+  }
+
+  /**
+   * Selects the banner for subsequent text exports; new exporters default to FULL.
+   * This option does not change TLV contents or comment suppression.
+   *
+   * @param level FULL for historical help, SPDX for license only, or SPDX_AUTHOR for attribution
+   * @throws NullPointerException if level is null; the existing selection is retained
+   */
+  public void setTemplateBannerLevel(TemplateBannerLevel level) {
+    templateBannerLevel = Objects.requireNonNull(level, "Template banner level");
   }
 
   // Text rendering: emit syntax and annotations; PrettyPrint owns final indentation.
@@ -674,11 +686,19 @@ public class ConfigurationFileExport {
     }
   }
 
-  /** Builds the historical license/help banner; it is independent of TLV comment suppression. */
+  /** Builds the selected license/help banner independently of TLV comment suppression. */
   private StringBuilder banner() {
     StringBuilder sbBanner = new StringBuilder();
 
     sbBanner.append("/*\n");
+
+    if (templateBannerLevel != TemplateBannerLevel.FULL) {
+      sbBanner.append(Constants.SPDX_NOTICE);
+      if (templateBannerLevel == TemplateBannerLevel.SPDX_AUTHOR) {
+        sbBanner.append('\n').append(Constants.AUTHOR_NOTICE);
+      }
+      return sbBanner.append("\n*/\n\n");
+    }
 
     sbBanner.append(Constants.APACHE_20_LICENCE_DISCLAIMER + "\n\n");
 

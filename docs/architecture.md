@@ -347,6 +347,10 @@ Input adapters share initialization. One append buffer renders the body; shared
 leaf/SNMP/annotation helpers preserve values and paths. `PrettyPrint` remains the
 owner of final indentation and empty-template-container removal. Public overloads
 and per-instance option persistence remain compatible.
+`TemplateBannerLevel` independently controls the leading comment: `FULL` is the
+compatible default, `SPDX` retains copyright/license, and `SPDX_AUTHOR` adds
+attribution. The exporter setter applies to subsequent text and file exports;
+TLV selection, annotations, and binary encoding are unaffected.
 
 - [x] Replace loop string concatenation and repeated constructor setup.
 - [x] Document rendering stages, public contracts and shared immutable BER names.

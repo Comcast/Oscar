@@ -89,6 +89,31 @@ class ConfigurationFileExportTextTest {
     assertTrue(body(exporter.toPrettyPrint(true, false)).startsWith(header + " {\n"));
   }
 
+  @ParameterizedTest
+  @MethodSource("headers")
+  void bannerLevelsPreserveTemplateBodyAndDefaultToFull(int type, String header) {
+    var exporter = new ConfigurationFileExport(type);
+    String original = exporter.toPrettyPrint(true, false);
+    assertTrue(original.contains("Snmp11 OID DataType Value"));
+    assertTrue(original.contains("IPV4_TRANSPORT_FORMAT:"));
+    for (var level : TemplateBannerLevel.values()) {
+      exporter.setTemplateBannerLevel(level);
+      String output = exporter.toPrettyPrint(true, false);
+      assertEquals(body(original), body(output));
+      String banner = output.substring(0, output.indexOf("*/"));
+      assertTrue(banner.contains("Copyright 2015 - 2026"));
+      assertTrue(banner.contains("SPDX-License-Identifier: Apache-2.0"));
+      assertEquals(level != TemplateBannerLevel.SPDX, banner.contains("Author: Maurice Garcia"));
+      assertEquals(level != TemplateBannerLevel.SPDX, banner.contains("Author: Allen Flickinger"));
+      assertEquals(level == TemplateBannerLevel.FULL, banner.contains(Constants.OSCAR_BANNER));
+      assertEquals(level == TemplateBannerLevel.FULL, banner.contains("Snmp11 OID"));
+      assertEquals(level == TemplateBannerLevel.FULL, banner.contains("_FORMAT:"));
+    }
+    assertThrows(NullPointerException.class, () -> exporter.setTemplateBannerLevel(null));
+    exporter.setTemplateBannerLevel(TemplateBannerLevel.FULL);
+    assertEquals(original, exporter.toPrettyPrint(true, false));
+  }
+
   @Test
   void constructorsProduceIdenticalOutputAndFileBytesMatchText() throws Exception {
     var imported = new ConfigurationFileImport(new StringBuilder("Docsis { NetworkAccess 1; }"));
