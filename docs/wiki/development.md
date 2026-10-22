@@ -40,6 +40,19 @@ GitHub CLI; authentication and publication are separate actions.
 
 ## Build and test
 
+Dependency security is checked monthly, on the first day at 08:23 UTC, through
+the [Dependency security workflow](https://github.com/Comcast/Oscar/actions/workflows/dependency-security.yml).
+Use **Run workflow** to check sooner, or run locally:
+
+```bash
+python3 tools/quality/dependency-security.py
+```
+
+This resolves dependencies and queries OSV; it requires network access but no
+API key. Reports are written to `target/security-audit/`. Exit status is `0`
+for no advisory matches, `1` for findings, and `2` for an incomplete scan.
+See [scope and limitations](../architecture.md#monthly-dependency-monitoring).
+
 Run from the checkout root (use `./mvnw.cmd` instead in PowerShell):
 
 ```bash

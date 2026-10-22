@@ -1,0 +1,48 @@
+name: Dependency security
+
+on:
+  schedule:
+    - cron: '23 8 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-security-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    name: Maven dependency audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Scan application and build dependencies
+        run: python3 tools/quality/dependency-security.py
+      - name: Publish scan summary
+        if: always()
+        shell: bash
+        run: |
+          if [[ -f target/security-audit/summary.md ]]; then
+            cat target/security-audit/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Retain security report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: dependency-security-report
+          path: |
+            target/security-audit/report.json
+            target/security-audit/summary.md
+          retention-days: 35
+          if-no-files-found: warn

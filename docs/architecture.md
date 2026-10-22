@@ -467,3 +467,24 @@ the disabled lifecycle before excluding it. Explicit plugin-goal invocation is
 still possible: this setting is not a plugin execution sandbox. See the
 [Maven release notes](https://maven.apache.org/docs/3.10.0/release-notes.html)
 for the lifecycle property.
+
+### Monthly dependency monitoring
+
+`dependency-security.yml` runs on the default branch at 08:23 UTC on the first
+day of each month, or manually through Actions. It does not run on pushes or PRs
+and does not gate release publication. One Ubuntu runner invokes
+`tools/quality/dependency-security.py` with the pinned Maven wrapper.
+
+The scan queries OSV for all resolved application/test dependencies and Maven
+plugins with their transitive dependencies. It excludes the unused Site plugin
+only when absent from the effective build plugins; if Site is re-enabled, its
+dependencies are included. This scheduled scope does not inspect Maven's own
+distribution, dynamically loaded plugin libraries, JDK/OS packages, or GitHub
+Actions. It supplements CodeQL and Dependabot rather than replacing them.
+
+Any advisory match fails the job for review; an API or resolution error also
+fails instead of reporting a clean scan. OSV pagination is consumed completely.
+Only public Maven coordinates are sent to OSV. Reports under
+`target/security-audit/` identify affected coordinates and advisory IDs; CI
+retains the summary and JSON report for 35 days. The README badge reflects the
+latest workflow outcome, not a guarantee of security or a scan of every commit.
