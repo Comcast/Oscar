@@ -99,6 +99,16 @@ class ConfigurationFileExportTextTest {
     for (var level : TemplateBannerLevel.values()) {
       exporter.setTemplateBannerLevel(level);
       String output = exporter.toPrettyPrint(true, false);
+      if (level == TemplateBannerLevel.DISABLE) {
+        assertEquals(body(original), output);
+        assertTrue(output.startsWith(header + " {\n"));
+        assertTrue(output.contains("/* TLV:"));
+        exporter.toPrettyPrint(true, true);
+        String suppressed = exporter.toPrettyPrint(true);
+        assertTrue(suppressed.startsWith(header + " {\n"));
+        assertFalse(suppressed.contains("/*"));
+        continue;
+      }
       assertEquals(body(original), body(output));
       String banner = output.substring(0, output.indexOf("*/"));
       assertTrue(banner.contains("Copyright 2015 - 2026"));

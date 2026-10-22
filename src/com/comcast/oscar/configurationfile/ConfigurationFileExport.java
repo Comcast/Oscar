@@ -291,10 +291,10 @@ public class ConfigurationFileExport {
   }
 
   /**
-   * Selects the banner for subsequent text exports; new exporters default to FULL.
-   * This option does not change TLV contents or comment suppression.
+   * Selects the banner for subsequent text exports; new exporters default to FULL. This option does
+   * not change TLV contents or comment suppression.
    *
-   * @param level FULL for historical help, SPDX for license only, or SPDX_AUTHOR for attribution
+   * @param level FULL for help, SPDX for license, SPDX_AUTHOR for attribution, or DISABLE for none
    * @throws NullPointerException if level is null; the existing selection is retained
    */
   public void setTemplateBannerLevel(TemplateBannerLevel level) {
@@ -335,7 +335,7 @@ public class ConfigurationFileExport {
 
   /**
    * Renders text and retains the requested annotation setting for subsequent single-argument calls.
-   * The license/help banner remains present even when TLV comments are suppressed.
+   * The selected banner is independent of TLV comment suppression; DISABLE omits it.
    *
    * @param includeDefaults true to include valueless template entries, except incomplete SNMP
    *     objects
@@ -689,6 +689,9 @@ public class ConfigurationFileExport {
   /** Builds the selected license/help banner independently of TLV comment suppression. */
   private StringBuilder banner() {
     StringBuilder sbBanner = new StringBuilder();
+    if (templateBannerLevel == TemplateBannerLevel.DISABLE) {
+      return sbBanner;
+    }
 
     sbBanner.append("/*\n");
 

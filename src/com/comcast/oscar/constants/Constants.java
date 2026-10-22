@@ -23,12 +23,16 @@ public class Constants {
       "OSCAR: OpenSource Cable modem file AssembleR v" + OSCAR_VERSION;
 
   public static final String SPDX_NOTICE =
-      TAB + "Copyright 2015 - 2026 Comcast Cable Communications Management, LLC\n"
-          + TAB + "SPDX-License-Identifier: Apache-2.0\n";
+      TAB
+          + "Copyright 2015 - 2026 Comcast Cable Communications Management, LLC\n"
+          + TAB
+          + "SPDX-License-Identifier: Apache-2.0\n";
 
   public static final String AUTHOR_NOTICE =
-      TAB + "Author: Maurice Garcia (mgarcia01752@outlook.com)\n"
-          + TAB + "Author: Allen Flickinger (allen.flickinger@gmail.com)\n";
+      TAB
+          + "Author: Maurice Garcia (mgarcia01752@outlook.com)\n"
+          + TAB
+          + "Author: Allen Flickinger (allen.flickinger@gmail.com)\n";
 
   public static final String APACHE_20_LICENCE_DISCLAIMER =
       TAB + OSCAR_BANNER + "\n\n" + SPDX_NOTICE + "\n" + AUTHOR_NOTICE;

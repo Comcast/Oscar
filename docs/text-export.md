@@ -16,7 +16,7 @@ String text = exporter.toPrettyPrint(false, false);
 The first boolean includes valueless reference-template entries when true.
 Incomplete SNMP objects remain omitted because they lack an OID/type/value.
 The second boolean suppresses TLV comments when true; the license/help banner
-remains present. Comment-like text inside quoted values is preserved. This
+remains present unless its level is `DISABLE`. Comment-like text inside quoted values is preserved. This
 setting persists for subsequent single-argument `toPrettyPrint` calls.
 
 Pass an explicit family/revision. A binary's first byte cannot identify the
@@ -48,6 +48,10 @@ banner explicitly:
 exporter.setTemplateBannerLevel(TemplateBannerLevel.SPDX_AUTHOR);
 String text = exporter.toPrettyPrint(true, false);
 ```
+
+`DISABLE` omits the entire leading banner, including the comment delimiters.
+The output starts directly with the configuration header. TLV annotations remain
+controlled by the separate comment-suppression option.
 
 `SPDX` includes copyright and the SPDX license identifier. `SPDX_AUTHOR` also
 includes both authors. Neither compact level includes the version or format

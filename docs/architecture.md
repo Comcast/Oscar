@@ -349,7 +349,7 @@ owner of final indentation and empty-template-container removal. Public overload
 and per-instance option persistence remain compatible.
 `TemplateBannerLevel` independently controls the leading comment: `FULL` is the
 compatible default, `SPDX` retains copyright/license, and `SPDX_AUTHOR` adds
-attribution. The exporter setter applies to subsequent text and file exports;
+attribution; `DISABLE` omits the leading banner entirely. The exporter setter applies to subsequent text and file exports;
 TLV selection, annotations, and binary encoding are unaffected.
 
 - [x] Replace loop string concatenation and repeated constructor setup.

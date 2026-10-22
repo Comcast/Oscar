@@ -11,5 +11,7 @@ public enum TemplateBannerLevel {
   /** Copyright and SPDX license identifier only. */
   SPDX,
   /** Copyright, SPDX license identifier, and author attribution. */
-  SPDX_AUTHOR
+  SPDX_AUTHOR,
+  /** No leading banner; configuration text and TLV comments remain unchanged. */
+  DISABLE
 }
