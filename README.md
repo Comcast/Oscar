@@ -9,6 +9,7 @@
 </p>
 
 [![OSCAR CI and release](https://github.com/Comcast/Oscar/actions/workflows/ci.yml/badge.svg)](https://github.com/Comcast/Oscar/actions/workflows/ci.yml)
+[![Copilot code review](https://github.com/Comcast/Oscar/actions/workflows/dynamic/copilot-pull-request-reviewer/copilot-pull-request-reviewer/badge.svg)](https://github.com/Comcast/Oscar/actions/workflows/copilot-pull-request-reviewer/copilot-pull-request-reviewer)
 ![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)
 [![Ubuntu LTS CI targets: 22.04, 24.04, 26.04](https://img.shields.io/badge/Ubuntu_LTS-22.04%20%7C%2024.04%20%7C%2026.04-E95420?logo=ubuntu&logoColor=white)](https://github.com/Comcast/Oscar/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)
