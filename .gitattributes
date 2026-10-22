@@ -2,3 +2,7 @@
 /src/test/resources/export-text/*.txt text eol=lf
 # Preserve ANTLR generator output verbatim, including its trailing spaces.
 /src/com/comcast/oscar/parser/tlv*.java whitespace=-blank-at-eol
+
+# Keep wrapper launchers usable on Unix and Windows checkouts.
+/mvnw text eol=lf
+/mvnw.cmd text eol=crlf

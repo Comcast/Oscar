@@ -79,6 +79,6 @@ also add `-package` with the same declaration.
 
 A new grammar is not automatically used by OSCAR. Integrate its generated
 classes and entry rule explicitly, add valid/invalid input tests, and run
-`mvn test`. If extending existing configuration syntax, modify `tlv.g4` and
+`./mvnw test`. If extending existing configuration syntax, modify `tlv.g4` and
 its adapter/tests instead of introducing an unused second parser. Keep separate
 grammars in separate staging directories to avoid mixing generated output.

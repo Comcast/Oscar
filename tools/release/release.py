@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import os
 import re
 import shutil
 import subprocess
@@ -204,7 +205,8 @@ def build_release(
     if not skip_checks:
         run(["tools/run-all.sh"], dry_run=dry_run)
 
-    run(["mvn", "-q", "-DskipTests", "package"], dry_run=dry_run)
+    run([str(repo_root / ("mvnw.cmd" if os.name == "nt" else "mvnw")),
+         "-q", "-DskipTests", "package"], dry_run=dry_run)
 
     dist_dir = repo_root / "dist"
     dist_dir.mkdir(parents=True, exist_ok=True)

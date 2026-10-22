@@ -5,7 +5,7 @@ Use these guidelines when working in this codebase.
 
 ## Environment
 - Java: `21`
-- Build tool: `mvn` (primary), `build.xml` is legacy
+- Build tool: `./mvnw` (`./mvnw.cmd` on Windows); `build.xml` is legacy
 - Entry point: `com.comcast.oscar.cli.Main`
 
 ## Required Workflow

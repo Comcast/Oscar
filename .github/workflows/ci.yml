@@ -33,7 +33,7 @@ jobs:
           languages: java-kotlin
           build-mode: manual
       - name: Build for CodeQL
-        run: mvn -B -DskipTests clean package
+        run: ./mvnw -B -DskipTests clean package
       - uses: github/codeql-action/analyze@v4
         with:
           category: /language:java-kotlin
@@ -77,7 +77,8 @@ jobs:
           tools/run-all.sh
           python3 -m unittest discover -s tools/git -p 'test_*.py'
       - name: Build JARs and run JUnit tests
-        run: mvn -B clean verify
+        shell: bash
+        run: ./mvnw -B clean verify
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v6
@@ -116,7 +117,7 @@ jobs:
           PYTHON
       - name: Build thin and all JARs
         run: |
-          mvn -B -DskipTests clean package
+          ./mvnw -B -DskipTests clean package
           all_jar="$(find target -maxdepth 1 -type f -name 'oscar-*-all.jar')"
           thin_jar="$(find target -maxdepth 1 -type f -name 'oscar-*.jar' ! -name '*-all.jar')"
           if [[ ! -f "${all_jar}" || ! -f "${thin_jar}" ]]; then

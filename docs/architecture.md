@@ -427,3 +427,43 @@ were removed. OSCAR-UI has no source callers of either ZIP API.
 STORED entries, comments, failed updates and temporary cleanup. The opt-in
 [10,000-entry comparison](benchmarks/jdk-zip/README.md) records timings before
 and after replacing Zip4j.
+
+## Build toolchain security
+
+Local checks, the installer, release tooling and CI use the checked-in Apache
+Maven Wrapper. Its distribution URL and SHA-256 in
+`.mvn/wrapper/maven-wrapper.properties` own the Maven pin. Wrapper downloads stay
+in the user cache; system Maven and user credentials are not replaced. Use
+`./mvnw` on Unix and `./mvnw.cmd` in Windows PowerShell.
+
+The POM pins lifecycle plugins, including Clean, Resources, Install and Deploy,
+instead of inheriting Maven's defaults. Dependency inspection is also
+pinned. Clean, Resources, Shade and AntRun temporarily override Plexus Utils
+for CVE-2025-67030. The inspection plugin overrides BeanUtils for CVE-2025-48734;
+remove those overrides only after upstream plugins resolve
+patched versions and a fresh scan confirms them. Build-plugin dependencies are
+separate from application dependencies and are not included in the OSCAR JAR.
+
+Audit both resolved dependency trees and the plugin libraries actually loaded
+by the pinned Maven. Advisory matches require reachability review; no matches
+are not proof that a build or application has no vulnerabilities. Installation and
+deployment are separate from ordinary package/test checks. The unused Maven Site
+lifecycle is disabled in `.mvn/jvm.config`, avoiding its obsolete server stack;
+OSCAR documentation and wiki tooling do not use it. Re-enabling Site requires a
+separate dependency review.
+
+The 2026-10-22 OSV audit found no advisory matches across 164 distinct Maven
+coordinates from application/test dependencies, active plugin dependency graphs,
+observed package-time plugin class realms and the Maven distribution's embedded
+POM metadata. This is a point-in-time inventory check, not an exploitability
+assessment or a guarantee of security. Windows/macOS execution remains CI work.
+
+`dependency:resolve-plugins` also inventories the unused Site plugin. Its
+dependencies still have advisory matches; do not report those as fixed. For the
+active-build inventory, use
+`./mvnw dependency:resolve-plugins -DexcludeArtifactIds=maven-site-plugin`.
+Confirm Site is absent from the effective build plugins and `./mvnw site` rejects
+the disabled lifecycle before excluding it. Explicit plugin-goal invocation is
+still possible: this setting is not a plugin execution sandbox. See the
+[Maven release notes](https://maven.apache.org/docs/3.10.0/release-notes.html)
+for the lifecycle property.
