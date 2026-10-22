@@ -10,53 +10,38 @@ see [Development](../docs/wiki/development.md).
 - `src/com/comcast/oscar/parser/` contains the generated Java and token files
   compiled by Maven, alongside the handwritten `TlvConfigurationFileParser.java`.
 - `ANTLR/output/` is a historical output snapshot, not Maven's parser source.
-- `RunTlvLex.sh` is a legacy example with caller-relative paths. Use the
-  commands here instead.
+- `bin/ANT.xml` is an obsolete Eclipse export recipe, not a supported build path.
+- `RunTlvLex.sh` regenerates the active parser from any working directory.
 
-The Maven runtime is currently ANTLR **4.1**. Generate with the matching **4.1
-complete tool JAR**, not the runtime-only JAR or the latest ANTLR release.
-Changing the tool/runtime version is a separate migration. Maven does not
-regenerate the grammar automatically.
+The generator and runtime share `antlr.version` in `pom.xml` (currently
+**4.13.2**). Maven compiles the checked-in generated sources; it does not
+regenerate them automatically. Never update the runtime without regenerating.
 
 ## Regenerate after editing tlv.g4
 
-Download the matching tool into ignored build storage:
+With Java 21, Python 3 and curl available, run from the repository root:
 
 ```bash
-mkdir -p target/antlr-doc-check
-curl --fail --location \
-  --output target/antlr-doc-check/antlr-4.1-complete.jar \
-  https://www.antlr.org/download/antlr-4.1-complete.jar
+bash ANTLR/RunTlvLex.sh
+tools/run-all.sh
 ```
 
-Edit `ANTLR/grammar/tlv.g4`, then generate into a staging directory. Running
-from the grammar directory keeps machine-specific paths out of generated headers.
+The script reads the version from the POM, downloads the matching complete tool
+JAR into ignored `target/antlr-generator/`, and generates into a fresh temporary
+directory. Warnings or errors stop generation before any source is copied.
+Only the four generated Java files and two token files are copied into `src/`;
+the handwritten adapter is preserved. Interpreter `.interp` files are not needed
+by the Java runtime. Temporary generation output is removed on exit.
 
-```bash
-(
-  cd ANTLR/grammar
-  java -jar ../../target/antlr-doc-check/antlr-4.1-complete.jar \
-    -o ../../target/antlr-doc-check/generated tlv.g4
-)
-```
+Review the generated diff and commit the grammar, generated files and relevant
+tests together. Do not hand-edit or format generated Java. To verify reproducible
+generation, rerun the script and confirm that the generated files do not change.
 
-Review generator errors/warnings and the staged files before replacing sources.
-Copy only the six generated files; preserve the handwritten parser adapter:
-
-```bash
-for generated_file in tlvLexer.java tlvParser.java tlvListener.java \
-    tlvBaseListener.java tlv.tokens tlvLexer.tokens; do
-  cp "target/antlr-doc-check/generated/$generated_file" \
-    "src/com/comcast/oscar/parser/$generated_file"
-done
-mvn test
-```
-
-Run generation successfully before running the copy block; do not copy stale
-output after a failed generation. Review `git diff` and run the repository
-formatting/hygiene checks described in the development guide. Commit the grammar,
-all changed generated sources/token files, and relevant regression tests together.
-Do not hand-edit generated Java to change parser behavior.
+The 4.13.2 migration removed the unused empty lexer rule `NO_WS : '';`, which
+modern ANTLR rejects. A shared `@header` now supplies the package to the lexer,
+parser and listeners. Other grammar rules retain their previous meaning.
+Existing syntax, export and all-family round-trip tests cover compatibility;
+numeric generated token IDs are implementation details, not stable API values.
 
 ## Generate a new grammar file
 
@@ -66,11 +51,7 @@ match the filename. A minimal combined grammar using OSCAR's package convention:
 ```antlr
 grammar example;
 
-@lexer::header {
-package com.comcast.oscar.parser;
-}
-
-@parser::header {
+@header {
 package com.comcast.oscar.parser;
 }
 
@@ -79,19 +60,21 @@ WORD : [a-zA-Z]+;
 WS : [ \t\r\n]+ -> skip;
 ```
 
-Generate it independently:
+Run the main generation script above first to download the tool, then generate
+it independently (from the repository root):
 
 ```bash
+antlr_version=$(python3 -c 'import xml.etree.ElementTree as E; print(E.parse("pom.xml").getroot().findtext("{*}properties/{*}antlr.version"))')
 (
   cd ANTLR/grammar
-  java -jar ../../target/antlr-doc-check/antlr-4.1-complete.jar \
-    -o ../../target/antlr-doc-check/example-generated example.g4
+  java -jar "../../target/antlr-generator/antlr-$antlr_version-complete.jar" \
+    -Werror -o ../../target/antlr-generator/example-generated example.g4
 )
 ```
 
 This produces `exampleLexer.java`, `exampleParser.java`, `exampleListener.java`,
 `exampleBaseListener.java`, `example.tokens`, and `exampleLexer.tokens`.
-The headers supply the package declaration, including for listeners; do not
+The shared header supplies the package declaration, including for listeners; do not
 also add `-package` with the same declaration.
 
 A new grammar is not automatically used by OSCAR. Integrate its generated

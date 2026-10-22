@@ -163,7 +163,7 @@ The ANTLR grammar accepts quoted scalar strings and quoted SNMP values.
 `TlvTextString` owns escape decoding, export quoting and quote-aware comment
 suppression. This keeps URL punctuation and whitespace out of grammar syntax
 while preserving decoded bytes. Generated parser files are regenerated with
-ANTLR 4.1; they are not edited manually. Quoted-string JUnit tests cover literal
+ANTLR 4.13.2; they are not edited manually. Quoted-string JUnit tests cover literal
 URL bytes, escapes, nesting, SNMP, malformed input and binary/text round trips.
 This parser capability is independent of embedded-service catalog activation.
 

@@ -1,19 +1,33 @@
-#########################################################################################
-#	Copyright 2015 Comcast Cable Communications Management, LLC
-#	___________________________________________________________________
-#	Licensed under the Apache License, Version 2.0 (the "License")
-#	you may not use this file except in compliance with the License.
-#	You may obtain a copy of the License at
-#	http://www.apache.org/licenses/LICENSE-2.0
-#	Unless required by applicable law or agreed to in writing, software
-#	distributed under the License is distributed on an "AS IS" BASIS,
-#	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#	See the License for the specific language governing permissions and
-#	limitations under the License.
-#	
-#	@author Maurice Garcia (mgarcia01752@outlook.com)
-#########################################################################################
-mkdir TlvParser
-java -jar antlr-4.1-complete.jar -o TlvParser tlv.g4
+#!/usr/bin/env bash
+# Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
+# SPDX-License-Identifier: Apache-2.0
+set -euo pipefail
 
-
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+antlr_version="$(python3 - "$repo_root/pom.xml" <<'PY'
+import sys
+import xml.etree.ElementTree as ET
+root = ET.parse(sys.argv[1]).getroot()
+print(root.findtext('{*}properties/{*}antlr.version'))
+PY
+)"
+build_dir="$repo_root/target/antlr-generator"
+tool_jar="$build_dir/antlr-$antlr_version-complete.jar"
+mkdir -p "$build_dir"
+if [[ ! -f "$tool_jar" ]]; then
+  curl --fail --location "https://www.antlr.org/download/antlr-$antlr_version-complete.jar" \
+    --output "$tool_jar.download"
+  mv -- "$tool_jar.download" "$tool_jar"
+fi
+staging_dir="$(mktemp -d "$build_dir/generated.XXXXXX")"
+trap 'rm -rf -- "$staging_dir"' EXIT
+(
+  cd "$repo_root/ANTLR/grammar"
+  java -jar "$tool_jar" -Werror -o "$staging_dir" tlv.g4
+)
+# Copy only generated sources; preserve the handwritten listener adapter.
+for generated_file in tlvLexer.java tlvParser.java tlvListener.java \
+    tlvBaseListener.java tlv.tokens tlvLexer.tokens; do
+  cp -- "$staging_dir/$generated_file" "$repo_root/src/com/comcast/oscar/parser/$generated_file"
+done
+printf 'Regenerated OSCAR parser with ANTLR %s. Run tools/run-all.sh next.\n' "$antlr_version"

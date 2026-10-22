@@ -1,2 +1,4 @@
 # Exact exporter fixtures must match canonical LF output on every OS.
 /src/test/resources/export-text/*.txt text eol=lf
+# Preserve ANTLR generator output verbatim, including its trailing spaces.
+/src/com/comcast/oscar/parser/tlv*.java whitespace=-blank-at-eol

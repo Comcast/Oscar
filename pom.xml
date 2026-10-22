@@ -12,6 +12,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+    <antlr.version>4.13.2</antlr.version>
     <log4j.version>2.26.1</log4j.version>
   </properties>
 
@@ -73,7 +74,7 @@
     <dependency>
       <groupId>org.antlr</groupId>
       <artifactId>antlr4-runtime</artifactId>
-      <version>4.1</version>
+      <version>${antlr.version}</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

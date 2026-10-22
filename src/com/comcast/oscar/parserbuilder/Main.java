@@ -67,13 +67,16 @@ public class Main {
     }
 
     /**
-     * Directory for ANTLR
+     * Locates the generator matching the loaded ANTLR runtime, downloaded by RunTlvLex.sh.
      *
-     * @return
+     * @return the complete tool JAR beneath target/antlr-generator; this does not download it
      */
     public static File fAntlrLibFile() {
       return new File(
-          sBasePath() + File.separator + "lib" + File.separator + "antlr-4.1-complete.jar");
+          sBasePath(),
+          "target/antlr-generator/antlr-"
+              + org.antlr.v4.runtime.RuntimeMetaData.VERSION
+              + "-complete.jar");
     }
 
     /**
