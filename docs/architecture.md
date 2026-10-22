@@ -339,6 +339,21 @@ zero padding needed for four-byte alignment. All string keys use UTF-8.
 
 See [MIC API and compatibility notes](mic-verification.md#shared-generation-and-compatibility).
 
+## Valueless text-template TLVs
+
+A recognized valueless placeholder such as `NetworkAccess;` is accepted as
+reference-template syntax. `TlvConfigurationFileParser.enterEmptyTLV()` validates
+the name without assigning a value; the placeholder contributes no encoded TLV
+to binary output. Unknown names are still errors. An explicit value such as
+`NetworkAccess 0;` is not a placeholder and is encoded normally. This rule does
+not classify an explicitly quoted empty string as an absent value; its handling
+belongs to the relevant datatype and length constraints.
+
+Parsing a template does not establish a complete configuration. If a required
+TLV remains valueless, it is absent from the assembled binary and applicable
+complete-file minimum validation can reject finalization. Keep fragment/template
+parsing separate from those checks; do not silently supply deployment defaults.
+
 ## Configuration text export
 
 `ConfigurationFileExport` separates input/family selection, ordered decoding and
