@@ -403,3 +403,27 @@ pushes validate only. Version tags matching the POM publish JARs and checksums
 only after every OS passes. Manual publication requests use the same gate.
 See [development workflow](wiki/development.md#codeql-before-ci-and-release-builds)
 for the matrix, permissions, recovery procedure and flow diagram.
+
+## ZIP utility dependency
+
+`utilities.Zip` uses OpenJDK `java.util.zip`; Zip4j is no longer a runtime
+or build dependency. The two existing `ZipFile` signatures remain available:
+the single-entry overload uses the given archive filename, while the map
+overload appends `.zip` to its base name. Both add/replace entries while keeping
+unrelated existing entries. Empty maps do nothing. Entry separators use `/`.
+
+The utility writes one complete temporary archive, closes it, then replaces the
+destination (atomic move when supported). Failed archive construction preserves
+the destination and removes the temporary file. Existing ordinary STORED and
+DEFLATED entries and archive comments are preserved; new entries use DEFLATE.
+The legacy void methods log I/O failures rather than returning a success flag.
+
+There is still no ZIP option in the bulk CLI. `ConfigurationFile.writeToZip()`
+remains a deprecated no-op solely for compatibility; its historical `true`
+return does not indicate that an archive was created. Its dead Zip4j helpers
+were removed. OSCAR-UI has no source callers of either ZIP API.
+
+`ZipTest` covers entry bytes, names, empty entries/maps, append/replacement,
+STORED entries, comments, failed updates and temporary cleanup. The opt-in
+[10,000-entry comparison](benchmarks/jdk-zip/README.md) records timings before
+and after replacing Zip4j.
