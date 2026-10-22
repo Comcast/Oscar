@@ -12,7 +12,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
-    <log4j.version>2.25.3</log4j.version>
+    <log4j.version>2.26.1</log4j.version>
   </properties>
 
   <dependencyManagement>
