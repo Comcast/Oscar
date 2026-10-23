@@ -488,3 +488,26 @@ Only public Maven coordinates are sent to OSV. Reports under
 `target/security-audit/` identify affected coordinates and advisory IDs; CI
 retains the summary and JSON report for 35 days. The README badge reflects the
 latest workflow outcome, not a guarantee of security or a scan of every commit.
+
+## Recoverable text formatting diagnostics
+
+`TextLinter` owns read-only syntax and SNMP value-format lint, exposed independently
+of the compilers through immutable `TextLintReport` results. CLI and future
+OSCAR-UI integrations share this API; neither should duplicate datatype rules.
+See [text lint API and recovery](text-lint.md) for coordinates, limits, CLI usage,
+examples and validation scope.
+
+The generated ANTLR lexer and parser remain the syntax authority. A collecting
+error listener allows default parser recovery within bounded statements. A
+regression-tested boundary adapter prevents the legacy wildcard SNMP OID rule
+from absorbing subsequent valid TLVs, and resumes after malformed quoted lines.
+Generated parser sources and compilation entry points are unchanged. Unexpected
+Java errors propagate; only expected input problems become lint diagnostics.
+
+Diagnostics carry stable categories, severity, source ranges and lexical TLV
+ancestry. Offsets use zero-based UTF-16 with exclusive ends; lines and columns
+are one-based. An editor must associate each immutable report with its exact
+buffer revision. Lint may skip damaged regions and must never emit a partial
+binary or claim complete configuration conformance. Limits and invalid wrappers
+are reported as incomplete scans. Compilation and final-file validation remain
+separate operations.

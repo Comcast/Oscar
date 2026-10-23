@@ -1,0 +1,6 @@
+Docsis {
+    Snmp11 1.3.6.1 Integer32 "abc";
+    Snmp11 1.3.6.1 IpAddress "999.2.3.4";
+    Snmp64 1.3.6.1 HexString "0:zz";
+    NetworkAccess 1;
+}

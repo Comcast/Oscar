@@ -1,0 +1,6 @@
+Docsis {
+    Snmp11 1.3.6.1 Integer32 "abc";
+    Snmp11 1.3.6.1 OctetString "missing close;
+    MaxCPEAllowed 2
+    NetworkAccess 1;
+}

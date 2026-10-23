@@ -24,3 +24,9 @@ lab data. Successful compilation does not establish device interoperability.
 See [eRouter examples](erouter/README.md) for initialization-mode and TR-069 lab profiles
 with both service flows. See [minimum-validation examples](minimum/README.md) for
 valid and intentionally incomplete configurations and expected errors.
+
+## Text lint examples
+
+See [lint examples](lint/README.md) for intentionally malformed fragments,
+expected error locations and CLI commands. These are separate from complete
+lab profiles and demonstrate pre-compilation checks only.

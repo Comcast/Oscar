@@ -13,11 +13,22 @@ import com.comcast.oscar.utilities.DirectoryStructure;
 public class Main {
 
   /**
-   * Main Class. Checks and creates necessary directories then run commands.
+   * Runs standalone diagnostics without creating directories, or initializes the legacy CLI. Lint
+   * exits with 0 for clean formatting, 1 for findings, and 2 for usage/read failures. Unexpected
+   * Java errors propagate normally.
    *
-   * @param args
+   * @param args command-line arguments, including standalone --lint-text FILE [--lint-json]
    */
   public static void main(String args[]) {
+    if (java.util.Arrays.stream(args)
+        .anyMatch(
+            argument ->
+                argument.equals("--lint-text")
+                    || argument.startsWith("--lint-text=")
+                    || argument.equals("--lint-json"))) {
+      System.exit(com.comcast.oscar.cli.commands.LintText.run(args, System.out, System.err));
+      return;
+    }
     // Keep diagnostics independent of directory creation, banner output, and bracket rewriting.
     if (java.util.Arrays.stream(args)
         .anyMatch(

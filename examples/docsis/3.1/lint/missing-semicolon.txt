@@ -1,0 +1,4 @@
+Docsis {
+    NetworkAccess 1
+    MaxCPEAllowed 2;
+}
