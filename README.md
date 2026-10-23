@@ -13,7 +13,12 @@
 [![Copilot code review](https://github.com/Comcast/Oscar/actions/workflows/dynamic/copilot-pull-request-reviewer/copilot-pull-request-reviewer/badge.svg)](https://github.com/Comcast/Oscar/actions/workflows/copilot-pull-request-reviewer/copilot-pull-request-reviewer)
 ![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white)
 [![Ubuntu LTS CI targets: 22.04, 24.04, 26.04](https://img.shields.io/badge/Ubuntu_LTS-22.04%20%7C%2024.04%20%7C%2026.04-E95420?logo=ubuntu&logoColor=white)](https://github.com/Comcast/Oscar/actions/workflows/ci.yml)
+[![Windows 11 ARM CI target](https://img.shields.io/badge/Windows-11_ARM-0078D4)](https://github.com/Comcast/Oscar/actions/workflows/ci.yml)
+[![macOS 14 CI target](https://img.shields.io/badge/macOS-14-000000?logo=apple&logoColor=white)](https://github.com/Comcast/Oscar/actions/workflows/ci.yml)
 ![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)
+
+Platform badges identify CI targets; **OSCAR CI and release** reports their combined
+status, including CodeQL. **Dependency security** reports the monthly Maven audit.
 
 OSCAR is a Java-based CableLabs&reg; Configuration File Builder API for DOCSIS&reg;, PacketCable&trade;, DPoE&trade; and DPoG&trade;.
 
