@@ -84,6 +84,10 @@ is produced, and errors are never silently turned into a successful compile.
 SNMP checks cover Integer/Integer32, Counter/Counter32, Gauge/Gauge32, TimeTicks,
 IpAddress, OctetString and HexString, for both Snmp11 and Snmp64. Numeric checks
 use the encoder's decimal/hex/octal notation and signed/unsigned 32-bit ranges.
+The encoder maps `Integer`, `Counter` and `Gauge` to the same BER tags as
+`Integer32`, `Counter32` and `Gauge32`; both spellings produce identical bytes.
+TLV availability still depends on the configuration family: syntax acceptance
+of `Snmp64` does not make it a valid top-level DOCSIS TLV.
 IP addresses require four decimal octets without DNS resolution; hexadecimal
 values require complete byte pairs. OctetString uses the grammar's quoted-string
 and escape rules. OID existence and MIB-specific ranges are outside lint scope.

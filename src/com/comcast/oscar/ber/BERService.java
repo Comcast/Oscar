@@ -36,6 +36,10 @@ public class BERService {
 
   public static final String CONVERSION_ERROR = "Error converting";
 
+  public static final String COUNTER = "Counter";
+  public static final String GAUGE = "Gauge";
+  public static final String INTEGER = "Integer";
+
   public static final String COUNTER32 = "Counter32";
   public static final String COUNTER64 = "Counter64";
   public static final String GAUGE32 = "Gauge32";
@@ -460,18 +464,21 @@ public class BERService {
   }
 
   /**
-   * @param sDataType
-   * @return byte
+   * Resolves a case-insensitive SNMP datatype name to its BER tag without encoding or I/O. The
+   * grammar aliases Integer, Counter and Gauge share the tags of Integer32, Counter32 and Gauge32
+   * respectively. For example, Integer and Integer32 both return BER.INTEGER32.
+   *
+   * @param sDataType canonical name or grammar alias; null is treated as unsupported
+   * @return BER tag, the existing HEX pseudo-tag for HexString, or zero for unsupported names
    */
   public static byte berStringDataTypeToByte(String sDataType) {
-
-    if (COUNTER32.equalsIgnoreCase(sDataType)) {
+    if (COUNTER32.equalsIgnoreCase(sDataType) || COUNTER.equalsIgnoreCase(sDataType)) {
       return BER.COUNTER32;
     } else if (COUNTER64.equalsIgnoreCase(sDataType)) {
       return BER.COUNTER64;
-    } else if (GAUGE32.equalsIgnoreCase(sDataType)) {
+    } else if (GAUGE32.equalsIgnoreCase(sDataType) || GAUGE.equalsIgnoreCase(sDataType)) {
       return BER.GAUGE32;
-    } else if (INTEGER32.equalsIgnoreCase(sDataType)) {
+    } else if (INTEGER32.equalsIgnoreCase(sDataType) || INTEGER.equalsIgnoreCase(sDataType)) {
       return BER.INTEGER32;
     } else if (TIMETICKS.equalsIgnoreCase(sDataType)) {
       return BER.TIMETICKS;

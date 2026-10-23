@@ -24,9 +24,13 @@ final class SnmpValueFormat {
   static Optional<String> problem(String type, String quotedValue) {
     String value = TlvTextString.decode(quotedValue);
     return switch (type) {
-      case "Integer", BERService.INTEGER32 ->
+      case BERService.INTEGER, BERService.INTEGER32 ->
           numeric(type, value, Integer.MIN_VALUE, Integer.MAX_VALUE);
-      case "Counter", BERService.COUNTER32, "Gauge", BERService.GAUGE32, BERService.TIMETICKS ->
+      case BERService.COUNTER,
+              BERService.COUNTER32,
+              BERService.GAUGE,
+              BERService.GAUGE32,
+              BERService.TIMETICKS ->
           numeric(type, value, 0, UNSIGNED_32_MAX);
       case BERService.IPADDRESS -> ipv4(value);
       case BERService.HEXSTRING ->
