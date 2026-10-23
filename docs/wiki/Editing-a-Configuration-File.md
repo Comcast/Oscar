@@ -5,12 +5,6 @@
 2. Edit with a plain text editor.
 3. Compile with `-c` and verify by decompiling with `-d`.
 
-## Editor Support
-A Notepad++ user-defined language file is available in this repo:
-- `Notepad++/`
-
-Legacy editor XML can still be used if preferred.
-
 ## Quoted string values
 
 Use double quotes for text containing URL punctuation, spaces, or delimiters:
