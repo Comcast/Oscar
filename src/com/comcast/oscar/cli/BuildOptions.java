@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2026 Comcast Cable Communications Management, LLC
+ * Copyright 2015 - 2026 Comcast Cable Communications Management, LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 package com.comcast.oscar.cli;
@@ -32,12 +32,16 @@ import org.apache.commons.cli.Options;
 public class BuildOptions {
 
   /**
-   * Build all usable options with LongOpt, Description and any viable arguments
+   * Registers CLI commands, including standalone lint and binary diagnostics, in the supplied
+   * options collection. This does not read input, compile, or create files.
    *
-   * @param options
+   * @param options non-null collection to extend
+   * @return the same collection with supported command options
+   * @throws NullPointerException if options is null
    */
   public static Options run(Options options) {
     com.comcast.oscar.cli.commands.DiagnoseBinary.addOptions(options);
+    com.comcast.oscar.cli.commands.LintText.addOptions(options);
     options.addOption("h", "help", false, "View all commands with descriptions.");
     options.addOption("v", "version", false, "Display current version.");
     options.addOption(CVC.OptionParameters());
