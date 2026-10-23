@@ -234,6 +234,8 @@ class DocsisMinimumRequirementsTest {
       for (Path file :
           files
               .filter(p -> p.toString().endsWith(".txt") && !p.toString().contains("missing-"))
+              // Lint fixtures are syntax fragments, covered by TextLinterTest.
+              .filter(p -> !p.startsWith(Path.of("examples/docsis/3.1/lint")))
               .toList()) {
         int version =
             file.toString().contains("4.0")

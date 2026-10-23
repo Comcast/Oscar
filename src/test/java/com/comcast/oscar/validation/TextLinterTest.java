@@ -19,6 +19,38 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class TextLinterTest {
+  @Test
+  void publishedLintExamplesHaveExpectedFindings() throws Exception {
+    var expected =
+        java.util.Map.of(
+            "missing-semicolon.txt", List.of(Code.MISSING_SEMICOLON),
+            "missing-quote.txt", List.of(Code.UNTERMINATED_STRING),
+            "invalid-snmp-values.txt", List.of(Code.SNMP_VALUE, Code.SNMP_VALUE, Code.SNMP_VALUE),
+            "multiple-errors.txt",
+                List.of(Code.SNMP_VALUE, Code.UNTERMINATED_STRING, Code.MISSING_SEMICOLON),
+            "unknown-name.txt", List.<Code>of(),
+            "valid-format.txt", List.<Code>of());
+    var directory = java.nio.file.Path.of("examples/docsis/3.1/lint");
+    try (var files = java.nio.file.Files.list(directory)) {
+      assertEquals(
+          expected.keySet(),
+          files
+              .filter(p -> p.toString().endsWith(".txt"))
+              .map(p -> p.getFileName().toString())
+              .collect(java.util.stream.Collectors.toSet()));
+    }
+    for (var example : expected.entrySet()) {
+      var report =
+          TextLinter.lint(java.nio.file.Files.readString(directory.resolve(example.getKey())));
+      assertEquals(
+          example.getValue(),
+          report.diagnostics().stream().map(Diagnostic::code).toList(),
+          example.getKey());
+      assertTrue(report.fullyScanned(), example.getKey());
+      assertEquals(Status.ACCEPTED, report.statements().getLast().status(), example.getKey());
+    }
+  }
+
   static Stream<Arguments> values() {
     return Stream.of(
         Arguments.of("Integer", "-2147483648", "2147483648"),
