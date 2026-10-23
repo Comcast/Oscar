@@ -9,7 +9,6 @@ see [Development](../docs/wiki/development.md).
 - `grammar/tlv.g4` is the source grammar for OSCAR configuration text.
 - `src/com/comcast/oscar/parser/` contains the generated Java and token files
   compiled by Maven, alongside the handwritten `TlvConfigurationFileParser.java`.
-- `ANTLR/output/` is a historical output snapshot, not Maven's parser source.
 - `bin/ANT.xml` is an obsolete Eclipse export recipe, not a supported build path.
 - `RunTlvLex.sh` regenerates the active parser from any working directory.
 
