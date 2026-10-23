@@ -40,3 +40,7 @@ synthetic/public lab values; keep generated output out of the example directory.
 
 DOCSIS [minimum-validation examples](docsis/3.1/minimum/README.md) include a valid
 profile and intentionally incomplete inputs that must fail complete-file compilation.
+
+DOCSIS [text-lint examples](docsis/3.1/lint/README.md) demonstrate missing quotes,
+missing semicolons, invalid SNMP values and multiple-error recovery. These are
+syntax-test fragments, not complete configurations.

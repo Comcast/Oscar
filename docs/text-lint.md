@@ -98,3 +98,7 @@ empty-container regression failed before correction. `TextLinterTest` covers
 supported wrappers/types, malformed syntax, nested contexts, offsets, limits,
 immutability and subsequent valid statements. `LintTextCliTest` checks text/JSON,
 exit codes, unchanged input and absence of generated files.
+
+Ready-to-run [example text files](../examples/docsis/3.1/lint/README.md) include
+missing quotes, missing semicolons, invalid SNMP values and a registry-name
+limitation example, with verified diagnostic locations and exit codes.
