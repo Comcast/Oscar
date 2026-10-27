@@ -43,6 +43,10 @@ java -jar oscar.jar --help
 See the [development guide](docs/wiki/development.md) for cloning, installing
 build prerequisites, building, testing, and preparing releases.
 
+## OSCAR UI
+
+The OSCAR UI provides a graphical interface for interacting with the OSCAR Configuration File Builder. It allows users to create, edit, and validate configuration files without using the command line. For more information, see [OSCAR UI](https://github.com/mgarcia01752/oscar-ui).  
+
 ## Documentation
 
 - [Downloadable examples by file type](examples/README.md)
