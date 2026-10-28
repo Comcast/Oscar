@@ -19,7 +19,6 @@ import com.comcast.oscar.tlv.TlvVariableBinding;
 import com.comcast.oscar.utilities.BinaryConversion;
 import com.comcast.oscar.utilities.HexString;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -440,103 +439,34 @@ public class ConfigurationFile {
   }
 
   /**
-   * @return boolean
+   * Writes the current encoded configuration to its configured destination.
+   *
+   * <p>The File destination takes precedence over the filename string. If neither is set, uses
+   * testfiles/Configuration.cm relative to the working directory. Parent directories are not
+   * created. Existing output is overwritten; a failed write may leave partial output. This method
+   * does not compile, finalize, or authenticate the configuration.
+   *
+   * @return true only after writing and closing successfully; false for missing encoded bytes or an
+   *     I/O failure, with the failure reported through Log4j
    */
   public boolean writeToDisk() {
-
-    if (toByteArray() == null) {
-
-      logger.debug("ConfigurationFile.writeToDisk() - NULL ByteArray");
-
+    byte[] encodedConfiguration = toByteArray();
+    if (encodedConfiguration == null) {
       return false;
     }
-
-    logger.debug(
-        () ->
-            "ConfigurationFile.writeToDisk() "
-                + " - Total Byte Count: "
-                + toByteArray().length
-                + " - FileName: "
-                + sConfigurationFileName);
-
-    OutputStream out = null;
-
-    if (this.fConfigurationFileName != null) {
-
-      try {
-        out = new FileOutputStream(fConfigurationFileName);
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      }
-
-      logger.debug(
-          () ->
-              "BuildFile.writeToDisk() "
-                  + " - Total Byte Count: "
-                  + toByteArray().length
-                  + " - FileName: "
-                  + fConfigurationFileName);
-
-    } else if (this.sConfigurationFileName.length() != 0) {
-
-      try {
-
-        out = new FileOutputStream(sConfigurationFileName);
-
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-
-    } else {
-
-      File fCf = null;
-
-      try {
-        fCf =
-            new File(
-                new java.io.File(".").getCanonicalPath()
-                    + File.separatorChar
-                    + "testfiles"
-                    + File.separatorChar
-                    + "Configuration.cm");
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
-
-      try {
-        out = new FileOutputStream(fCf);
-      } catch (FileNotFoundException e) {
-        e.printStackTrace();
-      }
-
-      if (logger.isDebugEnabled()) {
-        logger.debug(
-            "BuildFile.writeToDisk() "
-                + " - Total Byte Count: "
-                + toByteArray().length
-                + " - FileName: "
-                + fCf);
-      }
+    File destination = fConfigurationFileName;
+    if (destination == null) {
+      destination =
+          sConfigurationFileName.isEmpty()
+              ? new File("testfiles", "Configuration.cm")
+              : new File(sConfigurationFileName);
     }
-
-    try {
-      out.write(toByteArray());
-    } catch (IOException e) {
-      e.printStackTrace();
+    try (OutputStream output = new FileOutputStream(destination)) {
+      output.write(encodedConfiguration);
+    } catch (IOException failure) {
+      logger.error("Cannot write configuration to {}: {}", destination, failure.getMessage());
+      return false;
     }
-
-    try {
-      out.flush();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    try {
-      out.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
     return true;
   }
 

@@ -147,32 +147,29 @@ public class TlvBuilder implements TlvBuild {
   }
 
   /**
-   * @param booDirection true = ascending | false = descending
-   * @param tb TlvBuilder Object containing TLVs
-   * @return TlvBuilder TlvBuilder Object containing reordered TLVs
-   * @throws TlvException
+   * Groups one-byte-length top-level TLVs by ascending or descending type.
+   *
+   * <p>Preserves encounter order within each repeated type and does not mutate the source. Retains
+   * the legacy type range 1 through 254, excluding padding and end markers. This helper does not
+   * regenerate integrity fields and must not be used to reorder a finalized signed configuration.
+   * For example, types 3, 1, 3 become 1, 3, 3 ascending.
+   *
+   * @param ascending true for ascending type order, false for descending
+   * @param source non-null builder containing well-formed one-byte-length TLVs
+   * @return independent builder containing the reordered bytes
+   * @throws TlvException if the reordered bytes cannot be added to the result
    */
-  public static TlvBuilder reorderTLV(boolean booDirection, TlvBuilder tb) throws TlvException {
-
-    List<Integer> liType = new ArrayList<Integer>();
-
-    TlvBuilder tbReorder = new TlvBuilder();
-
-    byte[] bReorderTLV = null;
-
-    for (int iIndex = 1; iIndex < MAX_TLV_TYPE; iIndex++) {
-      liType.add(iIndex);
+  public static TlvBuilder reorderTLV(boolean ascending, TlvBuilder source) throws TlvException {
+    List<Integer> orderedTypes = new ArrayList<>();
+    for (int tlvType = 1; tlvType < MAX_TLV_TYPE; tlvType++) {
+      orderedTypes.add(tlvType);
     }
-
-    if (booDirection) {
-      bReorderTLV = fetchTlv(liType, tb.toByteArray());
-    } else {
-      bReorderTLV = fetchTlv(liType, tb.toByteArray());
+    if (!ascending) {
+      java.util.Collections.reverse(orderedTypes);
     }
-
-    tbReorder.add(new HexString(bReorderTLV));
-
-    return tbReorder;
+    TlvBuilder reordered = new TlvBuilder();
+    reordered.add(new HexString(fetchTlv(orderedTypes, source.toByteArray())));
+    return reordered;
   }
 
   /**
