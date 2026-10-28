@@ -79,3 +79,31 @@ headers, eight-level indentation, constructor consistency, UTF-8 file bytes,
 invalid lookups, malformed decoded entries and failed writes. Existing API and
 CVC round-trip tests independently check binary preservation, including
 fragmented certificates. See [API round trips](api-roundtrip-tests.md).
+
+## TODO: Optional numeric display for short byte arrays
+
+- [ ] Add an optional printable text-export mode that displays eligible byte-array
+  values of one through four bytes as decimal integers. Keep existing canonical
+  hex export as the default. Expose the option through a reusable API for CLI
+  and OSCAR-UI consumers.
+- [ ] Review an optional registry presentation field (proposed name:
+  `displayFormat`) to identify verified numeric byte-array fields. Define width,
+  signedness, byte order, units and allowed ranges through existing metadata
+  where possible; extend the schema and public metadata API only where needed.
+  Payload length alone does not establish numeric meaning: preserve hex for
+  opaque/vendor data, bit strings and other nonnumeric fields.
+- [ ] Decide whether this is a display-only report or reimportable configuration
+  text. A decimal string under the existing byte-array codec can be read as hex;
+  do not silently emit ambiguous canonical input. If reimportable, define an
+  unambiguous representation and implement parser support before enabling it.
+- [ ] Preserve exact encoded width and leading zero bytes. Verify 8/16/24/32-bit
+  cases, signed and unsigned boundaries, byte order, zero and invalid input.
+  Use a sufficiently wide numeric representation for unsigned 32-bit values.
+  Example: `00:00:01:00` displays as decimal `256` in big-endian numeric mode,
+  while retaining its four-byte encoding. Empty and longer arrays remain hex.
+- [ ] Add independent byte-vector tests and, if reimportable, exact export/import
+  round trips. Update the architecture, registry-format guide and user/API docs
+  when implemented. Correct inherently numeric registry codecs upstream where
+  appropriate rather than using presentation metadata to conceal codec defects.
+
+Status: deferred design; no new registry field or export behavior is implemented.

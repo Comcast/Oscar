@@ -1,0 +1,3137 @@
+     Data-Over-Cable Service Interface Specifications
+
+
+                                        eDOCSIS™ Specification
+
+                               CM-SP-eDOCSIS-I31-220831
+
+ISSUED
+
+
+
+                   Notice
+
+                   This DOCSIS® specification is the result of a cooperative effort
+                   undertaken at the direction of Cable Television Laboratories, Inc. for the
+                   benefit of the cable industry and its customers. You may download, copy,
+                   distribute, and reference the documents herein only for the purpose of
+                   developing products or services in accordance with such documents, and
+                   educational use. Except as granted by CableLabs in a separate written
+                   license agreement, no license is granted to modify the documents herein
+                   (except via the Engineering Change process), or to use, copy, modify or
+                   distribute the documents for any other purpose.
+
+                   This document may contain references to other documents not owned or
+                   controlled by CableLabs. Use and understanding of this document may
+                   require access to such other documents. Designing, manufacturing,
+                   distributing, using, selling, or servicing products, or providing services,
+                   based on this document may require intellectual property licenses from
+                   third parties for technology referenced in this document. To the extent this
+                   document contains or refers to documents of third parties, you agree to
+                   abide by the terms of any licenses associated with such third-party
+                   documents, including open source licenses, if any.
+
+
+
+                    Cable Television Laboratories, Inc., 2003–2022
+CM-SP-eDOCSIS-I31-220831                                       Data-Over-Cable Service Interface Specifications
+
+
+
+                                              DISCLAIMER
+
+This document is furnished on an "AS IS" basis and neither CableLabs nor its members provides any representation
+or warranty, express or implied, regarding the accuracy, completeness, noninfringement, or fitness for a particular
+purpose of this document, or any document referenced herein. Any use or reliance on the information or opinion in
+this document is at the risk of the user, and CableLabs and its members shall not be liable for any damage or injury
+incurred by any person arising out of the completeness, accuracy, or utility of any information or opinion contained
+in the document.
+CableLabs reserves the right to revise this document for any reason including, but not limited to, changes in laws,
+regulations, or standards promulgated by various entities, technology advances, or changes in equipment design,
+manufacturing techniques, or operating procedures described, or referred to, herein.
+This document is not to be construed to suggest that any company modify or change any of its products or
+procedures, nor does this document represent a commitment by CableLabs or any of its members to purchase any
+product whether or not it meets the characteristics described in the document. Unless granted in a separate written
+agreement from CableLabs, nothing contained herein shall be construed to confer any license or right to any
+intellectual property. This document is not to be construed as an endorsement of any product or company or as the
+adoption or promulgation of any guidelines, standards, or recommendations.
+
+
+
+
+2                                                  CableLabs                                               08/31/22
+eDOCSIS™ Specification                                                            CM-SP-eDOCSIS-I31-220831
+
+
+
+                                    Document Status Sheet
+  Document Control Number: CM-SP-eDOCSIS-I31-220831
+
+                Document Title: eDOCSIS™ Specification
+
+              Revision History: I01 - Issued 03/12/2003                     I17 - Issued 01/21/2009
+                                I02 - Issued 11/17/2003                     I18 - Issued 05/29/2009
+                                I03 - Issued 08/04/2004                     I19 - Issued 10/02/2009
+                                I04 - Issued 11/24/2004                     I20 - Issued 06/11/2010
+                                I05 - Issued 04/08/2005                     I21 - Issued 10/08/2010
+                                I06 - Issued 08/12/2005                     I22 - Issued 06/23/2011
+                                I07 - Issued 12/09/2005                     I23 - Issued 03/29/2012
+                                I08 - Issued 04/07/2006                     I24 - Issued 08/09/2012
+                                I09 - Issued 07/28/2006                     I25 - Issued 04/04/2013
+                                I10 - Issued 12/22/2006                     I26 - Issued 08/08/2013
+                                I11 - Issued 02/23/2007                     I27 - Issued 04/03/2014
+                                I12 - Issued 05/18/2007                     I28 - Issued 03/05/2015
+                                I13 - Issued 08/03/2007                     I29 - Issued 09/06/2017
+                                I14 - Issued 02/15/2008                     I30 - Issued 02/13/2019
+                                I15 - Issued 06/26/2008                     I31 - Issued 08/31/2022
+                                I16 - Issued 09/30/2008
+                            Date: August 31, 2022
+
+                          Status:       Work in               Draft              Issued              Closed
+                                        Progress
+
+     Distribution Restrictions:       Author Only          CL/Member          CL/ Member/             Public
+                                                                                Vendor
+
+
+Key to Document Status Codes
+  Work in Progress       An incomplete document, designed to guide discussion and generate feedback
+                         that may include several alternative requirements for consideration.
+
+  Draft                  A document in specification format that is considered largely complete, but
+                         lacking review by Members and vendors. Drafts are susceptible to substantial
+                         change during the review process.
+
+  Issued                 A generally public document that has undergone rigorous Member and
+                         Technology Supplier review, cross-vendor interoperability, and is suitable for
+                         certification/qualification testing if applicable. Issued Specifications are subject to
+                         the Engineering Change Process.
+
+  Closed                 A static document, reviewed, tested, validated, and closed to further engineering
+                         change requests to the specification through CableLabs.
+
+
+Trademarks
+CableLabs® is a registered trademark of Cable Television Laboratories, Inc. Other CableLabs marks are listed at
+http://www.cablelabs.com/certification/trademarks. All other marks are the property of their respective owners.
+
+
+
+
+08/31/22                                           CableLabs                                                      3
+CM-SP-eDOCSIS-I31-220831                                                                       Data-Over-Cable Service Interface Specifications
+
+
+
+                                                                           Contents
+1      INTRODUCTION ...............................................................................................................................................6
+    1.1       Scope .............................................................................................................................................................6
+    1.2       Goals ..............................................................................................................................................................6
+    1.3       DOCSIS Base Specifications .........................................................................................................................6
+    1.4       Requirements .................................................................................................................................................7
+2      REFERENCES ....................................................................................................................................................8
+    2.1       Normative References....................................................................................................................................8
+    2.2       Informative References ..................................................................................................................................9
+    2.3       Reference Acquisition....................................................................................................................................9
+3      TERMS AND DEFINITIONS .......................................................................................................................... 10
+4      ABBREVIATIONS AND ACRONYMS .......................................................................................................... 12
+5      EMBEDDED DOCSIS CABLE MODEM....................................................................................................... 14
+    5.1     Device Interface Reference Model .............................................................................................................. 14
+       5.1.1    ePS Reference Model ........................................................................................................................... 15
+       5.1.2    eMTA Reference Model ....................................................................................................................... 16
+       5.1.3    eSTB Reference Model ......................................................................................................................... 17
+       5.1.4    eSTB Reference Model with Set-top Extender Bridge (SEB) ............................................................... 20
+       5.1.5    eTEA Reference Model ........................................................................................................................ 22
+       5.1.6    eRouter Reference Model..................................................................................................................... 23
+       5.1.7    eDVA Reference Model ........................................................................................................................ 24
+       5.1.8    eSG Reference Model........................................................................................................................... 25
+       5.1.9    ePTA Reference Model ........................................................................................................................ 26
+       5.1.10   eTR Reference Model ........................................................................................................................... 27
+    5.2     eDOCSIS Requirements .............................................................................................................................. 28
+       5.2.1    General Requirements ......................................................................................................................... 28
+       5.2.2    Interface Requirements ........................................................................................................................ 29
+       5.2.3    Operations Support Requirements ....................................................................................................... 30
+       5.2.4    DHCPv4 Option 43 Syntax Requirements ........................................................................................... 37
+       5.2.5    DHCPv6 Vendor Specific Option Syntax Requirements ...................................................................... 38
+       5.2.6    Testability Requirements...................................................................................................................... 39
+       5.2.7    Firmware Download ............................................................................................................................ 43
+       5.2.8    eSAFE Configuration........................................................................................................................... 46
+ANNEX A              SLED MIB DEFINITION ................................................................................................................. 48
+ANNEX B              ESAFE MIB DEFINITION .............................................................................................................. 53
+ANNEX C FORMAT AND CONTENT FOR ECM/ESTB EVENT, SYSLOG, AND SNMP TRAP
+EXTENSIONS ........................................................................................................................................................... 54
+APPENDIX I               ACKNOWLEDGEMENTS .......................................................................................................... 55
+APPENDIX II                  REVISION HISTORY .............................................................................................................. 56
+
+
+                                                                             Figures
+Figure 1 - eDOCSIS Reference Model ........................................................................................................................ 14
+Figure 2 - CableHome Home Access eDOCSIS Device Reference Model ................................................................. 15
+Figure 3 - eCM - ePS Protocol Stacks ......................................................................................................................... 15
+Figure 4 - PacketCable E-MTA (with DOCSIS CM) eDOCSIS Reference Model..................................................... 16
+
+
+
+4                                                                            CableLabs                                                                             08/31/22
+eDOCSIS™ Specification                                                                                                  CM-SP-eDOCSIS-I31-220831
+
+
+Figure 5 - eCM - eMTA Protocol Stacks ..................................................................................................................... 16
+Figure 6 - OpenCable Host 2.1 eDOCSIS Reference Model ....................................................................................... 17
+Figure 7 - eCM - eSTB Protocol Stacks - OpenCable Host 2.1 - Socket Flow ........................................................... 18
+Figure 8 - Embedded Security STB eDOCSIS Reference Model................................................................................ 19
+Figure 9 - eCM - eSTB Protocol Stacks - Embedded Security STB ........................................................................... 19
+Figure 10 - OpenCable Host 2.1 DSG Set-top Extender Bridge Reference Model ..................................................... 20
+Figure 11 - Set-top Extender Bridge Client - Protocol Stack....................................................................................... 21
+Figure 12 - Set-top Extender Bridge Server - Protocol Stack ...................................................................................... 22
+Figure 13 - BSoD eTEA (with DOCSIS CM) eDOCSIS Reference Model ................................................................ 22
+Figure 14 - eCM - eTEA Protocol Stacks .................................................................................................................... 23
+Figure 15 - DOCSIS eRouter eDOCSIS Device Reference Model ............................................................................. 23
+Figure 16 - eCM - eRouter eDOCSIS Protocol Stacks ................................................................................................ 24
+Figure 17 - PacketCable E-DVA (with DOCSIS CM) eDOCSIS Reference Model ................................................... 24
+Figure 18 - eCM - eDVA Protocol Stacks ................................................................................................................... 25
+Figure 19 - PacketCable E-SG (with DOCSIS CM) eDOCSIS Reference Model ...................................................... 25
+Figure 20 - eCM – eSG Protocol Stacks ...................................................................................................................... 26
+Figure 21 - E-PTA (with DOCSIS CM) eDOCSIS Reference Model ......................................................................... 26
+Figure 22 - eCM – ePTA Protocol Stacks ................................................................................................................... 27
+Figure 23 - E-TR (with DOCSIS CM) eDOCSIS Reference Model ........................................................................... 27
+Figure 24 - eCM – eTR Protocol Stacks ...................................................................................................................... 28
+Figure 25 - eSTB Interface .......................................................................................................................................... 30
+Figure 26 - SLED Reference Model ............................................................................................................................ 40
+Figure 27 - SLED Packet Loopback Encapsulation .................................................................................................... 41
+Figure 28 - SLED Packet Loopback And Generation Sequences ................................................................................ 43
+
+
+                                                                          Tables
+Table 1 - eDOCSIS ifTable Interface Designations .................................................................................................... 32
+Table 2 - [RFC 2863] ifTable, MIB-Object Details for eDOCSIS Device Interfaces ................................................. 33
+Table 3 - [RFC 2011] ipNetToMediaTable MIB-Object Details for eDOCSIS Device Interfaces ............................. 35
+Table 4 - [RFC 4293] ipNetToPhysicalTable MIB-Object Details for eDOCSIS Device Interfaces .......................... 35
+Table 5 - eCM eSAFE TLVs ....................................................................................................................................... 46
+Table 6 - eDOCSIS Events Extensions........................................................................................................................ 54
+
+
+
+
+08/31/22                                                                 CableLabs                                                                                   5
+CM-SP-eDOCSIS-I31-220831                                        Data-Over-Cable Service Interface Specifications
+
+
+1 INTRODUCTION
+Existing DOCSIS specifications were created for stand-alone cable modems that provide high-speed broadband
+services using the hybrid-fiber-coaxial cable infrastructure. The emergence of a class of devices that embeds
+additional functionality with a Cable Modem such as packet-telephony, home networking, and video, has
+necessitated the creation of this specification to define additional requirements such as interfaces, management, and
+provisioning models. This is necessary to ensure that the Cable Modem will function properly and interact properly
+with the embedded Service/Application Functional Entities (eSAFEs).
+
+1.1     Scope
+This specification defines additional features that must be added to a DOCSIS Cable Modem for implementations
+that embed the Cable Modem with another application, such as a PacketCable MTA.
+
+1.2     Goals
+The goals for this specification are:
+•     To preserve functional separation of the DOCSIS cable modem entity from eSAFEs within the eDOCSIS
+      Device, so that existing DOCSIS cable plant integrity, cable modem configuration, management and
+      provisioning security are not compromised.
+•     To isolate DOCSIS cable modem functionality so that specification compliance can be tested for the eCM
+      component independent of eSAFEs.
+•     To enable the service provider to enable or disable forwarding traffic between each eSAFE and the eCM within
+      the eDOCSIS Device.
+•     To maximize compatibility with existing back-office management/provisioning infrastructure so that new
+      services enabled by eDOCSIS devices can be deployed rapidly.
+•     To architect eDOCSIS devices in such a way as to scale to new services and applications, and to take advantage
+      of technology innovations to achieve low cost and high functionalities.
+
+1.3     DOCSIS Base Specifications
+There are currently four versions of what are, in this document, referred to as the DOCSIS Base Specifications.
+These versions are commonly referred to as DOCSIS 1.0, DOCSIS 1.1, DOCSIS 2.0, and DOCSIS 3.0. A list of the
+document categories in the Data-Over-Cable Service Interface Specifications family is provided below. For updates,
+please refer to http://www.cablemodem.com/.
+
+                            Designation                                                     Title
+    DOCSIS 1.0    DOCSIS 1.1      DOCSIS 2.0     DOCSIS 3.0
+
+    SP-RFI        SP-RFIv1.1      SP-RFIv2.0     SP-DRFI           Radio Frequency       Downstream Radio Frequency
+                                                                   Interface             Interface Specification
+                                                                   Specification
+                                                 SP-PHYv3.0                              Physical Layer Specification
+                                                 SP-MULPIv3.0                            Media Access Control and Upper
+                                                                                         Layer Protocols Interface
+                                                                                         Specification
+    SP-OSSI       SP-OSSIv1.1     SP-OSSIv2.0    SP-OSSIv3.0       Operations Support System Interface Specification
+    SP-BPI        SP-BPI+                        SP-SECv3.0        Baseline Privacy and Security Interface Specification
+    SP-CMCI                                      SP-CMCIv3.0       Cable Modem to Customer Premises Equipment
+                                                                   Interface Specification
+
+
+
+
+6                                                   CableLabs                                                   08/31/22
+eDOCSIS™ Specification                                                                       CM-SP-eDOCSIS-I31-220831
+
+
+1.4      Requirements
+Throughout this document, the words that are used to define the significance of particular requirements are
+capitalized. These words are:
+
+ "MUST"                 This word means that the item is an absolute requirement of this specification.
+
+ "MUST NOT"             This phrase means that the item is an absolute prohibition of this specification.
+
+ "SHOULD"               This word means that there may exist valid reasons in particular circumstances to ignore this item, but
+                        the full implications should be understood and the case carefully weighed before choosing a different
+                        course.
+
+ "SHOULD NOT"           This phrase means that there may exist valid reasons in particular circumstances when the listed
+                        behavior is acceptable or even useful, but the full implications should be understood and the case
+                        carefully weighed before implementing any behavior described with this label.
+
+ "MAY"                  This word means that this item is truly optional. One vendor may choose to include the item because a
+                        particular marketplace requires it or because it enhances the product, for example; another vendor may
+                        omit the same item.
+
+
+
+
+08/31/22                                               CableLabs                                                                 7
+CM-SP-eDOCSIS-I31-220831                                            Data-Over-Cable Service Interface Specifications
+
+
+2 REFERENCES
+2.1       Normative References
+In order to claim compliance with this specification, it is necessary to conform to the following standards and other
+works as indicated, in addition to the other requirements of this specification. Notwithstanding, intellectual property
+rights may be required to use or implement such normative references.
+ [BPI+]                 Baseline Privacy Plus Interface Specification, CM-SP-BPI+-C01-081104, November 4, 2008, Cable
+                        Television Laboratories, Inc.
+ [CANN-DHCP]            CableLabs’ DHCP Options Registry, CL-SP-CANN-DHCP-Reg-I17-220831, August 31, 2022, Cable
+                        Television Laboratories, Inc.
+ [CDL2]                 OpenCable Common Download 2.0 Specification, OC-SP-CDL2.0-I13-120531, May 31, 2012, Cable
+                        Television Laboratories, Inc.
+ [CL BB]                CableLabs Battery Backup MIB Specification, CL-SP-MIB-BB-I05-180209, February 9, 2018, Cable
+                        Television Laboratories, Inc.
+ [CMCI]                 Cable Modem to Customer Premise Equipment Interface Specification, CM-SP-CMCI-C01-081104,
+                        November 4, 2008, Cable Television Laboratories, Inc.
+ [CMCIv3.0]             DOCSIS Cable Modem to CPE Interface Specification, CM-SP-CMCIv3.0-I03-170510, May 10, 2017,
+                        Cable Television Laboratories, Inc.
+ [DOCSIS CMCI]          Refers to [CMCIv3.0] and [CMCI].
+ [DOCSIS OSSI]          Refers to [OSSI 1.1], [OSSI 2.0], and [OSSI 3.0].
+ [DOCSIS RFI/MULPI]     Refers to [RFI 1.1], [RFI 2.0], and [MULPI3.0].
+ [DOCSIS2.0 IPv6]       DOCSIS 2.0 + IPv6 Cable Modem Specification, CM-SP-DOCSIS2.0-IPv6-I07-130404, April 4, 2013,
+                        Cable Television Laboratories, Inc.
+ [DSG]                  DOCSIS Set-top Gateway (DSG) Interface Specification, CM-SP-DSG-I25-170906, September 6, 2017,
+                        Cable Television Laboratories, Inc.
+ [eRouter]              IPv4 and IPv6 eRouter Specification, CM-SP-eRouter-I21-220209, February 9, 2022, Cable Television
+                        Laboratories, Inc.
+ [ESAFE-MIB]            Embedded Service/Application Functional Entity MIB, ESAFE-MIB,
+                        http://mibs.cablelabs.com/MIBs/DOCSIS/.
+ [HOST2.1]              OpenCable Host Device 2.1 Core Functional Requirements, OC-SP-HOST2.1-CFR-I17-130418,
+                        April 18, 2013, Cable Television Laboratories, Inc.
+ [MULPI3.0]             DOCSIS 3.0 MAC and Upper Layer Protocols Interface Specification, CM-SP-MULPIv3.0-C01-171207,
+                        December 7, 2017, Cable Television Laboratories, Inc.
+ [OSSI 1.0]             ANSI/SCTE 22-3 2012: DOCSIS 1.0 Operations Support System Interface.
+ [OSSI 1.1]             Operations Support System Interface Specification, CM-SP-OSSIv1.1-C01-050907, September 7,
+                        2005, Cable Television Laboratories, Inc.
+ [OSSI 2.0]             Operations Support System Interface Specification, CM-SP-OSSIv2.0-C01-081104, November 4, 2008,
+                        Cable Television Laboratories, Inc.
+ [OSSI 3.0]             DOCSIS 3.0 Operations Support System Interface Specification, CM-SP-OSSIv3.0-C01-171207,
+                        December 7, 2017, Cable Television Laboratories, Inc.
+ [RFC 768]              IETF STD6, RFC 768, User Datagram Protocol, J. Postel, August, 1980.
+ [RFC 791]              IETF STD5, RFC 791, Internet Protocol, J. Postel, September 1981.
+ [RFC 1493]             IETF RFC 1493, Definitions of Managed Objects for Bridges, E. Decker, P. Langille, A. Rijsinghani & K.
+                        McCloghrie, July 1993.
+ [RFC 2011]             IETF RFC 2011, SNMPv2 Management Information Base for the Internet Protocol using SMIv2, K.
+                        McCloghrie, November 1996.
+ [RFC 2131]             IETF RFC 2131, Dynamic Host Configuration Protocol, Droms, R., March 1997.
+ [RFC 2132]             IETF RFC 2132, DHCP Options, and BOOTP Vendor Extensions, Alexander, S., and R. Droms, March
+                        1997.
+ [RFC 2863]             IETF RFC 2863, The Interfaces Group MIB, K. McCloghrie, F. Kastenholz, June 2000.
+ [RFC 3396]             IETF RFC 3396, Encoding Long Options in the Dynamic Host Configuration Protocol (DHCPv4),
+                        Lemon, T., and S. Cheshire, November, 2002.
+ [RFC 3418]             IETF STD62, RFC 3418, Management Information Base (MIB) for the Simple Network Management
+                        Protocol (SNMP), R. Presuhn, Ed., December 2002.
+
+
+
+8                                                      CableLabs                                                    08/31/22
+eDOCSIS™ Specification                                                                     CM-SP-eDOCSIS-I31-220831
+
+
+    [RFC 4188]           IETF RFC 4188, K. Norseth, Ed. and E. Bell, Ed., Definitions of Managed Objects for Bridges, October
+                         2005.
+    [RFC 4293]           IETF RFC 4293, Management Information Base for the Internet Protocol (IP), S. Routhier, April 2006.
+    [RFI 1.0]            ANSI/SCTE 22-1 2012: DOCSIS 1.0 Radio Frequency Interface.
+    [RFI 1.1]            DOCSIS Radio Frequency Interface Specification, CM-SP-RFIv1.1-C01-050907, September 7, 2005,
+                         Cable Television Laboratories, Inc.
+    [RFI 2.0]            DOCSIS Radio Frequency Interface Specification, CM-SP-RFIv2.0-C02-090422, April 22, 2009, Cable
+                         Television Laboratories, Inc.
+    [TRIF]               OpenCable Tuning Resolver Interface Specification, OC-SP-TRIF-I05-130607, June 7, 2013, Cable
+                         Television Labs, Inc.
+
+
+
+2.2          Informative References
+This specification uses the following informative references.
+    [CH1.0]            CableHome 1.0 Specification, CH-SP-CH1.0-C01-060728, July 28, 2006, Cable Television Laboratories,
+                       Inc.
+    [CH1.1]            CableHome 1.1 Specification, CH-SP-CH1.1-C01-060728, July 28, 2006, Cable Television Laboratories,
+                       Inc.
+    [PC RST-EDVA]      PacketCable Residential SIP Telephony E-DVA Specification, PKT-SP-RST-E-DVA-C01-140314, March
+                       14, 2014, Cable Television Laboratories, Inc.
+    [PC SMA]           PacketCable Security, Monitoring, and Automation Signaling Specification, PKT-SP-SMA-C01-130930,
+                       September 30, 2013, Cable Television Laboratories, Inc.
+    [PC10-MIB]         PacketCable MIBs Framework Specification, PKT-SP-MIBS-C01-071129, November 29, 2007, Cable
+                       Television Laboratories, Inc.
+    [PC10-MTA]         PacketCable MTA Device Provisioning Specification, PKT-SP-PROV-C01-071129, November 29, 2007,
+                       Cable Television Laboratories, Inc.
+    [RFC 2578]         IETF STD58, IETF RFC 2578, Structure of Management Information Version 2 (SMIv2), K. McCloghrie, D.
+                       Perkins, J. Schoenwaelder, April 1999.
+    [TEI]              TDM Emulation Interface Specification, CM-SP-TEI-I06-100611, June 11, 2010, Cable Television
+                       Laboratories, Inc.
+
+
+
+2.3          Reference Acquisition
+
+•      Cable Television Laboratories, Inc., 858 Coal Creek Circle, Louisville, CO 80027; Phone +1-303-661-9100;
+       Fax +1-303-661-9199; http://www.cablelabs.com/
+•      SCTE Standards, Society of Cable Telecommunication Engineers, 140 Philips Road, Exton PA 19341-1318;
+       Phone +1-610-524-1725, http://www.scte.org/
+•      Internet Engineering Task Force (IETF) Secretariat, 48377 Fremont Blvd., Suite 117, Fremont, California
+       94538, USA; Phone: +1-510-492-4080, Fax: +1-510-492-4001; http://www.ietf.org/
+
+
+
+
+08/31/22                                               CableLabs                                                               9
+CM-SP-eDOCSIS-I31-220831                                           Data-Over-Cable Service Interface Specifications
+
+
+3 TERMS AND DEFINITIONS
+This specification uses the following terms and definitions.
+ CableCARD™ Device           A PCMCIA card distributed by cable providers and inserted into a Host device to enable premium
+                             services in compliance with the OpenCable specifications; also called “Card” and “Point of
+                             Deployment” (POD) module.
+ Cable Modem                 A modulator-demodulator at subscriber locations intended for use in conveying data
+                             communications on a cable television system.
+ CMCI                        Cable Modem (CM) to Customer Premise Equipment (CPE) Interface as defined in [CMCI].
+ Downstream Service          A 20-bit value in a DOCSIS extended header that identifies a stream of packets distributed to the
+ Identifier                  same cable modem or group of cable modems. The DSID value is unique within a MAC Domain.
+                             For sequenced packets, the DSID identifies the resequencing context for downstream packet
+                             bonding in the CM.
+ eCM                         An eCM is an embedded Cable Modem, i.e., one that has been enhanced with the features of this
+                             specification.
+ eDOCSIS                     eDOCSIS is the embedded DOCSIS specification that defines the interface between the eCM and
+                             an eSAFE.
+ eDOCSIS Device              An eDOCSIS Device is one that includes an eCM entity, one or more eSAFEs and supports a
+                             single software image download that is used for the entire device.
+ eDVA                        Embedded Digital Voice Adaptor. An embedded component within an E-DVA
+ E-DVA                       Embedded DVA device, a type of user equipment. An E-DVA is a single physical device
+                             embedded with an eDOCSIS-compliant eCM and a PacketCable 2.0 eDVA.
+ Embedded Security           An eSTB with integrated security functions.
+ eSTB
+ eMTA                        Embedded Multimedia Terminal Adaptor. An embedded component within an E-MTA.
+ E-MTA                       Embedded MTA device, a type of user equipment. An E-MTA is a single physical device
+                             embedded with an eDOCSIS-compliant eCM and a PacketCable 1.5 eMTA.
+ ePS                         Embedded Portal Service Element. A CableHome-compliant eSAFE that provides management
+                             and network address translation functions between the DOCSIS network and the home network.
+ E-PS                        Embedded PS device. An eDOCSIS device that contains both an ePS and an eCM.
+ ePTA                        Embedded Performance Test Agent. An embedded client application to enable test execution,
+                             measurement, and results under the control of a performance server application. The definition is
+                             silent with respect to client/server test management and execution.
+ eRouter                     DOCSIS Embedded Router: An eSAFE that is compliant with [eRouter], providing IPv4 and/or
+                             IPv6 data forwarding, address configuration, and Domain Name services to Internet Protocol host
+                             devices connected to the cable modem in a customer’s premises.
+ eSAFE                       Embedded Service/Application Functional Entity. An embedded version of CableLabs-specified
+                             application, such as a PacketCable Multimedia Terminal Adapter (MTA), that provides a service
+                             using the DOCSIS IP platform, or a function or set of functions, such as the eRouter logical
+                             element, that supports the delivery of one or more services over an IP platform.
+ eSG                         Embedded Security, Monitoring, and Automation Gateway eSAFE. An embedded version of an
+                             SMA Gateway.
+ E-SG                        Embedded Security, Monitoring, and Automation Gateway device. An eDOCSIS device that
+                             contains both an eSG and an eCM.
+ eSTB                        Embedded Set-Top Box: An eSAFE that is compliant with [DSG], providing video, audio, and data
+                             services. An example OpenCable-compliant eSTB is further specified in [HOST2.1].
+ eTEA                        Embedded TDM Emulator Adapter: An eSAFE that is compliant with [TEI], providing T1 and E1
+                             Circuit transport over IP.
+ E-TEA                       Embedded TDM Emulator Adapter device. An eDOCSIS device that contains both an eTEA and
+                             an eCM.
+ eTR                         Embedded Tuning Resolver. An embedded component within an E-TR.
+ E-TR                        Embedded TR device, a type of user equipment. An E-TR is a single physical device embedded
+                             with an eDOCSIS-compliant eCM.
+ Firmware                    A type of software which provides low-level instructions to embedded hardware devices, used
+                             interchangeably with software, software image, binary image and code image.
+
+
+
+
+10                                                    CableLabs                                                      08/31/22
+eDOCSIS™ Specification                                                                  CM-SP-eDOCSIS-I31-220831
+
+
+ Hard Reset              Describes a full reset of the eDOCSIS device and its constituent eSAFE application elements
+                         (such as the eRouter) and embedded CM.
+ LCI                     Logical CPE Interface. A bi-directional or uni-directional data-only logical 802.3/Ethernet MAC
+                         frame interface between eCM and an eSAFE.
+ Logical Element         An individual eSAFE within an eDOCSIS device. Used interchangeably with the term “component”
+                         or simply “element.”
+ Monolithic Firmware     A single firmware image containing one or more code images for the entire eDOCSIS device. For
+ Image                   eDOCSIS devices, the Monolithic Firmware Image contains both the eCM code image as well as
+                         the applicable eSAFE code image. As an example for an eDOCSIS device containing an eSTB,
+                         the Monolithic Firmware Image contains the eCM code image as well as the eSTB code image
+                         (which may also be composed from multiple eSTB code images).
+ Multicast DSID          A mechanism by which multicast traffic is forwarded by a CM based on a multicast DSID signaled
+ Forwarding              by the CMTS to the CM. A multicast DSID identifies a subset of CMs intended to receive the same
+                         Multicast session and for the CM the DSID is a filtering and forwarding criterion for multicast
+                         packets.
+ MTA                     Multimedia Terminal Adapter as defined in [PC10-MTA]. Contains the interface to a physical voice
+                         device, a network interface, CODECs, and all signaling and encapsulation functions required for
+                         VoIP transport, class features signaling and QoS signaling.
+ NVT                     The Network Virtual Terminal as defined in the Telnet Protocol. NVT was a bi-directional character
+                         device, representing characters as 7-bit ASCII codes, using an 8-bit field.
+ OpenCable Host eSTB     An eSTB device built to CableLabs OpenCable Host specifications.
+ Reset                   Describes a routine in which the operational state is interrupted by the instruction to shutdown and
+                         restart. The term is synonymous with the terms re-initialization and reboot. The term can describe
+                         either a full device reset (a Hard Reset) or the re-initialization of an individual eSAFE’s software
+                         application (a Soft Reset) and any associated routines necessary to notify connected clients or
+                         other nodes of the device becoming temporarily unavailable.
+ Secure                  The security element in a device that supports downloadable conditional access.
+ Microprocessor
+ SEBC                    A Set-top Device with an impaired upstream channel, using Set-top Extender Bridge (SEB) Client
+                         mode of operation to establish interactive IP connectivity.
+ SEBS                    A Set-top Device with functional two-way connection, providing Set-top Extender Bridge (SEB)
+                         Server mode support for any SEBC devices on the subscriber’s home network.
+ Segmented Firmware      A single firmware image containing one or more code images for one or more software
+ Image                   components of an eDOCSIS device. As an example, for an eDOCSIS device containing an eSTB,
+                         the Segmented Firmware Image contains a component of the eSTB code image but does not
+                         necessarily contain the eCM code image and may not contain the full eSTB code image.
+ Set-top Device          An eDOCSIS device that contains an eSTB.
+ Soft Reset              Describes a reset operation in which the software layer of the eRouter eSAFE application is re-
+                         initialized without impacting other eSAFEs or the embedded CM within an eDOCSIS device.
+ TDM                     Time Division Multiplexing: The means by which multiple digital signals can be carried on a single
+                         transmission path by interleaving portions of each signal in time.
+
+
+
+
+08/31/22                                           CableLabs                                                              11
+CM-SP-eDOCSIS-I31-220831                                           Data-Over-Cable Service Interface Specifications
+
+
+4 ABBREVIATIONS AND ACRONYMS
+This specification uses the following abbreviations and acronyms.
+ ASCII          American Standard Code for Information Interchange
+ BSoD           Business Services over DOCSIS
+ CATV           Community Access Television, Cable Television
+ CM             Cable Modem
+ CMCI           Cable Modem to Customer Premises Equipment Interface
+ CMTS           Cable Modem Termination System
+ CVC            Code Verification Certificate
+ DHCP           Dynamic Host Configuration Protocol
+ DIX            Digital Intel Xerox
+ DNS            Domain Name Server
+ DOCSIS         Data-Over-Cable Service Interface Specifications
+ DSG            DOCSIS Set-top Gateway
+ DSID           Downstream Service Identifier
+ DVA            Digital Voice Adaptor
+ eCM            Embedded Cable Modem
+ eDOCSIS        Embedded DOCSIS
+ eDVA           Embedded Digital Voice Adaptor
+ eMTA           Embedded Multimedia Terminal Adaptor
+ ePS            Embedded Portal Services Element
+ ePTA           Embedded Performance Test Agent
+ eSAFE          Embedded Service/Application Functional Entity
+ eSG            Embedded Security, Monitoring, and Automation Gateway
+ eSTB           Embedded Set-Top Box
+ eTEA           Embedded T1/E1 TDM Emulation Adapter (TEA)
+ eTR            Embedded Tuning Resolver
+ FCS            Frame Check Sequence
+ FQDN           Fully Qualified Domain Name
+ HTTP           Hyper Text Transfer Protocol
+ IP             Internet Protocol
+ LCI            Logical CPE Interface
+ LLC            Logical Link Control
+ MAC            Media Access Control
+ MDF            Multicast DSID Forwarding
+ MIC            Message Integrity Check
+ MTA            Multimedia Terminal Adaptor
+ OCAP™          OpenCable Application Platform
+ PS             Portal Services
+ RF             Radio Frequency
+ ROM            Read Only Memory
+ SG             SMA Gateway
+ SLED           Software Loopback for eDOCSIS
+
+
+
+
+12                                                    CableLabs                                          08/31/22
+eDOCSIS™ Specification                                          CM-SP-eDOCSIS-I31-220831
+
+
+ SMA        Security, Monitoring, and Automation
+ SNMP       Simple Network Management Protocol
+ SSD        Secure Software Download
+ STB        Set-Top Box
+ SW         Software
+ TDM        Time Division Multiplexing
+ TEA        TDM Emulation Adapter
+ TFTP       Trivial File Transfer Protocol
+ TLV        Type/Length/Value
+ UDP        User Datagram Protocol
+ UPS        Uninterrupted Power Supply
+ USB        Universal Serial Bus
+ WAN        Wide Area Network
+
+
+
+
+08/31/22                                           CableLabs                         13
+CM-SP-eDOCSIS-I31-220831                                                                                       Data-Over-Cable Service Interface Specifications
+
+
+5 EMBEDDED DOCSIS CABLE MODEM
+5.1      Device Interface Reference Model
+Referring to Figure 1, an eDOCSIS device consists of an embedded DOCSIS cable modem (eCM) and one or more
+embedded Service/Application Functional Entities (eSAFEs). An eDOCSIS device may also have one or more
+physically exposed interfaces.
+eSAFEs include:
+•     ePS: embedded CableHome Portal Services Logical Element [CH1.0], [CH1.1].
+•     eDVA: embedded PacketCable 2.0 Digital Voice Adaptor [PC RST-EDVA].
+•     eMTA: embedded PacketCable Multimedia Terminal Adapter [PC10-MTA], [PC10-MIB].
+•     eSG: embedded PacketCable Security, Monitoring, and Automation Gateway.
+•     eSTB: embedded Set-Top Box. An eSAFE that is compliant with [DSG], providing video, audio, and data
+      services. An example OpenCable-compliant eSTB is further specified in [HOST2.1].
+•     eTEA: embedded T1/E1 TDM Emulation Adapter (eTEA) [TEI].
+•     eRouter: An eSAFE that is compliant with [eRouter], providing Internet Protocol data forwarding, address
+      configuration, and Domain Name services.
+•     ePTA: An eSAFE that provides link performance test execution services under the control of a performance test
+      server.
+•     eTR: An eSAFE that provides OpenCable Tuning Resolver functionality [TRIF].
+Within an eDOCSIS device, each eSAFE interfaces to the eCM via a point-to-point logical CPE interface.
+
+                                                                      eDOCSIS Device
+             eCM                                                                                                  LCIs Service/Application
+                                                                                                  SLED                   Functional Entities
+                                                                                                                                               Home Network
+                                                                                       Logical CPE interface
+                                                                                       for PS or eRouter
+                                                                                                                              ePS or eRouter   (Ethernet, USB,
+                                                                                                                                               802.11, etc.)
+                 Downstream
+                                                             MAC Bridges and Filters
+
+
+
+
+                                                                                       Logical CPE interface                                   Phone(s)
+                    PHY                                                                for MTA
+                                                                                                                                   eMTA        (RJ11)
+                                            SF Classifiers
+
+
+
+
+                              DOCSIS                                                   Logical CPE interface                                   Audio/Video,
+                              MAC                                                      for STB
+                                                                                                                                   eSTB        CableCard I/F
+    RF
+                                                                                       Logical CPE interface                                   Sensors, Keypads,
+                              (with DSG
+                                                                                       for SG
+                                                                                                                                    eSG        etc
+                               support) *
+
+                                                                                       Logical CPE interface
+                                                                                                                                   ePTA
+                  Upstream                                                             for ePTA
+                    PHY                                                                Logical CPE interface
+                                                                                                                              Other eSAFEs     Other Interfaces
+                                                                                       for other SAFE(s)
+
+                                                                                       Physical CPE Devices
+                                                                                                                                               Other CPEs
+
+
+
+
+                                  * Required for eSTB only
+
+
+
+
+                                                  Figure 1 - eDOCSIS Reference Model
+
+
+
+
+14                                                                                              CableLabs                                                     08/31/22
+eDOCSIS™ Specification                                                                       CM-SP-eDOCSIS-I31-220831
+
+
+5.1.1     ePS Reference Model
+Figure 2 presents a typical CableHome Home Access eDOCSIS Device reference model.
+
+
+                        CableHome Home Access Device
+
+               RF                                                                                    Home Network
+                                      eCM                  ePS
+                                                                                                        CMCI
+
+
+
+
+                      Figure 2 - CableHome Home Access eDOCSIS Device Reference Model
+
+
+Figure 3 presents a logical view of protocol stacks for an eCM to ePS interface.
+
+
+                                           CableHome Home Access Device
+                               eCM*                                                     ePS
+                                                           DHCP, TFTP,
+                                                                                Kerb-                     DNS     DHCP
+              DHCP       TFTP        ToD    SNMP            TOD, DNS,    SNMP
+                                                             SYSLOG
+                                                                                eros                     Server   Server
+
+                       UDP, ICMP, ND                             UDP, ICMP                                UDP, ICMP
+                                                                                         CAT /CAPT
+                       IPv4/IPv6, ARP                              IP, ARP                                  IP, ARP
+
+              MAC Mgmt                                                                  Firewall
+                               802.2 LLC
+                                     MAC Bridge                      MAC Bridge                     MAC Bridge/Switch
+               802.3 Framing
+                                     and Filters
+               DOCSIS Link
+                 Security
+                                                                                                   Home LAN Data Link(s)
+               DOCSIS MAC
+                                       Logical CPE
+                  MPEG
+                  (d/s only)            Interface
+                                                                                                     Home LAN PHY(s)
+               DOCSIS PHY
+
+
+     RF                                                                                                                      Home
+              *The IPv6 components are only present in                                                                     Network(s)
+                  DOCSIS 3.0 (and beyond) eCMs
+
+                                            Figure 3 - eCM - ePS Protocol Stacks
+
+
+
+
+08/31/22                                               CableLabs                                                             15
+CM-SP-eDOCSIS-I31-220831                                           Data-Over-Cable Service Interface Specifications
+
+
+5.1.2    eMTA Reference Model
+Figure 4 presents a typical PacketCable E-MTA (with DOCSIS cable modem) eDOCSIS Device reference model.
+
+
+                       PacketCable E-MTA/DOCSIS CM
+
+              RF
+                                      eCM                      eMTA                                             RJ11(s)
+
+
+
+
+                                                     CMCI
+
+                 Figure 4 - PacketCable E-MTA (with DOCSIS CM) eDOCSIS Reference Model
+
+
+Figure 5 presents a logical view of protocol stacks for an eCM to eMTA interface.
+
+
+                                              PacketCable E-MTA Device
+                                 eCM*                                                   eMTA
+
+
+                                                                               DHCP, TFTP,
+                                                                                             Kerb-
+                DHCP       TFTP        ToD       SNMP           NCS   SNMP      NTP, DNS,
+                                                                                             eros    RTP/RTCP
+                                                                                 SYSLOG
+
+
+                         UDP, ICMP, ND                            UDP, ICMP, TCP (RSVP+)                       MTA0
+
+
+                         IPv4/IPv6, ARP                                 IP, ARP, IPSEC
+                                                                                                          CODEC(s)
+               MAC Mgmt
+                                 802.2 LLC
+                                       MAC Bridge                            MAC / LLC
+                802.3 Framing
+                                       and Filters
+                 DOCSIS Link
+                   Security
+                                                                                                               TR909
+                 DOCSIS MAC
+                                         Logical CPE
+                    MPEG                                                                                       POTS
+                    (d/s only)            Interface
+                                                                                                               PHY(s)
+                                                                                                      aaln/1
+
+
+
+
+                                                                                                                        aaln/n
+
+
+
+
+                 DOCSIS PHY                                                                                     ....
+                                                                                                               RJ11
+        RF
+                 *The IPv6 components are only present in
+                     DOCSIS 3.0 (and beyond) eCMs                                                    POTS
+
+                                             Figure 5 - eCM - eMTA Protocol Stacks
+
+
+
+
+16                                                       CableLabs                                                          08/31/22
+eDOCSIS™ Specification                                                       CM-SP-eDOCSIS-I31-220831
+
+
+5.1.3   eSTB Reference Model
+Figure 6 presents a typical OpenCable Host 2.1 eDOCSIS Device reference model where the Host provides DSG
+Socket Flow support.
+
+                                  OpenCable Host 2.1 STB/DOCSIS CM
+
+
+                  RF
+                                                                    eSTB                   A/V
+                                         eCM
+
+
+
+
+                                                                               CableCARD
+
+                         Figure 6 - OpenCable Host 2.1 eDOCSIS Reference Model
+
+
+
+
+08/31/22                                       CableLabs                                                   17
+CM-SP-eDOCSIS-I31-220831                                                Data-Over-Cable Service Interface Specifications
+
+
+Figure 7 presents a logical view of protocol stacks for an eCM to eSTB to CableCARD interface (OpenCable
+[HOST2.1]) where the Host provides DSG and Socket Flow support.
+
+
+                                                     Host/ eSTB
+                              eCM
+                                                         Prov/
+                                                                     OCAP
+                                                         Mgmt                               Card IP Socket Flow Support
+                     Prov/ Mgmt Apps*                                Apps
+                                                         Apps*
+
+
+                           UDP , ICMP                          TCP , UDP , ICMP
+
+
+                            IP , ARP                               IP , ARP
+
+                                                         eSTB MAC
+                           802. 2 LLC                    (802.2 LLC)          DSG Support
+                                                             .                                                     Card Interface
+                                                                                                                     Support
+                                MAC bridge and
+          802.3 Framing
+           802. 3 Framing           filters                                     MAC bridge
+           DOCSIS Link
+             Security
+          DOCSIS MAC
+           with DSG
+            Support
+              MPEG
+            (d/s  only)
+               MPEG
+             (d/ s only)
+           DOCSIS PHY
+
+
+                                                                                                         CHI
+
+
+
+                                                                                      OpenCable CableCARD I/F & Control
+     RF
+              DSG Ex. Channel
+                   Ethernet/IP                                                                           Socket Applications
+                                                                                     DSG Client
+                 CCIF APDUs
+                                                                                     Controller
+                         DSG
+                                                                                                           Other          DSG
+                                                                                                                          Client
+
+
+
+
+               * Prov/Mgmt Apps include DHCP, TFTP, DNS,
+                 SNMP, ToD, etc. as dictated by the relevant
+                 specification.
+
+
+
+
+                    Figure 7 - eCM - eSTB Protocol Stacks - OpenCable Host 2.1 - Socket Flow
+
+
+
+
+18                                                      CableLabs                                                                  08/31/22
+eDOCSIS™ Specification                                                                 CM-SP-eDOCSIS-I31-220831
+
+
+Figure 8 presents a typical embedded security STB eDOCSIS Device reference model.
+
+
+                                          Embedded Security STB/DOCSIS CM
+
+
+                      RF
+                                                                             eSTB               A/V
+                                                   eCM                     Embedded
+                                                                            Security
+
+
+
+
+                                                              CMCI
+
+                              Figure 8 - Embedded Security STB eDOCSIS Reference Model
+
+
+Figure 9 presents a logical view of protocol stacks for an eCM to eSTB interface (embedded security STB).
+
+                                             Embedded Security STB
+
+                               eCM*                                              eSTB
+                                                              DHCP/TFTP/
+             DHCP       TFTP        ToD       SNMP                           SNMP      others         DSG
+                                                                 DNS
+
+                      UDP, ICMP, ND                                   UDP, TCP, ICMP
+
+
+                      IPv4/IPv6, ARP                                         IP, ARP
+
+            MAC Mgmt
+                              802.2 LLC
+                                     MAC Bridge                                 802.2 LLC
+              802.3 Framing
+                                     and Filters
+              DOCSIS Link
+                Security
+            DOCSIS MAC with
+              DSG Support                 Logical CPE
+                 MPEG
+                 (d/s only)                Interfaces
+              DOCSIS PHY
+
+
+     RF
+           *The IPv6 components are only present in
+               DOCSIS 3.0 (and beyond) eCMs
+
+                          Figure 9 - eCM - eSTB Protocol Stacks - Embedded Security STB
+
+
+
+
+08/31/22                                                 CableLabs                                          19
+CM-SP-eDOCSIS-I31-220831                                     Data-Over-Cable Service Interface Specifications
+
+
+5.1.4   eSTB Reference Model with Set-top Extender Bridge (SEB)
+Figure 10 presents an OpenCable Host 2.1 Set-top Extender Bridge (SEB) Device reference model where the Host
+acting as a Set-top Extender Bridge Server provides Socket Flow and IP Flow support. The SEB Server is also
+providing an IP connection to the SEB Client by way of the SEB Server's eCM and the home network interface. The
+SEB Client continues to consume downstream DSG data using its embedded cable modem (eCM).
+
+
+                                                HOME
+                                                                                  SEBS
+                                              NETWORK
+                                             INTERFACE
+
+
+
+                                                  eCM                        eSTB
+
+
+
+
+                                                HOME
+                                                                                  SEBC
+                                              NETWORK
+                                             INTERFACE
+
+
+
+                                                  eCM                        eSTB
+
+
+
+                                      DOCSIS Downstream (DSG Data)
+                                      DOCSIS Downstream (non-DSG Data)
+                                      DOCSIS Upstream (IP data)
+                                      IP
+
+
+               Figure 10 - OpenCable Host 2.1 DSG Set-top Extender Bridge Reference Model
+
+
+
+
+20                                               CableLabs                                           08/31/22
+eDOCSIS™ Specification                                                                                               CM-SP-eDOCSIS-I31-220831
+
+
+Figure 11 and Figure 12 present a logical view of protocol stacks for an eCM to eSTB to CableCARD interface
+(OpenCable Host 2.x) where the Host provides Socket Flow and IP Flow support, when operating as DSG SEB
+devices.
+              eCM                                                  eSTB
+
+
+
+
+                      Prov / Mgmt Apps                     Prov Mgmt Apps        OCAP Apps                 Card IP Socket Flow Support
+
+
+
+
+                            UDP, ICMP                                     TCP , UDP, ICMP
+
+
+
+
+                             IP , ARP                                          IP , ARP
+
+
+
+                         eCM MAC                                 eSTB MAC
+                                                                                             DSG Support
+                        (802. 2 LLC)                           ( 802. 2 LLC)
+                                                                                                                                               Card Interface
+                                                                                                                                                 Support
+           802. 3 Framing      MAC Bridge and Filters                                        MAC Bridge
+
+
+            DOCSIS Link
+              Security
+           DOCSIS MAC with
+            DSG support
+               MPEG
+             (d/ s only)                                                                                                                 CHI
+                                                               Home Network Interface
+            DOCSIS PHY
+
+
+                                                                                                                       OpenCable CableCard I/F & Control
+
+
+                                                                                                                         DSG Client      Socket Applications
+                                                                                                                         Controller                    DSG
+                                                                                                                                          Other
+                                                                                                                                                       Client
+
+
+
+                                                 DSG
+                                                 DSG Ex. Channel
+                                                 Ethernet/IP
+                                                 CCIF APDUs
+
+
+                                         Figure 11 - Set-top Extender Bridge Client - Protocol Stack
+
+
+
+
+08/31/22                                                                   CableLabs                                                                           21
+CM-SP-eDOCSIS-I31-220831                                                                   Data-Over-Cable Service Interface Specifications
+
+
+            eCM                                                eSTB
+
+
+
+
+                    Prov / Mgmt Apps                      Prov/ Mgmt Apps      OCAP Apps                  Card IP Socket Flow Support
+
+
+
+
+                          UDP, ICMP                                     TCP , UDP, ICMP
+
+
+
+
+                           IP , ARP                                          IP , ARP
+
+
+
+                       eCM MAC                                 eSTB MAC
+                                                                                            DSG Support
+                      (802. 2 LLC)                           ( 802. 2 LLC)
+                                                                                                                                           Card Interface
+                                                                                                                                             Support
+
+         802. 3 Framing         MAC Bridge and Filters                                      MAC Bridge
+
+
+          DOCSIS Link
+            Security
+         DOCSIS MAC with
+          DSG support
+             MPEG
+           (d/ s only)                                                                                                                  CHI
+                                                             Home Network Interface
+          DOCSIS PHY
+
+
+                                                                                                                      OpenCable CableCard I/F & Control
+
+
+                                                                                                                       DSG Client       Socket Applications
+                                                                                                                       Controller                   DSG
+                                                                                                                                         Other
+                                                                                                                                                    Client
+
+                                           DSG
+                                           DSG Ex. Channel
+                                           Ethernet/IP
+                                           CCIF APDUs
+
+
+
+                                       Figure 12 - Set-top Extender Bridge Server - Protocol Stack
+
+
+
+5.1.5   eTEA Reference Model
+Figure 13 presents a typical T1/E1 TDM Emulation Adapter (TEA) eDOCSIS device Reference model.
+
+                                            BSoD E-TEA/DOCSIS CM
+                                                                                                                                TDM interfaces
+                  RF
+                                                    eCM                                    TEA
+
+
+
+
+                                                                  CMCI
+
+                              Figure 13 - BSoD eTEA (with DOCSIS CM) eDOCSIS Reference Model
+
+
+
+
+22                                                                       CableLabs                                                                           08/31/22
+eDOCSIS™ Specification                                                              CM-SP-eDOCSIS-I31-220831
+
+
+Figure 14 presents a logical view of protocol stacks for an eCM to eTEA interface (embedded TDM Emulation
+Adapter).
+
+
+                                               BSoD E-TEA Device
+                                  eCM*                                       eTEA
+
+                  DHCP      TFTP        ToD    SNMP           SNMP    DHCP       TFTP      RTP
+
+
+                          UDP, ICMP, ND                              UDP, ICMP
+                                                                                             IWF
+                          IPv4/IPv6, ARP                           IP, ARP, IPSEC           Framer
+                                                                                              LIU
+                  MAC Mgmt
+                                  802.2 LLC
+                                        MAC Bridge                   MAC / LLC
+                  802.3 Framing
+                                        and Filters
+                   DOCSIS Link
+                     Security
+                   DOCSIS MAC                                                               TDM I/F
+                                          Logical CPE
+                     MPEG
+                     (d/s only)            Interface
+                   DOCSIS PHY
+
+
+
+        RF
+                *The IPv6 components are only present in
+                    DOCSIS 3.0 (and beyond) eCMs                                             T1/E1
+
+                                        Figure 14 - eCM - eTEA Protocol Stacks
+
+
+
+5.1.6   eRouter Reference Model
+Figure 15 presents a typical DOCSIS eRouter eDOCSIS Device reference model.
+
+
+                              DOCSIS eRouter Device
+
+                                                                                    Home Network
+             RF                       eCM                eRouter                       CMCI
+
+
+
+                         Figure 15 - DOCSIS eRouter eDOCSIS Device Reference Model
+
+
+
+
+08/31/22                                              CableLabs                                            23
+CM-SP-eDOCSIS-I31-220831                                                         Data-Over-Cable Service Interface Specifications
+
+
+Figure 16 presents a logical view of protocol stacks for an eCM to eRouter interface.
+
+                                              DOCSIS eRouter eDOCSIS Device
+                                eCM*                                          IPv4 + IPv6 eRouter†
+                                                         DHCP             IGMPv3/                    DHCP       IGMPv3/
+                DHCP      TFTP        ToD    SNMP                 SNMP
+                                                         Client            MLDv2                     Server      MLDv2
+
+                        UDP, ICMP, ND                       UDP, ICMP, ND                             UDP, ICMP, ND
+
+                                                                                    IPv4 NAPT +
+                        IPv4/IPv6, ARP                      IPv4/IPv6, ARP                            IPv4/IPv6, ARP
+                                                                                     IPv6 router
+               MAC Mgmt
+                                802.2 LLC
+                                      MAC Bridge              MAC bridge                            MAC bridge/switch
+                802.3 Framing
+                                      and Filters
+                 DOCSIS Link
+                  Security                                                                            Home LAN Data
+                DOCSIS MAC                                                   Customer-facing             link(s)
+                                        Logical CPE                            IP Interface
+                   MPEG                               Operator-facing
+                   (d/s only)            Interface
+                                                       IP Interface                                 Home LAN PHY(s)
+                 DOCSIS PHY
+                                                                                                                                   Home
+        RF                                                                                                                       Network(s)
+                                                                    †
+               *The IPv6 components are only present in                 In some cases only the IPv4 or the IPv6 components
+                   DOCSIS 3.0 (and beyond) eCMs                           may be present/active. See [eRouter] for details.
+
+
+                                            Figure 16 - eCM - eRouter eDOCSIS Protocol Stacks
+
+
+
+5.1.7        eDVA Reference Model
+Figure 17 presents a typical PacketCable E-DVA (with DOCSIS cable modem) eDOCSIS Device reference model.
+
+
+                                PacketCable E-DVA/DOCSIS CM
+
+                 RF
+                                              eCM                           eDV                                               RJ11(s)
+
+
+
+
+                                                          CMCI
+
+                       Figure 17 - PacketCable E-DVA (with DOCSIS CM) eDOCSIS Reference Model
+
+
+
+
+24                                                                CableLabs                                                         08/31/22
+eDOCSIS™ Specification                                                                        CM-SP-eDOCSIS-I31-220831
+
+
+Figure 18 presents a logical view of protocol stacks for an eCM to eMTA interface.
+
+                                                 PacketCable E-DVA
+                                     eCM *                                               eDVA
+
+
+                                                                                DHCP, TFTP,    Kerb-
+                   DHCP       TFTP        ToD      SNMP          NCS   SNMP      NTP, DNS,                RTP / RTCP
+                                                                                               eros
+                                                                                 SYSLOG
+
+
+                           UDP, ICMP, ND                            UDP, ICMP; TCP, (RSVP +)                   DVA 0
+
+
+                           IPv4/IPv6, ARP                              IP, ARP, IPSEC
+                                                                                                             CODEC(s)
+                  MAC Mgmt
+                                     802.2 LLC
+                                                                              MAC / LLC
+                                           MAC Bridge
+                   802.3 Framing
+                                           and Filters
+                    DOCSIS Link                                                                                TR 90
+                     Security
+                    DOCSIS MAC
+                                             Logical CPE
+                       MPEG                                                                                    POTS
+                      ( d/s only )             Interface
+                                                                                                               PHY(s)
+                    DOCSIS PHY                                                                              aaln/1 ..... aaln/n
+
+                                                                                                                 RJ11
+           RF
+                   *The IPv6 components are only present in                                               POTS
+                   DOCSIS 3.0 (and beyond) eCMs
+
+                                          Figure 18 - eCM - eDVA Protocol Stacks
+
+
+
+5.1.8    eSG Reference Model
+Figure 19 represents a typical PacketCable E-SG (with DOCSIS cable modem) eDOCSIS Device reference model.
+
+                PacketCable E–SG/DOCSIS CM
+
+
+    RF                                                                                                  wireless and wired
+                             eCM                              eSG                                         connections to
+                                                                                                       sensors, keypads, etc
+
+
+
+
+                                                 CMCI
+
+                 Figure 19 - PacketCable E-SG (with DOCSIS CM) eDOCSIS Reference Model
+
+
+
+
+08/31/22                                                  CableLabs                                                              25
+CM-SP-eDOCSIS-I31-220831                                            Data-Over-Cable Service Interface Specifications
+
+
+Figure 20 represents a logical view of protocol stacks for an eCM to eSG interface.
+
+                                            PacketCable E-SG Device
+                                eCM*                                            eSG
+
+
+                                                                           DHCP, TFTP,       security and
+                                                           HTTP/
+              DHCP        TFTP        ToD    SNMP                   SNMP    NTP, DNS,
+                                                           REST
+                                                                             SYSLOG      automation protocols
+
+                                                                                                wireless and
+                       UDP, ICMP, ND                        UDP, ICMP, TCP (RSVP+)                  wired
+                                                                                                connections
+                                                                                                 to sensors,
+                       IPv4/IPv6, ARP                              IP, ARP, IPSEC               keypads, etc
+                                                                                                                sensors,
+              MAC Mgmt
+                                802.2 LLC                                                                       keypads,
+                                      MAC Bridge                     MAC / LLC                                     etc
+               802.3 Framing
+                                      and Filters
+               DOCSIS Link
+                Security
+               DOCSIS MAC
+                                        Logical CPE
+                  MPEG
+                  (d/s only)             Interface
+               DOCSIS PHY
+
+
+
+        RF
+               *The IPv6 components are only present in
+                   DOCSIS 3.0 (and beyond) eCMs
+
+                                            Figure 20 - eCM – eSG Protocol Stacks
+
+
+
+5.1.9     ePTA Reference Model
+Figure 21 represents a typical E-PTA (with DOCSIS cable modem) eDOCSIS Device reference model.
+
+                                  E – PTA/ D O C S I S C M
+
+
+     RF
+                                 eCM                         ePTA
+
+
+
+
+                               Figure 21 - E-PTA (with DOCSIS CM) eDOCSIS Reference Model
+
+
+
+
+26                                                      CableLabs                                                08/31/22
+eDOCSIS™ Specification                                                                   CM-SP-eDOCSIS-I31-220831
+
+
+Figure 22 represents a logical view of protocol stacks for an eCM to ePTA interface.
+
+                                                     E-PTA Device
+                                eCM*                                           ePTA
+
+
+                                                                           DHCP, TFTP,
+                                                          HTTP/
+               DHCP       TFTP       ToD    SNMP          REST
+                                                                  SNMP      NTP, DNS,    iPERF Client
+                                                                             SYSLOG
+
+
+                       UDP, ICMP, ND                                     UDP, ICMP, TCP
+
+
+                       IPv4/IPv6, ARP                                     IPv6, IPSEC
+
+               MAC Mgmt
+                               802.2 LLC
+                                     MAC Bridge                            MAC / LLC
+               802.3 Framing
+                                     and Filters
+                DOCSIS Link
+                 Security
+                DOCSIS MAC
+                                       Logical CPE
+                   MPEG
+                  (d/s only)            Interface
+                DOCSIS PHY
+
+
+
+      RF
+                *The IPv6 components are only present in
+                    DOCSIS 3.0 (and beyond) eCMs
+                                           Figure 22 - eCM – ePTA Protocol Stacks
+
+
+
+5.1.10 eTR Reference Model
+Figure 23 represents a typical E-TR (with DOCSIS cable modem) eDOCSIS Device reference model.
+
+
+
+
+                               Figure 23 - E-TR (with DOCSIS CM) eDOCSIS Reference Model
+
+
+
+
+08/31/22                                                CableLabs                                             27
+CM-SP-eDOCSIS-I31-220831                                         Data-Over-Cable Service Interface Specifications
+
+
+Figure 24 represents a logical view of protocol stacks for an eCM to eTR interface.
+
+
+
+
+                                       Figure 24 - eCM – eTR Protocol Stacks
+
+5.2     eDOCSIS Requirements
+5.2.1    General Requirements
+The eCM will provide an SNMP agent which is logically separate from any other SNMP agent in the device.
+The eCM MUST NOT provide access to the eSAFE-specified MIB objects through its Management IP address,
+except for MIB objects that are explicitly allowed to be shared.
+The following MIB objects are shared when applicable:
+•     An eDOCSIS device MAY share MIB objects from [RFC 3418].As an exception, the eDOCSIS device MUST
+      share the sysDescr MIB object1 and report its value as defined in [DOCSIS OSSI].
+•     An eDOCSIS device MAY share MIB objects from UDP-MIB and IP-MIB. However, the eDOCSIS device
+      MUST NOT share MIB objects from IP-MIB that define per-interface management information (e.g.,
+      ipNetToMediaTable or IpNetToPhysicalTable; see Section 5.2.3.3).
+•     An eDOCSIS device MAY share MIB objects rooted under snmpV2 ([RFC 2578]).
+The eCM MUST act as an entity distinct from the eSAFEs that are embedded in the eDOCSIS device.
+The eCM MUST have logical CPE interfaces to its eSAFEs.
+The eCM MUST first process all messages coming from the DOCSIS data network (labeled RF in the diagrams)
+destined for eSAFEs.
+As per DOCSIS, the eCM will always have an interface to the DOCSIS RF. An eSAFE MUST NOT have any
+interface directly attached to the DOCSIS RF.
+For an eDOCSIS device containing an eSTB, the eCM MUST implement DSG client support functionality including
+one-way DOCSIS and DCD MAC message as specified in [DSG].
+An eDOCSIS device MUST NOT implement both an ePS and an eRouter simultaneously.
+
+
+1 In order to associate a Monolithic Firmware Image to an eDOCSIS device, the sysDescr MIB value is shared among eCM and
+
+eSAFEs. This is defined with the purpose of providing a mechanism to properly associate a firmware image with the eDevice
+vendor name and hardware model.
+
+
+28                                                    CableLabs                                                08/31/22
+eDOCSIS™ Specification                                                              CM-SP-eDOCSIS-I31-220831
+
+
+For an eDOCSIS device containing an eRouter:
+•   The eCM MUST provide access to the eRouter MIBs defined in Annex B via the IP address assigned to the
+    eCM's management interface, independent of the operational state of the eRouter.
+An eCM MUST meet the requirements of an equivalent standalone cable modem as specified in the applicable
+DOCSIS Base Specifications (see Section 1.3). In case any requirement in this specification conflicts with a
+requirement in the DOCSIS Base Specifications, the requirement in this specification takes precedence for any
+eDOCSIS device.
+
+5.2.2     Interface Requirements
+
+5.2.2.1    General Interface Requirements
+The bridging function of the eCM between the RF port and the CPE interfaces (logical or physical) MUST be
+equivalent to that of a multi-port learning bridge. Each CPE interface of the eCM MUST comply with the CM
+Forwarding Rules defined in [DOCSIS RFI/MULPI]. In particular:
+•   The eCM MUST count the MAC addresses of each eSAFE toward the total allowed by the Maximum Number
+    of CPEs configuration setting at the eCM.
+•   The eCM MUST NOT count the DSG tunnel MAC addresses associated with ifIndex=18 to enforce the total
+    allowed by the Maximum Number of CPEs configuration setting.
+•   The eCM MUST apply the packet forwarding and filtering rules defined in [DOCSIS RFI/MULPI]
+    specification, to the logical and the physical interfaces as defined in this specification and in [DOCSIS OSSI].
+•   A Cable Modem embedded into a device which contains an eSTB compliant with OpenCable 2.1 or higher
+    MUST support layer-2 bridging of:
+    •     EtherType 0x86DD (IPv6) frames using standard bridging rules (IPv6 packets are not subject to filtering by
+          the docsDevFilterIpTable).
+    •     IPv6 provisioning traffic for the eSTB, which includes the IPv6 Link Local Scope All Nodes Address (33-
+          33-00-00-00-01, FF02::1) and the Solicited Node Addresses for the eSTB (in the range 33-33-ff-xx-xx-xx,
+          FF02::1:FFxx:xxxx). The CM will need to implement some mechanism that will allow it to forward IPv6
+          provisioning traffic to the appropriate Solicited Node addresses.
+NOTE: Implementation of the functionality described in [DOCSIS2.0 IPv6] would satisfy these requirements.
+
+•   With the exception of the interface to the DSG Client (ifIndex 18), the eCM MUST perform data forwarding
+    through all other interfaces to eSAFEs according to the Network Access Control Object as defined in [DOCSIS
+    RFI/MULPI]. NACO state does not affect the forwarding of DSG traffic (through ifIndex 18) in an eDOCSIS
+    device containing an eSTB.
+•   In cable modems compliant with DOCSIS 3.0, data forwarding through the interfaces to all eSAFEs except the
+    eSTB-DSG interface (ifIndex 18) the eCM MUST obey the CM-CTRL-REQ "Disable Forwarding" command
+    as defined in [MULPI3.0].
+
+5.2.2.2    eSTB-DSG Interface Requirements
+In an eDOCSIS device containing an eSTB, the eCM considers the eSTB-DSG interface (ifIndex 18) the logical
+interface between the eCM and the eSTB for the one-way DSG tunnel traffic. The eCM not operating with Multicast
+DSID Forwarding (MDF) enabled identifies traffic destined for the eSTB-DSG interface by the DSG MAC
+addresses. The MDF-enabled eCM identifies traffic destined for the eSTB-DSG interface by the DSIDs associated
+with the DSG MAC addresses. The eCM acquires the DSG MAC addresses from the eSTB in an implementation-
+dependent manner.
+The eCM MUST NOT count the DSG tunnel MAC addresses associated with the eSTB-DSG interface (ifIndex=18)
+towards the Maximum Number of CPEs in the configuration file. Data forwarding of DSG tunnel traffic (through
+ifIndex 18) is unaffected by the Network Access Control state. The CM-CTRL-REQ "Disable Forwarding"
+command does not affect the forwarding of DSG traffic (through ifIndex 18).
+
+
+
+08/31/22                                           CableLabs                                                      29
+CM-SP-eDOCSIS-I31-220831                                     Data-Over-Cable Service Interface Specifications
+
+
+An eCM MUST discard a frame destined for the eSTB-DSG interface if that frame was received from any port other
+than the one associated with ifIndex 2 (CATV-MAC). An eCM MUST NOT bridge a frame destined for the eSTB-
+DSG interface to any port other than the one associated with ifIndex 18 (the interface to the DSG Client of the
+eSTB). These requirements supplement the requirements in [RFI 1.0], [RFI 1.1], and [RFI 2.0] on the pre-3.0
+DOCSIS eCM. These requirements are satisfied in [MULPI3.0] on the DOCSIS 3.0 eCM.
+Since DSG tunnel traffic generally has a multicast destination MAC address, DSG eCMs not operating with
+Multicast DSID Forwarding enabled have additional requirements. If a CPE MAC address is acquired by the eCM
+via the eCM Configuration File or via the address learning process and the eCM is later informed that the same
+address is a DSG tunnel MAC address, the eCM SHOULD remove the DSG tunnel MAC address from its list of
+acquired CPE MAC addresses. Also, the eCM SHOULD NOT populate a CPE MAC address from the eCM
+Configuration File into its list of acquired CPE MAC addresses if that MAC address matches that of a DSG tunnel
+MAC address already established via DSG operation.
+
+
+
+
+                                            Figure 25 - eSTB Interface
+
+
+
+5.2.3     Operations Support Requirements
+
+5.2.3.1    ifTable Requirements
+The eCM MUST represent the logical interface to each eSAFE with an entry in the ifTable with ifType other(1) as
+described in [DOCSIS OSSI] and as detailed below.
+If the eCM is embedded into a device which contains an active (i.e., not disabled) ePS or an eRouter, the eCM
+MUST adhere to the following requirements:
+•    The eCM MUST use ifIndex 1 (the Primary CPE interface) to represent the logical interface between the eCM
+     and the ePS or between the eCM and the eRouter.
+•    The eCM MUST NOT report in the ifTable the physically exposed interfaces associated with the ePS or with
+     the eRouter.
+•    The eCM MUST NOT report the MIB Module extensions associated with ePS or eRouter interfaces exposed to
+     the customer premises (e.g., EtherLike-MIB and USB-MIB).
+•    If the eCM is embedded into a device that contains an eRouter that is disabled, the eCM MUST report in the
+     eCM's ifTable the physical CPE interfaces that would be associated with the eRouter if the eRouter was not
+     disabled. Note: the ifIndex range allowed for CPE interfaces is described in Table 1.
+
+
+
+
+30                                                CableLabs                                              08/31/22
+eDOCSIS™ Specification                                                             CM-SP-eDOCSIS-I31-220831
+
+
+If the eCM is embedded into a device which contains an eMTA, the eCM MUST adhere to the following
+requirements:
+•   The eCM MUST use ifIndex 16 to represent the logical interface between the eCM and the eMTA.
+•   The eCM MUST NOT report in the ifTable the eMTA endpoints (ifType 198).
+If the eCM is embedded into a device which contains an eDVA, the eCM MUST adhere to the following
+requirements:
+•   The eCM MUST use ifIndex 16 to represent the logical interface between the eCM and the eDVA.
+•   The eCM MUST NOT report in the ifTable the eDVA endpoints (ifType 198).
+If the eCM is embedded into a device which contains an eSTB, the eCM MUST adhere to the following
+requirements if the device is not operating as a SEB Client:
+•   The eCM MUST use ifIndex 17 to represent the logical interface between the eCM and the eSTB for the
+    interactive IP traffic.
+•   The eCM MUST use ifIndex 18 to represent the logical interface between the eCM and the eSTB for the one-
+    way DSG tunnel traffic.
+•   The eCM MUST NOT report in the ifTable any other interfaces on the eSTB (such as CableCARD, DSG
+    Clients, and A/V interfaces, etc.) which are not directly and physically connected to the eCM.
+•   The eCM MUST use ifIndex 21 to represent the logical interface between the eCM and the eSTB of SEBC
+    devices for the interactive IP traffic, when the eDOCSIS device is operating as a SEB Server.
+•   The eCM MAY use ifIndex 21 to represent the logical interface between the eCM and the eSTB for interactive
+    IP traffic destined for the SEB Tunnel, when the eDOCSIS device is operating as a SEB Client. This interface
+    will not be present in SEB Client eSTB implementations that inject ethernet frames directly into the SEB
+    Tunnel without traversing the eCM.
+If the eCM is embedded into a device which contains an eTEA, the eCM MUST adhere to the following
+requirements:
+•   The eCM MUST use ifIndex 19 to represent the logical interface between the eCM and the eTEA.
+•   The eCM MUST NOT report in the ifTable the eTEA interfaces (ifType = ds1(18), ds0Bundle(82), etc.).
+If the eCM is embedded into a device which contains an eSG, the eCM MUST adhere to the following requirements:
+• The eCM MUST use ifIndex 20 to represent the logical interface between the eCM and the eSG.
+•   The eCM MUST NOT report in the ifTable the eSG interfaces.
+If the eCM is embedded into a device which contains an ePTA, the eCM MUST adhere to the following
+requirements:
+• The eCM MUST use ifIndex 22 to represent the logical interface between the eCM and the ePTA.
+•   The eCM MUST NOT report the ePTA interface in the ifTable.
+If the eCM is embedded into a device which contains an eTR, the eCM MUST adhere to the following requirements:
+• The eCM MUST use ifIndex 23 to represent the logical interface between the eCM and the eTR.
+•   The eCM MUST NOT report the eTR interface in the ifTable.
+The eCM MUST support the ifXTable in accordance with [RFC 2863]. The eCM MUST set the default value of
+ifLinkUpDownTrapEnable to enabled(1) for all of its logical interfaces that are connected to eSAFEs.
+The eCM MUST support the ifStackTable in accordance with [RFC 2863]. Any of the eCM's logical interface(s)
+towards an eSAFE MUST NOT contain any sub-layers.
+Table 1 summarizes the eCM assignment of ifIndexes to its connected interfaces. Table 2 defines the details of the
+ifTable entries that MUST be supported by ePS, eRouter, eMTA, eDVA, eSTB, eTEA, eSG, ePTA, and eTR.
+
+
+
+08/31/22                                           CableLabs                                                    31
+CM-SP-eDOCSIS-I31-220831                                           Data-Over-Cable Service Interface Specifications
+
+
+                                 Table 1 - eDOCSIS ifTable Interface Designations
+
+  Interface                                                        Type
+  1             Primary CPE interface (CableHome ePS WAN interface or eRouter Operator-Facing Interface, when eRouter is
+                enabled, Home Network Interface when eSTB device is operating as SEB Server)
+  2             DOCSIS-MAC interface
+  3             Primary downstream RF interface
+  4             One of the upstream RF interface
+  5 - 15        Additional CPE interfaces
+  16            Reserved for PacketCable/eMTA interface
+  17            Reserved for eSTB-IP interface
+  18            Reserved for eSTB-DSG interface
+  19            Reserved for eTEA interface
+  20            Reserved for eSG interface
+  21            Reserved for SEB eSTB-IP interface
+  22            Reserved for ePTA interface
+  23            Reserved for eTR interface
+  24 - 31       Reserved for additional eDOCSIS eSAFE interfaces
+  32 - 47       Reserved for additional CPE interfaces
+  48 - 79       Reserved for additional downstream RF interfaces
+  80 - 111      Reserved for additional upstream RF interfaces
+  112 - 143     Reserved for additional downstream RF interfaces
+
+
+An eDOCSIS compliant eCM can have zero, one, or multiple CPE interfaces, as well as interfaces to one or multiple
+eSAFEs. When multiple CPE interfaces are present, if docsDevFilterIpTable, docsDevFilterLLCTable, or
+docsDevNmAccessFilterTable filter(s) are applied to the eCM's "Primary CPE Interface" (ifIndex 1), the eCM
+MUST also apply the same filter(s) to its "Other CPE Interfaces" (ifIndexes 5 through 15). Moreover, such filters
+are never used to limit traffic between the CPE interfaces ("Primary CPE Interface" and "Other CPE Interfaces")
+within the eCM. However, if docsDevFilterIpTable, docsDevFilterLLCTable, or docsDevNmAccessFilterTable
+filters are applied to the eCM's "Primary CPE Interface" (ifIndex 1), the eCM MUST NOT apply these filters to
+ifIndex 16 through 31, which are reserved as interfaces to eSAFEs.
+The above defined mechanism provides granular, independent control of filters applied to the CPE Interfaces versus
+those applied to the interface to each eSAFE. The eCM MUST have the ability to filter traffic at a particular
+interface to an eSAFE, regardless of the origination point of that traffic. This granular filter control provides the
+ability for the eCM to filter traffic sourced by one eSAFE that is destined to another eSAFE within the same device.
+
+
+
+
+32                                                       CableLabs                                            08/31/22
+eDOCSIS™ Specification                                                                                                                CM-SP-eDOCSIS-I31-220831
+
+
+                                              Table 2 - [RFC 2863] ifTable, MIB-Object Details for eDOCSIS Device Interfaces
+
+[RFC 2863] MIB-                                                                 eSTB
+Object details for
+                   ePS or eRouter                   eMTA                                                  eTEA             eSG              ePTA             eTR
+  eCM-eSAFE                                                          eSTB-IP             eSTB-DSG
+   Interfaces
+ ifIndex                 1                    16               17                  18               19               20               22               23
+ ifDescr: Match the      "CableHome           "PacketCable     "Set-Top Box        "Set-Top Box     "BSoD            "PacketCable     "ePTA            "eTR Embedded
+ text indicated          Embedded             Embedded         Embedded IP         Embedded DSG     Embedded TEA     Embedded SG      Embedded         Tuning Resolver
+                         Interface" for the   Interface"       Interface"          Interface"       Interface"       Interface"       Performance      Interface"
+                         ePS, or "eRouter                                                                                             Test Agent"
+                         Embedded
+                         Interface" for the
+                         eRouter
+ ifType                  other(1)             other(1)         other(1)            other(1)         other(1)         other(1)         other(1)         other(1)
+ ifMtu                   0                    0                0                   0                0                0                0                0
+ ifSpeed                 0                    0                0                   0                0                0                0                0
+ ifPhysAddress           <empty-string>       <empty-string>   <empty-string>      <empty-string>   <empty-string>   <empty-string>   <empty-string>   <empty-string>
+ ifAdminStatus: Only     up(1), down(2)       up(1), down(2)   up(1), down(2)      up(1), down(2)   up(1), down(2)   up(1), down(2)   up(1), down(2)   up(1), down(2)
+ up/down controls
+ are required for this
+ interface. Other
+ values are optional
+ ifOperStatus: Only      up(1), down(2)       up(1), down(2)   up(1), down(2)      up(1), down(2)   up(1), down(2)   up(1), down(2)   up(1), down(2)   up(1), down(2)
+ up/down controls
+ are required for this
+ interface. Other
+ values are optional
+ ifLastChange            <per                  <per            <per                <per             <per             <per             <per             <per
+                         [RFC 2863]>          [RFC 2863]>      [RFC 2863]>         [RFC 2863]>      [RFC 2863]>      [RFC 2863]>      [RFC 2863]>      [RFC 2863]>
+ ifInOctets              (n)                  (n)              (n)                 Deprecated       (n)              (n)              (n)              (n)
+ ifInUcastPkts           (n)                  (n)              (n)                 Deprecated       (n)              (n)              (n)              (n)
+ ifInNUcastPkts          Deprecated           Deprecated       Deprecated          Deprecated       Deprecated       Deprecated       Deprecated       Deprecated
+ ifInDiscards            0                    0                0                   0                0                0                0                0
+ ifInErrors              0                    0                0                   0                0                0                0                0
+ ifInUnknownProtos       0                    0                0                   0                0                0                0                0
+ ifOutOctets             (n)                  (n)              (n)                 (n)              (n)              (n)              (n)              (n)
+ ifOutUcastPkts          (n)                  (n)              (n)                 (n)              (n)              (n)              (n)              (n)
+ ifOutNUcastPkts         Deprecated           Deprecated       Deprecated          Deprecated       Deprecated       Deprecated       Deprecated       Deprecated
+ ifOutDiscards           0                    0                0                   0                0                0                0                0
+
+
+
+
+08/31/22                                                                          CableLabs                                                                            33
+CM-SP-eDOCSIS-I31-220831                                                                                    Data-Over-Cable Service Interface Specifications
+
+
+[RFC 2863] MIB-                                                              eSTB
+Object details for
+                   ePS or eRouter               eMTA                                               eTEA           eSG             ePTA            eTR
+  eCM-eSAFE                                                        eSTB-IP          eSTB-DSG
+   Interfaces
+ ifOutErrors             0                  0                0                  0              0              0               0              0
+ ifOutQLen               Deprecated         Deprecated       Deprecated         Deprecated     Deprecated     Deprecated      Deprecated     Deprecated
+ ifSpecific              Deprecated         Deprecated       Deprecated         Deprecated     Deprecated     Deprecated      Deprecated     Deprecated
+ ifIndex                 21
+ ifDescr: Match the      "SEB Set-Top Box Embedded IP Interface"
+ text indicated
+ ifType                  other(1)
+ ifMtu                   0
+ ifSpeed                 0
+ ifPhysAddress           <empty-string>
+ ifAdminStatus: Only     up(1), down(2)
+ up/down controls
+ are required for this
+ interface. Other
+ values are optional
+ ifOperStatus: Only      up(1), down(2)
+ up/down controls
+ are required for this
+ interface. Other
+ values are optional
+ ifLastChange            <per [RFC 2863]>
+ ifInOctets              (n)
+ ifInUcastPkts           (n)
+ ifInNUcastPkts          Deprecated
+ ifInDiscards            0
+ ifInErrors              0
+ ifInUnknownProtos       0
+ ifOutOctets             (n)
+ ifOutUcastPkts          (n)
+ ifOutNUcastPkts         Deprecated
+ ifOutDiscards           0
+ ifOutErrors             0
+
+
+
+
+34                                                                             CableLabs®                                                          08/31/22
+eDOCSIS™ Specification                                                                   CM-SP-eDOCSIS-I31-220831
+
+
+
+5.2.3.2    [RFC 2011] ipNetToMediaTable and [RFC 4293] ipNetToPhysicalTable Requirements
+If the eDOCSIS device includes a single eSAFE device, and that eSAFE device does not support the IPv6 protocol
+for provisioning and management, then the eCM MUST support the ipNetToMediaTable [RFC 2011] and populate
+the entries as per Table 3. If the eDOCSIS device includes one or more eSAFE device and at least one eSAFE
+device supports the IPv6 protocol for provisioning and management, then the eCM MUST support the
+ipNetToPhysicalTable [RFC 4293] and populate the entries as per Table 4. If the eDOCSIS device includes one or
+more eSAFE device and at least one eSAFE device does not support the IPv6 protocol for provisioning and
+management, then the eCM MAY support the ipNetToMediaTable [RFC 2011] and populate the entries as per Table
+3. For example, an eDOCSIS device containing an eDVA and eSTB, where the eDVA supports both IPv4 and IPv6
+while the eSTB supports only IPv4 for provisioning and management would need to implement [RFC 4293]
+ipNetToPhysicalTable and populate this table per Table 4, optionally the [RFC 2011] ipNetToMediaTable could be
+implemented and populated per Table 3.
+           Table 3 - [RFC 2011] ipNetToMediaTable MIB-Object Details for eDOCSIS Device Interfaces
+
+ [RFC 2011] MIB-
+      Object                                                                                    SEB eSTB-
+                          ePS             eMTA       eSTB-IP            eTEA           eSG                        eTR
+  details for eCM-                                                                                 IP
+ eSAFE Interfaces
+ipNetToMediaIfIndex   1              16             17             19             20            21           23
+ipNetToMediaPhysAd    WAN-Man        MTA MAC        STB MAC        TEA MAC        SG MAC        00:00:00:00:0 TR MAC
+dress                 MAC            Address        Address        Address        Address       0             Address
+                      Address
+ipNetToMediaNetAddr   WAN-Man        MTA            STB IP         TEA IP         SG IP         0.0.0.0      TR IP
+ess                   Address, if    Address, if    Address, if    Address, if    Address, if                Address, if
+                      acquired;      acquired;      acquired;      acquired;      acquired;                  acquired;
+                      otherwise      otherwise      otherwise      otherwise      otherwise                  otherwise,
+                      0.0.0.0        0.0.0.0        0.0.0.0        0.0.0.0        0.0.0.0                    0.0.0.0
+ipNetToMediaType      static(4)      static(4)      static(4)      static(4)      static(4)     static(4)    static(4)
+
+          Table 4 - [RFC 4293] ipNetToPhysicalTable MIB-Object Details for eDOCSIS Device Interfaces
+
+                         ePS,
+                      eRouter or      eMTA or                                                   SEB eSTB-
+ MIB Object Name                                     eSTB-IP            eTEA           eSG                        eTR
+                      eSTB SEB         eDVA                                                        IP
+                        Server
+ipNetToPhysicalIfInde 1             16             17             19             20             21           23
+x
+ipNetToPhysicalPhys   WAN-Man        MTA or eDVA STB MAC          TEA MAC        SG MAC         00:00:00:00:0 TR MAC
+Address               MAC Address MAC Address Address             Address        Address        0             Address
+                      for the ePS or
+                      operator-
+                      facing
+                      interface
+                      MAC Address
+                      for the
+                      eRouter or
+                      00:00:00:00:0
+                      0 for eSTB
+                      SEB Server
+ipNetToPhysicalNetA   ipv4(1) or    ipv4(1) or     ipv4(1) or     ipv4(1) or     ipv4(1) or     Unknown(0)   ipv4(1) or
+ddressType            ipv6(2),      ipv6(2), as    ipv6(2), as    ipv6(2), as    ipv6(2), as                 ipv6(2), as
+                      as applicable applicable     applicable     applicable     applicable                  applicable
+
+
+
+
+08/31/22                                             CableLabs                                                            35
+CM-SP-eDOCSIS-I31-220831                                          Data-Over-Cable Service Interface Specifications
+
+
+                          ePS,
+                       eRouter or      eMTA or                                                SEB eSTB-
+    MIB Object Name                                  eSTB-IP          eTEA           eSG                         eTR
+                       eSTB SEB         eDVA                                                     IP
+                         Server
+ipNetToPhysicalNetA   WAN-Man IP     MTA or eDVA STB IP           TEA IP        SG IP         zero-length   TR IP
+ddress                Address for    IP Address, if Address, if   Address, if   Address, if   string        Address, if
+                      the ePS, or    acquired;      acquired;     acquired;     acquired;                   acquired;
+                      eRouter        otherwise a    otherwise a   otherwise a   otherwise a                 otherwise a
+                      operator-      zero-length    zero-length   zero-length   zero-length                 zero-length
+                      facing         string         string        string        string                      string
+                      interface IP
+                      address, if
+                      acquired;
+                      otherwise a
+                      zero-length
+                      string
+ipNetToPhysicalLastU <refer to       <refer to     <refer to      <refer to     <refer to     <refer to     <refer to
+pdated               [RFC 4293]>     [RFC 4293]>   [RFC 4293]>    [RFC 4293]>   [RFC 4293]>   [RFC 4293]>   [RFC 4293]>
+ipNetToPhysicalType   static(4)      static(4)     static(4)      static(4)     static(4)     static(4)     static(4)
+ipNetToPhysicalState <refer to       <refer to     <refer to      <refer to     <refer to     <refer to     <refer to
+                     [RFC 4293]>     [RFC 4293]>   [RFC 4293]>    [RFC 4293]>   [RFC 4293]>   [RFC 4293]>   [RFC 4293]>
+ipNetToPhysicalRowS 'active'         'active'      'active'       'active'      'active'      'active'      'active'
+tatus
+
+
+5.2.3.3     [RFC 1493]/[RFC 4188] Requirements
+The eCM MUST add ports associated with eSAFEs to its dot1dBasePortTable [RFC 1493] [RFC 4188].
+The eCM MUST support all bridge statistics of the dot1dTpPortTable [RFC 1493] [RFC 4188] for all ports
+associated with eSAFEs.
+The eCM MUST create a row entry in its dot1dTpFdbTable [RFC 1493] [RFC 4188] for each active eSAFE MAC
+address within the eDOCSIS device. Note that an eSAFE may have more than one active MAC address.
+The eCM MUST populate each dot1dTpFdbTable entry for an eSAFE as follows:
+•     the dot1dTpFdbAddress report the corresponding eSAFE MAC address,
+•     the dot1dTpFdbPort reports the port associated with the ifIndex of that eSAFE from the dot1dBasePortTable,
+•     the dot1dTpFdbStatus reports mgmt(5).
+The eCM MUST prevent row entries for eSAFEs in the dot1dTpFdbTable from being aged-out or overwritten.
+
+5.2.3.3.1    [RFC 1493]/[RFC 4188] Requirements for the eTEA
+An eCM MUST NOT bridge a frame having a destination address equal to an active eTEA MAC address if that
+frame was received from any port other than the one associated with ifIndex 19.
+An eCM MUST NOT bridge a frame having a destination address equal to an active eTEA MAC address to any port
+other than the one associated with ifIndex 19 (the interface to the eTEA).
+If a CPE MAC address is acquired by the eCM via the eCM Configuration File or via the address learning process,
+and the eCM is later informed that the same address is an eTEA MAC address, the eCM SHOULD remove the
+eTEA MAC address from its list of acquired CPE MAC addresses.
+
+5.2.3.4     Battery Backup UPS MIB Requirements
+eSAFE specifications can require support for the Battery Backup UPS MIB, if Battery Backup is supported in the
+containing eDOCSIS device. For more information, please refer to the Battery Backup MIB specification ([CL
+BB]).
+For an eDOCSIS device meeting the requirements specified in [CL BB], the eCM MUST implement the Battery
+Backup UPS MIB specified in [CL BB].
+
+
+36                                                    CableLabs                                                08/31/22
+eDOCSIS™ Specification                                                               CM-SP-eDOCSIS-I31-220831
+
+
+5.2.4     DHCPv4 Option 43 Syntax Requirements
+In order to facilitate device provisioning, all eDOCSIS devices operating with IPv4 will use DHCP Option 43 during
+registration process for providing vendor class identification, embedded component, and vendor specific capability
+enumerations. Requirements in this section apply only to cable modems operating with IPv4 and do not apply to
+cable modems not operating with an IPv4 protocol stack, such as a DOCSIS 3.0 or greater cable modem operating
+with only an IPv6 protocol stack.
+
+5.2.4.1    General Requirements
+The eCM MUST implement Option 43 and its Sub-options 2 through 10 for Vendor Specific Information to identify
+embedded components as specified in [CANN-DHCP] for the DHCP DISCOVER and DHCP REQUEST messages.
+Similarly, each eSAFE MAY issue its own DHCP DISCOVER and DHCP REQUEST with Option 43 after eCM
+has been successfully registered and operational; details are specified in each eSAFE's specification.
+
+5.2.4.2    DHCP Option 43 Syntax
+DHCP Option 43 provides device specific information through the use of sub-options. Sub-options 1 through 10 are
+specified by CableLabs, sub-options 11-127 are reserved for future CableLabs use, and sub-options 128 and above
+are reserved for vendor use.
+The eCM MUST implement the Vendor Specific Information Option (DHCP option 43) as specified in [CANN-
+DHCP] and per [RFC 2132]. Details of DHCP option 43 and its sub-options for eDOCSIS are further defined below.
+The option begins with a type octet with the value of number 43, followed by a length octet. The length octet is
+followed by the number of octets of data equal to the value of the length octet. The value of the length octet does not
+include the two octets specifying the tag and length.
+DHCP option 43 in eDOCSIS is a compound option. The content of option 43 is composed of one or more sub-
+options. Supported DHCP option 43 sub-options in eDOCSIS are in the range 1-254. A sub-option begins with a tag
+octet containing the sub-option code, followed a length octet which indicates the total number of octets of data. The
+value of the length octet does not include itself or the tag octet. The length octet is followed by "length" octets of
+sub-option data.
+
+5.2.4.3    DHCPv4 Option 43 Sub-option Encoding
+The encoding of each Option 43 sub-option is defined below. See [CANN-DHCP] for the intended purpose of each
+sub-option.
+The eCM MAY include Option 43 sub-option 1 in DHCPDISCOVER and DHCPREQUEST messages. If DHCP
+Option 43 sub-option 1 is included in these DHCP client messages, the eCM MUST encode this sub-option by the
+number of octets equal to the value of the length octet of this sub-option, with each octet codifying a requested sub-
+option. If the length octet of this sub-option is 0 (because there are no requested sub-options), the eCM SHOULD
+omit this sub-option from DHCP Option 43.
+The eCM MUST encode each of the DHCP Option 43 sub-options 2, 3, 4, 5, 6, 7, 8, 9, and 10 as a character string
+consisting of characters from the NVT ASCII character set, with no terminating NULL.
+An eCM MUST send DHCP Option 43 sub-option 2 containing the character string "ECM" (without the quotation
+marks).
+An eCM MUST send DHCP Option 43 sub-option 3 containing a colon-separated list of all eSAFE types in the
+eDOCSIS device, including at a minimum the colon-separated character string "ECM:<eSAFE>" (without the
+quotation marks). The first device on the list is always "ECM". See [CANN-DHCP] for possible eSAFEs.
+Defined eSAFEs are: "EPS" for CableHome embedded Portal Services Element, "EMTA" for PacketCable
+embedded MTA, "EDVA" for PacketCable 2.0 embedded digital voice adaptor, "ESTB" for embedded set-top box,
+"ETEA" for embedded TDM emulation adapter, and "ESG" for embedded SMA gateway.
+An eCM MUST send DHCP Option 43 sub-option 4 containing the device serial number as in MIB object
+docsDevSerialNumber.
+
+
+
+08/31/22                                            CableLabs                                                      37
+CM-SP-eDOCSIS-I31-220831                                    Data-Over-Cable Service Interface Specifications
+
+
+An eCM MUST send DHCP Option 43 sub-option 5 containing the Hardware version number identical to the value
+as reported in <Hardware version> field in MIB object sysDescr.
+An eCM MUST send DHCP Option 43 sub-option 6 containing the Software version number identical to the value
+as reported in <Software version> field in MIB object sysDescr.
+An eCM MUST send DHCP Option 43 sub-option 7 containing the Boot ROM version number identical to the
+value as reported in <Boot ROM version> field in MIB object sysDescr.
+An eCM MUST send DHCP Option 43 sub-option 8 containing a 6-octet, hexadecimally-encoded, vendor-specific
+Organization Unique Identifier (OUI) that uniquely identifies the eCM manufacturer.
+An eCM MAY use its MAC address as the value for the OUI field in DHCP Option 43 sub-option 8. All eDOCSIS
+devices from a single vendor MAY use a single OUI.
+An eCM MUST send DHCP Option 43 sub-option 9 containing the Model number identical to the value as reported
+in <Model number> field in MIB object sysDescr.
+An eCM MUST send DHCP Option 43 sub-option 10 containing the Vendor name identical to the value as reported
+in <Vendor name> field in MIB object sysDescr.
+If an eCM is embedded with one or more eSAFEs that utilize eCM Config File Encapsulation, the eCM MUST send
+DHCP Option 43 sub-option 15 containing the list of eSAFEs that support this feature. If no eSAFE supports eCM
+Config File Encapsulation, then the eCM MUST either not populate this sub-option or set the sub-option length to
+zero.
+If an eCM is embedded in a device containing an eSTB, the eCM MUST send DHCP Option 43 sub-option 18
+containing the type of video security element in the device.
+An eCM or eSAFE MUST NOT implement DHCP Option 43 sub-options 11-127, which are reserved for eSAFEs
+and CableLabs.
+An eCM or eSAFE MAY implement DHCP Option 43 sub-options 128-256, which are reserved for vendor-specific
+purpose. If the total number of octets in all DHCP Option 43 sub-options exceeds 255 octets, the eCM MUST split
+the option into multiple smaller options per [RFC 3396].
+
+5.2.5     DHCPv6 Vendor Specific Option Syntax Requirements
+In order to facilitate provisioning, all eDOCSIS devices implementing a DOCSIS 3.0 or greater CM and operating
+with IPv6 will include Vendor-specific Information options during the CM IPv6 registration process [MULPI3.0].
+Vendor-specific Information options include configuration file location and name information, syslog server
+information, device identifier information, and cable modem capabilities. Refer to [CANN-DHCP].
+
+5.2.5.1    eDOCSIS Device Information in DHCPv6 Vendor Specific Options
+An eCM operating with IPv6 provides device-specific information through the use of the DHCPv6 Vendor Specific
+Information Options. This information, which is carried in Option 43 sub-options in the case of an eCM or eSAFE
+using IPv4, provides the provisioning system with details about the eDOCSIS device, including implemented
+CableLabs specification, hardware revision, software revision, and number and type of implemented eSAFEs. Refer
+to Section 5.2.4.3 for more information about DHCPv4 Option 43 requirements.
+An eCM operating with IPv6 MUST include the DHCPv6 Vendor Specific option codes listed below in DHCPv6
+Solicit messages:
+•    Option Code 2: Device Type Option (with "ECM" as the Embedded Cable Modem Identifier)
+•    Option Code 3: List of Implemented eSAFEs
+•    Option Code 4: Device Serial Number
+•    Option Code 5: Hardware Version Number
+•    Option Code 6: Software Version Number
+
+
+
+
+38                                               CableLabs                                            08/31/22
+eDOCSIS™ Specification                                                            CM-SP-eDOCSIS-I31-220831
+
+
+•   Option Code 9: Model Number
+•   Option Code 10: Vendor Identifier
+The eCM MUST list in the List of Implemented eSAFEs option the abbreviation for each eSAFE implemented in
+the device, beginning with ECM and separated with a colon.
+The format of the DHCPv6 vendor specific option codes 2 - 6 and 9 - 10 listed above follow the format of other
+vendor specific options described in [CANN-DHCP].
+
+5.2.6     Testability Requirements
+In order to verify conformance to this specification and to the DOCSIS Base Specifications, a mechanism to
+generate and receive traffic bridged through the eCM is required. eDOCSIS devices that have a physically exposed
+CMCI (e.g., Ethernet or USB) can be tested by using external packet generation equipment connected to that
+interface.
+For cost, security, or other reasons, however, certain eDOCSIS devices may not have an exposed CMCI,
+necessitating an alternative mechanism.
+Additionally, an eDOCSIS device MAY have multiple eSAFEs, each with a logical CPE interface (LCI) to the
+eCM. This specification places requirements on the LCIs as well as the bridging of traffic among eCM and eSAFEs.
+To this end, a Software Loopback for eDOCSIS (SLED) is specified below.
+
+5.2.6.1     General Requirements
+An eCM SHOULD implement SLED. An eCM without an externally accessible CMCI port, or a physical interface
+configured to be equivalent to a CMCI port, MUST implement SLED.
+
+5.2.6.2     SLED Protocol Description
+
+5.2.6.2.1    General Description
+SLED is an embedded test function residing in an eCM enabling DOCSIS and eDOCSIS conformance testing
+coverage, particularly when an exposed CMCI is not available.
+The SLED test functions are controlled via SLED MIB objects as specified in Annex A. The eCM MUST associate
+SLED MIB objects with the SNMP stack of the eCM. The eCM MUST NOT make the SLED MIB objects
+accessible through the CMCI.
+To prevent unintended activation, the eCM MUST set the default state of all SLED functions to disable (false). The
+eCM MUST enable SLED functions only if the MIB object sledGlobalEnable is set to 'true' prior to eCM
+registration; sledGlobalEnable MAY can be set to 'true' via inclusion in TLV-11 of the eCM's configuration file.
+The SLED MIB values revert to power-on values when the CM de-registers or loses Operational state; the
+sledGlobalEnable will revert to 'false', and in-progress packet generation or loopback will be stopped.
+
+
+
+
+08/31/22                                          CableLabs                                                     39
+CM-SP-eDOCSIS-I31-220831                                      Data-Over-Cable Service Interface Specifications
+
+
+Figure 26 illustrates the SLED reference model.
+
+
+
+
+                                                                              eDOCSIS Device
+           Test Station
+                                      CMTS                        eCM
+                                                                             LCI
+                                                                                           eSAFE
+             Packet                                              SLED
+             Sniffer            NSI          RFI                  MIB
+
+            Packet
+           Generator                                                                           Packet
+                                                                            Loopback            Gen
+                                                                                                        SLED
+
+
+
+
+                                         Figure 26 - SLED Reference Model
+
+
+The SLED functionality supports:
+1.   Packet loopback—The primary purpose of the Packet loopback protocol is to enable verification of the receipt
+     of packets across the LCI by the eSAFE. Once enabled by the SLED MIB object, all packets that are forwarded
+     to the indicated LCI are encapsulated into a pre-defined packet header (Ethernet DIX frame header + IP header
+     + UDP header) and reflected back across the LCI to the eCM for forwarding to the final destination. Typically,
+     the looped-back packets will be addressed to, and captured by, a test station residing in the Network-Side
+     Interface (NSI) of the CMTS.
+2.   Packet generation—SLED MIB objects are defined to enable setting up of Ethernet framing and payload
+     transmission for packet generation and transmission through the LCI to the eCM. The SLED MIB objects
+     described below control the packet transmission with parameters such as Ethernet packet header, packet rate,
+     and the number of packets.
+3.   Packet loopback and packet generation SLED functions MUST be able to be controlled independently.
+4.   The eCM's packet loopback and packet generation SLED functions MUST NOT disrupt network connectivity
+     to or from the eSAFE. When SLED loopback is enabled, the eCM MUST transmit every packet that is
+     forwarded across the LCI in the eCM-to-eSAFE direction, to both the eSAFE and the SLED loopback function.
+     When SLED functions are enabled the eCM MUST continue to bridge packets to/from the eSAFE across the
+     LCI.
+
+5.2.6.2.2       Loopback Protocol
+An eCM implementing SLED MUST implement the following loopback protocol:
+1.   The SLED packet loopback function is attached to the LCI associated with the eSAFE by setting SLED MIB
+     sledLoopbackInterface to the eCM's ifIndex number associated with the LCI (per Table 1).
+2.   The SLED MIB object sledLoopbackPktHdr is configured with the 42-byte loopback Ethernet packet/IP/UDP
+     headers (14-byte Ethernet header + 20-byte IPv4 header + 8-byte UDP header).
+3.   As an example, the following loopback header parameters could be used:
+      a.     Ethernet MAC source address = eSAFE MAC address
+      b.     Ethernet MAC destination address = test station MAC address
+      c.     IP source address = eSAFE Management IP address
+      d.     IP destination address= test station IP address
+      e.     UDP source port number = 7
+
+
+
+40                                                  CableLabs                                             08/31/22
+eDOCSIS™ Specification                                                                            CM-SP-eDOCSIS-I31-220831
+
+
+      f.   UDP destination port number =7
+
+4.   When the SLED MIB object sledLoopbackInterface is set to an ifIndex associated with an LCI which supports
+     SLED, sledLoopbackPktHdr contains a 42-byte octet string, and sledLoopbackEnable is set to 'true', the SLED
+     operates in a loopback mode.
+5.   When operating in loopback mode, all Ethernet packets forwarded across the indicated LCI by the eCM will be
+     processed as follows: 2
+      a.   If the received Ethernet packet is greater than 1472 octets, the Ethernet packet is split into two fragments
+           according to IP fragmentation scheme as described in [RFC 791], the first consisting of the first 1472
+           octets of the Ethernet packet and the second containing the remaining octets, resulting in two payloads to
+           that are processed as described below.
+      b.   If the received Ethernet packet is less than or equal to 1472 octets, the entire packet is processed as a
+           single payload.
+      c.   Each payload generated in step 5a or 5b MUST be prepended with the contents of sledLoopbackPktHdr.
+      d.   The mutable fields within sledLoopbackPktHdr are to be recomputed. The mutable fields are IP Header
+           Checksum, IP Total Length per [RFC 791], and UDP Checksum, UDP Length per [RFC 768].
+      e.   If the Ethernet packet is fragmented as defined in step 5a, the appropriate IP header fields are to be
+           updated to indicate IP fragmentation. The IP fragmentation header values will differ depending on if this
+           is the first or second fragment being processed (per [RFC 791]). Further, the final 8 bytes of
+           sledLoobpackPktHdr (the UDP header) are NOT to be prepended to the second fragment.
+      f.   The Ethernet FCS is computed and appended.
+      g.   The resulting Ethernet packet is transmitted to the LCI toward the eCM.
+
+6.   When the SLED MIB object sledLoopbackEnable is set to 'false', the SLED loopback function is be disabled.
+7.   While the SLED loopback function is enabled, the eCM rejects changes to sledLoopbackInterface or
+     sledLoopbackPktHdr.
+Figure 27 illustrates the SLED packet loopback encapsulation.
+                                42 Octets                             64-1518 Octets                              4 Octets
+
+                                Loopback
+                                                  Payload: Downstream Ethernet/802 MAC Frame minus FCS
+                              Encapsulation        (fragment into 2 IP fragments if greater than 1472 octets)
+                                                                                                                   FCS
+                                 Header
+
+
+
+
+                                                  2
+                6 Octets          6 Octets                             20 Octets                       8 Octets
+                                                Octets
+
+             Ethernet MAC       Ethernet MAC     Type                IP header
+                                                                                                     UDP header
+              Dest Addr =        Src. Addr =      =            Src IP Addr = eSAFE
+               test station        eSAFE         0800        Dest IP Addr = test station
+
+
+                                  Figure 27 - SLED Packet Loopback Encapsulation
+
+
+Figure 28 illustrates an example of the SLED loopback sequence.
+
+
+
+
+2 Note: The eCM MUST remove the Ethernet FCS/CRC32 before encapsulating and processing the packet for loopback. Because
+
+the CRC32 may not be present, may be incorrect, and is not relevant to the SLED loopback tests, it is omitted from the packet
+that is looped back.
+
+
+08/31/22                                                 CableLabs                                                          41
+CM-SP-eDOCSIS-I31-220831                                        Data-Over-Cable Service Interface Specifications
+
+
+5.2.6.2.3    Packet Generation Protocol
+An eDOCSIS device implementing SLED MUST implement the following packet generator protocol:
+1.   The SLED packet generation function is attached to the eCM's LCI associated with the eSAFE by setting SLED
+     MIB sledPktGenInterface to the ifIndex number associated with the LCI (per Table 1).
+2.   The SLED MIB object sledPktGenPayload is set up to be a complete Ethernet (DIX/802 MAC) packet,
+     including FCS trailer, for transmission across the LCI. The FCS is set to be correct for the packet as specified,
+     and MAY be recalculated by the eCM as required for upstream processing; the SLED is not required to validate
+     the FCS, and a packet with an invalid FCS MAY be transmitted with a corrected FCS.
+3.   The SLED MIB objects sledPktGenRate and sledPktGenNumPkts are set to non-zero values.
+4.   When sledPktGenInterface is set to an ifIndex associated with an LCI which supports SLED, sledPktGenRate
+     and sledPktGenNumPkts are both set to non-zero values, the SLED Packet Generator MUST start to send
+     generated Ethernet packets to the LCI in within 250 msec after sledPktGenTrigger is set to 'start'; the SLED
+     starts to transmit packets to the LCI as soon as possible in order to minimize the amount of time it takes to run
+     tests that use the SLED Packet Generator.
+5.   When sledPktGenTrigger is set to 'start', the SLED Packet Generator sets the SLED MIB
+     sledPktGenLastTrigger to the current value of the system MIB sysUptime.
+6.   The packets generated by the SLED Packet Generator MUST be the exact copies of the Ethernet packet
+     specified by the SLED MIB sledPktGenPayload. The average rate of generated packets be as specified by the
+     SLED MIB sledPktGenRate.
+7.   The packet generation MUST be continued until the total number of generated packets reaches the limit as
+     specified by the SLED MIB sledPktGenNumPkts, unless terminated by setting sledPktGenTrigger to 'stop'. If
+     sledPktGenTrigger is set to 'stop' while packets are being generated, the SLED stops packet generation within 1
+     second.
+8.   While the previous sequence of SLED packets is still in progress, the eCM rejects changes to
+     sledPktGenInterface, sledPktGenPayload, sledPktGenNumPkts, or sledPktGenRate.
+
+
+
+
+42                                                   CableLabs                                               08/31/22
+eDOCSIS™ Specification                                                                                                              CM-SP-eDOCSIS-I31-220831
+
+
+Refer to Figure 28 for an illustration of the SLED packet loopback and generation sequences.
+
+                                                                                                                           eDOCSIS Device
+                                                                                                                 eCM               LCI
+                                                                                                                                                      eSAFE
+                        Test
+                                             IP                CMTS                     HFC
+                       Station
+                                                                                                                  SLED                                   Packet
+                                                                                                                                           Loopback
+                                                                                                                   MIB         SLED                       Gen
+                                                       sledGlobalEnable = 'true'
+                                                         included in TLV-11 of
+                                                           Configuration File
+
+                                                                              Enable SLED
+                                                                                             via TLV-11
+                                                            Select loopback LCI
+                                     (SNMP SET sledloop
+                                                             backInterface to ifInd
+                                     Set up filters (Config                        ex of eSAFE LCI)
+                                                           . file or SNMP) to pas
+                                                                                  s UDP traffic to LCI
+                                     Set up encapsulation
+                                                             Ethernet /UDP header
+                                                                                     using SLED MIB
+                                                           sledLoopbackPktHdr
+                                      Enable Loopback (SN
+                                                                MP SETsledLoopba
+                                                                                    ckEnable='true')
+
+
+            SLED                                                                                                                          Loopback
+                                                                                                                                           Enabled
+            Packet                                                         send packet
+           Loopback
+
+
+
+                                                                                            ket received
+                                                                          smit Ethernet pac
+                                                      Encapsulate & tran                                    2 octets (if needed
+                                                                                                                               )
+                                                                             ket receiv ed greater than 147
+                                                     smit 2nd fragment if pac
+                                                 tran
+                                 Encapsulate and
+
+                                      Disable Loopback (SNMP
+                                                             SETsledLoopbackEnable=
+                                                                                   'false')
+
+                                                                                                                                         Loopback
+                                                                                                                                         Disabled
+
+
+                         ~
+                         ~                                        ~
+                                                                  ~                                                 ~
+                                                                                                                    ~                        ~
+                                                                                                                                             ~            ~
+                                                                                                                                                          ~
+                                                        Select packet gen.
+                                     (SNMP SET sledPktG                     LCI
+                                                            enInterface to ifIndex
+                                                                                    of eSAFE LCI)
+                             Set up packet payload
+                                                    , packet rate and num
+                                  sledPktGenPayload,                       ber of packets via SNM
+                                                        sledPktGenRate, and                         P SET:
+                                                                                sledPKtGenNumPkts
+                                  Start packet transmission
+                                                             (SNMP SET sledPktGenTrig
+                                                                                           ger='start')
+
+             SLED
+                                                                                                           sledPktGenLastTrigger
+                                                                                                                = sysUptime
+            Packet
+           Generator
+                                                                               Xmit packet #1
+                                                                               Xmit packet #2
+
+                                   Abort packet transmission
+                                                               (SNMP SET sledPktGenTrig
+                                                                                             ger='stop')
+
+
+                                                                              Xmit last packet
+                                                                                                                                                      Packet Gen.
+                                                                                                                                                       Completed
+
+
+
+                             Figure 28 - SLED Packet Loopback And Generation Sequences
+
+
+
+5.2.7   Firmware Download
+An eDOCSIS device MUST support a Monolithic Firmware Image download that is used for the entire eDOCSIS
+device. A change to any component of a Monolithic Firmware Image constitutes a change to the entire image, and as
+such, requires a new SW version number.
+An eDOCSIS device MAY support Segmented Firmware Image download for specific components within the
+device. When an eDOCSIS device supports Segmented Firmware Image download, a change to a specific set of
+
+
+08/31/22                                                                 CableLabs                                                                                 43
+CM-SP-eDOCSIS-I31-220831                                       Data-Over-Cable Service Interface Specifications
+
+
+component devices or elements can be performed using a discrete firmware image for those specific components.
+An eDOCSIS device which supports Segmented Firmware Image download MUST update the software version
+number when any segmented firmware image is loaded. An eDOCSIS device which supports Segmented Firmware
+Image download MUST ensure that the same combination of segmented firmware image components always results
+in the same software version number.
+The DOCSIS Secure Software Download mechanism and framework allows support for both Monolithic and
+Segmented Firmware image downloads. With the exception of an eDOCSIS device that contains an eSTB, the eCM
+MUST control the download using the DOCSIS Secure Software Download (SSD) mechanisms as specified in
+[BPI+], [DOCSIS RFI/MULPI], and [DOCSIS OSSI].
+Firmware download requirements for an eDOCSIS device that contains an eSTB (referred to as a Set-top Device) is
+defined in the following subsection "Set-top Device Firmware Download". The DOCSIS SSD mechanism requires
+an eDOCSIS device to validate any downloaded firmware image. In the context of segmented software downloads,
+this means that the eDOCSIS device is required to verify that a new software component will work correctly with
+other existing software components before installing that image.
+NOTE: An eDOCSIS device can implement TFTP or HTTP download protocols as defined in [DOCSIS RFI/MULPI]
+   for the purposes of updating the device firmware and/or software.
+
+5.2.7.1    Set-top Device Firmware Download
+There are two firmware download methods for an eDOCSIS device that contains an eSTB:
+1.   DSM-CC data carousel methods as defined in the OpenCable Common Download specification [CDL2],
+2.   DOCSIS Secure Software Download (SSD) mechanisms as defined in [BPI+], [DOCSIS RFI/MULPI], and
+     [DOCSIS OSSI].
+NOTE: OpenCable Host 2.1 Set-top devices support the above firmware download methods as specified in
+   [HOST2.1] and [CDL2].
+eSTBs that do not comply with [HOST2.1] MUST support either:
+•    all the DSM-CC Data Carousel methods, or
+•    the DOCSIS SSD method.
+Firmware downloads can be triggered either via the eCM or the eSTB depending upon implementation. When a Set-
+top Device firmware download is triggered via the eCM logical element, the eCM MUST report the status of the
+firmware download as described in Section 5.2.7.1.1. When a Set-top Device firmware download is triggered via the
+eSTB logical element, the eCM MUST report the status of the firmware download as indicated in Section 5.2.7.1.2.
+For all eSTB-triggered firmware download methods that use IP (such as TFTP, HTTP, or FLUTE), the eCM will
+perform the firmware download using the same address family used to download the configuration file. Upon
+receiving an eSTB trigger for an IP-based download method, the eCM MUST:
+•    perform the firmware download using an IPv4 download server address if the eCM downloaded its
+     configuration file using IPv4, or
+•    perform the firmware download using an IPv6 download server address if the eCM downloaded its
+     configuration file using IPv6.
+For eSTB-triggered firmware downloads that use IPv4, the download server address MUST be selected as follows:
+•    the IPv4 address contained within the eSTB trigger, if present; or
+•    the IPv4 address specified in the Software Upgrade IPv4 TFTP Server TLV in the cable modem configuration
+     file, if present; or
+•    the IPv4 address of the TFTP server used to download the configuration file.
+For eSTB-triggered firmware downloads that use IPv6, the download server address MUST be selected as follows:
+•    the IPv6 address contained within the eSTB trigger, if present; or
+
+
+
+44                                                  CableLabs                                         08/31/22
+eDOCSIS™ Specification                                                             CM-SP-eDOCSIS-I31-220831
+
+
+•   the IPv6 address specified in the Software Upgrade IPv6 TFTP Server TLV in the cable modem configuration
+    file, if present; or
+•   the IPv6 address of the TFTP server used to download the configuration file.
+The operator can achieve maximum robustness and interoperability by specifying both IPv4 and IPv6 addresses for
+all download triggers. This allows all devices to successfully perform the download regardless of provisioning
+mode.
+
+5.2.7.1.1   OSS Requirements for Firmware Downloads Initiated by the eCM
+If the Set-top Device supports DOCSIS SSD, then it MUST report the status of a firmware download initiated by the
+eCM in accordance with the CM requirements in [DOCSIS OSSI].
+If the eSTB does not implement DOCSIS SSD mechanisms, then the eCM MUST set the docsDevSwOperStatus to
+other(5). If the eSTB does not implement DOCSIS SSD mechanisms, then the eCM MUST respond to an attempt to
+trigger a TFTP upgrade (initiated through SNMP or Configuration File) as follows:
+•   ignore DOCSIS SSD triggers through SNMP or Config File TLVs,
+•   remain capable of accepting new software through the non-DOCSIS firmware download mechanism,
+•   report the attempt to trigger a TFTP firmware upgrade by logging the appropriate event at the eCM (via an entry
+    in the docsDevEvTable),
+•   maintaining the docsDevSwOperStatus to other(5).
+If the Set-top Device does not implement DOCSIS SSD mechanisms, then all the download-related requirements as
+specified in [BPI+] do not apply. Additionally the eCM in this type of Set-top Device MUST support the BPI+ MIB
+docsBpi2CodeDownloadControl objects with the following constraints (other objects within
+docsBpi2CodeDownloadControl are as defined within the MIB):
+•   docsBpi2CodeDownloadStatusCode always reports other(7)
+•   docsBpi2CodeDownloadStatusString always returns the string "DOCSIS SSD not supported"
+
+5.2.7.1.2   OSS Requirements for Firmware Downloads Initiated by the eSTB
+During a firmware download for the Set-top Device which is initiated by the eSTB, the eCM MUST set its MIB
+objects as follows:
+•   docsDevSwServer to 0.0.0.0 or docsDevSwServerAddress to 0.0.0.0 or :: and docsDevSwServerAddressType
+    to ipv4(1) or ipv6(2) respectively.
+•   docsDevSwFilename to the filename of the image the eSTB is downloading.
+•   docsDevSwAdminStatus to ignoreProvisioningUpgrade(3)
+•   docsDevSwOperStatus to inProgress(1)
+•   docsDevSwCurrentVers to the current version of the eDOCSIS device code
+•   docsBpi2CodeDownloadStatusCode to other(7)
+•   docsBpi2CodeDownloadStatusString to the string "Set-top Device code file download initialized by the eSTB"
+During the download of an image for the Set-top Device which is initiated by the eSTB, the eCM MUST ignore any
+change to the docsDevSwAdminStatus MIB object. Note that by setting docsDevSwAdminStatus to
+ignoreProvisioningUpgrade and by fixing this value, the eCM will ignore any firmware download triggers through
+the eCM configuration file while a firmware download initiated by the eSTB is taking place. Note also that setting
+docsDevSwAdminStatus to ignoreProvisioningUpgrade and by fixing this value, the eCM effectively ignores
+firmware download triggers through SNMP while a firmware download initiated by the eSTB is taking place.
+After the download process finishes, the eCM MUST set its MIB objects as follows:
+
+
+
+
+08/31/22                                          CableLabs                                                    45
+CM-SP-eDOCSIS-I31-220831                                       Data-Over-Cable Service Interface Specifications
+
+
+•    docsDevSwServer to 0.0.0.0 or docsDevSwServerAddress to 0.0.0.0 or :: and docsDevSwServerAddressType
+     to ipv4(1) or ipv6(2) respectively
+•    docsDevSwFilename to the filename of the image that the eSTB intended to download
+•    docsDevSwAdminStatus to ignoreProvisioningUpgrade(3) if the eDOCSIS device firmware download initiated
+     by the eSTB succeeded, or to the value present before the download was initiated if the eDOCSIS device
+     firmware download initiated by the eSTB failed
+•    docsDevSwOperStatus to failed(4) if the eDOCSIS device firmware download initiated by the eSTB failed, or
+     to other(5) if it succeeded
+•    docsDevSwCurrentVers to the current version of the eDOCSIS device code
+•    docsBpi2CodeDownloadStatusCode to codeFileVerified(5) if the eDOCSIS device could verify the firmware
+     download, or codeFileRejected(6) if the eDOCSIS device could not verify the firmware download and therefore
+     rejected it, or to other(7) in any other case
+•    docsBpi2CodeDownloadStatusString to the string "Firmware Download initiated by the eSTB successful" if the
+     eDOCSIS device firmware download initiated by the eSTB succeeded, or "Firmware Download initiated by the
+     eSTB failed"
+In the case where the CVC is distributed to the Set-top Device through the eSTB fails verification checks (e.g., those
+defined in OpenCable), the eCM MUST set its MIB objects as follows:
+•    docsBpi2CodeDownloadStatusCode to other(7)
+•    docsBpi2CodeDownloadStatusString to the string "Set-top Device CVC validation failure for CVC distributed
+     through eSTB"
+
+5.2.8     eSAFE Configuration
+It is within the scope of each eSAFE specification to define the configuration mechanisms for each type of eSAFE
+device. eDOCSIS provides two methods for the direct configuration of eSAFE features via the eCM. Either of these
+two methods may be used by an eSAFE, both may be used, or neither may be used, as defined in the relevant eSAFE
+specification. The two methods are:
+1.   eSAFE-MIB Configuration - The eSAFE-MIB can provide eCM MIB objects that can be used to configure a
+     particular type of eSAFE (see Annex B). Such MIB objects can be set via the CM configuration file, or by
+     direct SNMP access to the eCM.
+2.   eCM Config File Encapsulation - The eCM configuration file can contain eSAFE specific configuration
+     parameters, the details of which are defined by the eSAFE specification. These configuration parameters are
+     encapsulated in the eCM configuration file via the "eCM eSAFE Configuration File TLVs," and are passed to
+     the eSAFE upon validation of the configuration file.
+An eCM in an eDOCSIS device implementing an ePS, eRouter, eTEA, eSTB, eDVA, or/and eMTA logical
+element(s) as an eSAFE MUST implement the eSAFE-MIB (Annex B).
+
+5.2.8.1    eCM Config File Encapsulation
+If the eCM is embedded with one or more eSAFEs that utilize eCM Config File Encapsulation, the eCM MUST
+recognize the corresponding eCM eSAFE Configuration TLVs as listed in Table 5.
+                                            Table 5 - eCM eSAFE TLVs
+
+                       Type                   Length                 Applies to eSAFE Type
+                        201                      n                               ePS
+                        202                      n                             eRouter
+                     203..215                                                <reserved>
+
+
+
+
+46                                                   CableLabs                                             08/31/22
+eDOCSIS™ Specification                                                              CM-SP-eDOCSIS-I31-220831
+
+
+
+                       Type                   Length                 Applies to eSAFE Type
+                        216                      n                              eMTA
+                        217                      n                              eSTB
+                        218                                                  <reserved>
+                        219                      n                              eTEA
+                        220                      n                              eDVA
+                        221                      n                               eSG
+                        222                      n                              ePTA
+                        223                      n                               eTR
+                     224..231                                                <reserved>
+
+
+Upon successful validation of the CM MIC, the eCM MUST pass the contents of the appropriate eCM eSAFE
+Configuration File TLVs to each eSAFE that supports eCM Config File Encapsulation.
+The eCM MUST silently ignore eCM eSAFE Configuration File TLVs for eSAFEs that do not exist or that do not
+support eCM Config File Encapsulation.
+The mechanism used to pass eCM eSAFE Configuration File TLVs to the eSAFE is vendor specific. It is in the
+scope of each eSAFE specification to define the encoding of configuration parameters within the corresponding
+eSAFE TLV and the rules in case the contents are longer than the 254-octet maximum length of each eCM
+configuration file TLV instance. The configuration file can include multiple instances of each eCM eSAFE TLV in
+order to encode eSAFE configuration parameters in excess of the 254-octet maximum length of each instance. If
+multiple instances of a particular eCM eSAFE TLV are included in the eCM configuration file, the eCM MUST
+forward the contents of all instances to the eSAFE in the order they were received. As a result, the fragmentation of
+the eSAFE configuration parameter data can be performed without regard to the internal (eSAFE TLV) structure of
+the data itself based on the appropriate eSAFE specification.
+
+
+
+
+08/31/22                                             CableLabs                                                    47
+CM-SP-eDOCSIS-I31-220831                       Data-Over-Cable Service Interface Specifications
+
+
+Annex A       SLED MIB Definition
+SLED-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY,
+        Integer32,
+        Unsigned32,
+        OBJECT-TYPE       FROM SNMPv2-SMI
+        TruthValue,
+        TimeStamp         FROM SNMPv2-TC
+        OBJECT-GROUP,
+        MODULE-COMPLIANCE FROM SNMPv2-CONF
+    clabProjDocsis        FROM CLAB-DEF-MIB
+    InterfaceIndex        FROM IF-MIB
+    ;
+
+sledMib MODULE-IDENTITY
+    LAST-UPDATED        "200905290000Z" -- May 29, 2009
+    ORGANIZATION        "Cable Television Laboratories, Inc."
+    CONTACT-INFO
+            "Postal:    Cable Television Laboratories, Inc
+                        858 Coal Creek Circle
+                        Louisville, CO 80027
+                        U.S.A.
+            Phone: +1 303-661-9100
+            Fax:     +1 303-661-9199
+            E-mail: mibs@cablelabs.com"
+    DESCRIPTION
+            "This MIB module provides the management objects necessary
+            to configure and invoke the Software Loopback Application
+            for eDOCSIS (SLED) functionality.
+
+             Copyright 1999-2009 Cable Television Laboratories, Inc.
+             All rights reserved."
+     REVISION "200905290000Z" -- May 29, 2009
+     DESCRIPTION
+             "This revision is published as part of the CableLabs
+             eDOCSIS Specification I18."
+
+     REVISION "200705180000Z" -- May 18, 2007
+     DESCRIPTION
+             "This revision is published as part of the CableLabs
+             eDOCSIS Specification I12."
+
+     REVISION "200607280000Z" -- July 28, 2006
+     DESCRIPTION
+             "This revision is published as part of the CableLabs
+             eDOCSIS Specification I09."
+
+     REVISION "200502090000Z" -- February 9, 2005
+     DESCRIPTION
+             "This revision is published as part of the CableLabs
+             eDOCSIS Specification I05."
+
+     REVISION "200411240000Z" -- November 24, 2004
+     DESCRIPTION
+             "This revision is published as part of the CableLabs
+             eDOCSIS Specification I04."
+
+     REVISION "200310150000Z" -- October 15, 2003
+     DESCRIPTION
+             "Initial version of the eDOCSIS SLED MIB module.
+             This revision is published as part of the CableLabs
+
+
+
+48                                     CableLabs                                     08/31/22
+eDOCSIS™ Specification                                           CM-SP-eDOCSIS-I31-220831
+
+
+              eDOCSIS Specification I02."
+
+    ::=    { clabProjDocsis 13 }
+
+-- Administrative assignments
+sledNotifications             OBJECT IDENTIFIER ::= { sledMib 0 }
+sledMibObjects                OBJECT IDENTIFIER ::= { sledMib 1 }
+sledMibNotificationsObjects   OBJECT IDENTIFIER ::= { sledMib 2 }
+sledMibConformance            OBJECT IDENTIFIER ::= { sledMib 3 }
+
+-- Object Groups
+sledGlobal          OBJECT IDENTIFIER ::= { sledMibObjects 1 }
+sledLoopback        OBJECT IDENTIFIER ::= { sledMibObjects 2 }
+sledPktGen          OBJECT IDENTIFIER ::= { sledMibObjects 3 }
+
+--
+-- The following group describes the objects that apply to
+-- both loopback and packet generator SLED functionality
+--
+
+sledGlobalEnable OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS read-write
+    STATUS      current
+    DESCRIPTION
+            "This object allows the SLED functionality to be
+            enabled/disabled. This object may only be updated prior to
+            device registration. If the device has completed
+            registration, any attempt to update the value of this
+            object returns 'notWritable'. Prior to registration, if the
+            value of this object is set to 'true', the SLED
+            functionality is enabled and access to this MIB is allowed.
+            Prior to registration, if the value of this object is set
+            to 'false', the SLED functionality is disabled and any
+            attempt to update other objects in this MIB returns
+            'noAccess'."
+    DEFVAL { false }
+    ::= { sledGlobal 1 }
+
+--
+-- The following group describes the loopback objects
+--
+
+sledLoopbackInterface OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS read-write
+    STATUS      current
+    DESCRIPTION
+            "The index of the logical CPE interface (LCI) that the SLED
+            loopback function is attached to. If the index does not
+            correspond to a LCI supported by this device, 'wrongValue'
+            is returned.
+            Any attempt to set this object while sledLoopbackEnable is
+            set to 'true' returns'notWritable'."
+    ::= { sledLoopback 1 }
+
+sledLoopbackEnable OBJECT-TYPE
+    SYNTAX      TruthValue
+    MAX-ACCESS read-write
+    STATUS      current
+    DESCRIPTION
+            "Setting this object to 'true' enables the loopback
+            function. Setting this object to 'false' disables the
+
+
+
+08/31/22                                CableLabs                                     49
+CM-SP-eDOCSIS-I31-220831                        Data-Over-Cable Service Interface Specifications
+
+
+             loopback function. When enabled, the eCM removes the
+             Ethernet FCS/CRC32 from the original packets. All Ethernet
+             packets received by the SLED from the LCI are then processed
+             as follows:
+
+             1. If the received Ethernet packet is greater than 1472
+               octets, the Ethernet packet is split into two fragments,
+               the first consisting of the first 1472 octets of the
+               Ethernet packet and the second containing the remaining
+               octets, resulting in two payloads that are processed as
+               described below. If the received Ethernet packet is less
+               than or equal to 1472 octets, the entire packet will be
+               processed as a single payload.
+             2. For each payload generated in step 1, the payload is
+               appended to the contents of sledLoopbackPktHdr.
+             3. The mutable fields within sledLoopbackPktHdr MUST be
+               recomputed. The mutable fields are IP Header Checksum, IP
+               Total Length, UDP Checksum, and UDP Length.
+             4. If the Ethernet packet was fragmented in step 1, the
+               appropriate IP header fields (Flags and Fragment Offset)
+               are updated to indicate IP fragmentation These IP
+               fragmentation header values will differ depending on
+               if this is the first or second fragment being processed.
+             5. The Ethernet FCS is computed and appended.
+             6. The resulting Ethernet packet is transmitted to the
+               LCI."
+     DEFVAL { false }
+     ::= { sledLoopback 2 }
+
+sledLoopbackPktHdr OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(42))
+    MAX-ACCESS read-write
+    STATUS      current
+    DESCRIPTION
+            "A properly formatted Ethernet(DIX)+IP+UDP headers for use
+            in SLED loopback processing as described in
+            sledLoopbackEnable. The object value contains mutable
+            fields that are recomputed: the IP Header Checksum,
+            IP Total Length, UDP Length, and UDP Checksum. Any attempt
+            to set this object while sledLoopbackEnable is set to
+            'true' returns 'notWritable'."
+    ::= { sledLoopback 3 }
+--
+-- The following group describes the packet generation objects
+--
+
+sledPktGenInterface OBJECT-TYPE
+    SYNTAX      InterfaceIndex
+    MAX-ACCESS read-write
+    STATUS      current
+    DESCRIPTION
+            "The index of the logical CPE interface (LCI) that the SLED
+            packet generation function is attached to. If the index
+            does not correspond to a LCI supported by the device,
+            'wrongValue' is returned. Any attempt to set this object
+            while sledPktGenTrigger is set to 'start' returns
+            'notWritable'."
+    ::= { sledPktGen 1 }
+
+sledPktGenPayload OBJECT-TYPE
+    SYNTAX      OCTET STRING (SIZE(64..1518))
+    MAX-ACCESS read-write
+    STATUS      current
+
+
+
+50                                     CableLabs                                      08/31/22
+eDOCSIS™ Specification                                        CM-SP-eDOCSIS-I31-220831
+
+
+    DESCRIPTION
+            "The properly formatted Ethernet packet payload to be
+            generated. Any attempt to set this object while
+            sledPktGenTrigger is set to 'start' returns
+            'notWritable'."
+    ::= { sledPktGen 2 }
+
+sledPktGenRate OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS read-write
+    STATUS      current
+    DESCRIPTION
+            "The packet rate (in packets per second) that the SLED is
+            to transmit the packet specified in the sledPktGenPayload.
+            Any attempt to set this object while sledPktGenTrigger is
+            set to 'start' returns 'notWritable'."
+    DEFVAL { 10 }
+    ::= { sledPktGen 3 }
+
+sledPktGenNumPkts OBJECT-TYPE
+    SYNTAX       Unsigned32
+    MAX-ACCESS read-write
+    STATUS       current
+    DESCRIPTION
+            "Number of packets to be generated at the rate specified by
+            sledPktGenRate. Any attempt to set this object while
+            sledPktGenTrigger has been set to 'start' will return
+            'notWritable'."
+    DEFVAL { 1 }
+    ::= { sledPktGen 4 }
+
+sledPktGenTrigger OBJECT-TYPE
+    SYNTAX       INTEGER {
+       start(1),
+       stop(2)
+    }
+    MAX-ACCESS read-write
+    STATUS       current
+    DESCRIPTION
+            "This object controls the packet generation. Setting this
+            object to 'start' causes the packet generation to begin.
+            Reading this object will return 'start' if a packet
+            generation is in progress, otherwise it will return 'stop'.
+            Setting this object to 'stop' while packet generation is in
+            progress aborts the packet generation. Setting this object
+            to 'start' while packet generation is in progress,
+            'wrongValue' is returned."
+    DEFVAL { stop }
+    ::= { sledPktGen 5 }
+
+sledPktGenLastTrigger OBJECT-TYPE
+    SYNTAX      TimeStamp
+    MAX-ACCESS read-only
+    STATUS      current
+    DESCRIPTION
+            "Value of sysUptime when the   packet generation was
+            last triggered."
+    ::= { sledPktGen 6 }
+
+-- Conformance information *******************************************
+
+sledMibCompliances   OBJECT IDENTIFIER ::= { sledMibConformance 1 }
+sledMibGroups        OBJECT IDENTIFIER ::= { sledMibConformance 2 }
+
+
+
+08/31/22                               CableLabs                                   51
+CM-SP-eDOCSIS-I31-220831                      Data-Over-Cable Service Interface Specifications
+
+
+
+-- Compliance statements
+
+sledMibCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+            "The compliance statement for SLED."
+    MODULE
+
+-- unconditionally mandatory groups
+
+      MANDATORY-GROUPS {
+              sledMibBaseGroup
+      }
+
+      ::= { sledMibCompliances 1 }
+
+
+sledMibBaseGroup OBJECT-GROUP
+    OBJECTS {
+           sledGlobalEnable,
+           sledLoopbackInterface,
+           sledLoopbackEnable,
+           sledLoopbackPktHdr,
+           sledPktGenInterface,
+           sledPktGenPayload,
+           sledPktGenRate,
+           sledPktGenNumPkts,
+           sledPktGenTrigger,
+           sledPktGenLastTrigger
+    }
+    STATUS      current
+    DESCRIPTION
+            "Group of object in SLED MIB."
+    ::= { sledMibGroups 1 }
+
+END
+
+
+
+
+52                                    CableLabs                                     08/31/22
+eDOCSIS™ Specification                                                        CM-SP-eDOCSIS-I31-220831
+
+
+Annex B         eSAFE MIB Definition
+For the full text of the ESAFE-MIB, see http://mibs.cablelabs.com/MIBs/DOCSIS/.
+
+
+
+
+08/31/22                                        CableLabs                                          53
+CM-SP-eDOCSIS-I31-220831                                    Data-Over-Cable Service Interface Specifications
+
+
+Annex C Format and Content for eCM/eSTB Event, SYSLOG, and
+SNMP Trap Extensions
+To facilitate device provisioning and fault management, the eCM of a Set-top Device MUST support the DOCSIS
+Event extensions defined in this section.
+This section is an extension of the Format and Content for Event, SYSLOG, and SNMP Notification Annex of
+[OSSI 3.0] and the Format and Content for Event, SYSLOG, and SNMP Trap Annex of [OSSI 2.0] and [OSSI 1.1].
+                                       Table 6 - eDOCSIS Events Extensions
+
+ Process    Sub-Process         CM     Event Message Message Error Event ID            Notification Name
+                              Priority                Notes   Code
+                                                       and     Set
+                                                      Details
+                                             Secure Software Download
+ SW         SW Upgrade        Notice    DOCSIS SSD                H01.1 72000101
+ Upgrade    General Failure             not supported
+ SW         Verification of   Error     Set-top Device            H01.2 72000102   docsDevCmSwUpgradeCVCFail
+ Upgrade    CVC                         CVC validation                             Trap [OSSI 1.1] [OSSI 2.0] or
+                                        failure for CVC                            docsDevCmSwUpgradeCVCFail
+                                        distributed                                Notif [OSSI 3.0]
+                                        through the
+                                        eSTB
+ SW         SW Upgrade        Notice    Set-top Device            H01.3 72000103   docsDevCmSwUpgradeInitTrap
+ Upgrade    Init                        code file                                  [OSSI 1.1] [OSSI 2.0] or
+                                        download                                   docsDevCmSwUpgradeInitNotif
+                                        initialized                                [OSSI 3.0]
+                                        through the
+                                        eSTB
+ SW         SW Upgrade        Error     Set-top Device            H01.4 72000104   docsDevCmSwUpgradeFailTrap
+ Upgrade    General Failure             code file                                  [OSSI 1.1] [OSSI 2.0] or
+                                        download                                   docsDevCmSwUpgradeFailNotif
+                                        through the                                [OSSI 3.0]
+                                        eSTB failed
+ SW         SW Upgrade        Notice    Set-top Device            H01.5 72000105   docsDevCmSwUpgradeSuccess
+ Upgrade    Success                     code file                                  Trap [OSSI 1.1] [OSSI 2.0] or
+                                        successfully                               docsDevCmSwUpgradeSuccess
+                                        downloaded                                 Notif [OSSI 3.0]
+                                        through the
+                                        eSTB
+
+
+
+
+54                                                   CableLabs                                      08/31/22
+eDOCSIS™ Specification                                                            CM-SP-eDOCSIS-I31-220831
+
+
+Appendix I                Acknowledgements
+The inter-disciplinary nature of this specification involves contributions from many individuals. On behalf of the
+cable industry and our participating member companies, CableLabs would like to extend our sincere appreciation to
+all those who have contributed to the development of this specification. Special thanks are given to the following
+individuals.
+                            Contributor                 Company Affiliation
+                            Ralph Brown                 CableLabs
+                            John Berg                   CableLabs
+                            Steve Burroughs             CableLabs
+                            Eduardo Cardona             CableLabs
+                            Kevin Luehrs                CableLabs
+                            Greg White                  CableLabs
+                            Margo Dolas                 Broadcom
+                            Gordon Li                   Conexant
+                            Sridhar Sharma              iMedia
+                            Greg Nakanishi              Motorola
+                            Mariano Schain              Texas Instruments
+                            Nancy Davoust               YAS
+                            Doug Jones                  YAS
+
+
+
+
+08/31/22                                          CableLabs                                                    55
+CM-SP-eDOCSIS-I31-220831                                   Data-Over-Cable Service Interface Specifications
+
+
+Appendix II             Revision History
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS I02-031117.
+     ECN Identifier     Accepted Date                                      Summary
+  EDOCS-N-03084          8/20/2003        Incorporate DHCP Option 43 for eDOCSIS
+  EDOCS-N-03099          10/29/2003       Corrections and Clarifications; alignment of rearranged text with J.eCM
+                                          submission
+  EDOCS-N-03088          10/29/2003       Incorporate Software Loopback for eDOCSIS (SLED)
+
+
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS I03-040804.
+     ECN Identifier     Accepted Date                                      Summary
+  eDOCSIS-N-04.0122-2    2/11/2004        eDOCSIS SLED clarifications
+  eDOCSIS-N-04.0123-2    2/11/2004        eDOCSIS DHCP Option 43 clarifications
+  eDOCSIS-N-04.0134-2    3/17/2004        eDOCSIS DHCP Option 43 suboption 1 clarifications
+  eDOCSIS-N-04.0138-1    4/7/2004         Reserved DHCP 43 suboptions for eSAFEs
+  eDOCSIS-N-04.0150-2    6/30/2004        eDOCSIS clarification on the effect of NACO state on eSAFE traffic
+  eDOCSIS-N-04.0151-3    6/30/2004        Adding eSTB as a new eDOCSIS eSAFE
+  eDOCSIS-N-04.0152-5    7/7/2004         eSAFE MIB definition for eDOCSIS
+  eDOCSIS-N-04.0153-2    6/30/2004        eDOCSIS ifIndex filter rules for interfaces to eSAFEs
+  eDOCSIS-N-04.0154-2    6/30/2004        Modify eDOCSIS firmware download requirements to account for eSTB
+  eDOCSIS-N-04.0158-2    7/7/2004         Additional RFC 1493 requirements for eDOCSIS devices
+  eDOCSIS-N-04.0160-1    7/28/2004        Miscellaneous editorial and typo corrections
+  eDOCSIS-N-04.0161-1    7/28/2004        Remove reference to non-existent eSAFE MIB object
+
+
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS I04-041124.
+     ECN Identifier     Accepted Date                                      Summary
+  eDOCSIS-N-04.0169-1    9/1/2004         Correct eCM DHCP sub-option 43.1 entry in Table 5-8
+  eDOCSIS-N-04.0172-6    10/6/2004        Enhancements to eDOCSIS MIB for device status, specifically related to safe
+                                          reboots
+  eDOCSIS-N-04.0176-2    10/27/2004       Add dormant mode option to eSAFE MIB object
+                                          esafePsCableHomeModeControl
+  eDOCSIS-N-04.0182-2    10/27/2004       Clarification of MaxCPE count for DSG tunnel MAC addresses
+
+
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS-I05-050408.
+     ECN Identifier     Accepted Date                                      Summary
+  eDOCSIS-N-05.0208-4    2/16/2005        esafeProvisioningStatusProgress description change
+  eDOCSIS-N-05.0210-2    2/23/2005        Software download for CMs with eSTBs
+  eDOCSIS-N-05.0212-2    3/9/2005         Discrepancy between the CLAB-DEF-MIB and the SLED-MIB
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I06-050812.
+     ECN Identifier     Accepted Date                                      Summary
+  eDOCSIS-N-05.0223-3    7/14/2005        SW Download for Non-OC eDOCSIS Device
+
+
+
+
+56                                            CableLabs                                                       08/31/22
+eDOCSIS™ Specification                                                            CM-SP-eDOCSIS-I31-220831
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I07-051209.
+    ECN Identifier      Accepted Date                                     Summary
+  eDOCSIS-N-05.0260-2    11/9/2005        Update of eDOCSIS for changes in OC downloading
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I08-060407.
+    ECN Identifier      Accepted Date                                     Summary
+  eDOCSIS-N-06.0268-2    3/22/2006        CableCARD MAC Address Heading
+
+
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS-I09-060728.
+    ECN Identifier      Accepted Date                                     Summary
+  eDOCSIS-N-06.0269-2   4/12/2006         Incorporation of conditionally mandatory Battery Backup UPS MIBs
+  eDOCSIS-N-06.0271-2   5/24/2006         Updates to eDOCSIS to define requirements for new eTEA eSAFE
+
+
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS-I10-061222.
+    ECN Identifier      Accepted Date                                     Summary
+  eDOCSIS-N-06.0279-3   8/30/2006         Addition of eCM eSAFE Configuration File TLVs processing by the eCM
+  eDOCSIS-N-06.0281-5   8/30/2006         Revisions to eSTB SW download section
+  eDOCSIS-N-06.0283-3   8/30/2006         Modification to eDOCSIS eSTB to enhance protocol stack to include Socket
+                                          Flow
+  eDOCSIS-N-06.0290-2   9/20/2006         Number of eCM CMCIs Clarification
+
+
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS-I11-070223.
+    ECN Identifier      Accepted Date                                     Summary
+  eDOCSIS-N-06.0336-1   12/13/2006        eSAFE MIB compiler errors and warnings
+  eDOCSIS-N-06.0343-2   1/3/2007          Updates to define requirements for eRouter eSAFE
+  eDOCSIS-N-06.0355-2   1/17/2007         eSTB Security Element Suboption
+
+
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS-I12-070518.
+    ECN Identifier      Accepted Date                                     Summary
+  eDOCSIS-N-07.0394-2   3/21/2007         SysDescr Requirements for eDOCSIS device
+  eDOCSIS-N-07.0417-1   4/18/2007         Editorial corrections to eSAFE MIB
+
+
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS-I13-070803.
+    ECN Identifier      Accepted Date                                     Summary
+  eDOCSIS-N-07.0482-2   7/5/2007          eDOCSIS updates for DOCSIS 3.0
+  eDOCSIS-N-07.0467-2   6/20/2007         Definition and usage of Monolithic Software Image
+  eDOCSIS-N-07.0466-3   6/27/2007         eSAFE MIB references cleanup; references removed and MIB object support
+                                          details to be added to applicable eSAFE Specs
+  eDOCSIS-N-07.0457-2   5/30/2007         Move and expand eSAFE MIB requirements to include eRouter, eTEA and
+                                          eSTB
+
+
+
+
+08/31/22                                      CableLabs                                                             57
+CM-SP-eDOCSIS-I31-220831                                  Data-Over-Cable Service Interface Specifications
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I14-080215.
+     ECN Identifier     Accepted Date                                     Summary
+  eDOCSIS-N-07.0577-2   1/2/2008          Updates for docsDevSwServer deprecated object
+
+
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS-I15-080626.
+     ECN Identifier     Accepted Date                                     Summary
+  eDOCSIS-N-08.0624-2   4/16/2008         Allow bridging of Ethernet frames carrying IPv6 packets to eSTB
+  eDOCSIS-N-08.0649-2   5/28/2008         Updates to DSG Interface for DOCSIS 3.0
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I16-080930.
+     ECN Identifier     Accepted Date                                     Summary
+  eDOCSIS-N-08.0689-3   9/10/2008         Updating eDOCSIS requirements for ReqPro
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I17-090121.
+     ECN Identifier     Accepted Date                                     Summary
+  eDOCSIS-N-08.0693-3   11/26/2008        Modifications required to support embedded SMA Gateway
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I18-090529.
+     ECN Identifier     Accepted Date                                     Summary
+  eDOCSIS-N-09.0779-2   4/29/2009         Update Host reference to HOST 2.1
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I19-091002.
+     ECN Identifier     Accepted Date                                     Summary
+  eDOCSIS-N-09.0848-2   09/02/2009        Clarification for ipNetToPhysicalTable vs. IpNetToMediaTable in multi-eSAFE
+                                          eDOCSIS device mixed IPv4/IPv6 support
+
+
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS-I20-100611.
+     ECN Identifier     Accepted Date                                     Summary
+  eDOCSIS-N-09.0880-6   5/5/2010          Multiple eSAFE device and SW management
+  eDOCSIS-N-10.0904-3   4/21/2010         Removal of eSMA and E-SMA terms
+  eDOCSIS-N-10.0922-3   5/5/2010          DHCP text alignment between eDOCSIS & CANN
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I21-101008.
+     ECN Identifier     Accepted Date                                     Summary
+  eDOCSIS-N-10.0941-2   9/1/2010          D-3.0 CMCI References
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I22-110623.
+     ECN Identifier     Accepted Date                                     Summary
+  eDOCSIS-N-11.0992-5   5/25/2011         eDOCSIS changes for Set-top Extender Bridge Operation
+
+
+
+
+58                                            CableLabs                                                    08/31/22
+eDOCSIS™ Specification                                                           CM-SP-eDOCSIS-I31-220831
+
+
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS-I23-120329.
+    ECN Identifier      Accepted Date                                    Summary
+  eDOCSIS-N-12.1032-2    2/29/2012        Deprecate CableCard IP Unicast Support
+  eDOCSIS-N-12.1033-1    2/29/2012        TLV fragmentation
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I24-120809.
+    ECN Identifier      Accepted Date                                    Summary
+  eDOCSIS-N-12.1042-2    4/18/2012        Address selection process for eSTB-triggered software downloads
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I25-130404.
+    ECN Identifier      Accepted Date     Author                                   Summary
+  eDOCSIS-N-13.1092-4   2/27/13          Grundemann      esafeErouterInitModeControl
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I26-130808.
+    ECN Identifier      Accepted Date     Author                                   Summary
+  eDOCSIS-N-13.1107-3   7/3/2013         Grundemann      eDOCSIS eRouter Reset Object
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I27-140403.
+    ECN Identifier      Accepted Date     Author                                   Summary
+  eDOCSIS-N-13.1128-4   2/26/14          Berg            Companion changes to eDOCSIS spec based on changes in
+                                                         eRouter-N-13.1127-4
+
+
+The following Engineering Changes were incorporated into CM-SP-eDOCSIS-I28-150305.
+    ECN Identifier      Accepted Date     Author                                   Summary
+  eDOCSIS-N-14.1161-1   9/3/2014         Berg            Editorial Change to requirements for eCM management of
+                                                         eSafe MIBs
+  eDOCSIS-N-14.1232-2   1/21/2015        Mudugere        Aligning eDOCSIS with DOCSIS-3.1 CM OSSI specification
+                                                         for downstream and upstream interface numbers
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I29-170906.
+    ECN Identifier      Accepted Date     Author                                   Summary
+  eDOCSIS-N-17.1744-1   6/15/2017        Kershaw         Add Apache License info to ESAFE MIB
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I30-190213.
+    ECN Identifier      Accepted Date     Author                                   Summary
+  eDOCSIS-N-18.1967-2   11/15/2018       Burroughs       Add Embedded Test Agent
+
+
+The following Engineering Change was incorporated into CM-SP-eDOCSIS-I31-220831.
+    ECN Identifier      Accepted Date     Author                                   Summary
+  eDOCSIS-N-22.2233-1   3/10/2022        Jones           Adding embedded Tuning Resolver (eTR) to eDOCSIS
+                                                         specification
+
+
+
+                                                 ✽✽✽
+
+
+
+08/31/22                                        CableLabs                                                        59
+

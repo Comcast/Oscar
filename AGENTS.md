@@ -22,6 +22,10 @@ editor, codec, and file-integrity changes:
   pinned to **DPoG-SP-MULPIv1.0-C01-160830**. Use its applicability and
   delegated-source checks before revisiting the DPoG editor.
 
+- PacketCable: [oscar-packetcable-config-tlvs](skills/oscar-packetcable-config-tlvs/SKILL.md),
+  pinned to PROV1.5 C01-191120, EUE-PROV C01-140314 and eDOCSIS I31-220831.
+  Keep standalone edition profiles separate from opaque DOCSIS 216/220 wrappers.
+
 - eRouter: [oscar-erouter-config-tlvs](skills/oscar-erouter-config-tlvs/SKILL.md),
   pinned to **CM-SP-eRouter-I21-220209**. Use for type-202 settings together
   with the target-family skill; check source ambiguities before encoding.

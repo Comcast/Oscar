@@ -603,3 +603,66 @@ The disassembler reads files completely before decoding and fails construction o
 unreadable input. Diagnostics use Log4j without dumping provisioning payloads;
 public compatibility signatures remain unchanged. `TlvDisassembleFileTest` covers
 the read failure and unchanged-input behavior.
+
+
+## PacketCable version profiles and embedded boundaries
+
+PacketCable 1.5/2.0 share `res/tlv-registry/packetcable.json` and its codecs.
+`PacketCableVersion` is the protocol selector. The public
+`TlvRegistry.forPacketCable(version)` API exposes edition-specific metadata:
+1.5 excludes 38.8; 2.0 includes it. Existing `forFamily("packetcable")` exposes
+the compatibility union, so clients needing edition accuracy must use the typed
+API. PacketCable 1.0 remains a legacy compatibility route, not newly certified.
+Text headers and explicit export types select the profile. Automatic binary
+identification cannot reliably choose a PacketCable edition.
+
+Type 38 is a composite with independent repeated receivers. Type 43 is opaque
+HEX, including its inner sub-TLV headers. This preserves arbitrary vendor data
+without introducing dynamic vendor definitions into the global registry.
+`PacketCablePayloadValidation` checks standalone fragment framing and 2.0 ASCII
+OUI encoding on text assembly and explicit binary export. It is a reusable API;
+it does not validate mandatory MIB objects or authenticate a provisioning file.
+
+Standalone files have 254 start/end markers. DOCSIS 216 (eMTA) and 220 (eDVA)
+are separate eSAFE envelopes and remain opaque; no catalog reference attaches
+the standalone registry. eDOCSIS permits repeated envelopes with ordered
+forwarding but delegates payload encoding to each service specification. Never
+infer that an embedded device consumes its whole standalone file inside one TLV.
+See the [PacketCable source map](../skills/oscar-packetcable-config-tlvs/references/source-map.md)
+for exact sections, source hashes, coverage and outstanding semantic checks.
+
+
+## Registry source edition notation
+
+A registry's `edition` identifies the specification issue(s) from which its
+reviewed definitions derive, separately from the OSCAR release version. For a
+single source, use its complete specification identifier. For multiple sources,
+join complete identifiers with exactly ` + ` (space, plus, space):
+
+```json
+"edition": "PKT-SP-PROV1.5-C01-191120 + PKT-SP-EUE-PROV-C01-140314"
+```
+
+Use ` + ` consistently, rather than mixing it with `|`. Preserve the individual
+identifiers so API/UI consumers, including About, can display each source
+separately. The combined string records provenance; it does not select a runtime
+protocol profile or claim complete compliance with every listed specification.
+Keep source hashes and per-definition applicability in the corresponding source
+manifest and coverage notes. This notation does not change the existing single
+`sourceSha256` field into a hash of all listed sources.
+
+## Deferred numeric presentation of short byte arrays
+
+Track the proposed optional decimal representation for verified numeric byte-array
+TLVs of one through four bytes in the [text-export TODO](text-export.md#todo-optional-numeric-display-for-short-byte-arrays).
+This may require registry presentation metadata shared by CLI and UI consumers.
+Canonical hex encoding remains unchanged until display-only versus reimportable
+syntax, signedness, width and byte order are explicitly defined and tested.
+
+## Deferred digit-map editing and validation support
+
+The [digit-map TODO](text-lint.md#todo-digit-map-text-validation-and-editing-api)
+tracks specification-based text validation and reusable extraction/replacement
+APIs. OSCAR owns dialect-aware diagnostics and SNMP encoding; OSCAR-UI owns the
+notepad-style editor and companion-file save workflow. Validation must be
+read-only and distinguish dial-plan syntax from provisioning/device acceptance.

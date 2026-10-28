@@ -106,3 +106,37 @@ exit codes, unchanged input and absence of generated files.
 Ready-to-run [example text files](../examples/docsis/3.1/lint/README.md) include
 missing quotes, missing semicolons, invalid SNMP values and a registry-name
 limitation example, with verified diagnostic locations and exit codes.
+
+## TODO: Digit-map text validation and editing API
+
+- [ ] Add reusable validation for standalone digit-map text and digit maps
+  extracted from SNMP OCTET STRING values. Keep the editor interface in OSCAR-UI;
+  OSCAR owns language rules, diagnostics and encoding APIs.
+- [ ] Add and pin the source specifications in the PacketCable skill before
+  implementation: [PKT-SP-RSTF-C01-140314](https://account.cablelabs.com/server/alfresco/ab3282a9-3a2b-4bf9-a512-2b038e141674),
+  section 7.1.1, for syntax, matching, timers and actions; and
+  [PKT-SP-RST-EUE-PROV-C01-140314](https://account.cablelabs.com/server/alfresco/38c14465-ea4c-49f8-b543-89996a8f262f)
+  for digit-map MIB provisioning. Keep RST and legacy NCS/MGCP dialects explicit;
+  do not validate every dial plan with one assumed grammar.
+- [ ] Evaluate an ANTLR grammar for the selected dialect. Return structured
+  diagnostics with line, column, source span, severity and stable diagnostic code.
+  Recover where possible to report multiple errors without hiding unexpected Java
+  failures. Support repeated calls for UI Validate and debounced live checking.
+- [ ] Expose focused APIs for text/file validation and extraction/replacement of
+  the selected digit-map VarBind. Do not write files during validation or silently
+  modify input. Keep user-controlled companion-file saves separate from applying
+  edited contents to the parent configuration.
+- [ ] Validate syntax and specification-defined semantic rules such as references,
+  timers and actions where confirmed. Distinguish language validity, provisioning
+  constraints and device acceptance. Apply the RST `pktcEUERSTDMValue` limit of
+  8192 octets to that object/profile, not as a universal limit for every digit-map
+  OID; establish encoding and line-ending rules before counting bytes.
+- [ ] Retain valid and invalid fixtures covering missing quotes/delimiters,
+  malformed patterns, unresolved references, invalid timer/action forms and
+  payload boundaries. Test multiple diagnostics, source locations, unchanged
+  inputs and exact extraction/edit/re-embedding round trips through TLV 64.
+- [ ] Document the public API and CLI usage, supported dialects and validation
+  limits; coordinate with the OSCAR-UI Digit Map editor TODO.
+
+Status: deferred; existing digit-map insertion transports content and is not a
+claim of dial-plan language validation. No editor or new validator is added here.

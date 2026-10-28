@@ -9,3 +9,9 @@
 
 # Provenance hashes cover exact extracted bytes, including original line endings.
 /skills/**/references/sources/*.txt -text
+
+# Preserve upstream PacketCable fixture/source bytes and their provenance hashes.
+/src/test/resources/packetcable-public/*.bin -text
+/src/test/resources/packetcable-public/*.cm -text
+/src/test/resources/packetcable-public/*.txt -text
+/src/test/resources/packetcable-public/*.conf -text

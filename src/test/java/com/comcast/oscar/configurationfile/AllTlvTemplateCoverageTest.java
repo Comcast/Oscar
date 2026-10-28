@@ -42,7 +42,7 @@ class AllTlvTemplateCoverageTest {
   @MethodSource("families")
   void everyRegistryDefinitionAppearsUnderItsOwnParent(int type, String family) {
     var expected = new LinkedHashMap<String, List<Integer>>();
-    collect(TlvRegistry.forFamily(family), List.of(), "", expected);
+    collect(registry(type, family), List.of(), "", expected);
     String output =
         new ConfigurationFileExport(type).toPrettyPrint(ConfigurationFileExport.EXPORT_DEFAULT_TLV);
     Set<String> actual = entries(output);
@@ -50,7 +50,7 @@ class AllTlvTemplateCoverageTest {
     actual.forEach(missing::remove);
     // Empty VarBinds require OID/type/value and are intentionally omitted.
     // Keep them in expected so any emitted entry still needs its correct parent.
-    var registry = TlvRegistry.forFamily(family);
+    var registry = registry(type, family);
     missing
         .entrySet()
         .removeIf(
@@ -63,6 +63,12 @@ class AllTlvTemplateCoverageTest {
     var unexpected = new LinkedHashSet<>(actual);
     unexpected.removeAll(expected.keySet());
     assertTrue(unexpected.isEmpty(), () -> "Unexpected or misplaced template TLVs: " + unexpected);
+  }
+
+  private static TlvRegistry registry(int type, String family) {
+    return family.equals(TlvRegistry.PACKETCABLE_FAMILY)
+        ? TlvRegistry.forPacketCable(PacketCableVersion.fromConfigurationFileType(type))
+        : TlvRegistry.forFamily(family);
   }
 
   private static void collect(

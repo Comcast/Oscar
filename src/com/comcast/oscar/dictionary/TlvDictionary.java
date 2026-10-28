@@ -5,6 +5,7 @@
 package com.comcast.oscar.dictionary;
 
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
+import com.comcast.oscar.configurationfile.PacketCableVersion;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,8 @@ public class TlvDictionary {
   public static final Integer CONFIGURATION_FILE_TYPE_DPOE =
       ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE;
   public static final String DPOG_DICTIONARY_TABLE_NAME = "DPOG_TLV_DEFINITION";
+  public static final String PACKET_CABLE_15_DICTIONARY_TABLE_NAME =
+      "PACKET_CABLE_15_TLV_DEFINITION";
   private String table;
   private TlvRegistry registry;
 
@@ -56,12 +59,16 @@ public class TlvDictionary {
         switch (table) {
           case DOCSIS_40_DICTIONARY_TABLE_NAME -> TlvRegistry.DOCSIS_40_FAMILY;
           case DOCSIS_DICTIONARY_TABLE_NAME -> TlvRegistry.DOCSIS_FAMILY;
+          case PACKET_CABLE_15_DICTIONARY_TABLE_NAME -> TlvRegistry.PACKETCABLE_FAMILY;
           case PACKET_CABLE_DICTIONARY_TABLE_NAME -> TlvRegistry.PACKETCABLE_FAMILY;
           case DPOE_DICTIONARY_TABLE_NAME -> TlvRegistry.DPOE_FAMILY;
           case DPOG_DICTIONARY_TABLE_NAME -> TlvRegistry.DPOG_FAMILY;
           default -> throw new IllegalArgumentException("Unknown TLV dictionary: " + table);
         };
-    registry = TlvRegistry.forFamily(family);
+    registry =
+        table.equals(PACKET_CABLE_15_DICTIONARY_TABLE_NAME)
+            ? TlvRegistry.forPacketCable(PacketCableVersion.PACKETCABLE_1_5)
+            : TlvRegistry.forFamily(family);
     this.table = table;
   }
 
@@ -148,7 +155,10 @@ public class TlvDictionary {
       selected = DOCSIS_DICTIONARY_TABLE_NAME;
     } else if (configurationType >= ConfigurationFileTypeConstants.PKT_CABLE_10_CONFIGURATION_TYPE
         && configurationType <= ConfigurationFileTypeConstants.PKT_CABLE_20_CONFIGURATION_TYPE) {
-      selected = PACKET_CABLE_DICTIONARY_TABLE_NAME;
+      selected =
+          configurationType == ConfigurationFileTypeConstants.PKT_CABLE_15_CONFIGURATION_TYPE
+              ? PACKET_CABLE_15_DICTIONARY_TABLE_NAME
+              : PACKET_CABLE_DICTIONARY_TABLE_NAME;
     } else if (configurationType == ConfigurationFileTypeConstants.DPOE_10_CONFIGURATION_TYPE
         || configurationType == ConfigurationFileTypeConstants.DPOE_20_CONFIGURATION_TYPE) {
       selected = DPOE_DICTIONARY_TABLE_NAME;
