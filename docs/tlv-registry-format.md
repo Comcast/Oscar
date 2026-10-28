@@ -143,3 +143,18 @@ This is a template-completeness check, separate from byte-for-byte round trips
 and from configuration validity. Empty template values are not deployment values.
 Run it directly with `mvn -B -Dtest=AllTlvTemplateCoverageTest test`, or as part
 of `tools/run-all.sh`.
+
+
+## PacketCable edition views
+
+The PacketCable catalog is the shared inventory for standalone 1.5 and 2.0.
+Use `TlvRegistry.forPacketCable(PacketCableVersion.PACKETCABLE_1_5)` or
+`PACKETCABLE_2_0` for edition-aware editor choices. The old family-only lookup
+retains the compatibility union. Existing supported-version metadata value `3`
+identifies the 2.0-only IPv6 receiver; it is not an OSCAR release number.
+
+VendorSpecific (43) takes the entire vendor payload as HEX, including sub-option
+headers. The 2.0 OUI sub-option contains six ASCII hex characters; a binary
+three-octet DOCSIS OUI must not be substituted. DOCSIS 216/220 remain opaque
+wrappers, with no automatic standalone-catalog attachment. See the
+[PacketCable source map](../skills/oscar-packetcable-config-tlvs/references/source-map.md).

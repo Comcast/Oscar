@@ -122,7 +122,8 @@ public class TlvDisassemble extends TlvDictionary {
    * profile or authenticate MICs, and does not write files.
    *
    * @return decoded instance array; legacy family paths can omit unsupported entries
-   * @throws IllegalArgumentException if bounded DOCSIS/DPoG framing or values are malformed
+   * @throws IllegalArgumentException if bounded DOCSIS/DPoG/PacketCable framing or values are
+   *     malformed
    */
   public JSONArray getTlvDictionary() {
     if (TLV_TYPE_DPOG.equals(getDictionaryTableName())) {
@@ -466,7 +467,9 @@ public class TlvDisassemble extends TlvDictionary {
     // Registry children belong to individual wire containers. In particular, repeated
     // coexistence address rows and ASF/HQoS entries must not share values or bounds.
     if ((TLV_TYPE_DOCSIS.equals(getDictionaryTableName())
-            || TLV_TYPE_DOCSIS_40.equals(getDictionaryTableName()))
+            || TLV_TYPE_DOCSIS_40.equals(getDictionaryTableName())
+            || TLV_TYPE_PACKET_CABLE.equals(getDictionaryTableName())
+            || TlvDictionary.PACKET_CABLE_15_DICTIONARY_TABLE_NAME.equals(getDictionaryTableName()))
         && joTlvDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
       return decodeBoundedInstance(bTlvBuffer, joTlvDictionary);
     }

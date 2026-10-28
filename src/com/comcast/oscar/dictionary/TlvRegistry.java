@@ -4,6 +4,7 @@
  */
 package com.comcast.oscar.dictionary;
 
+import com.comcast.oscar.configurationfile.PacketCableVersion;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -124,6 +125,33 @@ public final class TlvRegistry {
     TlvRegistry registry = Catalogs.ALL.get(family);
     if (registry == null) throw new IllegalArgumentException("Unknown TLV family: " + family);
     return registry;
+  }
+
+  /**
+   * Returns immutable version-specific PacketCable metadata for standalone files. PacketCable 1.5
+   * excludes the IPv6 receiver added by 2.0. The legacy 1.0 selection retains compatibility
+   * metadata, not a new conformance claim.
+   *
+   * @param version non-null PacketCable protocol version, not an OSCAR release
+   * @return shared catalog view; does not modify catalog entries or files
+   * @throws NullPointerException if version is null
+   */
+  public static TlvRegistry forPacketCable(PacketCableVersion version) {
+    java.util.Objects.requireNonNull(version, "version");
+    return version == PacketCableVersion.PACKETCABLE_1_5
+        ? PacketCable15Catalog.INSTANCE
+        : forFamily(PACKETCABLE_FAMILY);
+  }
+
+  private static class PacketCable15Catalog {
+    // Existing supportedVersion metadata: 1 = legacy base; 3 = PacketCable 2.0.
+    private static final String PACKETCABLE_20_METADATA_VERSION = "3";
+    private static final TlvRegistry INSTANCE =
+        new TlvRegistry(
+            forFamily(PACKETCABLE_FAMILY).entries.stream()
+                .filter(entry -> !entry.supportedVersion().equals(PACKETCABLE_20_METADATA_VERSION))
+                .toList(),
+            "PacketCable 1.5 profile");
   }
 
   private static class Docsis40Catalog {

@@ -603,3 +603,30 @@ The disassembler reads files completely before decoding and fails construction o
 unreadable input. Diagnostics use Log4j without dumping provisioning payloads;
 public compatibility signatures remain unchanged. `TlvDisassembleFileTest` covers
 the read failure and unchanged-input behavior.
+
+
+## PacketCable version profiles and embedded boundaries
+
+PacketCable 1.5/2.0 share `res/tlv-registry/packetcable.json` and its codecs.
+`PacketCableVersion` is the protocol selector. The public
+`TlvRegistry.forPacketCable(version)` API exposes edition-specific metadata:
+1.5 excludes 38.8; 2.0 includes it. Existing `forFamily("packetcable")` exposes
+the compatibility union, so clients needing edition accuracy must use the typed
+API. PacketCable 1.0 remains a legacy compatibility route, not newly certified.
+Text headers and explicit export types select the profile. Automatic binary
+identification cannot reliably choose a PacketCable edition.
+
+Type 38 is a composite with independent repeated receivers. Type 43 is opaque
+HEX, including its inner sub-TLV headers. This preserves arbitrary vendor data
+without introducing dynamic vendor definitions into the global registry.
+`PacketCablePayloadValidation` checks standalone fragment framing and 2.0 ASCII
+OUI encoding on text assembly and explicit binary export. It is a reusable API;
+it does not validate mandatory MIB objects or authenticate a provisioning file.
+
+Standalone files have 254 start/end markers. DOCSIS 216 (eMTA) and 220 (eDVA)
+are separate eSAFE envelopes and remain opaque; no catalog reference attaches
+the standalone registry. eDOCSIS permits repeated envelopes with ordered
+forwarding but delegates payload encoding to each service specification. Never
+infer that an embedded device consumes its whole standalone file inside one TLV.
+See the [PacketCable source map](../skills/oscar-packetcable-config-tlvs/references/source-map.md)
+for exact sections, source hashes, coverage and outstanding semantic checks.

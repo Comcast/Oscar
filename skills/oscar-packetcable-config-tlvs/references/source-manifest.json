@@ -1,0 +1,26 @@
+[
+  {
+    "edition": "PKT-SP-PROV1.5-C01-191120",
+    "url": "https://account.cablelabs.com/server/alfresco/6627e0be-02a5-4359-ada7-a649ea9d851d",
+    "pdfSha256": "315eab51a0087db4e920c5079fdca16745c9ad1df3ea9a89800e39aa4d10cc01",
+    "text": "sources/PKT-SP-PROV1.5-C01-191120.txt",
+    "textSha256": "755566e2af6bd0324c8634b7d2ef79da10aa7ae1e898d3d373c587bd596b47bd",
+    "extraction": "pdftotext -layout"
+  },
+  {
+    "edition": "PKT-SP-EUE-PROV-C01-140314",
+    "url": "https://account.cablelabs.com/server/alfresco/4716637d-34fa-4dc5-9517-be17a558036a",
+    "pdfSha256": "3c10ebd9eeca420d4ccd7f40b53da828616e2dc8ef4276b1a88b6fb21c32cae8",
+    "text": "sources/PKT-SP-EUE-PROV-C01-140314.txt",
+    "textSha256": "aa01f7a244ed47a958bed905dc661ed69bbb8e518849c246cfa9b50dd925dedf",
+    "extraction": "pdftotext -layout"
+  },
+  {
+    "edition": "CM-SP-eDOCSIS-I31-220831",
+    "url": "https://account.cablelabs.com/server/alfresco/c6e0ef44-a58a-4d9b-bb22-23c8e556fc3f",
+    "pdfSha256": "035122de5a6d8e1948d109cae6a745ab98f244f62fe5d171997bf8f3dcb60705",
+    "text": "sources/CM-SP-eDOCSIS-I31-220831.txt",
+    "textSha256": "b5e4646a3a7b2cd2acd1959f5cca443392ac985bcf1a698688fcc1e0507941dd",
+    "extraction": "pdftotext -layout"
+  }
+]

@@ -274,7 +274,11 @@ public class ConfigurationFileExport {
                   : TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME);
       rootName = docsis40 ? "Docsis-4.0" : "Docsis";
     } else if (configurationType >= PKT_CBL_VER_10 && configurationType <= PKT_CBL_VER_20) {
-      dictionary = new TlvDictionary(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+      dictionary =
+          new TlvDictionary(
+              configurationType == PKT_CBL_VER_15
+                  ? TlvDictionary.PACKET_CABLE_15_DICTIONARY_TABLE_NAME
+                  : TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
       rootName =
           configurationType == PKT_CBL_VER_10
               ? "PacketCable-1.0"
@@ -514,6 +518,10 @@ public class ConfigurationFileExport {
       return;
     }
 
+    if (configurationType == PKT_CBL_VER_15 || configurationType == PKT_CBL_VER_20) {
+      PacketCablePayloadValidation.validate(
+          binary, PacketCableVersion.fromConfigurationFileType(configurationType));
+    }
     String sDictionaryTableName = dictionary.getDictionaryTableName();
     decodedEntries = new ArrayList<>();
     TlvBuilder tbTLV = new TlvBuilder();

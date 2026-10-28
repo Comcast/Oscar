@@ -7,6 +7,8 @@ package com.comcast.oscar.parser;
 import com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
+import com.comcast.oscar.configurationfile.PacketCablePayloadValidation;
+import com.comcast.oscar.configurationfile.PacketCableVersion;
 import com.comcast.oscar.dictionary.Dictionary;
 import com.comcast.oscar.dictionary.DictionaryTLV;
 import com.comcast.oscar.dictionary.TlvDictionary;
@@ -58,9 +60,10 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   /**
    * {@inheritDoc}
    *
-   * <p>The default implementation does nothing.
+   * <p>Selects the family and edition dictionary from the parsed text header. PacketCable 1.5
+   * excludes 2.0-only fields. This changes parser state, not registry definitions or files.
    *
-   * @param ctx tlvParser.ConfigTypeContext
+   * @param ctx non-null ANTLR configuration-header context
    */
   @Override
   public void enterConfigType(@NotNull tlvParser.ConfigTypeContext ctx) {
@@ -78,7 +81,8 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
       dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
       iConfigurationFileType = ConfigurationFile.PKT_CBL_VER_10;
     } else if (ctx.getText().equals("PacketCable-1.5")) {
-      dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
+      dsqTlvDictionary.updateDictionaryTablename(
+          TlvDictionary.PACKET_CABLE_15_DICTIONARY_TABLE_NAME);
       iConfigurationFileType = ConfigurationFile.PKT_CBL_VER_15;
     } else if (ctx.getText().equals("PacketCable-2.0")) {
       dsqTlvDictionary.updateDictionaryTablename(TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME);
@@ -126,7 +130,9 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     containerTemplate =
         joWorkingTLVDictionary.getBoolean(Dictionary.ARE_SUBTYPES)
                 && (iConfigurationFileType == ConfigurationFile.DOCSIS_VER_31
-                    || iConfigurationFileType == ConfigurationFile.DOCSIS_VER_40)
+                    || iConfigurationFileType == ConfigurationFile.DOCSIS_VER_40
+                    || iConfigurationFileType == ConfigurationFile.PKT_CBL_VER_15
+                    || iConfigurationFileType == ConfigurationFile.PKT_CBL_VER_20)
             ? new JSONObject(joWorkingTLVDictionary.toString())
             : null;
     if (containerTemplate != null) {
@@ -444,7 +450,8 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
    * Assembles populated document instances after validating DOCSIS vendor scopes.
    *
    * @return encoded TLV fragment with valueless top-level placeholders removed
-   * @throws IllegalArgumentException if a populated vendor extension is malformed
+   * @throws IllegalArgumentException if a populated vendor extension or PacketCable payload is
+   *     malformed
    */
   public byte[] toByteArray() {
 
@@ -467,6 +474,11 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
       e.printStackTrace();
     }
 
+    if (iConfigurationFileType == ConfigurationFile.PKT_CBL_VER_15
+        || iConfigurationFileType == ConfigurationFile.PKT_CBL_VER_20) {
+      PacketCablePayloadValidation.validate(
+          baTlvAssembler, PacketCableVersion.fromConfigurationFileType(iConfigurationFileType));
+    }
     return baTlvAssembler;
   }
 
