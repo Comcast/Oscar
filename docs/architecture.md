@@ -540,3 +540,58 @@ See the
 for implemented paths, delegated specifications, and compatibility
 limits. Registry presence and successful round trips do not prove complete
 specification coverage.
+
+## Vendor-scoped DOCSIS extension data
+
+DOCSIS TLV 43 is scoped by its first child, VendorId (type 8, length 3).
+MULPI 3.1 I25 C.1.1.18, printed p. 600, and C.1.1.18.2, p. 607,
+permit repeated containers and vendor-defined child meanings. MULPI 4.0 I12
+C.1.1.18, pp. 698–699, uses the same VendorId selection rule.
+
+`DocsisVendorExtension` owns the shared instance checks. For VendorId `FFFFFF`,
+the decoder uses known general-extension definitions and preserves unknown children
+as hex. For any other VendorId, all children other than VendorId are opaque;
+standard child numbers must not imply standard meanings. No vendor-specific
+catalog is currently registered. Missing, malformed or duplicate VendorId fields,
+truncated child framing, and overlong assembled containers are rejected.
+
+Opaque top-level extension children use the existing grammar's identifier/value
+form, with an instance-only name `RawTlv` followed by the decimal type:
+
+```text
+Docsis {
+    VendorSpecific {
+        VendorId 00:05:CA;
+        RawTlv242 00:01:02:03:04:05:06:07;
+        RawTlv1 "AB";
+        RawTlv242 "";
+    }
+}
+```
+
+This is a synthetic TLV fragment, not a complete provisionable configuration.
+`RawTlv242 "";` explicitly encodes a zero-length child; `RawTlv242;` remains a
+valueless template placeholder. Bracketed hex remains accepted. Raw names are
+accepted only within supported DOCSIS extension containers, never as arbitrary
+unknown top-level TLVs. Byte order, repeated children and container boundaries
+remain significant. Preserving opaque data does not validate vendor semantics.
+
+The DOCSIS 3.1 catalog's nested classifier/service-flow extensions retain their
+existing whole-payload hex syntax and now validate VendorId and child framing.
+DOCSIS 4.0 nested extensions absent from its catalog remain unsupported. This
+change does not change OpenCable or DPoE vendor handling.
+
+`ConfigurationFileExport.getTopLevelTLVJSON()` exposes decoded opaque children
+with their numeric `Type`, complete `ParentTypeList`, `byte_array` codec, hex
+`Value`, and instance name. These definitions do not modify the shared TLV
+registry. UI clients must consume instance metadata for opaque children instead
+of requiring every decoded child to have a registry entry. Import accepts the
+exported names through `ConfigurationFileImport`; no new ANTLR tokens are needed.
+The existing DOCSIS 4.0 text VendorId-first normalization remains compatible;
+binary decoding never reorders malformed input to make it acceptable.
+
+Regression coverage: `VendorExtensionRoundTripTest` exercises byte-identical
+binary/text/binary fragments, overlapping vendor/standard numbers, repeated
+instances, zero-length bytes, edits, nested framing, invalid text and malformed
+VendorIds. The initial test reproduced the unknown-child rejection and duplicate
+VendorId acceptance before implementation.

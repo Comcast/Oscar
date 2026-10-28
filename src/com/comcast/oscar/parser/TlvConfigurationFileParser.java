@@ -340,6 +340,12 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
         }
       }
     }
+    if (containerTemplate != null) {
+      JSONObject raw = com.comcast.oscar.tlv.DocsisVendorExtension.rawDefinition(parent, name);
+      if (raw != null) {
+        return raw;
+      }
+    }
     throw new IllegalArgumentException(
         "Unknown TLV " + name + " under " + parent.getString(Dictionary.TLV_NAME));
   }
@@ -435,10 +441,17 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   }
 
   /**
-   * @return byte[]
+   * Assembles populated document instances after validating DOCSIS vendor scopes.
+   *
+   * @return encoded TLV fragment with valueless top-level placeholders removed
+   * @throws IllegalArgumentException if a populated vendor extension is malformed
    */
   public byte[] toByteArray() {
 
+    if (iConfigurationFileType == ConfigurationFile.DOCSIS_VER_31
+        || iConfigurationFileType == ConfigurationFile.DOCSIS_VER_40) {
+      com.comcast.oscar.tlv.DocsisVendorExtension.validate(jaTlvDictionary);
+    }
     byte[] baTlvAssembler = null;
 
     logger.debug("TlvConfigurationFileParser.toByteArray() {}", jaTlvDictionary);

@@ -212,6 +212,9 @@ public class TlvAssembler extends TlvBuilder {
   private static TlvBuilder encapsulate(JSONObject definition, TlvBuilder value)
       throws TlvException {
     int type = definition.getInt(Dictionary.TYPE);
+    if (DocsisVendorExtension.applies(definition) && value.length() > TlvBuilder.MAX_TLV_LENGTH) {
+      throw new IllegalArgumentException("DOCSIS extension exceeds its one-byte payload limit");
+    }
     if (definition.getInt(Dictionary.BYTE_LENGTH) == 1) {
       value.encapsulateTlv(type);
       return value;
@@ -252,7 +255,8 @@ public class TlvAssembler extends TlvBuilder {
       if ((oValue instanceof String)
           && (((String) oValue).matches("\\s*"))
           && (!sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING_NULL_TERMINATED))
-          && (!sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING))) {
+          && (!sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_STRING))
+          && !DocsisVendorExtension.isRaw(joTlvDictionary)) {
         return tbLocalTlvBuilder;
       }
 
@@ -377,7 +381,12 @@ public class TlvAssembler extends TlvBuilder {
 
         // Add Integer TLV
         try {
-          tbLocalTlvBuilder.add(iType, hsTlvValue.toByteArray());
+          if (DocsisVendorExtension.isRaw(joTlvDictionary)) {
+            // Opaque zero-length children are data, not valueless template placeholders.
+            tbLocalTlvBuilder.add(iType, hsTlvValue);
+          } else {
+            tbLocalTlvBuilder.add(iType, hsTlvValue.toByteArray());
+          }
         } catch (TlvException e) {
           e.printStackTrace();
         }

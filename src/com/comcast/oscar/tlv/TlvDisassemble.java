@@ -397,6 +397,10 @@ public class TlvDisassemble extends TlvDictionary {
       throw new IllegalArgumentException("Invalid container TLV length");
     JSONObject result = new JSONObject(template.toString());
     if (!result.getBoolean(Dictionary.ARE_SUBTYPES)) {
+      if (DocsisVendorExtension.applies(result)) {
+        DocsisVendorExtension.validatePayload(
+            java.util.Arrays.copyOfRange(encoded, headerBytes, encoded.length));
+      }
       int size = encoded.length - headerBytes;
       int minimum = result.getInt(Dictionary.LENGTH_MIN);
       int maximum = result.getInt(Dictionary.LENGTH_MAX);
@@ -413,6 +417,8 @@ public class TlvDisassemble extends TlvDictionary {
       result.put(Dictionary.PARENT_TYPE_LIST, parentPath);
       return result;
     }
+    boolean extension = DocsisVendorExtension.applies(template);
+    boolean general = !extension || DocsisVendorExtension.isGeneral(encoded);
     JSONArray children = new JSONArray();
     for (int offset = headerBytes; offset < encoded.length; ) {
       if (offset + 2 > encoded.length)
@@ -429,7 +435,25 @@ public class TlvDisassemble extends TlvDictionary {
           break;
         }
       }
-      if (child == null) throw new IllegalArgumentException("Unknown embedded child TLV " + type);
+      if (extension
+          && type == com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes.VENDOR_ID_ENC
+          && offset != headerBytes) {
+        throw new IllegalArgumentException("Duplicate VendorId in DOCSIS extension");
+      }
+      if (extension
+          && type != com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes.VENDOR_ID_ENC
+          && (!general || child == null)) {
+        child = DocsisVendorExtension.rawDefinition(template, "RawTlv" + type);
+        child.put(
+            Dictionary.VALUE,
+            java.util.HexFormat.ofDelimiter(":").formatHex(encoded, offset + 2, end));
+        children.put(child);
+        offset = end;
+        continue;
+      }
+      if (child == null) {
+        throw new IllegalArgumentException("Unknown embedded child TLV " + type);
+      }
       children.put(
           decodeBoundedInstance(java.util.Arrays.copyOfRange(encoded, offset, end), child));
       offset = end;
