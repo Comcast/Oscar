@@ -75,6 +75,33 @@ banner or domain type meets this skill. Use descriptive local names, avoid
 reassigning input parameters, and keep blank lines between logical steps rather
 than directly inside method openings when changing handwritten code.
 
+## Hex utility reuse check
+
+Run this check whenever new or changed code parses, validates, normalizes or
+formats hexadecimal data, including private helpers in TLV/parser classes:
+
+1. Inspect `src/com/comcast/oscar/utilities/HexString.java` and related conversion
+   or formatting classes before implementing another helper. Locate candidates:
+   ```bash
+   rg -n 'parseHex|formatHex|isHexString|decodeHex|toByteArray' src/com/comcast/oscar/utilities src/com/comcast/oscar/datatype
+   ```
+2. Compare contracts, not just method names: accepted delimiters/brackets,
+   whitespace, empty input, malformed or odd-length input, and exception behavior.
+   A decoder that silently returns empty bytes is not a strict validator; valid
+   empty payloads must remain distinguishable from malformed input.
+3. Reuse the matching utility. If its contract is insufficient, add the focused
+   reusable behavior to `HexString` or the appropriate existing hex-formatting
+   class and have callers delegate. Do not duplicate normalization or byte-pair
+   parsing in a feature class. Keep protocol-specific byte limits and TLV rules
+   in the protocol owner, outside generic hex utilities.
+4. Prefer the JDK's `HexFormat` for conversion where it fits. Do not repeat its
+   invalid-character/odd-length checks with a regex unless a distinct accepted
+   input contract requires one. Preserve existing callers' documented behavior
+   when introducing a stricter API.
+5. Test the shared utility's contract and affected caller round trips. In the QA
+   report, name the utility inspected/reused, explain any gap requiring a new
+   shared API, and identify the owner of remaining protocol-specific checks.
+
 ## Common registry contract
 
 All base and embedded catalogs must use `docs/tlv-registry.schema.json` and

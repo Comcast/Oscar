@@ -63,6 +63,13 @@ and `tools/run-all.sh` after changes.
 
 Use [qa-hygiene](skills/qa-hygiene/SKILL.md) for TLV catalog naming,
 registry/parser hygiene changes, optimization, defect fixes, and QA hygiene reviews.
+Apply the skill whenever adding or modifying handwritten Java, including review
+of the affected class's public API banners and utility ownership. Before adding
+hex parsing, validation, normalization or formatting, inspect `HexString` and
+existing hex/datatype formatting classes. Keep reusable hex behavior in those
+classes; keep TLV-specific length and protocol rules with their owning module.
+Follow the skill's **Hex utility reuse check** and report the existing utility
+reviewed, any semantic gap, and the chosen owner.
 For optimization, benchmark the original implementation before editing, rerun
 the same benchmark afterward, and retain results alongside correctness tests.
 Follow [optimization QA](docs/optimization-qa.md).
