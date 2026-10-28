@@ -658,3 +658,11 @@ TLVs of one through four bytes in the [text-export TODO](text-export.md#todo-opt
 This may require registry presentation metadata shared by CLI and UI consumers.
 Canonical hex encoding remains unchanged until display-only versus reimportable
 syntax, signedness, width and byte order are explicitly defined and tested.
+
+## Deferred digit-map editing and validation support
+
+The [digit-map TODO](text-lint.md#todo-digit-map-text-validation-and-editing-api)
+tracks specification-based text validation and reusable extraction/replacement
+APIs. OSCAR owns dialect-aware diagnostics and SNMP encoding; OSCAR-UI owns the
+notepad-style editor and companion-file save workflow. Validation must be
+read-only and distinguish dial-plan syntax from provisioning/device acceptance.
