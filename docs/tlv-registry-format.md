@@ -10,7 +10,10 @@ or length vocabulary for embedded devices.
 
 Required fields: `formatVersion` (1), `family`, `edition`, `sourceSha256`, and
 `definitions`. The hash identifies the source artifact documented by the catalog's
-specification references. Embedded catalogs additionally declare `parentPath`.
+specification references. Bundled specification TXT files are marked `-text`
+in `.gitattributes`: Git must preserve their original bytes on every platform,
+including Windows, so provenance hashes do not depend on checkout line endings.
+Embedded catalogs additionally declare `parentPath`.
 Base parent definitions have an optional `reference` filename, such as
 `"path": [202], "reference": "erouter.json"` or
 `"path": [217], "reference": "opencable.json"` (alongside the required fields).

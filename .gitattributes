@@ -6,3 +6,6 @@
 # Keep wrapper launchers usable on Unix and Windows checkouts.
 /mvnw text eol=lf
 /mvnw.cmd text eol=crlf
+
+# Provenance hashes cover exact extracted bytes, including original line endings.
+/skills/**/references/sources/*.txt -text
