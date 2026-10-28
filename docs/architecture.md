@@ -630,3 +630,31 @@ forwarding but delegates payload encoding to each service specification. Never
 infer that an embedded device consumes its whole standalone file inside one TLV.
 See the [PacketCable source map](../skills/oscar-packetcable-config-tlvs/references/source-map.md)
 for exact sections, source hashes, coverage and outstanding semantic checks.
+
+
+## Registry source edition notation
+
+A registry's `edition` identifies the specification issue(s) from which its
+reviewed definitions derive, separately from the OSCAR release version. For a
+single source, use its complete specification identifier. For multiple sources,
+join complete identifiers with exactly ` + ` (space, plus, space):
+
+```json
+"edition": "PKT-SP-PROV1.5-C01-191120 + PKT-SP-EUE-PROV-C01-140314"
+```
+
+Use ` + ` consistently, rather than mixing it with `|`. Preserve the individual
+identifiers so API/UI consumers, including About, can display each source
+separately. The combined string records provenance; it does not select a runtime
+protocol profile or claim complete compliance with every listed specification.
+Keep source hashes and per-definition applicability in the corresponding source
+manifest and coverage notes. This notation does not change the existing single
+`sourceSha256` field into a hash of all listed sources.
+
+## Deferred numeric presentation of short byte arrays
+
+Track the proposed optional decimal representation for verified numeric byte-array
+TLVs of one through four bytes in the [text-export TODO](text-export.md#todo-optional-numeric-display-for-short-byte-arrays).
+This may require registry presentation metadata shared by CLI and UI consumers.
+Canonical hex encoding remains unchanged until display-only versus reimportable
+syntax, signedness, width and byte order are explicitly defined and tested.

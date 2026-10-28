@@ -13,6 +13,13 @@ Required fields: `formatVersion` (1), `family`, `edition`, `sourceSha256`, and
 specification references. Bundled specification TXT files are marked `-text`
 in `.gitattributes`: Git must preserve their original bytes on every platform,
 including Windows, so provenance hashes do not depend on checkout line endings.
+For multiple source specifications, `edition` joins their complete identifiers
+with ` + `, for example
+`PKT-SP-PROV1.5-C01-191120 + PKT-SP-EUE-PROV-C01-140314`.
+Use this separator consistently; do not substitute `|`. See
+[edition notation](architecture.md#registry-source-edition-notation) for the
+provenance and consumer contract.
+
 Embedded catalogs additionally declare `parentPath`.
 Base parent definitions have an optional `reference` filename, such as
 `"path": [202], "reference": "erouter.json"` or
