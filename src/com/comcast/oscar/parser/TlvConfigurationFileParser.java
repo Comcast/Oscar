@@ -4,6 +4,7 @@
  */
 package com.comcast.oscar.parser;
 
+import com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes;
 import com.comcast.oscar.configurationfile.ConfigurationFile;
 import com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants;
 import com.comcast.oscar.dictionary.Dictionary;
@@ -124,7 +125,8 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     containerInstances.clear();
     containerTemplate =
         joWorkingTLVDictionary.getBoolean(Dictionary.ARE_SUBTYPES)
-                && iConfigurationFileType == ConfigurationFile.DOCSIS_VER_31
+                && (iConfigurationFileType == ConfigurationFile.DOCSIS_VER_31
+                    || iConfigurationFileType == ConfigurationFile.DOCSIS_VER_40)
             ? new JSONObject(joWorkingTLVDictionary.toString())
             : null;
     if (containerTemplate != null) {
@@ -281,11 +283,26 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     if (ancestors.hasNext()) ancestors.next();
     while (ancestors.hasNext()) template = findChildDefinition(template, ancestors.next());
     if (depth > 0) template = findChildDefinition(template, name);
+    trackDefinition(template);
     JSONObject instance = depth == 0 ? joWorkingTLVDictionary : new JSONObject(template.toString());
     if (instance.getBoolean(Dictionary.ARE_SUBTYPES))
       instance.put(Dictionary.SUBTYPE_ARRAY, new JSONArray());
-    if (depth > 0)
-      containerInstances.get(depth - 1).getJSONArray(Dictionary.SUBTYPE_ARRAY).put(instance);
+    if (depth > 0) {
+      JSONObject parent = containerInstances.get(depth - 1);
+      JSONArray children = parent.getJSONArray(Dictionary.SUBTYPE_ARRAY);
+      // I12 C.1.1.18: the general extension VendorId must be first on the wire,
+      // regardless of text or catalog order. Preserve the historical normalization.
+      if (iConfigurationFileType == ConfigurationFile.DOCSIS_VER_40
+          && depth == 1
+          && parent.getInt(Dictionary.TYPE) == DocsisTlvTypes.DOC_EXT_FIELD
+          && instance.getInt(Dictionary.TYPE) == DocsisTlvTypes.VENDOR_ID_ENC) {
+        JSONArray ordered = new JSONArray().put(instance);
+        for (Object child : children) ordered.put(child);
+        parent.put(Dictionary.SUBTYPE_ARRAY, ordered);
+      } else {
+        children.put(instance);
+      }
+    }
     while (containerInstances.size() > depth) containerInstances.removeLast();
     containerInstances.add(instance);
     return instance;

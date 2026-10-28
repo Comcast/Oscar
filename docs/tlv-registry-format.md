@@ -59,7 +59,15 @@ Example OpenCable definition:
 ```
 
 Use the existing compact layout: one definition per line, as in `docsis.json`.
-The example is expanded for readability.
+The example is expanded for readability. Keep definitions in ascending numeric
+path order, with each parent immediately before its descendants: `4`, `4.1`,
+`4.2`, `4.10`, then `5`. Apply the same rule to relative paths in embedded
+catalogs. Do not append new children at the bottom of the catalog.
+
+Catalog layout is not a wire-order requirement. DOCSIS 3.1/4.0 text import
+preserves child statement order; DOCSIS 4.0 still normalizes the general
+extension VendorId to the first child as required by its encoding. Duplicate
+child rejection for DOCSIS 4.0 remains enforced.
 
 ## Source notes and validation
 

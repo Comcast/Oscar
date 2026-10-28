@@ -386,11 +386,18 @@ public class TlvDisassemble extends TlvDictionary {
   /** Decode one bounded container instance; repeated children produce independent JSON nodes. */
   private JSONObject decodeBoundedInstance(byte[] encoded, JSONObject template)
       throws TlvException {
-    if (encoded.length < 2 || Byte.toUnsignedInt(encoded[1]) != encoded.length - 2)
-      throw new IllegalArgumentException("Invalid embedded TLV length");
+    int lengthBytes = template.getInt(Dictionary.BYTE_LENGTH);
+    int headerBytes = 1 + lengthBytes;
+    if (encoded.length < headerBytes)
+      throw new IllegalArgumentException("Truncated container header");
+    int payloadLength = 0;
+    for (int index = 1; index < headerBytes; index++)
+      payloadLength = (payloadLength << Byte.SIZE) | Byte.toUnsignedInt(encoded[index]);
+    if (payloadLength != encoded.length - headerBytes)
+      throw new IllegalArgumentException("Invalid container TLV length");
     JSONObject result = new JSONObject(template.toString());
     if (!result.getBoolean(Dictionary.ARE_SUBTYPES)) {
-      int size = encoded.length - 2;
+      int size = encoded.length - headerBytes;
       int minimum = result.getInt(Dictionary.LENGTH_MIN);
       int maximum = result.getInt(Dictionary.LENGTH_MAX);
       if (size < minimum || (maximum > 0 && size > maximum))
@@ -407,7 +414,7 @@ public class TlvDisassemble extends TlvDictionary {
       return result;
     }
     JSONArray children = new JSONArray();
-    for (int offset = 2; offset < encoded.length; ) {
+    for (int offset = headerBytes; offset < encoded.length; ) {
       if (offset + 2 > encoded.length)
         throw new IllegalArgumentException("Truncated embedded TLV header");
       int type = Byte.toUnsignedInt(encoded[offset]);
@@ -436,7 +443,8 @@ public class TlvDisassemble extends TlvDictionary {
 
     // Registry children belong to individual wire containers. In particular, repeated
     // coexistence address rows and ASF/HQoS entries must not share values or bounds.
-    if (TLV_TYPE_DOCSIS.equals(getDictionaryTableName())
+    if ((TLV_TYPE_DOCSIS.equals(getDictionaryTableName())
+            || TLV_TYPE_DOCSIS_40.equals(getDictionaryTableName()))
         && joTlvDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
       return decodeBoundedInstance(bTlvBuffer, joTlvDictionary);
     }
