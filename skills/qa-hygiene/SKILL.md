@@ -83,6 +83,26 @@ Run `EmbeddedServiceCatalogTest` along with the registry checks; it discovers
 all catalogs, including eRouter and OpenCable. Do not add an alternative
 `kind`/nested-length schema for new services.
 
+## TLV registry ordering
+
+Keep every `res/tlv-registry/*.json` definitions array in ascending numeric
+path order. Put each parent immediately before its descendants, recursively:
+`4`, `4.1`, `4.1.1`, `4.2`, `4.10`, then `5`. Compare path components as
+integers, not strings. Insert new children in their parent group; never append
+them at the bottom of a catalog. Apply this to base catalogs and embedded
+catalogs' relative paths, including future catalogs discovered in the directory.
+
+For ordering-only changes, verify that sorting changes no definition fields,
+paths, references, edition or source hash. Follow
+[the registry format](../../docs/tlv-registry-format.md) and run the catalog
+checks and `tools/run-all.sh` to catch serializers that depend on catalog order.
+
+Catalog layout does not define wire order. Preserve document-instance order
+and explicit protocol requirements, including DOCSIS 4.0 TLV 43's VendorId-first
+rule. Fix ordering dependencies in the owning parser/encoder; do not restore an
+unsorted catalog, weaken byte-for-byte round-trip tests, or regenerate expected
+binary fixtures merely to make a sorting change pass.
+
 ## TLV identifiers
 
 - In `res/tlv-registry/*.json`, `name` is a parser identifier, not a display
@@ -91,8 +111,8 @@ all catalogs, including eRouter and OpenCable. Do not add an alternative
 - Follow existing identifiers such as `ErroredParameter`, `ErrorCode`, and
   `ErrorMessage`. Do not silently strip whitespace while loading: reject bad
   catalog input so the source can be fixed.
-- Check all five catalogs: `docsis`, `docsis40`, `dpoe`, `dpog`, and `packetcable`,
-  including nested children. Extend the catalog-wide check when adding a family.
+- Discover every catalog under `res/tlv-registry/`, including embedded eRouter
+  and OpenCable catalogs and all nested children. Do not use a frozen family list.
 - Treat renames as text-format compatibility changes. Update affected fixtures
   and documentation; old templates may need renaming or regeneration. Preserve
   numeric paths and wire encodings when only correcting names.
@@ -101,8 +121,9 @@ all catalogs, including eRouter and OpenCable. Do not add an alternative
 
 Inspect `src/com/comcast/oscar/dictionary/TlvRegistry.java` for fail-fast checks:
 whitespace names, duplicate paths, case-insensitive duplicate sibling names,
-missing parents, unknown codecs, and invalid metadata. Preserve catalog order;
-legacy serializers rely on it. Do not add duplicate tests for existing coverage.
+missing parents, unknown codecs, and invalid metadata. Keep source catalogs in
+the numeric order described above; verify wire behavior independently. Do not
+add duplicate tests for existing coverage.
 
 `src/test/java/com/comcast/oscar/dictionary/TlvRegistryTest.java` contains:
 
