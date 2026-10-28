@@ -103,3 +103,21 @@ cases produced eight failures against the old implementation before the fix.
 ASCII limits, every byte value, fixed-width conversions, input immutability and
 invalid ranges/hex. Seven failing cases were reproduced before fixing the
 implementation. See [hexadecimal display](hex-dump.md) and its benchmark record.
+
+## Public PacketCable interoperability fixtures
+
+`PublicPacketCableRoundTripTest` tests two unchanged binaries from the independent
+[rlaager/docsis project](https://github.com/rlaager/docsis), pinned to commit
+`94e8845838c0bea2c12e8002001f04a62ca1e3d0`. The digit-map and TLV-64 fixtures
+are tested under explicit PacketCable 1.5 and 2.0 profiles, with SHA-256 checks
+and exact binary → text → binary comparisons. Tests require no network and use
+numeric OIDs rather than host-specific MIB name resolution.
+
+See [fixture provenance and license](../src/test/resources/packetcable-public/README.md)
+for source links, unchanged text inputs, hashes and coverage limits. These tests
+exercise common SNMP and delimiter encodings, not device provisioning validity,
+2.0-only fields or embedded DOCSIS payloads. Run with:
+
+```bash
+./mvnw -B -Dtest=PublicPacketCableRoundTripTest test
+```
