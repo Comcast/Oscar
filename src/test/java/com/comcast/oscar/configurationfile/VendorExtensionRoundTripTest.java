@@ -45,8 +45,8 @@ class VendorExtensionRoundTripTest {
             text);
       }
       String text = export("2b0e08030005ca0101abf201cd0101ef", version);
-      assertTrue(text.contains("RawTlv1"));
-      assertTrue(text.contains("RawTlv242"));
+      assertTrue(text.contains("UnknownTLV1"));
+      assertTrue(text.contains("UnknownTLV242"));
       assertArrayEquals(
           HexFormat.of().parseHex("2b0e08030005ca0101abf201aa0101ef"),
           new ConfigurationFileImport(
@@ -74,17 +74,17 @@ class VendorExtensionRoundTripTest {
   void rejectsMalformedTextAndOutOfScopeRawChildren() {
     for (String body :
         new String[] {
-          "VendorSpecific { RawTlv242 AA; }",
-          "VendorSpecific { VendorId 00:05; RawTlv242 AA; }",
+          "VendorSpecific { UnknownTLV242 AA; }",
+          "VendorSpecific { VendorId 00:05; UnknownTLV242 AA; }",
           "VendorSpecific { VendorId 00:05:CA; VendorId 00:05:CA; }",
-          "VendorSpecific { VendorId 00:05:CA; RawTlv8 AA; }",
-          "VendorSpecific { VendorId 00:05:CA; RawTlv256 AA; }",
-          "VendorSpecific { VendorId 00:05:CA; RawTlv242 \"xyz\"; }",
-          "VendorSpecific { VendorId 00:05:CA; RawTlv242 \"abc\"; }",
+          "VendorSpecific { VendorId 00:05:CA; UnknownTLV8 AA; }",
+          "VendorSpecific { VendorId 00:05:CA; UnknownTLV256 AA; }",
+          "VendorSpecific { VendorId 00:05:CA; UnknownTLV242 \"xyz\"; }",
+          "VendorSpecific { VendorId 00:05:CA; UnknownTLV242 \"abc\"; }",
           "VendorSpecific { VendorId 00:05:CA; CMLoadBalancingID 1; }",
-          "UpstreamServiceFlow { RawTlv242 AA; }",
-          "RawTlv242 AA;",
-          "VendorSpecific { VendorId 00:05:CA; RawTlv242 \"" + "ab".repeat(248) + "\"; }"
+          "UpstreamServiceFlow { UnknownTLV242 AA; }",
+          "UnknownTLV242 AA;",
+          "VendorSpecific { VendorId 00:05:CA; UnknownTLV242 \"" + "ab".repeat(248) + "\"; }"
         }) {
       assertThrows(
           RuntimeException.class,
@@ -126,11 +126,12 @@ class VendorExtensionRoundTripTest {
     assertEquals(242, raw.getInt("Type"));
     assertEquals("[-1,43,242]", raw.getJSONArray("ParentTypeList").toString());
     assertEquals("byte_array", raw.getString("DataType"));
-    assertEquals("RawTlv242", raw.getString("TlvName"));
+    assertEquals("UnknownTLV242", raw.getString("TlvName"));
     assertArrayEquals(
         HexFormat.of().parseHex("2b0508030005ca"),
         new ConfigurationFileImport(
-                new StringBuilder("Docsis { VendorSpecific { VendorId 00:05:CA; RawTlv242; } }"))
+                new StringBuilder(
+                    "Docsis { VendorSpecific { VendorId 00:05:CA; UnknownTLV242; } }"))
             .toByteArray());
   }
 }

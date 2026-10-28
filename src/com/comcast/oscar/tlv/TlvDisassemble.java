@@ -5,29 +5,95 @@
 package com.comcast.oscar.tlv;
 
 import com.comcast.oscar.ber.BEROIDConversion;
+import com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes;
 import com.comcast.oscar.compiler.PacketCableConstants;
 import com.comcast.oscar.datatype.DataTypeDictionaryReference;
 import com.comcast.oscar.datatype.DataTypeFormatConversion;
 import com.comcast.oscar.datatype.DataTypeFormatException;
 import com.comcast.oscar.dictionary.Dictionary;
 import com.comcast.oscar.dictionary.TlvDictionary;
+import com.comcast.oscar.dictionary.TlvRegistry;
 import com.comcast.oscar.utilities.HexString;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/** Decodes TLV instances using an explicitly selected registry; does not authenticate MICs. */
 public class TlvDisassemble extends TlvDictionary {
+  private static final int ROOT_PATH_MARKER = -1;
+
+  // Diagnostics never include provisioning payload bytes.
+  private static final Logger logger = LogManager.getLogger(TlvDisassemble.class);
+
+  private TlvBuilder tlvBuffer = null;
+
+  private TlvVariableBinding variableBinding = null;
+
+  public static final String TLV_TYPE_DOCSIS = TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME;
+  public static final String TLV_TYPE_DOCSIS_40 = TlvDictionary.DOCSIS_40_DICTIONARY_TABLE_NAME;
+  public static final String TLV_TYPE_PACKET_CABLE =
+      TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME;
+  public static final String TLV_TYPE_DPOG = TlvDictionary.DPOG_DICTIONARY_TABLE_NAME;
+  public static final String TLV_TYPE_DPOE = TlvDictionary.DPOE_DICTIONARY_TABLE_NAME;
+
+  /**
+   * Retains a builder for decoding with the selected dictionary; no file is read or written.
+   *
+   * @param tlvBuffer non-null encoded builder; caller must not mutate it during decoding
+   * @param dictionaryTable registry table name, e.g. TLV_TYPE_DOCSIS
+   * @throws NullPointerException if the builder or table is null
+   */
+  public TlvDisassemble(TlvBuilder tlvBuffer, String dictionaryTable) {
+    this.tlvBuffer = Objects.requireNonNull(tlvBuffer, "tlvBuffer");
+    super.updateDictionaryTablename(Objects.requireNonNull(dictionaryTable, "dictionaryTable"));
+  }
+
+  /**
+   * Retains a variable binding, including its length-field widths, for deferred decoding.
+   *
+   * @param variableBinding non-null encoded binding; caller must not mutate it during decoding
+   * @param dictionaryTable registry table name, e.g. TLV_TYPE_DOCSIS
+   * @throws NullPointerException if the binding or table is null
+   */
+  public TlvDisassemble(TlvVariableBinding variableBinding, String dictionaryTable) {
+    this.variableBinding = Objects.requireNonNull(variableBinding, "variableBinding");
+    super.updateDictionaryTablename(Objects.requireNonNull(dictionaryTable, "dictionaryTable"));
+  }
+
+  /**
+   * Reads a complete binary file into a private builder and selects its decoding dictionary. The
+   * input file is not modified; failed reads do not leave a partially initialized decoder.
+   *
+   * @param configurationFile non-null readable binary file
+   * @param dictionaryTable registry table name, e.g. TLV_TYPE_DOCSIS
+   * @throws IllegalArgumentException if the file cannot be read or represented as a TLV stream
+   * @throws NullPointerException if the file or table is null
+   */
+  public TlvDisassemble(File configurationFile, String dictionaryTable) {
+    Objects.requireNonNull(configurationFile, "configurationFile");
+    this.tlvBuffer = new TlvBuilder();
+    try {
+      tlvBuffer.add(new HexString(Files.readAllBytes(configurationFile.toPath())));
+    } catch (IOException | TlvException exception) {
+      throw new IllegalArgumentException("Cannot read binary configuration", exception);
+    }
+    super.updateDictionaryTablename(Objects.requireNonNull(dictionaryTable, "dictionaryTable"));
+  }
+
   /**
    * Inspects a raw TLV stream without requiring construction of a valid configuration.
    *
@@ -42,109 +108,25 @@ public class TlvDisassemble extends TlvDictionary {
    */
   public static TlvDisassemblyReport diagnose(
       byte[] configurationBytes, DisassemblyOptions options) {
-    java.util.Objects.requireNonNull(configurationBytes, "configurationBytes");
-    java.util.Objects.requireNonNull(options, "options");
+    Objects.requireNonNull(configurationBytes, "configurationBytes");
+    Objects.requireNonNull(options, "options");
     if (configurationBytes.length > options.maxBytes()) {
       throw new IllegalArgumentException("Diagnostic input exceeds byte limit");
     }
     return new TlvDiagnosticWalker(configurationBytes.clone(), options).inspect();
   }
 
-  // Log4J2 logging
-  private static final Logger logger = LogManager.getLogger(TlvDisassemble.class);
-
-  private TlvBuilder tbTlvBuffer = null;
-
-  private TlvVariableBinding tvbTlvBuffer = null;
-
-  public static final String TLV_TYPE_DOCSIS = TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME;
-  public static final String TLV_TYPE_DOCSIS_40 = "DOCSIS40_TLV_DEFINITION";
-  public static final String TLV_TYPE_PACKET_CABLE =
-      TlvDictionary.PACKET_CABLE_DICTIONARY_TABLE_NAME;
-  public static final String TLV_TYPE_DPOG = TlvDictionary.DPOG_DICTIONARY_TABLE_NAME;
-  public static final String TLV_TYPE_DPOE = TlvDictionary.DPOE_DICTIONARY_TABLE_NAME;
-
   /**
-   * @param tbTlvBuffer
-   * @param sTlvType String
-   */
-  public TlvDisassemble(TlvBuilder tbTlvBuffer, String sTlvType) {
-
-    super();
-
-    logger.debug("TlvDisassemble(t,s) DICTIONARY-TABLE-NAME: {}", sTlvType);
-
-    // Update local pointer
-    this.tbTlvBuffer = tbTlvBuffer;
-
-    logger.debug(() -> "TlvDisassemble(tb,s) TLV Buffer: " + tbTlvBuffer.toStringSeperation(":"));
-
-    // Check the first byte to determine if it is a DOCSIS File or PacketCable File
-    super.updateDictionaryTablename(sTlvType);
-  }
-
-  /**
-   * @param tvbTlvBuffer
-   * @param sTlvType String
-   */
-  public TlvDisassemble(TlvVariableBinding tvbTlvBuffer, String sTlvType) {
-
-    super();
-
-    logger.debug("TlvDisassemble(tvb,s) DICTIONARY-TABLE-NAME: {}", sTlvType);
-
-    // Update local pointer
-    this.tvbTlvBuffer = tvbTlvBuffer;
-
-    logger.debug(() -> "TlvDisassemble(tvb,s) TLV Buffer: " + tvbTlvBuffer.toString());
-
-    // Check the first byte to determine if it is a DOCSIS File or PacketCable File
-    super.updateDictionaryTablename(sTlvType);
-  }
-
-  /**
-   * @param fTlvBuffer
-   * @param sTlvType String
-   */
-  public TlvDisassemble(File fTlvBuffer, String sTlvType) {
-
-    super();
-
-    logger.debug("TlvDisassemble(f,s) DICTIONARY-TABLE-NAME: {}", sTlvType);
-
-    byte[] bTlvBuffer = new byte[(int) fTlvBuffer.length()];
-
-    FileInputStream fisTlvBuffer;
-
-    try {
-      fisTlvBuffer = new FileInputStream(fTlvBuffer);
-      fisTlvBuffer.read(bTlvBuffer);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    this.tbTlvBuffer = new TlvBuilder();
-
-    logger.debug(() -> "TlvDisassemble(f,s) TLV Buffer: " + tbTlvBuffer.toStringSeperation(":"));
-
-    try {
-      tbTlvBuffer.add(new HexString(bTlvBuffer));
-    } catch (TlvException e) {
-      e.printStackTrace();
-    }
-
-    logger.debug(() -> "TlvDisassemble(f,s) TLV-BUFFER: " + tbTlvBuffer.toStringSeperation(":"));
-
-    // Check the first byte to determine if it is a DOCSIS File or PacketCable File
-    super.updateDictionaryTablename(sTlvType);
-  }
-
-  /**
-   * @return JSONArray
+   * Decodes stored TLVs into independent dictionary instances with values and numeric paths. DOCSIS
+   * vendor children use VendorId-scoped metadata. This does not validate a complete provisioning
+   * profile or authenticate MICs, and does not write files.
+   *
+   * @return decoded instance array; legacy family paths can omit unsupported entries
+   * @throws IllegalArgumentException if bounded DOCSIS/DPoG framing or values are malformed
    */
   public JSONArray getTlvDictionary() {
     if (TLV_TYPE_DPOG.equals(getDictionaryTableName())) {
-      byte[] binary = tbTlvBuffer != null ? tbTlvBuffer.toByteArray() : tvbTlvBuffer.toByteArray();
+      byte[] binary = tlvBuffer != null ? tlvBuffer.toByteArray() : variableBinding.toByteArray();
       JSONArray decoded = new JSONArray();
       for (var element : DPoGTlvCodec.parse(binary)) {
         JSONObject dictionary = super.getTlvDictionary(element.definition().type());
@@ -171,16 +153,16 @@ public class TlvDisassemble extends TlvDictionary {
     List<Integer> liTlvBuffer = null;
 
     // Check which Type of TLV Buffer we are using
-    if (tbTlvBuffer != null) {
+    if (tlvBuffer != null) {
 
-      liTlvBuffer = tbTlvBuffer.getTopLevelTlvList(getTopLevelByteLength());
+      liTlvBuffer = tlvBuffer.getTopLevelTlvList(getTopLevelByteLength());
 
-    } else if (tvbTlvBuffer != null) {
+    } else if (variableBinding != null) {
 
-      liTlvBuffer = tvbTlvBuffer.getTopLevelTlvList();
+      liTlvBuffer = variableBinding.getTopLevelTlvList();
     }
 
-    // Get Major TLV from tbTlvBuffer via Map Type -> Byte Length
+    // Get Major TLV from tlvBuffer via Map Type -> Byte Length
     for (Integer iType : liTlvBuffer) {
 
       // mgarcia - Added 140103 - Need a new Buffer for each Type Look up
@@ -198,9 +180,9 @@ public class TlvDisassemble extends TlvDictionary {
       Map<Integer, Integer> miiTypeByteLength = new HashMap<Integer, Integer>();
 
       // need to account for VariableNumByteLength TLV's
-      if (tvbTlvBuffer != null) {
+      if (variableBinding != null) {
 
-        miiTypeByteLength.put(iType, tvbTlvBuffer.getMapTypeToByteLength().get(iType));
+        miiTypeByteLength.put(iType, variableBinding.getMapTypeToByteLength().get(iType));
 
         // fetch Major TLV and store in BASO
         try {
@@ -208,9 +190,9 @@ public class TlvDisassemble extends TlvDictionary {
               TlvBuilder.fetchTlv(
                   new ArrayList<Integer>(Arrays.asList(iType)), // Contains Type
                   miiTypeByteLength, // Contains Type -> ByteLength
-                  tvbTlvBuffer.toByteArray())); // Contains TLV ByteArray
+                  variableBinding.toByteArray())); // Contains TLV ByteArray
         } catch (IOException e) {
-          e.printStackTrace();
+          logger.error("Unable to decode a configuration field; inspect the input structure");
         }
 
         try {
@@ -219,18 +201,18 @@ public class TlvDisassemble extends TlvDictionary {
           try {
             joTlvDictionary.put(Dictionary.BYTE_LENGTH, miiTypeByteLength.get(iType));
           } catch (JSONException e) {
-            e.printStackTrace();
+            logger.error("Unable to decode a configuration field; inspect the input structure");
           }
 
           // Load JSON Object
           jaTlvDictionary.put(
-              loadTlvValuesIntoTlvDictionary(tvbTlvBuffer.toByteArray(), joTlvDictionary));
+              loadTlvValuesIntoTlvDictionary(variableBinding.toByteArray(), joTlvDictionary));
 
         } catch (TlvException e) {
-          e.printStackTrace();
+          logger.error("Unable to decode a configuration field; inspect the input structure");
         }
 
-      } else if (tbTlvBuffer != null) {
+      } else if (tlvBuffer != null) {
 
         // Map to hold TYPE to Byte Length
         try {
@@ -238,7 +220,7 @@ public class TlvDisassemble extends TlvDictionary {
               joTlvDictionary.getInt(Dictionary.TYPE),
               joTlvDictionary.getInt(Dictionary.BYTE_LENGTH));
         } catch (JSONException e1) {
-          e1.printStackTrace();
+          logger.error("Unable to decode a configuration field; inspect the input structure");
         }
 
         // fetch Major TLV and store in BASO
@@ -247,16 +229,16 @@ public class TlvDisassemble extends TlvDictionary {
               TlvBuilder.fetchTlv(
                   new ArrayList<Integer>(Arrays.asList(iType)), // Contains Type
                   miiTypeByteLength, // Contains Type -> ByteLength
-                  tbTlvBuffer.toByteArray())); // Contains TLV ByteArray
+                  tlvBuffer.toByteArray())); // Contains TLV ByteArray
         } catch (IOException e) {
-          e.printStackTrace();
+          logger.error("Unable to decode a configuration field; inspect the input structure");
         }
 
         try {
           jaTlvDictionary.put(
               loadTlvValuesIntoTlvDictionary(boasTlvBufferTemp.toByteArray(), joTlvDictionary));
         } catch (TlvException e) {
-          e.printStackTrace();
+          logger.error("Unable to decode a configuration field; inspect the input structure");
         }
       }
     }
@@ -265,18 +247,23 @@ public class TlvDisassemble extends TlvDictionary {
   }
 
   /**
-   * @return List<byte[]>
+   * Groups builder-backed input by top-level type using the existing builder ordering.
+   *
+   * @return encoded groups; this is not a wire-order-preserving export
+   * @throws NullPointerException if constructed from a variable binding rather than a builder/file
    */
   public List<byte[]> toListByteArray() {
-    return tbTlvBuffer.sortByTopLevelTlv();
+    return tlvBuffer.sortByTopLevelTlv();
   }
 
   /**
-   * @param iTlvType
-   * @return JSONArray
+   * Returns decoded top-level instances matching a numeric wire type, without changing input.
+   *
+   * @param iTlvType wire identifier to select, e.g. 3 for NetworkAccess
+   * @return matching JSON instances, or an empty array if absent
+   * @throws IllegalArgumentException if decoding encounters malformed bounded data
    */
   public JSONArray getTopLevelTLVJSON(int iTlvType) {
-
     JSONArray jaTLV = new JSONArray();
 
     JSONArray jaTlvDictionary = getTlvDictionary();
@@ -288,7 +275,7 @@ public class TlvDisassemble extends TlvDictionary {
       try {
         joTlvDictionary = jaTlvDictionary.getJSONObject(iIndex);
       } catch (JSONException e) {
-        e.printStackTrace();
+        logger.error("Unable to decode a configuration field; inspect the input structure");
       }
 
       try {
@@ -298,7 +285,7 @@ public class TlvDisassemble extends TlvDictionary {
         }
 
       } catch (JSONException e) {
-        e.printStackTrace();
+        logger.error("Unable to decode a configuration field; inspect the input structure");
       }
     }
 
@@ -306,11 +293,14 @@ public class TlvDisassemble extends TlvDictionary {
   }
 
   /**
-   * @param fConfiguraitonFile
-   * @return Return the Type of File to determine DataBase Selection
+   * Applies the legacy first-byte PacketCable-versus-DOCSIS heuristic to a file. This does not
+   * identify a DOCSIS revision or prove configuration validity.
+   *
+   * @param fConfiguraitonFile non-null readable, nonempty binary file; not modified
+   * @return PacketCable table for its file marker, otherwise the DOCSIS table
+   * @throws IndexOutOfBoundsException if the legacy reader returns an empty buffer
    */
   public static String GetConfiguraitonFileType(File fConfiguraitonFile) {
-
     // Convert to Byte Array
     byte[] bTLV = HexString.fileToByteArray(fConfiguraitonFile);
 
@@ -326,7 +316,6 @@ public class TlvDisassemble extends TlvDictionary {
    * @param jaTlvDictionary
    */
   private void loadTlvValuesIntoTlvDictionary(byte[] bTlvBuffer, JSONArray jaTlvDictionary) {
-
     // Cycle thru JSON Array and inspect each JSON Object
 
     /*!!!!!!!DO NOT REFACTOR THIS!!!!!!!*/
@@ -340,7 +329,7 @@ public class TlvDisassemble extends TlvDictionary {
       try {
         joTlvDictionary = jaTlvDictionary.getJSONObject(iJsonArrayIndex);
       } catch (JSONException e1) {
-        e1.printStackTrace();
+        logger.error("Unable to decode a configuration field; inspect the input structure");
       }
 
       try {
@@ -373,12 +362,12 @@ public class TlvDisassemble extends TlvDictionary {
 
           } catch (TlvException e) {
 
-            e.printStackTrace();
+            logger.error("Unable to decode a configuration field; inspect the input structure");
           }
         }
 
       } catch (JSONException e) {
-        e.printStackTrace();
+        logger.error("Unable to decode a configuration field; inspect the input structure");
       }
     }
   }
@@ -387,32 +376,38 @@ public class TlvDisassemble extends TlvDictionary {
   private JSONObject decodeBoundedInstance(byte[] encoded, JSONObject template)
       throws TlvException {
     int lengthBytes = template.getInt(Dictionary.BYTE_LENGTH);
-    int headerBytes = 1 + lengthBytes;
-    if (encoded.length < headerBytes)
+    int headerBytes = TlvBuilder.TLV_TYPE_OVERHEAD + lengthBytes;
+    if (encoded.length < headerBytes) {
       throw new IllegalArgumentException("Truncated container header");
+    }
     int payloadLength = 0;
-    for (int index = 1; index < headerBytes; index++)
+    for (int index = 1; index < headerBytes; index++) {
       payloadLength = (payloadLength << Byte.SIZE) | Byte.toUnsignedInt(encoded[index]);
-    if (payloadLength != encoded.length - headerBytes)
+    }
+    if (payloadLength != encoded.length - headerBytes) {
       throw new IllegalArgumentException("Invalid container TLV length");
+    }
     JSONObject result = new JSONObject(template.toString());
     if (!result.getBoolean(Dictionary.ARE_SUBTYPES)) {
       if (DocsisVendorExtension.applies(result)) {
         DocsisVendorExtension.validatePayload(
-            java.util.Arrays.copyOfRange(encoded, headerBytes, encoded.length));
+            Arrays.copyOfRange(encoded, headerBytes, encoded.length));
       }
       int size = encoded.length - headerBytes;
       int minimum = result.getInt(Dictionary.LENGTH_MIN);
       int maximum = result.getInt(Dictionary.LENGTH_MAX);
-      if (size < minimum || (maximum > 0 && size > maximum))
+      if (size < minimum || (maximum > 0 && size > maximum)) {
         throw new IllegalArgumentException("Invalid embedded scalar width");
+      }
       if (result.getString(Dictionary.DATA_TYPE).equals("byte_array_inet_transport_address")
-          && size != 6
-          && size != 18)
+          && size != DataTypeFormatConversion.IPV4_TRANSPORT_ADDRESS_MAX_BYTE_LENGTH
+          && size != DataTypeFormatConversion.IPV6_TRANSPORT_ADDRESS_MAX_BYTE_LENGTH) {
         throw new IllegalArgumentException("Transport address must contain 6 or 18 bytes");
+      }
       JSONArray parentPath = result.getJSONArray(Dictionary.PARENT_TYPE_LIST);
       result.put(
-          Dictionary.PARENT_TYPE_LIST, new JSONArray().put(-1).put(result.getInt(Dictionary.TYPE)));
+          Dictionary.PARENT_TYPE_LIST,
+          new JSONArray().put(ROOT_PATH_MARKER).put(result.getInt(Dictionary.TYPE)));
       loadTlvValuesIntoTlvDictionary(encoded, result);
       result.put(Dictionary.PARENT_TYPE_LIST, parentPath);
       return result;
@@ -421,12 +416,15 @@ public class TlvDisassemble extends TlvDictionary {
     boolean general = !extension || DocsisVendorExtension.isGeneral(encoded);
     JSONArray children = new JSONArray();
     for (int offset = headerBytes; offset < encoded.length; ) {
-      if (offset + 2 > encoded.length)
+      if (offset + TlvBuilder.TLV_TYPE_LENGTH_OVERHEAD > encoded.length) {
         throw new IllegalArgumentException("Truncated embedded TLV header");
+      }
       int type = Byte.toUnsignedInt(encoded[offset]);
-      int end = offset + 2 + Byte.toUnsignedInt(encoded[offset + 1]);
-      if (end > encoded.length)
+      int end =
+          offset + TlvBuilder.TLV_TYPE_LENGTH_OVERHEAD + Byte.toUnsignedInt(encoded[offset + 1]);
+      if (end > encoded.length) {
         throw new IllegalArgumentException("Embedded TLV exceeds parent length");
+      }
       JSONObject child = null;
       for (Object entry : template.getJSONArray(Dictionary.SUBTYPE_ARRAY)) {
         JSONObject candidate = (JSONObject) entry;
@@ -443,10 +441,11 @@ public class TlvDisassemble extends TlvDictionary {
       if (extension
           && type != com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes.VENDOR_ID_ENC
           && (!general || child == null)) {
-        child = DocsisVendorExtension.rawDefinition(template, "RawTlv" + type);
+        child = DocsisVendorExtension.rawDefinition(template, type);
         child.put(
             Dictionary.VALUE,
-            java.util.HexFormat.ofDelimiter(":").formatHex(encoded, offset + 2, end));
+            HexFormat.ofDelimiter(":")
+                .formatHex(encoded, offset + TlvBuilder.TLV_TYPE_LENGTH_OVERHEAD, end));
         children.put(child);
         offset = end;
         continue;
@@ -454,8 +453,7 @@ public class TlvDisassemble extends TlvDictionary {
       if (child == null) {
         throw new IllegalArgumentException("Unknown embedded child TLV " + type);
       }
-      children.put(
-          decodeBoundedInstance(java.util.Arrays.copyOfRange(encoded, offset, end), child));
+      children.put(decodeBoundedInstance(Arrays.copyOfRange(encoded, offset, end), child));
       offset = end;
     }
     result.put(Dictionary.SUBTYPE_ARRAY, children);
@@ -496,13 +494,14 @@ public class TlvDisassemble extends TlvDictionary {
         } else {
           byte[] indices =
               TlvVariableBinding.findTLVIndex(
-                  bTlvBuffer, bParentChildTlvEncodeList, joTlvDictionary.getInt("ByteLength"));
+                  bTlvBuffer,
+                  bParentChildTlvEncodeList,
+                  joTlvDictionary.getInt(Dictionary.BYTE_LENGTH));
           bPCTEPointer = new int[indices.length];
-          for (int index = 0; index < indices.length; index++)
+          for (int index = 0; index < indices.length; index++) {
             bPCTEPointer[index] = Byte.toUnsignedInt(indices[index]);
+          }
         }
-
-        String hsPCTEPointer = java.util.Arrays.toString(bPCTEPointer);
 
         if (bPCTEPointer.length != 0) {
 
@@ -521,7 +520,7 @@ public class TlvDisassemble extends TlvDictionary {
 
             // Convert Value to Proper Data Type
             if (sDataType.equals("unsigned_integer")) {
-              joTlvDictionary.put(Dictionary.VALUE, new java.math.BigInteger(1, bValue));
+              joTlvDictionary.put(Dictionary.VALUE, new BigInteger(1, bValue));
             } else if (sDataType.equals(DataTypeDictionaryReference.DATA_TYPE_INTEGER)) {
 
               // Get Value
@@ -614,7 +613,7 @@ public class TlvDisassemble extends TlvDictionary {
               try {
                 sTlvValue = DataTypeFormatConversion.byteArrayToIPv4TransportAddress(bValue);
               } catch (DataTypeFormatException e) {
-                e.printStackTrace();
+                logger.error("Unable to decode a configuration field; inspect the input structure");
               }
 
               // Insert Value into JSON Object
@@ -628,7 +627,7 @@ public class TlvDisassemble extends TlvDictionary {
               try {
                 sTlvValue = DataTypeFormatConversion.byteArrayToIPv6TransportAddress(bValue);
               } catch (DataTypeFormatException e) {
-                e.printStackTrace();
+                logger.error("Unable to decode a configuration field; inspect the input structure");
               }
 
               // Insert Value into JSON Object
@@ -642,7 +641,7 @@ public class TlvDisassemble extends TlvDictionary {
               try {
                 sTlvValue = DataTypeFormatConversion.byteArrayToInetTransportAddress(bValue);
               } catch (DataTypeFormatException e) {
-                e.printStackTrace();
+                logger.error("Unable to decode a configuration field; inspect the input structure");
               }
 
               // Insert Value into JSON Object
@@ -655,7 +654,7 @@ public class TlvDisassemble extends TlvDictionary {
               try {
                 sTlvValue = DataTypeFormatConversion.doubleByteArray(bValue);
               } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+                logger.error("Unable to decode a configuration field; inspect the input structure");
               }
 
               // Insert Value into JSON Object
@@ -725,82 +724,80 @@ public class TlvDisassemble extends TlvDictionary {
       }
 
     } catch (JSONException e) {
-      e.printStackTrace();
+      logger.error("Unable to decode a configuration field; inspect the input structure");
     }
 
     return joTlvDictionary;
   }
 
-  /**
-   * @param jaParentTypeList
-   * @return byte[]
-   */
+  /** Finds absolute offsets for a registry path without crossing enclosing container bounds. */
   private static int[] findDocsis40Offsets(byte[] bytes, JSONArray parents) {
-    java.util.List<Integer> path = new java.util.ArrayList<>();
+    List<Integer> path = new ArrayList<>();
     for (int index = 0; index < parents.length(); index++) {
       int type = parents.getInt(index);
-      if (type >= 0) path.add(type);
+      if (type >= 0) {
+        path.add(type);
+      }
     }
-    java.util.List<Integer> offsets = new java.util.ArrayList<>();
+    List<Integer> offsets = new ArrayList<>();
     findDocsis40Offsets(bytes, 0, bytes.length, path, 0, offsets);
     return offsets.stream().mapToInt(Integer::intValue).toArray();
   }
 
   private static void findDocsis40Offsets(
-      byte[] bytes,
-      int start,
-      int end,
-      java.util.List<Integer> path,
-      int depth,
-      java.util.List<Integer> offsets) {
+      byte[] bytes, int start, int end, List<Integer> path, int depth, List<Integer> offsets) {
     int offset = start;
     while (offset < end) {
       int type = Byte.toUnsignedInt(bytes[offset]);
-      if (depth == 0 && type == 0) {
+      if (depth == 0 && type == DocsisTlvTypes.PAD) {
         offset++;
         continue;
       }
-      if (depth == 0 && type == 255) return;
-      java.util.List<Integer> current = new java.util.ArrayList<>(path.subList(0, depth));
+      if (depth == 0 && type == DocsisTlvTypes.END_OF_FILE) {
+        return;
+      }
+      List<Integer> current = new ArrayList<>(path.subList(0, depth));
       current.add(type);
-      var definition = com.comcast.oscar.dictionary.TlvRegistry.forFamily("docsis40").find(current);
-      int width = definition == null ? 1 : definition.lengthBytes();
-      if (width > end - offset - 1)
+      var definition = TlvRegistry.forFamily(TlvRegistry.DOCSIS_40_FAMILY).find(current);
+      int width = definition == null ? TlvBuilder.TLV_ONE_BYTE_LENGTH : definition.lengthBytes();
+      if (width > end - offset - 1) {
         throw new IllegalArgumentException("Truncated D4.0 header at " + current);
+      }
       int length = 0;
-      for (int index = 1; index <= width; index++)
-        length = (length << 8) | Byte.toUnsignedInt(bytes[offset + index]);
+      for (int index = 1; index <= width; index++) {
+        length = (length << Byte.SIZE) | Byte.toUnsignedInt(bytes[offset + index]);
+      }
       int valueStart = offset + 1 + width;
-      if (length > end - valueStart)
+      if (length > end - valueStart) {
         throw new IllegalArgumentException("Truncated D4.0 value at " + current);
+      }
       if (type == path.get(depth)) {
-        if (depth == path.size() - 1) offsets.add(offset);
-        else findDocsis40Offsets(bytes, valueStart, valueStart + length, path, depth + 1, offsets);
+        if (depth == path.size() - 1) {
+          offsets.add(offset);
+        } else {
+          findDocsis40Offsets(bytes, valueStart, valueStart + length, path, depth + 1, offsets);
+        }
       }
       offset = valueStart + length;
     }
   }
 
   private byte[] toParentTypeListByteArray(JSONArray jaParentTypeList) {
-
     ByteArrayOutputStream baosParentTypeList = new ByteArrayOutputStream();
 
     int iParentTypeListIndex = 0;
 
     try {
 
-      // Check to see the first entry is a -1, this indicate the start of the Major TLV
-      // Then increment
-      if (jaParentTypeList.getInt(iParentTypeListIndex) == -1)
-
-        // Cycle Thru all the elements and add them to the byte array output stream
-        while (++iParentTypeListIndex < jaParentTypeList.length())
-
-          // Add to output stream
+      // The registry's root sentinel is metadata, not a wire type.
+      if (jaParentTypeList.getInt(iParentTypeListIndex) == ROOT_PATH_MARKER) {
+        while (++iParentTypeListIndex < jaParentTypeList.length()) {
           baosParentTypeList.write(jaParentTypeList.getInt(iParentTypeListIndex));
+        }
+      }
 
     } catch (JSONException e) {
-      e.printStackTrace();
+      logger.error("Unable to decode a configuration field; inspect the input structure");
     }
 
     return baosParentTypeList.toByteArray();

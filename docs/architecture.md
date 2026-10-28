@@ -556,21 +556,21 @@ catalog is currently registered. Missing, malformed or duplicate VendorId fields
 truncated child framing, and overlong assembled containers are rejected.
 
 Opaque top-level extension children use the existing grammar's identifier/value
-form, with an instance-only name `RawTlv` followed by the decimal type:
+form, with an instance-only name `UnknownTLV` followed by the decimal type:
 
 ```text
 Docsis {
     VendorSpecific {
         VendorId 00:05:CA;
-        RawTlv242 00:01:02:03:04:05:06:07;
-        RawTlv1 "AB";
-        RawTlv242 "";
+        UnknownTLV242 00:01:02:03:04:05:06:07;
+        UnknownTLV1 "AB";
+        UnknownTLV242 "";
     }
 }
 ```
 
 This is a synthetic TLV fragment, not a complete provisionable configuration.
-`RawTlv242 "";` explicitly encodes a zero-length child; `RawTlv242;` remains a
+`UnknownTLV242 "";` explicitly encodes a zero-length child; `UnknownTLV242;` remains a
 valueless template placeholder. Bracketed hex remains accepted. Raw names are
 accepted only within supported DOCSIS extension containers, never as arbitrary
 unknown top-level TLVs. Byte order, repeated children and container boundaries
@@ -595,3 +595,11 @@ binary/text/binary fragments, overlapping vendor/standard numbers, repeated
 instances, zero-length bytes, edits, nested framing, invalid text and malformed
 VendorIds. The initial test reproduced the unknown-child rejection and duplicate
 VendorId acceptance before implementation.
+
+New exports and instance metadata use `UnknownTLV<number>`; the numeric suffix
+is generated from the wire type.
+
+The disassembler reads files completely before decoding and fails construction on
+unreadable input. Diagnostics use Log4j without dumping provisioning payloads;
+public compatibility signatures remain unchanged. `TlvDisassembleFileTest` covers
+the read failure and unchanged-input behavior.

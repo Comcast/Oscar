@@ -18,9 +18,9 @@ import org.json.JSONObject;
 public final class DocsisVendorExtension {
   private static final int VENDOR_ID_BYTES = 3;
   private static final String GENERAL_VENDOR_ID = "ffffff";
-  private static final String RAW_PREFIX = "RawTlv";
-  // Canonical decimal identifiers, e.g. RawTlv242; the wire range is checked separately.
-  private static final Pattern RAW_NAME = Pattern.compile("RawTlv(0|[1-9][0-9]{0,2})");
+  private static final String RAW_PREFIX = "UnknownTLV";
+  // Canonical decimal identifiers, e.g. UnknownTLV242; the wire range is checked separately.
+  private static final Pattern RAW_NAME = Pattern.compile(RAW_PREFIX + "(0|[1-9][0-9]{0,2})");
   private static final int HEADER_BYTES = 2;
   private static final Set<Integer> EXTENSION_PARENTS =
       Set.of(US_PKT_CLASS, DS_PKT_CLASS, US_SERVICE_FLOW, DS_SERVICE_FLOW, US_DROP_PKT_CLASS);
@@ -78,7 +78,7 @@ public final class DocsisVendorExtension {
    * Creates an instance-only opaque definition; never adds vendor identifiers to the registry.
    *
    * @param parent supported extension dictionary node
-   * @param name canonical RawTlv followed by a decimal wire identifier
+   * @param name UnknownTLV followed by a decimal wire identifier
    * @return byte-array definition with a complete numeric path, or null for another name
    * @throws IllegalArgumentException if the raw identifier is invalid or aliases VendorId
    */
@@ -109,6 +109,18 @@ public final class DocsisVendorExtension {
             Dictionary.TLV_DESCRIPTION,
             "Opaque DOCSIS extension bytes; vendor semantics unvalidated")
         .put(Dictionary.SUPPORTED_VERSIONS, parent.get(Dictionary.SUPPORTED_VERSIONS));
+  }
+
+  /**
+   * Creates opaque metadata using the canonical dynamic name for a wire identifier.
+   *
+   * @param parent supported extension dictionary node
+   * @param type numeric child identifier from the encoded input
+   * @return canonical opaque child definition
+   * @throws IllegalArgumentException if the identifier is invalid or aliases VendorId
+   */
+  public static JSONObject rawDefinition(JSONObject parent, int type) {
+    return rawDefinition(parent, RAW_PREFIX + type);
   }
 
   /**
@@ -165,7 +177,7 @@ public final class DocsisVendorExtension {
             }
             if (!general && !isRaw(child)) {
               throw new IllegalArgumentException(
-                  "Private vendor children require RawTlv identifiers");
+                  "Private vendor children require UnknownTLV identifiers");
             }
           }
         }
