@@ -87,5 +87,8 @@ public final class DocsisTlvTypes {
   public static final int NETWORK_TIMING_PROFILE = 73;
   public static final int ENERGY_MGT_PARA_ENC = 74;
   public static final int ENERGY_MGT_MODE_INDICATOR = 75;
+  public static final int MANUFACTURER_CVC_CHAIN = 81;
+  public static final int CO_SIGNER_CVC_CHAIN = 82;
+  public static final int ESTB_CONFIGURATION = 217;
   public static final int END_OF_FILE = 255;
 }

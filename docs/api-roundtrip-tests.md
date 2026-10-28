@@ -45,19 +45,37 @@ Runtime cache writes sort keys and retain readable JSON formatting.
 ## CVC binary preservation regression
 
 Run `mvn -B -Dtest=CvcApiRoundTripTest test`. Synthetic byte arrays exercise
-manufacturer CVC (32) and co-signer CVC (33), separately and together, at
-1, 253, 254, 255, 508 and 1025 bytes. Tests check fragment lengths and payload
+manufacturer CVC (32), co-signer CVC (33), manufacturer chain (81) and
+co-signer chain (82), separately and together, at
+1, 253, 254, 255, 508, 1025 and 2409 bytes. Tests check fragment lengths and payload
 order independently, then compare complete binaries byte for byte after two
 unchanged text round trips, including MICs and padding. No certificate files
 are read; these tests do not validate DER syntax, signatures or certificate trust.
 The 254-byte fragmentation expectation follows CM-SP-MULPIv3.1-I21-201020,
-sections C.1.2.10 and C.1.2.11.
+sections C.1.2.10 and C.1.2.11 for legacy CVCs, and
+CM-SP-MULPIv3.1-I25-230419, C.1.2.21 and C.1.2.22 for chains.
 
 The exporter flushes each contiguous fragment group before switching TLV types,
 clears its payload buffer, and starts the next group independently. Tests cover
 both certificate orders and raw inputs ending without an EOF marker, as well as
-finalized configurations. All 24 cases must preserve bytes exactly. This guards
+finalized configurations. All 56 cases must preserve bytes exactly. This guards
 against the former loss of adjacent CVC entries and duplication of NetworkAccess.
+
+The DOCSIS chain text names are `ManufacturerCVCChain` and `Co-signerCVCChain`.
+They use the same hexadecimal payload syntax as the legacy CVC fields.
+`Docsis31CvcChainTest` also checks independent, repeated TLV 53.2 containers
+with IPv4 and IPv6 address/mask pairs. See the
+[DOCSIS 3.1 coverage audit](../skills/oscar-docsis-31-config-tlvs/references/coverage-audit.md)
+for the exact source editions and coverage limits.
+
+
+## I25 configuration encoding regression
+
+`Docsis31I25CatalogTest` checks the Table 108 configuration inventory, excluded
+REG-only/reserved additions, repeatable metadata and the edition/source hash.
+`Docsis31I25WireTest` uses explicit wire fragments for new configuration families,
+including repeated ASF/HQoS children, channel selection, light sleep, AQM and
+SYNC IPv4/IPv6. These fragments test codecs; they are not complete profiles.
 
 ## Exact text output
 

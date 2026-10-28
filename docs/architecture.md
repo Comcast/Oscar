@@ -511,3 +511,32 @@ buffer revision. Lint may skip damaged regions and must never emit a partial
 binary or claim complete configuration conformance. Limits and invalid wrappers
 are reported as incomplete scans. Compilation and final-file validation remain
 separate operations.
+
+## DOCSIS 3.1 I25 catalog and container ownership
+
+Manufacturer and co-signer CVC chains (81/82) use the existing
+`multi_tlv_byte_array` registry codec. Binary export joins successive fragments;
+text import emits 254-byte fragments. A chain remains one logical registry
+instance. Transport preservation does not validate certificate trust or MICs.
+
+SNMP coexistence (53) permits repeated top-level entries and repeated 53.2
+address-access containers. The parser creates independent container instances
+from immutable templates; the decoder bounds child traversal to each instance.
+The same mechanism applies to every DOCSIS container, including repeated ASF
+matching criteria and Enhanced HQoS constituents. Registry structure drives this
+behavior rather than a hard-coded list of special top-level types. IPv4 and IPv6
+rows retain their values and wire order. Other file families retain their own
+parsing rules.
+
+The DOCSIS catalog edition is `CM-SP-MULPIv3.1-I25-230419`; its source hash
+identifies the bundled I25 text. I21 remains available for historical citations.
+New configuration entries include DUT filtering, UNI control, diplexer settings,
+AQM/low-latency/HQoS, light sleep, and DOCSIS SYNC. TLV 88 is an opaque HEX
+payload: the referenced LLX I02 does not publish its child numbers. Do not invent
+child definitions. Reserved DOCSIS 4.0 and REG-only additions are excluded.
+
+See the
+[coverage audit](../skills/oscar-docsis-31-config-tlvs/references/coverage-audit.md)
+for implemented paths, delegated specifications, and compatibility
+limits. Registry presence and successful round trips do not prove complete
+specification coverage.

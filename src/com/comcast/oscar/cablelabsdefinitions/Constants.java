@@ -65,6 +65,9 @@ public class Constants {
   public static final Integer KEY_SEQUENCE_NUMBER = DocsisTlvTypes.KEY_SEQUENCE_NUMBER;
   public static final Integer MANUFACTURER_CVC = DocsisTlvTypes.MANUFACTURER_CVC;
   public static final Integer CO_SIGNER_CVC = DocsisTlvTypes.CO_SIGNER_CVC;
+  public static final Integer MANUFACTURER_CVC_CHAIN = DocsisTlvTypes.MANUFACTURER_CVC_CHAIN;
+  public static final Integer CO_SIGNER_CVC_CHAIN = DocsisTlvTypes.CO_SIGNER_CVC_CHAIN;
+  public static final Integer ESTB_CONFIGURATION = DocsisTlvTypes.ESTB_CONFIGURATION;
   public static final Integer SNMPV3_KICKSTART_VALUE = DocsisTlvTypes.SNMPV3_KICKSTART_VALUE;
   public static final Integer SUB_MGMT_CTRL = DocsisTlvTypes.SUB_MGMT_CTRL;
   public static final Integer SUB_MGMT_CPE_IPV4_LIST = DocsisTlvTypes.SUB_MGMT_CPE_IPV4_LIST;

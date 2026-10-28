@@ -40,10 +40,10 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 
   private int iConfigurationFileType = -1;
 
-  // eSTB instances must not share the mutable registry definition: repeated
+  // Bounded container instances must not share mutable registry definitions: repeated
   // prefixes and SNMP access rows carry independent values in source order.
-  private JSONObject openCableTemplate;
-  private final java.util.List<JSONObject> openCableInstances = new java.util.ArrayList<>();
+  private JSONObject containerTemplate;
+  private final java.util.List<JSONObject> containerInstances = new java.util.ArrayList<>();
 
   private final java.util.Set<JSONObject> seenDefinitions =
       java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
@@ -102,11 +102,13 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   }
 
   /**
-   * {@inheritDoc}
+   * Starts an independent top-level definition for the parsed statement.
    *
-   * <p>The default implementation does nothing.
+   * <p>DOCSIS containers retain a read-only template and create independent child instances so
+   * repeated containers preserve source order.
    *
-   * @param ctx tlvParser.StartTLVContext
+   * @param ctx non-null parsed top-level TLV context
+   * @throws IllegalArgumentException if the top-level name is unknown
    */
   @Override
   public void enterStartTLV(@NotNull tlvParser.StartTLVContext ctx) {
@@ -119,13 +121,15 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     }
     joWorkingTLVDictionary = dsqTlvDictionary.getTlvDefinition(type);
     seenDefinitions.clear();
-    openCableInstances.clear();
-    openCableTemplate =
-        type == 217 && iConfigurationFileType == ConfigurationFile.DOCSIS_VER_31
+    containerInstances.clear();
+    containerTemplate =
+        joWorkingTLVDictionary.getBoolean(Dictionary.ARE_SUBTYPES)
+                && iConfigurationFileType == ConfigurationFile.DOCSIS_VER_31
             ? new JSONObject(joWorkingTLVDictionary.toString())
             : null;
-    if (openCableTemplate != null)
+    if (containerTemplate != null) {
       joWorkingTLVDictionary.put(Dictionary.SUBTYPE_ARRAY, new JSONArray());
+    }
 
     logger.debug("TlvConfigurationFileParser.enterStartTLV() {}", joWorkingTLVDictionary);
 
@@ -252,7 +256,9 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
   }
 
   private JSONObject validateTlvName(String name) {
-    if (openCableTemplate != null) return openCableInstance(name);
+    if (containerTemplate != null) {
+      return newContainerInstance(name);
+    }
     JSONObject definition = joWorkingTLVDictionary;
     var ancestors = aqsSubTypeHierarchyStack.descendingIterator();
     if (!ancestors.hasNext()) {
@@ -268,9 +274,9 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     return trackDefinition(findChildDefinition(definition, name));
   }
 
-  private JSONObject openCableInstance(String name) {
+  private JSONObject newContainerInstance(String name) {
     int depth = aqsSubTypeHierarchyStack.size();
-    JSONObject template = openCableTemplate;
+    JSONObject template = containerTemplate;
     var ancestors = aqsSubTypeHierarchyStack.descendingIterator();
     if (ancestors.hasNext()) ancestors.next();
     while (ancestors.hasNext()) template = findChildDefinition(template, ancestors.next());
@@ -279,16 +285,16 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     if (instance.getBoolean(Dictionary.ARE_SUBTYPES))
       instance.put(Dictionary.SUBTYPE_ARRAY, new JSONArray());
     if (depth > 0)
-      openCableInstances.get(depth - 1).getJSONArray(Dictionary.SUBTYPE_ARRAY).put(instance);
-    while (openCableInstances.size() > depth) openCableInstances.removeLast();
-    openCableInstances.add(instance);
+      containerInstances.get(depth - 1).getJSONArray(Dictionary.SUBTYPE_ARRAY).put(instance);
+    while (containerInstances.size() > depth) containerInstances.removeLast();
+    containerInstances.add(instance);
     return instance;
   }
 
   private JSONObject valueTarget() {
-    return openCableTemplate == null
+    return containerTemplate == null
         ? joWorkingTLVDictionary
-        : openCableInstances.get(aqsSubTypeHierarchyStack.size() - 1);
+        : containerInstances.get(aqsSubTypeHierarchyStack.size() - 1);
   }
 
   private JSONObject trackDefinition(JSONObject definition) {

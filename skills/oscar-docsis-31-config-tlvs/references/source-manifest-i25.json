@@ -1,0 +1,20 @@
+{
+  "document": "CM-SP-MULPIv3.1-I25-230419",
+  "origin": "User-supplied CableLabs PDF",
+  "acquired": "2026-10-27",
+  "extraction": "pdftotext -layout",
+  "files": [
+    {
+      "file": "CM-SP-MULPIv3.1-I25-230419.txt",
+      "bytes": 3083339,
+      "sha256": "e91d040d099354c8433f4c61cfba8c550fd1c131de7462e904e451a962ce21c5"
+    }
+  ],
+  "original": {
+    "file": "agents/CM-SP-MULPIv3.1-I25-230419.pdf",
+    "bytes": 13957442,
+    "sha256": "fe9daf3d2bcee2a84b34cfcfed1094841efb04baa6136d1fe44d776a9a8afc1a",
+    "tracked": false
+  },
+  "note": "Keep the local original; PDF files are excluded from Git. I21 source and its manifest remain unchanged."
+}

@@ -1,11 +1,16 @@
 ---
 name: oscar-docsis-31-config-tlvs
-description: Implement, explain, encode, decode, or validate DOCSIS 3.1 MULPI configuration-file TLV settings for Oscar. Use for its TLV registry, nested encodings, config editor, binary codec, or file integrity checks. Excludes MAC-message-only TLVs and general DOCSIS protocol review. Pinned to CM-SP-MULPIv3.1-I21-201020.
+description: Implement, explain, encode, decode, or validate DOCSIS 3.1 MULPI configuration-file TLV settings for Oscar. Use for its TLV registry, nested encodings, config editor, binary codec, or file integrity checks. Excludes MAC-message-only TLVs and general DOCSIS protocol review. Pinned to CM-SP-MULPIv3.1-I25-230419.
 ---
 
 # Oscar DOCSIS 3.1 configuration-file TLVs
 
-Use **CM-SP-MULPIv3.1-I21-201020** (2020-10-20) as this package’s baseline. Read [the source map](references/source-map.md) first, then only the source passages needed for the requested settings. Read [the Oscar implementation guide](references/oscar-workflow.md) when changing code, schemas, validation, or binary output. These packages are independent; do not require the other DOCSIS version or the original user skill.
+Use **CM-SP-MULPIv3.1-I25-230419** (2023-04-19) as this package’s baseline. Read [the source map](references/source-map.md) first, then only the source passages needed for the requested settings. Read [the Oscar implementation guide](references/oscar-workflow.md) when changing code, schemas, validation, or binary output. These packages are independent; do not require the other DOCSIS version or the original user skill.
+
+The prior I21 source is retained for historical citations. Adding I25 does not
+certify the legacy registry: see [coverage audit](references/coverage-audit.md)
+for reviewed fixes and outstanding definitions. Never relabel an I21-only finding
+as I25 without checking its corresponding passage.
 
 ## Scope and authority
 
@@ -27,7 +32,7 @@ Use only definitions verified in this exact issue. Never infer a type, child pat
 
 ## Citation and uncertainty contract
 
-Cite findings and new registry definitions as `CM-SP-MULPIv3.1-I21-201020, §C.x.y, <setting heading>, printed p. N` (add table/row or full TLV path). Use §D references for complete-file rules. Cite the local source path from the source map; include its official source link when useful. Record the issue in machine-readable metadata or nearby code comments using Oscar’s existing conventions.
+Cite findings and new registry definitions as `CM-SP-MULPIv3.1-I25-230419, §C.x.y, <setting heading>, printed p. N` (add table/row or full TLV path). Use §D references for complete-file rules. Cite the local source path from the source map; include its official source link when useful. Record the issue in machine-readable metadata or nearby code comments using Oscar’s existing conventions.
 
 Report each requested setting as **verified**, **invalid in this context**, or **unverified**. Separate normative requirements, recommendations, Oscar design choices, and inferred behavior. If the source text is inconsistent or poorly extracted, quote only the necessary short fragment, identify the conflict, and consult the original matching PDF; do not silently repair it by guessing.
 

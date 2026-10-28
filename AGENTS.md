@@ -10,7 +10,7 @@ decoding, or validating DOCSIS configuration-file TLVs, including registry,
 editor, codec, and file-integrity changes:
 
 - DOCSIS 3.1: [oscar-docsis-31-config-tlvs](skills/oscar-docsis-31-config-tlvs/SKILL.md),
-  pinned to **CM-SP-MULPIv3.1-I21-201020**.
+  pinned to **CM-SP-MULPIv3.1-I25-230419** (I21 retained for historical citations).
 - DOCSIS 4.0: [oscar-docsis-40-config-tlvs](skills/oscar-docsis-40-config-tlvs/SKILL.md),
     pinned to **CM-SP-MULPIv4.0-I12-261014**.
 

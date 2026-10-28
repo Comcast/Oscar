@@ -6,6 +6,8 @@ package com.comcast.oscar.configurationfile;
 
 import static com.comcast.oscar.cablelabsdefinitions.Constants.CO_SIGNER_CVC;
 import static com.comcast.oscar.cablelabsdefinitions.Constants.MANUFACTURER_CVC;
+import static com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes.CO_SIGNER_CVC_CHAIN;
+import static com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes.MANUFACTURER_CVC_CHAIN;
 import static com.comcast.oscar.configurationfile.ConfigurationFileTypeConstants.DOCSIS_31_CONFIGURATION_TYPE;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -66,7 +68,11 @@ class CvcApiRoundTripTest {
       String text = exporter.toPrettyPrint(false, true);
       for (int certificateType : certificateTypes) {
         assertTrue(
-            text.contains(certificateType == MANUFACTURER_CVC ? "ManufacturerCVC" : "Co-signerCVC"),
+            text.contains(
+                com.comcast.oscar.dictionary.TlvRegistry.forFamily(
+                        com.comcast.oscar.dictionary.TlvRegistry.DOCSIS_FAMILY)
+                    .find(java.util.List.of(certificateType))
+                    .name()),
             text);
       }
       var reparsed = new ConfigurationFileImport(new StringBuilder(text));
@@ -80,10 +86,25 @@ class CvcApiRoundTripTest {
   }
 
   private static Stream<Arguments> certificates() {
-    return Stream.of(1, 253, 254, 255, 508, 1025)
+    return Stream.of(1, 253, 254, 255, 508, 1025, 2409)
         .flatMap(
             length ->
                 Stream.of(
+                    Arguments.of("Manufacturer chain", length, new int[] {MANUFACTURER_CVC_CHAIN}),
+                    Arguments.of("Co-signer chain", length, new int[] {CO_SIGNER_CVC_CHAIN}),
+                    Arguments.of(
+                        "Both chains",
+                        length,
+                        new int[] {MANUFACTURER_CVC_CHAIN, CO_SIGNER_CVC_CHAIN}),
+                    Arguments.of(
+                        "Legacy and chains",
+                        length,
+                        new int[] {
+                          MANUFACTURER_CVC,
+                          CO_SIGNER_CVC,
+                          MANUFACTURER_CVC_CHAIN,
+                          CO_SIGNER_CVC_CHAIN
+                        }),
                     Arguments.of("Manufacturer", length, new int[] {MANUFACTURER_CVC}),
                     Arguments.of("Co-signer", length, new int[] {CO_SIGNER_CVC}),
                     Arguments.of("Both", length, new int[] {MANUFACTURER_CVC, CO_SIGNER_CVC}),

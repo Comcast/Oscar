@@ -1,0 +1,29 @@
+{
+  "acquired": "2026-10-27",
+  "files": [
+    {
+      "document": "CM-SP-L2VPN-I16-220328",
+      "file": "CM-SP-L2VPN-I16-220328.txt",
+      "bytes": 435494,
+      "sha256": "b84df47ee59ea5f3c59e778efa28b67d9e778e7e850d5ddf406c8d5435a0ff11",
+      "source": "https://account.cablelabs.com/server/alfresco/f3911769-2329-4a69-a153-2e9e8cd1ad3b",
+      "extraction": "pdftotext -layout; existing bundled extraction for SYNC"
+    },
+    {
+      "document": "CM-SP-LLX-I02-200623",
+      "file": "CM-SP-LLX-I02-200623.txt",
+      "bytes": 250444,
+      "sha256": "bb58ee02653dddef2d68edd6e2892886cb9f1181be9a22425c415a96399becb2",
+      "source": "https://account.cablelabs.com/server/alfresco/9ef430a7-3016-4b08-8416-3a9cb2fdca08",
+      "extraction": "pdftotext -layout; existing bundled extraction for SYNC"
+    },
+    {
+      "document": "CM-SP-SYNC-I03-220715",
+      "file": "CM-SP-SYNC-I03-220715.txt",
+      "bytes": 355233,
+      "sha256": "b4bd40406e4bfcdc87728395e6b5963101a4cddf3b7ffaf2d07ad8dd2c8340ca",
+      "source": "skills/oscar-docsis-40-config-tlvs/references/sources/CM-SP-SYNC-I03-220715.txt",
+      "extraction": "pdftotext -layout; existing bundled extraction for SYNC"
+    }
+  ]
+}

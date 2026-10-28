@@ -39,7 +39,7 @@ class DiagnoseBinaryTest {
   @Test
   void printsUnknownMetadataButNotValuesAndRejectsOtherCommands() throws Exception {
     Path file = directory.resolve("input.cfg");
-    Files.write(file, new byte[] {45, 6, 83, 69, 67, 82, 69, 84, (byte) 255});
+    Files.write(file, new byte[] {(byte) 200, 6, 83, 69, 67, 82, 69, 84, (byte) 255});
     var buffer = new ByteArrayOutputStream();
     try (var output = new PrintStream(buffer, true, StandardCharsets.UTF_8)) {
       assertEquals(

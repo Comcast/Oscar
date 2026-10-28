@@ -383,8 +383,8 @@ public class TlvDisassemble extends TlvDictionary {
     }
   }
 
-  /** Decode one bounded eSTB instance; repeated children produce independent JSON nodes. */
-  private JSONObject decodeEmbeddedInstance(byte[] encoded, JSONObject template)
+  /** Decode one bounded container instance; repeated children produce independent JSON nodes. */
+  private JSONObject decodeBoundedInstance(byte[] encoded, JSONObject template)
       throws TlvException {
     if (encoded.length < 2 || Byte.toUnsignedInt(encoded[1]) != encoded.length - 2)
       throw new IllegalArgumentException("Invalid embedded TLV length");
@@ -424,7 +424,7 @@ public class TlvDisassemble extends TlvDictionary {
       }
       if (child == null) throw new IllegalArgumentException("Unknown embedded child TLV " + type);
       children.put(
-          decodeEmbeddedInstance(java.util.Arrays.copyOfRange(encoded, offset, end), child));
+          decodeBoundedInstance(java.util.Arrays.copyOfRange(encoded, offset, end), child));
       offset = end;
     }
     result.put(Dictionary.SUBTYPE_ARRAY, children);
@@ -434,13 +434,11 @@ public class TlvDisassemble extends TlvDictionary {
   private JSONObject loadTlvValuesIntoTlvDictionary(byte[] bTlvBuffer, JSONObject joTlvDictionary)
       throws TlvException {
 
-    // DOCSIS type 217 is eSTBConfig, referencing opencable.json in the TLV registry.
-    // TODO: Preserve reference metadata at runtime to replace this hard-coded dispatch.
-    // Verify eRouter and length-width handling before routing all referenced containers here.
+    // Registry children belong to individual wire containers. In particular, repeated
+    // coexistence address rows and ASF/HQoS entries must not share values or bounds.
     if (TLV_TYPE_DOCSIS.equals(getDictionaryTableName())
-        && joTlvDictionary.getInt(Dictionary.TYPE) == 217
         && joTlvDictionary.getBoolean(Dictionary.ARE_SUBTYPES)) {
-      return decodeEmbeddedInstance(bTlvBuffer, joTlvDictionary);
+      return decodeBoundedInstance(bTlvBuffer, joTlvDictionary);
     }
 
     JSONArray jaMultiSubTlvInstance = null;

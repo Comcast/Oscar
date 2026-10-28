@@ -20,7 +20,8 @@ class TlvDiagnosticTest {
 
   @Test
   void retainsUnknownAndRepeatedEntriesInWireOrder() {
-    var report = inspect(3, 1, 1, 45, 2, 17, 19, 3, 1, 0, 255, 0);
+    // Use an unassigned type; type 45 is now a supported DUT container.
+    var report = inspect(3, 1, 1, 200, 2, 17, 19, 3, 1, 0, 255, 0);
     assertEquals(5, report.entries().size());
     assertEquals(Status.UNKNOWN_TYPE, report.entries().get(1).status());
     assertEquals(2, report.entries().get(2).occurrence());
