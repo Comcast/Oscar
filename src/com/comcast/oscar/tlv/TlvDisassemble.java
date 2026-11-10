@@ -439,9 +439,13 @@ public class TlvDisassemble extends TlvDictionary {
           && offset != headerBytes) {
         throw new IllegalArgumentException("Duplicate VendorId in DOCSIS extension");
       }
-      if (extension
-          && type != com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes.VENDOR_ID_ENC
-          && (!general || child == null)) {
+      boolean docsis =
+          TLV_TYPE_DOCSIS.equals(getDictionaryTableName())
+              || TLV_TYPE_DOCSIS_40.equals(getDictionaryTableName());
+      if ((extension
+              && type != com.comcast.oscar.cablelabsdefinitions.DocsisTlvTypes.VENDOR_ID_ENC
+              && !general)
+          || (docsis && child == null)) {
         child = DocsisVendorExtension.rawDefinition(template, type);
         child.put(
             Dictionary.VALUE,
@@ -463,6 +467,20 @@ public class TlvDisassemble extends TlvDictionary {
 
   private JSONObject loadTlvValuesIntoTlvDictionary(byte[] bTlvBuffer, JSONObject joTlvDictionary)
       throws TlvException {
+
+    if (DocsisVendorExtension.isRaw(joTlvDictionary)) {
+      if (bTlvBuffer.length < TlvBuilder.TLV_TYPE_LENGTH_OVERHEAD
+          || Byte.toUnsignedInt(bTlvBuffer[1])
+              != bTlvBuffer.length - TlvBuilder.TLV_TYPE_LENGTH_OVERHEAD) {
+        throw new IllegalArgumentException("Invalid opaque TLV length");
+      }
+      return joTlvDictionary
+          .put(Dictionary.TLV_NAME, "UnknownTLV")
+          .put(
+              Dictionary.VALUE,
+              HexFormat.ofDelimiter(":")
+                  .formatHex(bTlvBuffer, TlvBuilder.TLV_TYPE_LENGTH_OVERHEAD, bTlvBuffer.length));
+    }
 
     // Registry children belong to individual wire containers. In particular, repeated
     // coexistence address rows and ASF/HQoS entries must not share values or bounds.

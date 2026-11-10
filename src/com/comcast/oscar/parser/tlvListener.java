@@ -30,6 +30,16 @@ public interface tlvListener extends ParseTreeListener {
 	 */
 	void exitStartTLV(tlvParser.StartTLVContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link tlvParser#rawTlv}.
+	 * @param ctx the parse tree
+	 */
+	void enterRawTlv(tlvParser.RawTlvContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link tlvParser#rawTlv}.
+	 * @param ctx the parse tree
+	 */
+	void exitRawTlv(tlvParser.RawTlvContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link tlvParser#tlv}.
 	 * @param ctx the parse tree
 	 */

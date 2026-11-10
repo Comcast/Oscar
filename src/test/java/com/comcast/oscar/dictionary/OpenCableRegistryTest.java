@@ -136,7 +136,7 @@ class OpenCableRegistryTest {
 
   @org.junit.jupiter.params.ParameterizedTest
   @org.junit.jupiter.params.provider.ValueSource(
-      strings = {"d903270201", "d903270001", "d903fa0100", "d90401020001"})
+      strings = {"d903270201", "d903270001", "d90401020001"})
   void malformedOrUnknownChildrenAreNotSilentlyDropped(String hex) throws Exception {
     var bytes = new com.comcast.oscar.tlv.TlvBuilder();
     bytes.add(new com.comcast.oscar.utilities.HexString(HexFormat.of().parseHex(hex)));

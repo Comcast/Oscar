@@ -43,6 +43,18 @@ public class tlvBaseListener implements tlvListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterRawTlv(tlvParser.RawTlvContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRawTlv(tlvParser.RawTlvContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterTlv(tlvParser.TlvContext ctx) { }
 	/**
 	 * {@inheritDoc}

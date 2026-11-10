@@ -157,11 +157,15 @@ configType      : (
 
 //Start TLV Parsing
 startTLV        : (
-                    tlv
+                    rawTlv
+                |   tlv
                 |   sub
                 |   emptyTLV
                 |   snmp
                   );
+
+// Opaque fields retain their wire type separately from the generic name.
+rawTlv : 'UnknownTLV' INT QUOTED_STRING SEMICOLON;
 
 //Generic TLV Parsers
 tlv             : IDENTIFIER typeValue;
@@ -216,7 +220,8 @@ subTypeValue    : (
 
 // Sub TLV embedded in TopLevel TLV
 subTLV          : (
-                    sTlv
+                    rawTlv
+                |   sTlv
                 |   sub
                 |   emptyTLV
                 |   snmp

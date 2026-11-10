@@ -99,3 +99,17 @@ one-byte-length assumption. The Java API retains its recoverable default; pass
 Exit codes: `0` for structurally known input, `1` for unknown entries or other
 diagnostic findings, `2` for invalid arguments, unsupported family, input over
 one MiB, or file read errors. A zero exit code is not MIC or semantic validation.
+
+## Preserving unknown DOCSIS fields
+
+Editable DOCSIS decoding preserves unknown root fields and unknown children of
+known containers as `UnknownTLV <decimal-type> "<hex-payload>";`. For example,
+`UnknownTLV 7 "01";` retains type 7 and its one-byte value without claiming to
+understand the setting. Decoding continues with the following field. The numeric
+path, occurrence order and bytes remain available through the export API.
+
+Unknown fields use one-byte length framing and remain opaque. Truncated headers
+or values, malformed known fields, and invalid vendor containers still fail.
+Successful decoding does not prove provisioning validity or authenticate MICs.
+UI consumers need the matching grammar and instance-metadata adapter; updating
+only their registry cannot provide this support.

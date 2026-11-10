@@ -120,11 +120,18 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
 
     logger.debug(() -> "TlvConfigurationFileParser.enterStartTLV() " + ctx.getStart().getText());
 
-    Integer type = hmsiTopLevelTypeNameToType.get(ctx.getStart().getText());
-    if (type == null) {
+    String lookupName =
+        ctx.rawTlv() == null
+            ? ctx.getStart().getText()
+            : "UnknownTLV" + ctx.rawTlv().INT().getText();
+    Integer type = hmsiTopLevelTypeNameToType.get(lookupName);
+    joWorkingTLVDictionary =
+        type == null
+            ? dsqTlvDictionary.rawTopLevelDefinition(lookupName)
+            : dsqTlvDictionary.getTlvDefinition(type);
+    if (joWorkingTLVDictionary == null) {
       throw new IllegalArgumentException("Unknown top-level TLV: " + ctx.getStart().getText());
     }
-    joWorkingTLVDictionary = dsqTlvDictionary.getTlvDefinition(type);
     seenDefinitions.clear();
     containerInstances.clear();
     containerTemplate =
@@ -270,7 +277,8 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     JSONObject definition = joWorkingTLVDictionary;
     var ancestors = aqsSubTypeHierarchyStack.descendingIterator();
     if (!ancestors.hasNext()) {
-      if (!definition.getString(Dictionary.TLV_NAME).equalsIgnoreCase(name)) {
+      if (!definition.getString(Dictionary.TLV_NAME).equalsIgnoreCase(name)
+          && !com.comcast.oscar.tlv.DocsisVendorExtension.isRaw(definition)) {
         throw new IllegalArgumentException("Unknown TLV: " + name);
       }
       return trackDefinition(definition);
@@ -330,6 +338,24 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
     return definition;
   }
 
+  /**
+   * Retains an opaque field's numeric identity and hexadecimal payload independently.
+   *
+   * @param ctx UnknownTLV decimal-type quoted-hex statement
+   * @throws IllegalArgumentException for registered aliases or invalid identifiers
+   */
+  @Override
+  public void enterRawTlv(tlvParser.RawTlvContext ctx) {
+    JSONObject target =
+        aqsSubTypeHierarchyStack.isEmpty()
+            ? joWorkingTLVDictionary
+            : validateTlvName("UnknownTLV" + ctx.INT().getText());
+    target.put(Dictionary.TLV_NAME, "UnknownTLV");
+    target.put(
+        Dictionary.VALUE,
+        com.comcast.oscar.utilities.TlvTextString.decode(ctx.QUOTED_STRING().getText()));
+  }
+
   private JSONObject findChildDefinition(JSONObject parent, String name) {
     JSONArray children = parent.optJSONArray(Dictionary.SUBTYPE_ARRAY);
     if (children != null) {
@@ -346,7 +372,9 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
         }
       }
     }
-    if (containerTemplate != null) {
+    if (containerTemplate != null
+        && (iConfigurationFileType == ConfigurationFile.DOCSIS_VER_31
+            || iConfigurationFileType == ConfigurationFile.DOCSIS_VER_40)) {
       JSONObject raw = com.comcast.oscar.tlv.DocsisVendorExtension.rawDefinition(parent, name);
       if (raw != null) {
         return raw;
@@ -467,9 +495,16 @@ public class TlvConfigurationFileParser extends tlvBaseListener {
       validateDpogNumbers(jaTlvDictionary);
     }
     try {
-      baTlvAssembler =
-          TlvBuilder.stripZeroByteTLV(
-              new TlvAssembler(jaTlvDictionary).toByteArray(), getTopLevelTypeToNumByteLength());
+      var output = new java.io.ByteArrayOutputStream();
+      for (Object entry : jaTlvDictionary) {
+        JSONObject definition = (JSONObject) entry;
+        byte[] encoded = new TlvAssembler(new JSONArray().put(definition)).toByteArray();
+        output.writeBytes(
+            com.comcast.oscar.tlv.DocsisVendorExtension.isRaw(definition)
+                ? encoded
+                : TlvBuilder.stripZeroByteTLV(encoded, getTopLevelTypeToNumByteLength()));
+      }
+      baTlvAssembler = output.toByteArray();
     } catch (TlvException e) {
       e.printStackTrace();
     }

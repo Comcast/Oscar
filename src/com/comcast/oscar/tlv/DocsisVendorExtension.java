@@ -22,6 +22,7 @@ public final class DocsisVendorExtension {
   // Canonical decimal identifiers, e.g. UnknownTLV242; the wire range is checked separately.
   private static final Pattern RAW_NAME = Pattern.compile(RAW_PREFIX + "(0|[1-9][0-9]{0,2})");
   private static final int HEADER_BYTES = 2;
+  private static final int MAX_OPAQUE_LENGTH = (1 << Byte.SIZE) - 1;
   private static final Set<Integer> EXTENSION_PARENTS =
       Set.of(US_PKT_CLASS, DS_PKT_CLASS, US_SERVICE_FLOW, DS_SERVICE_FLOW, US_DROP_PKT_CLASS);
 
@@ -75,15 +76,16 @@ public final class DocsisVendorExtension {
   }
 
   /**
-   * Creates an instance-only opaque definition; never adds vendor identifiers to the registry.
+   * Creates instance-only opaque metadata; never adds identifiers to the registry. Non-vendor
+   * parents accept only identifiers absent from their child definitions.
    *
-   * @param parent supported extension dictionary node
+   * @param parent dictionary node containing child definitions
    * @param name UnknownTLV followed by a decimal wire identifier
    * @return byte-array definition with a complete numeric path, or null for another name
    * @throws IllegalArgumentException if the raw identifier is invalid or aliases VendorId
    */
   public static JSONObject rawDefinition(JSONObject parent, String name) {
-    if (!applies(parent) || !name.startsWith(RAW_PREFIX)) {
+    if (!name.startsWith(RAW_PREFIX)) {
       return null;
     }
     var match = RAW_NAME.matcher(name);
@@ -91,8 +93,15 @@ public final class DocsisVendorExtension {
       throw new IllegalArgumentException("Invalid raw extension identifier");
     }
     int type = Integer.parseInt(match.group(1));
-    if (type > TlvBuilder.MAX_TLV_TYPE || type == VENDOR_ID_ENC) {
+    if (type > TlvBuilder.MAX_TLV_TYPE || (applies(parent) && type == VENDOR_ID_ENC)) {
       throw new IllegalArgumentException("Invalid raw extension identifier");
+    }
+    if (!applies(parent)) {
+      for (Object entry : parent.optJSONArray(Dictionary.SUBTYPE_ARRAY, new JSONArray())) {
+        if (((JSONObject) entry).getInt(Dictionary.TYPE) == type) {
+          throw new IllegalArgumentException("Raw identifier aliases a known TLV");
+        }
+      }
     }
     JSONArray path =
         new JSONArray(parent.getJSONArray(Dictionary.PARENT_TYPE_LIST).toString()).put(type);
@@ -102,25 +111,23 @@ public final class DocsisVendorExtension {
         .put(Dictionary.DATA_TYPE, DataTypeDictionaryReference.DATA_TYPE_BYTE_ARRAY)
         .put(Dictionary.ARE_SUBTYPES, false)
         .put(Dictionary.LENGTH_MIN, 0)
-        .put(Dictionary.LENGTH_MAX, TlvBuilder.MAX_TLV_LENGTH)
+        .put(Dictionary.LENGTH_MAX, MAX_OPAQUE_LENGTH)
         .put(Dictionary.BYTE_LENGTH, 1)
         .put(Dictionary.PARENT_TYPE_LIST, path)
-        .put(
-            Dictionary.TLV_DESCRIPTION,
-            "Opaque DOCSIS extension bytes; vendor semantics unvalidated")
+        .put(Dictionary.TLV_DESCRIPTION, "Opaque DOCSIS bytes; semantics unvalidated")
         .put(Dictionary.SUPPORTED_VERSIONS, parent.get(Dictionary.SUPPORTED_VERSIONS));
   }
 
   /**
    * Creates opaque metadata using the canonical dynamic name for a wire identifier.
    *
-   * @param parent supported extension dictionary node
+   * @param parent dictionary node containing child definitions
    * @param type numeric child identifier from the encoded input
    * @return canonical opaque child definition
    * @throws IllegalArgumentException if the identifier is invalid or aliases VendorId
    */
   public static JSONObject rawDefinition(JSONObject parent, int type) {
-    return rawDefinition(parent, RAW_PREFIX + type);
+    return rawDefinition(parent, RAW_PREFIX + type).put(Dictionary.TLV_NAME, RAW_PREFIX);
   }
 
   /**
@@ -130,7 +137,8 @@ public final class DocsisVendorExtension {
    * @return true for a canonical opaque child name
    */
   public static boolean isRaw(JSONObject definition) {
-    return RAW_NAME.matcher(definition.getString(Dictionary.TLV_NAME)).matches();
+    return RAW_PREFIX.equals(definition.getString(Dictionary.TLV_NAME))
+        || RAW_NAME.matcher(definition.getString(Dictionary.TLV_NAME)).matches();
   }
 
   /**
@@ -211,15 +219,10 @@ public final class DocsisVendorExtension {
   }
 
   private static byte[] hex(String text) {
-    String compact = text.strip();
-    if (compact.startsWith("[") && compact.endsWith("]")) {
-      compact = compact.substring(1, compact.length() - 1);
+    byte[] bytes = com.comcast.oscar.utilities.HexString.parseHex(text);
+    if (bytes.length > MAX_OPAQUE_LENGTH) {
+      throw new IllegalArgumentException("Opaque TLV exceeds supported length");
     }
-    compact = compact.replace(":", "").replace(" ", "");
-    if (!compact.matches("(?:[0-9a-fA-F]{2})*")
-        || compact.length() / 2 > TlvBuilder.MAX_TLV_LENGTH) {
-      throw new IllegalArgumentException("Invalid opaque extension hexadecimal value");
-    }
-    return HexFormat.of().parseHex(compact);
+    return bytes;
   }
 }

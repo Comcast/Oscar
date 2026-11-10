@@ -379,6 +379,23 @@ public class HexString {
     else return new HexString().toByteArray();
   }
 
+  /**
+   * Parses opaque hexadecimal values without converting malformed input to empty bytes. Optional
+   * surrounding brackets, colon separators and spaces are accepted.
+   *
+   * @param text hexadecimal bytes; an empty string represents zero bytes
+   * @return decoded bytes
+   * @throws IllegalArgumentException for odd-length or nonhexadecimal input
+   * @throws NullPointerException if text is null
+   */
+  public static byte[] parseHex(String text) {
+    String compact = text.strip();
+    if (compact.startsWith("[") && compact.endsWith("]")) {
+      compact = compact.substring(1, compact.length() - 1);
+    }
+    return java.util.HexFormat.of().parseHex(compact.replace(":", "").replace(" ", ""));
+  }
+
   private static byte[] decodeHex(String hex) {
     if (hex == null) {
       return new byte[0];

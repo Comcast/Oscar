@@ -528,6 +528,12 @@ public class ConfigurationFileExport {
 
     // Build Map to determine the Type to ByteLength Mapping
     Map<Integer, Integer> miiTopLevelTLV = dictionary.getTopLevelByteLength();
+    if (sDictionaryTableName.equals(TlvDictionary.DOCSIS_DICTIONARY_TABLE_NAME)
+        || sDictionaryTableName.equals(TlvDictionary.DOCSIS_40_DICTIONARY_TABLE_NAME)) {
+      for (int type = 1; type < TlvBuilder.MAX_TLV_TYPE; type++) {
+        miiTopLevelTLV.putIfAbsent(type, 1);
+      }
+    }
 
     // Add TLV Byte Array from Constructor for later processing
     tbTLV.add(new TlvVariableBinding(binary, miiTopLevelTLV));
@@ -613,11 +619,19 @@ public class ConfigurationFileExport {
       return;
     }
     if (!includeDefaults && !entry.has(Dictionary.VALUE)) return;
-    String name = entry.getString(Dictionary.TLV_NAME);
+    String name =
+        com.comcast.oscar.tlv.DocsisVendorExtension.isRaw(entry)
+            ? "UnknownTLV"
+            : entry.getString(Dictionary.TLV_NAME);
     if (!entry.has(Dictionary.VALUE)
         && (name.equals(SNMP_STANDARD_NAME) || name.equals(SNMP_EXTENDED_NAME))) return;
     output.append("\t".repeat(depth)).append(name).append(' ');
-    if (entry.opt(Dictionary.VALUE) instanceof JSONArray varbinds) {
+    if (com.comcast.oscar.tlv.DocsisVendorExtension.isRaw(entry)) {
+      output
+          .append(entry.getInt(Dictionary.TYPE))
+          .append(' ')
+          .append(TlvTextString.quote(entry.optString(Dictionary.VALUE, "")));
+    } else if (entry.opt(Dictionary.VALUE) instanceof JSONArray varbinds) {
       appendSnmpValue(output, varbinds.getJSONObject(0));
     } else if (entry.has(Dictionary.VALUE)) {
       output.append(

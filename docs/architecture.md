@@ -135,9 +135,8 @@ reviewed subset. DPoE is unchanged.
 Legacy unverified DOCSIS definitions 202.43 (including .8/.11), 202.53
 (including .1–.4 and .2.1/.2.2), 202.54 (including .1–.4), and 202.2.7
 are deferred, not copied into the reviewed catalog. Inputs using these settings
-are unsupported and must fail rather than silently dropping their contents.
-This is an intentional compatibility restriction pending specification/codec
-verification. Standalone 217.8 is removed; the supported VendorID is 217.43.8.
+are preserved as opaque `UnknownTLV` instances when their framing is complete.
+Their semantics remain unverified pending specification/codec review. Standalone 217.8 is removed; the supported VendorID is 217.43.8.
 25.14 MaximumDownstreamLatency is grouped after 25.13 in catalog order.
 
 DOCSIS 201 (ePS), 216 (eMTA), 219 (eTEA), 220 (eDVA), and 221 (eSG)
@@ -555,49 +554,41 @@ standard child numbers must not imply standard meanings. No vendor-specific
 catalog is currently registered. Missing, malformed or duplicate VendorId fields,
 truncated child framing, and overlong assembled containers are rejected.
 
-Opaque top-level extension children use the existing grammar's identifier/value
-form, with an instance-only name `UnknownTLV` followed by the decimal type:
+### Unknown DOCSIS fields
+
+DOCSIS 3.1 and 4.0 preserve structurally complete unknown fields at the root or
+inside known containers. The instance name is always `UnknownTLV`; its numeric
+`Type`, `ParentTypeList`, `byte_array` codec and hexadecimal `Value` remain separate
+metadata. Shared registries are unchanged. Unknown contents are opaque, not
+recursively guessed or declared specification-compliant.
 
 ```text
 Docsis {
-    VendorSpecific {
-        VendorId 00:05:CA;
-        UnknownTLV242 00:01:02:03:04:05:06:07;
-        UnknownTLV1 "AB";
-        UnknownTLV242 "";
+    eRouterConfig {
+        TR-069ManagementServer {
+            UnknownTLV 7 "01";
+        }
     }
+    UnknownTLV 242 "00:01:02";
 }
 ```
 
-This is a synthetic TLV fragment, not a complete provisionable configuration.
-`UnknownTLV242 "";` explicitly encodes a zero-length child; `UnknownTLV242;` remains a
-valueless template placeholder. Bracketed hex remains accepted. Raw names are
-accepted only within supported DOCSIS extension containers, never as arbitrary
-unknown top-level TLVs. Byte order, repeated children and container boundaries
-remain significant. Preserving opaque data does not validate vendor semantics.
+This illustrates syntax, not a complete provisioning profile. The numeric type is
+required to reconstruct the wire bytes. `UnknownTLV 242 "";` preserves a zero-length
+field. Previous suffixed input names remain readable, but exports use the generic
+name with a separate decimal type. Known identifiers cannot be disguised as raw
+fields outside vendor-specific scope. VendorId-first and duplicate checks remain.
+Unknown framing assumes one length octet; malformed/truncated input still fails.
+Byte order, duplicates and payload bytes must survive binary/text/binary round trips.
+Preservation does not authenticate MICs or validate unknown field semantics.
 
-The DOCSIS 3.1 catalog's nested classifier/service-flow extensions retain their
-existing whole-payload hex syntax and now validate VendorId and child framing.
-DOCSIS 4.0 nested extensions absent from its catalog remain unsupported. This
-change does not change OpenCable or DPoE vendor handling.
-
-`ConfigurationFileExport.getTopLevelTLVJSON()` exposes decoded opaque children
-with their numeric `Type`, complete `ParentTypeList`, `byte_array` codec, hex
-`Value`, and instance name. These definitions do not modify the shared TLV
-registry. UI clients must consume instance metadata for opaque children instead
-of requiring every decoded child to have a registry entry. Import accepts the
-exported names through `ConfigurationFileImport`; no new ANTLR tokens are needed.
-The existing DOCSIS 4.0 text VendorId-first normalization remains compatible;
-binary decoding never reorders malformed input to make it acceptable.
-
-Regression coverage: `VendorExtensionRoundTripTest` exercises byte-identical
-binary/text/binary fragments, overlapping vendor/standard numbers, repeated
-instances, zero-length bytes, edits, nested framing, invalid text and malformed
-VendorIds. The initial test reproduced the unknown-child rejection and duplicate
-VendorId acceptance before implementation.
-
-New exports and instance metadata use `UnknownTLV<number>`; the numeric suffix
-is generated from the wire type.
+`ConfigurationFileExport.getTopLevelTLVJSON()` exposes opaque instance metadata.
+Clients must use instance type/path metadata instead of requiring a registry entry,
+and handle the separate type operand in `UnknownTLV` text. The ANTLR grammar owns
+this syntax; generated parser files are regenerated, never manually patched.
+`VendorExtensionRoundTripTest` covers nested/root unknown fields, vendor scope,
+zero-length and repeated payloads, and malformed data. ACS Override 202.2.7 remains
+unverified because eRouter I21 B.4.3.7 specifies length N; its bytes are preserved.
 
 The disassembler reads files completely before decoding and fails construction on
 unreadable input. Diagnostics use Log4j without dumping provisioning payloads;

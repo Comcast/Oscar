@@ -84,17 +84,48 @@ public class TlvDictionary {
    * type 3 describes NetworkAccess. Template edits do not alter the registry.
    *
    * @param type numeric top-level TLV identifier
-   * @return a fresh template, or an empty object when the type is unknown
+   * @return a fresh template; unknown DOCSIS types use opaque instance metadata
    */
   public JSONObject getTlvDefinition(int type) {
-    return registry.template(List.of(type));
+    JSONObject known = registry.template(List.of(type));
+    if (known.isEmpty()
+        && (table.equals(DOCSIS_DICTIONARY_TABLE_NAME)
+            || table.equals(DOCSIS_40_DICTIONARY_TABLE_NAME))) {
+      return rawTopLevelDefinition("UnknownTLV" + type);
+    }
+    return known;
+  }
+
+  /**
+   * Resolves an opaque DOCSIS root instance without changing the registry.
+   *
+   * @param name canonical UnknownTLV identifier
+   * @return raw metadata, or null for another name or family
+   * @throws IllegalArgumentException for reserved or registered numeric aliases
+   */
+  public JSONObject rawTopLevelDefinition(String name) {
+    if (!table.equals(DOCSIS_DICTIONARY_TABLE_NAME)
+        && !table.equals(DOCSIS_40_DICTIONARY_TABLE_NAME)) return null;
+    JSONArray children = new JSONArray();
+    getTopLevelTLV().forEach(type -> children.put(registry.template(List.of(type))));
+    JSONObject parent =
+        new JSONObject()
+            .put(Dictionary.TYPE, -1)
+            .put(Dictionary.PARENT_TYPE_LIST, new JSONArray().put(-1))
+            .put(Dictionary.SUBTYPE_ARRAY, children)
+            .put(Dictionary.SUPPORTED_VERSIONS, "unverified");
+    JSONObject raw = com.comcast.oscar.tlv.DocsisVendorExtension.rawDefinition(parent, name);
+    if (raw != null && (raw.getInt(Dictionary.TYPE) == 0 || raw.getInt(Dictionary.TYPE) == 255)) {
+      throw new IllegalArgumentException("Raw identifier aliases a DOCSIS marker");
+    }
+    return raw;
   }
 
   /**
    * Alias for getTlvDefinition, retaining the existing editor/codec API.
    *
    * @param type numeric top-level TLV identifier
-   * @return a fresh template, or an empty object when the type is unknown
+   * @return a fresh template; unknown DOCSIS types use opaque instance metadata
    */
   public JSONObject getTlvDictionary(int type) {
     return getTlvDefinition(type);

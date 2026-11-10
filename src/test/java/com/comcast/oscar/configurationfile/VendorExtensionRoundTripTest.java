@@ -20,6 +20,52 @@ class VendorExtensionRoundTripTest {
   }
 
   @Test
+  void preservesUnknownDocsisFieldsInWireOrder() throws Exception {
+    for (DocsisVersion version :
+        new DocsisVersion[] {DocsisVersion.DOCSIS_3_1, DocsisVersion.DOCSIS_4_0}) {
+      for (String hex :
+          new String[] {
+            "ca050203070101",
+            "ca090207070101f2000700",
+            "1803f201ab",
+            "f201ab030101f200f201cd",
+            "d903fa0100",
+            "f2ff" + "ab".repeat(255)
+          }) {
+        String text = export(hex, version);
+        assertTrue(text.contains("UnknownTLV"), hex + " -> " + text);
+        assertFalse(com.comcast.oscar.validation.TextLinter.lint(text).hasErrors());
+        assertArrayEquals(
+            HexFormat.of().parseHex(hex),
+            new ConfigurationFileImport(new StringBuilder(text)).toByteArray(),
+            text);
+      }
+    }
+  }
+
+  @Test
+  void rejectsMalformedUnknownFieldsAndKnownAliases() {
+    for (String hex : new String[] {"ca0402020701", "1803f202ab", "f202ab", "f2"}) {
+      assertThrows(Exception.class, () -> export(hex, DocsisVersion.DOCSIS_3_1));
+    }
+    for (String body :
+        new String[] {
+          "UnknownTLV 3 \"01\";",
+          "UnknownTLV 255 \"\";",
+          "UnknownTLV 0 \"\";",
+          "UnknownTLV 256 \"01\";",
+          "UnknownTLV 242 \"xyz\";",
+          "UpstreamServiceFlow { UnknownTLV 1 \"00:01\"; }"
+        }) {
+      assertThrows(
+          RuntimeException.class,
+          () ->
+              new ConfigurationFileImport(new StringBuilder("Docsis { " + body + " }"))
+                  .toByteArray());
+    }
+  }
+
+  @Test
   void preservesVendorChildrenAndOverlappingStandardNumbers() throws Exception {
     for (DocsisVersion version :
         new DocsisVersion[] {DocsisVersion.DOCSIS_3_1, DocsisVersion.DOCSIS_4_0}) {
@@ -45,8 +91,8 @@ class VendorExtensionRoundTripTest {
             text);
       }
       String text = export("2b0e08030005ca0101abf201cd0101ef", version);
-      assertTrue(text.contains("UnknownTLV1"));
-      assertTrue(text.contains("UnknownTLV242"));
+      assertTrue(text.contains("UnknownTLV 1 "));
+      assertTrue(text.contains("UnknownTLV 242 "));
       assertArrayEquals(
           HexFormat.of().parseHex("2b0e08030005ca0101abf201aa0101ef"),
           new ConfigurationFileImport(
@@ -82,8 +128,6 @@ class VendorExtensionRoundTripTest {
           "VendorSpecific { VendorId 00:05:CA; UnknownTLV242 \"xyz\"; }",
           "VendorSpecific { VendorId 00:05:CA; UnknownTLV242 \"abc\"; }",
           "VendorSpecific { VendorId 00:05:CA; CMLoadBalancingID 1; }",
-          "UpstreamServiceFlow { UnknownTLV242 AA; }",
-          "UnknownTLV242 AA;",
           "VendorSpecific { VendorId 00:05:CA; UnknownTLV242 \"" + "ab".repeat(248) + "\"; }"
         }) {
       assertThrows(
@@ -126,7 +170,7 @@ class VendorExtensionRoundTripTest {
     assertEquals(242, raw.getInt("Type"));
     assertEquals("[-1,43,242]", raw.getJSONArray("ParentTypeList").toString());
     assertEquals("byte_array", raw.getString("DataType"));
-    assertEquals("UnknownTLV242", raw.getString("TlvName"));
+    assertEquals("UnknownTLV", raw.getString("TlvName"));
     assertArrayEquals(
         HexFormat.of().parseHex("2b0508030005ca"),
         new ConfigurationFileImport(
