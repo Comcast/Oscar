@@ -53,7 +53,7 @@ jobs:
             architecture: x64
           - os: ubuntu-26.04
             architecture: x64
-          - os: macos-14
+          - os: macos-15
             architecture: aarch64
           - os: windows-11-arm
             architecture: x64
