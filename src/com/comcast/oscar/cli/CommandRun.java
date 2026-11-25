@@ -129,7 +129,12 @@ public class CommandRun {
       }
 
       if (line.hasOption("k")) {
-        comKey.setKey(line.getOptionValues("k"));
+        try {
+          comKey.setKey(line.getOptionValues("k"));
+        } catch (IllegalArgumentException exception) {
+          System.err.println(exception.getMessage());
+          System.exit(1);
+        }
       }
 
       if (line.hasOption("mbb")) {
@@ -292,6 +297,9 @@ public class CommandRun {
       }
     } catch (ParseException exp) {
       System.err.println("Parsing failed. Reason: " + exp.getMessage());
+    } catch (IllegalArgumentException exp) {
+      System.err.println(exp.getMessage());
+      System.exit(1);
     }
   }
 

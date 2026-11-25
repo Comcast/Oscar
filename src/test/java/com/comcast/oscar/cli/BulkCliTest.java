@@ -101,6 +101,59 @@ class BulkCliTest {
         "Legacy space-path defect changed; replace with a successful-output regression");
   }
 
+  @Test
+  void compileWithoutKeyReportsMissingSecretWithoutOutput() throws Exception {
+    Path root = Files.createDirectory(temporary.resolve("no-key-compile"));
+    Path input = Files.writeString(root.resolve("docsis.txt"), source(0), StandardCharsets.UTF_8);
+    Path output = root.resolve("docsis.bin");
+
+    var result =
+        runCli(
+            root,
+            "no-key-compile",
+            "-c",
+            "-s",
+            "d",
+            "3.1",
+            "-i",
+            input.toString(),
+            "-o",
+            output.toString());
+
+    assertNotEquals(0, result.exitCode(), result.log());
+    assertFalse(Files.exists(output));
+    assertTrue(result.log().contains("MIC generation requires a nonempty CMTS key"), result.log());
+    assertFalse(result.log().contains("\tat "), result.log());
+  }
+
+  @Test
+  void singleDirectoryMergeUsesSuppliedKey() throws Exception {
+    Path root = Files.createDirectory(temporary.resolve("merge-key"));
+    Path input = Files.createDirectory(root.resolve("input"));
+    Path output = Files.createDirectory(root.resolve("output"));
+    Path key = Files.writeString(root.resolve("lab.key"), LAB_KEY, StandardCharsets.UTF_8);
+    String source = source(0);
+    Files.writeString(input.resolve("model.txt"), source, StandardCharsets.UTF_8);
+
+    var result =
+        runCli(
+            root,
+            "merge-key",
+            "-s",
+            "d",
+            "3.1",
+            "-k",
+            key.toString(),
+            "-mbb",
+            input.toString(),
+            "o=" + output,
+            "e=.cfg",
+            "b");
+
+    assertEquals(0, result.exitCode(), result.log());
+    assertArrayEquals(compile(source), Files.readAllBytes(output.resolve("model.txt.cfg")));
+  }
+
   private void exercise(int fileCount, int modelCount, int tierCount, boolean record)
       throws Exception {
     Path root = Files.createDirectory(temporary.resolve("bulk-workspace"));
@@ -386,6 +439,7 @@ class BulkCliTest {
       Path output =
           Files.createDirectory(report.resolveSibling(report.getFileName() + "-warm-out"));
       Path key = report.resolveSibling("lab.key");
+      Files.writeString(key, LAB_KEY);
       for (int index = 0; index < WARMUP_FILE_COUNT; index++) {
         Files.writeString(input.resolve("warm-" + index), source(index));
       }

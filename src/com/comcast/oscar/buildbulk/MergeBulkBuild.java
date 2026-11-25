@@ -199,7 +199,8 @@ public class MergeBulkBuild {
           e.printStackTrace();
         }
 
-        ConfigurationFile cf = new ConfigurationFile(iConfigurationFileType, cfi.getTlvBuilder());
+        ConfigurationFile cf =
+            new ConfigurationFile(iConfigurationFileType, cfi.getTlvBuilder(), sSharedSecret);
 
         cf.removeAllSecurityHash();
 
@@ -217,7 +218,7 @@ public class MergeBulkBuild {
           e.printStackTrace();
         }
 
-        ConfigurationFile cf = new ConfigurationFile(iConfigurationFileType, tb);
+        ConfigurationFile cf = new ConfigurationFile(iConfigurationFileType, tb, sSharedSecret);
 
         cf.removeAllSecurityHash();
 
