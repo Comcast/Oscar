@@ -270,37 +270,39 @@ public class TlvVariableBinding implements TlvBuild {
   }
 
   /**
-   * This Method assumes that each TLV Level that it is searching is of the same Number of Byte
-   * Length
+   * Finds the absolute offsets of every instance of a parent/child path, assuming each searched TLV
+   * level uses the same number of length bytes.
    *
-   * @param bParentChildTlvEncodeList
-   * @param _bTlvBuffer byte[]
-   * @param iTopLevelTlvNumByteLength int
-   * @return byte[]
-   * @throws TlvException
+   * <p>Offsets are returned as integers in encounter order, so values above 255 are unambiguous.
+   *
+   * @param _bTlvBuffer encoded TLV bytes to search, not null
+   * @param bParentChildTlvEncodeList wire types from outermost to innermost, not null
+   * @param iTopLevelTlvNumByteLength number of length bytes used at each level; not negative
+   * @return offsets in encounter order; empty when the path is absent or input is too short
+   * @throws TlvException if an argument is null or the byte-length count is negative
    */
-  public static byte[] findTLVIndex(
+  public static int[] findTlvOffsets(
       byte[] _bTlvBuffer, byte[] bParentChildTlvEncodeList, int iTopLevelTlvNumByteLength)
       throws TlvException {
 
     if (_bTlvBuffer == null)
-      throw new TlvException("TlvVariableBinding.findTLVIndex(b,b,i) TLV Byte Array is NULL");
+      throw new TlvException("TlvVariableBinding.findTlvOffsets(b,b,i) TLV Byte Array is NULL");
 
     if (bParentChildTlvEncodeList == null)
       throw new TlvException(
-          "TlvVariableBinding.findTLVIndex(b,b,i) bParentChildTlvEncodeList is NULL");
+          "TlvVariableBinding.findTlvOffsets(b,b,i) bParentChildTlvEncodeList is NULL");
 
     if (iTopLevelTlvNumByteLength < 0)
       throw new TlvException(
-          "TlvVariableBinding.findTLVIndex(b,b,i) iTopLevelTlvNumByteLength less than 0");
-
-    ByteArrayOutputStream baosTlvTypeIndexList = new ByteArrayOutputStream();
+          "TlvVariableBinding.findTlvOffsets(b,b,i) iTopLevelTlvNumByteLength less than 0");
 
     // Need to make sure that length is at least 1 + N bytes
     if (_bTlvBuffer.length < (TLV_TYPE_OVERHEAD + iTopLevelTlvNumByteLength)) {
 
-      return baosTlvTypeIndexList.toByteArray();
+      return new int[0];
     }
+
+    List<Integer> offsets = new ArrayList<Integer>();
 
     // Jump ahead to the second TLV Type
     int iStartIndexEncodeList = 0;
@@ -319,11 +321,7 @@ public class TlvVariableBinding implements TlvBuild {
         if (iStartIndexEncodeList == (bParentChildTlvEncodeList.length - 1)) {
 
           // Save Index
-          try {
-            baosTlvTypeIndexList.write(HexString.intToByteArray(iStartIndex));
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
+          offsets.add(iStartIndex);
 
           // Finish looking thru Buffer in-case there are other TLVs
           iStartIndex = nextTLVIndex(_bTlvBuffer, iStartIndex, iTopLevelTlvNumByteLength);
@@ -344,6 +342,32 @@ public class TlvVariableBinding implements TlvBuild {
 
       // If the index exceeds buffer length, we reached the end of the loop
       if (iStartIndex >= _bTlvBuffer.length) break;
+    }
+
+    return offsets.stream().mapToInt(Integer::intValue).toArray();
+  }
+
+  /**
+   * Legacy wrapper around {@link #findTlvOffsets} that preserves the variable-width byte encoding
+   * of each offset. The width is not recorded, so offsets above 255 are ambiguous; new callers
+   * should use {@link #findTlvOffsets} instead.
+   *
+   * @param _bTlvBuffer encoded TLV bytes to search, not null
+   * @param bParentChildTlvEncodeList wire types from outermost to innermost, not null
+   * @param iTopLevelTlvNumByteLength number of length bytes used at each level; not negative
+   * @return concatenated variable-width offsets; empty when the path is absent or input is too
+   *     short
+   * @throws TlvException if an argument is null or the byte-length count is negative
+   */
+  public static byte[] findTLVIndex(
+      byte[] _bTlvBuffer, byte[] bParentChildTlvEncodeList, int iTopLevelTlvNumByteLength)
+      throws TlvException {
+
+    ByteArrayOutputStream baosTlvTypeIndexList = new ByteArrayOutputStream();
+
+    for (int offset :
+        findTlvOffsets(_bTlvBuffer, bParentChildTlvEncodeList, iTopLevelTlvNumByteLength)) {
+      baosTlvTypeIndexList.writeBytes(HexString.intToByteArray(offset));
     }
 
     return baosTlvTypeIndexList.toByteArray();

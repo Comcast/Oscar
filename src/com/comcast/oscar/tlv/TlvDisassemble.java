@@ -513,15 +513,11 @@ public class TlvDisassemble extends TlvDictionary {
               findDocsis40Offsets(
                   bTlvBuffer, joTlvDictionary.getJSONArray(Dictionary.PARENT_TYPE_LIST));
         } else {
-          byte[] indices =
-              TlvVariableBinding.findTLVIndex(
+          bPCTEPointer =
+              TlvVariableBinding.findTlvOffsets(
                   bTlvBuffer,
                   bParentChildTlvEncodeList,
                   joTlvDictionary.getInt(Dictionary.BYTE_LENGTH));
-          bPCTEPointer = new int[indices.length];
-          for (int index = 0; index < indices.length; index++) {
-            bPCTEPointer[index] = Byte.toUnsignedInt(indices[index]);
-          }
         }
 
         if (bPCTEPointer.length != 0) {
